@@ -1,0 +1,118 @@
+<title>환율 × 외국인 수급 — 5개년 백테스트</title>
+<style>
+:root{--ink:#1d2733;--sub:#66727f;--line:#dce3ea;--up:#d63c2f;--dn:#2660c4;--paper:#f4f7f9;--card:#fff;--acc:#1e6f5c;--accbg:#e9f5f1}
+body{font-family:'Apple SD Gothic Neo','Noto Sans KR',sans-serif;margin:0;background:var(--paper);color:var(--ink)}
+.wrap{max-width:880px;margin:0 auto;padding:34px 20px 90px}
+.eyebrow{font-size:.78rem;letter-spacing:.08em;color:var(--acc);font-weight:800}
+h1{font-size:1.5rem;margin:6px 0 4px;letter-spacing:-.01em;text-wrap:balance}
+.sub{color:var(--sub);font-size:.85rem}
+.hero{background:linear-gradient(135deg,#123f34,#1e6f5c);color:#fff;border-radius:16px;padding:30px 28px;margin:22px 0;text-align:center}
+.hero .rule{font-size:1.45rem;font-weight:800;line-height:1.55;letter-spacing:-.01em}
+.hero .rule b{color:#ffd47e}
+.hero .memo{margin-top:12px;font-size:.93rem;color:#bfe0d6}
+h2{font-size:1.02rem;margin:34px 0 12px;padding-left:10px;border-left:4px solid var(--acc)}
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}
+.card{background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:16px 18px}
+.card.pick{border-color:var(--acc);background:var(--accbg)}
+.big{font-size:1.55rem;font-weight:800;font-variant-numeric:tabular-nums}
+.up{color:var(--up)} .dn{color:var(--dn)}
+.k{font-size:.76rem;color:var(--sub)}
+table{border-collapse:collapse;width:100%;background:var(--card);font-size:.86rem;font-variant-numeric:tabular-nums}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:center}
+th{background:#eef2f6}
+td.l{text-align:left}
+.ybars{margin:14px 0}
+.yrow{display:flex;align-items:center;gap:10px;margin:10px 0}
+.ylbl{width:120px;font-size:.83rem;font-weight:700;text-align:right;flex:none}
+.ybar{height:24px;border-radius:4px;background:var(--dn)}
+.yval{font-weight:800;font-size:.88rem;font-variant-numeric:tabular-nums;color:var(--dn)}
+.ynote{font-size:.75rem;color:var(--sub);margin-left:8px}
+.warn{background:#fff7e2;border:1.5px solid #e6cf9b;border-radius:10px;padding:4px 18px 12px;font-size:.85rem;line-height:1.7;color:#5c4a1e}
+.note{color:var(--sub);font-size:.76rem;margin-top:24px;border-top:1px solid var(--line);padding-top:10px;line-height:1.6}
+.conv{display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap;margin:14px 0;font-size:.9rem;font-weight:700}
+.conv .box{background:var(--card);border:1.5px solid var(--line);border-radius:10px;padding:10px 16px;font-variant-numeric:tabular-nums}
+.conv .eq{color:var(--acc);font-size:1.3rem;font-weight:800}
+</style>
+<div class="wrap">
+<span class="eyebrow">FX × FOREIGN FLOW — 5-YEAR BACKTEST</span>
+<h1>과거 5개년 백테스트: 환율 1%당 외국인 유출, 평균은 얼마였나</h1>
+<p class="sub">2022-02 ~ 2026-07-24 · 1,088거래일 (자료 한도로 5개년의 88%) · 증시 상승분 반영 2방식 · 외국인 순매수(KOSPI) × USD/KRW</p>
+
+<div class="hero">
+  <div class="rule">증시 규모를 현재 기준으로 환산한 5개년 평균<br>환율 <b>1% 절하 = 약 0.64조원 유출</b> (이틀 누적)</div>
+  <div class="memo">현행 공식(0.61조·최근 2.5년 추정)과 수렴 — 공식은 기간을 늘려도 유지됩니다.<br>단 <b>2026년 국면 민감도는 -1.57조/1%로 평균의 2.5배</b>.</div>
+</div>
+
+<h2>① 증시 상승분을 어떻게 고려했나 — 3가지 추정치</h2>
+<div class="grid3">
+<div class="card"><span class="k">명목 조원 그대로</span><div class="big dn">-0.39조</div><span class="k">과거 증시(KOSPI 2,700)가 작아 평균이 눌림 — 참고용</span></div>
+<div class="card pick"><span class="k">★ 증시 규모 정규화 (현재 KOSPI 6,693 기준 환산)</span><div class="big dn">-0.64조</div><span class="k">각 시점 유출 × (현재지수/당시지수) — "지금 규모라면 얼마였나"</span></div>
+<div class="card"><span class="k">+ KOSPI 수익률 통제 (환율 고유분)</span><div class="big dn">-0.31조</div><span class="k">유출의 절반은 환율 고유, 절반은 환율·주가 동반 리스크오프</span></div>
+</div>
+
+<h2>② 연도별 민감도 (2026 규모 환산, 1%당 이틀 누적)</h2>
+<div class="ybars">
+<div class="yrow"><span class="ylbl">2022 약세장</span><div class="ybar" style="width:130px"></div><span class="yval">-0.65조</span><span class="ynote">금리인상 — 민감 (t≈-4)</span></div>
+<div class="yrow"><span class="ylbl">2023 회복장</span><div class="ybar" style="width:66px"></div><span class="yval">-0.33조</span><span class="ynote">둔감</span></div>
+<div class="yrow"><span class="ylbl">2024 박스권</span><div class="ybar" style="width:70px"></div><span class="yval">-0.35조</span><span class="ynote">둔감</span></div>
+<div class="yrow"><span class="ylbl">2025 상승장</span><div class="ybar" style="width:106px"></div><span class="yval">-0.53조</span><span class="ynote">재상승</span></div>
+<div class="yrow"><span class="ylbl">2026 고환율</span><div class="ybar" style="width:314px"></div><span class="yval">-1.57조</span><span class="ynote">평균의 2.5배 (t=-3.3 · 표본 137일)</span></div>
+</div>
+
+<h2>②-2 연도별 상세 — 기존 산식(명목)과 규모 환산 병행 + 국면 컨텍스트</h2>
+<div class="tblwrap" style="overflow-x:auto"><table>
+<tr><th>연도</th><th>평균 환율</th><th>1,400원+ 일수 비중</th><th>평균 KOSPI</th><th>명목 (기존 산식)</th><th>규모 환산</th></tr>
+<tr><td>2022</td><td>1,303원</td><td>14%</td><td>2,485</td><td class="dn">-0.25조/1%</td><td class="dn">-0.65조/1%</td></tr>
+<tr><td>2023</td><td>1,303원</td><td>0%</td><td>2,499</td><td class="dn">-0.12조/1%</td><td class="dn">-0.33조/1%</td></tr>
+<tr><td>2024</td><td>1,362원</td><td>9%</td><td>2,632</td><td class="dn">-0.14조/1%</td><td class="dn">-0.35조/1%</td></tr>
+<tr><td>2025</td><td>1,420원</td><td>61%</td><td>3,114</td><td class="dn">-0.24조/1%</td><td class="dn">-0.53조/1%</td></tr>
+<tr style="background:#fff8e6"><td><b>2026</b></td><td><b>1,486원</b></td><td><b>100%</b></td><td><b>6,460</b></td><td class="dn"><b>-1.50조/1%</b></td><td class="dn"><b>-1.57조/1%</b></td></tr>
+</table></div>
+<p class="sub">명목(기존 산식)으로 보면 2022~25년이 -0.1~-0.25조로 작아 보이지만, 당시 증시 규모가 지금의 절반 이하였기 때문 — 규모 환산이 국면 비교의 올바른 잣대입니다. 2026년은 두 산식이 수렴(증시가 이미 현재 규모).</p>
+
+<h2>②-3 환율 레벨 구간별 민감도 (풀샘플 1,088일)</h2>
+<div class="tblwrap" style="overflow-x:auto"><table>
+<tr><th>환율 구간</th><th>표본</th><th>명목 (기존 산식)</th><th>규모 환산</th><th class="l">해석</th></tr>
+<tr><td>~1,300원</td><td>217일</td><td class="dn">-0.24조/1%</td><td class="dn">-0.63조/1%</td><td class="l">저환율(절상 국면) — 유입 탄력도 커서 민감</td></tr>
+<tr><td>1,300~1,400원</td><td>533일</td><td class="dn">-0.18조/1%</td><td class="dn">-0.46조/1%</td><td class="l">중간 밴드 — 가장 둔감 (관망 구간)</td></tr>
+<tr style="background:#fff8e6"><td><b>1,400원 이상</b></td><td>338일</td><td class="dn"><b>-0.75조/1%</b></td><td class="dn"><b>-0.89조/1%</b></td><td class="l"><b>임계선 위 — 환손실 회피 매도 가속 (중간 밴드의 2배)</b></td></tr>
+</table></div>
+<p class="sub">U자형 구조: 양 끝(저환율·고환율)이 민감하고 중간 밴드가 둔감 — "1,400원"이 실증적으로도 행동 변화의 임계선입니다.</p>
+
+<h2>②-4 연도 × 환율 구간 교차 (규모 환산, 표본 40일 이상만)</h2>
+<div class="tblwrap" style="overflow-x:auto"><table>
+<tr><th></th><th>~1,300원</th><th>1,300~1,400원</th><th>1,400원+</th></tr>
+<tr><td><b>2022</b></td><td class="dn">-0.92조</td><td class="dn">-0.46조</td><td>표본 부족</td></tr>
+<tr><td><b>2023</b></td><td class="dn">-0.33조</td><td class="dn">-0.34조</td><td>—</td></tr>
+<tr><td><b>2024</b></td><td>—</td><td class="dn">-0.44조</td><td>표본 부족</td></tr>
+<tr><td><b>2025</b></td><td>—</td><td class="dn">-0.72조</td><td class="dn">-0.46조</td></tr>
+<tr style="background:#fff8e6"><td><b>2026</b></td><td>—</td><td>—</td><td class="dn"><b>-1.57조</b></td></tr>
+</table></div>
+<p class="sub">같은 1,400원+ 구간이라도 2025년(-0.46)과 2026년(-1.57)이 3배 차이 — 레벨뿐 아니라 <b>변동성·속도(급등 국면인지)</b>가 민감도를 증폭시킵니다. 2022년 저환율 칸(-0.92)은 급락장 초기라는 특수성.</p>
+
+<h2>③ 수렴 체크 — 공식의 로버스트함</h2>
+<div class="conv">
+<div class="box">최근 2.5년 추정<br><span class="dn">-0.61조/1%</span></div>
+<span class="eq">≈</span>
+<div class="box">5개년 평균 (규모 환산)<br><span class="dn">-0.64조/1%</span></div>
+<span class="eq">≈</span>
+<div class="box">암기 공식<br><span class="dn">"1% = 누적 6천억"</span></div>
+</div>
+
+<h2>④ 시차 구조 — 평상시와 위기가 다르다</h2>
+<table>
+<tr><th>국면</th><th>당일 반응</th><th>익일 반응</th><th class="l">해석</th></tr>
+<tr><td>평상시 (2023~2025)</td><td>무의미 (t&lt;1)</td><td class="dn"><b>유의</b></td><td class="l">외국인은 환율 충격에 <b>하루 늦게</b> 기계적으로 따라옴</td></tr>
+<tr><td>위기 (2022·2026)</td><td class="dn"><b>즉각 유의</b></td><td class="dn">유의</td><td class="l">리스크오프 국면에선 당일 반응까지 켜져 이틀 연속 유출</td></tr>
+</table>
+
+<h2>⑤ 결론</h2>
+<div class="warn">
+<p><b>평균 공식</b>: 환율 1% 절하당 <b>약 0.6~0.65조원 유출</b> (현재 증시 규모 기준, 그중 환율 고유분 ~0.3조).</p>
+<p><b>실전 적용</b>: 평균보다 <b>국면별 계수</b>를 쓸 것 — 회복·박스권에선 0.3~0.35조로 할인, 고환율(1,400원↑)·고변동 국면에선 <b>1.5조까지 각오</b>. 기존 인포그래픽의 "고환율 ×1.5" 가중은 2026년 실측(×2.5) 대비 보수적이었음.</p>
+<p><b>주의</b>: 2026년 계수는 표본 137일 + 7월 폭락 주간 포함이라 과대추정 여지. 2021-07~2022-01은 자료 한도로 제외(5개년의 88% 커버).</p>
+</div>
+
+<p class="note">방법: 일별 외국인 순매수(KOSPI, 네이버금융) ~ USD/KRW %변화(당일+전일, FMP) OLS. 규모 정규화 = 순매수 × (현재 KOSPI/당시 KOSPI).
+KOSPI 수익률 통제 모델로 환율 고유분 분리. 지수 데이터: 키움 API. 연도·구간별 상세 추가 2026-07-24. 관련: <a href="fx-flow.html">환율 × 외국인 수급 공식 (현행판)</a></p>
+</div>

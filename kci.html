@@ -1,0 +1,179 @@
+<title>고려신용정보 급등일 × 지수 반응 대시보드</title>
+<style>
+:root{--ink:#20262e;--sub:#6b7683;--line:#dde3e9;--up:#d63c2f;--dn:#2660c4;--paper:#f6f8fa;--card:#fff;--gold:#b07d1e}
+body{font-family:'Apple SD Gothic Neo','Noto Sans KR',sans-serif;margin:0;background:var(--paper);color:var(--ink)}
+.wrap{max-width:1060px;margin:0 auto;padding:30px 20px 80px}
+h1{font-size:1.35rem;margin:0 0 4px;letter-spacing:-.01em}
+.sub{color:var(--sub);font-size:.85rem}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:20px 0}
+.tile{background:var(--card);border:1.5px solid var(--line);border-radius:10px;padding:13px 15px}
+.tile .k{font-size:.73rem;color:var(--sub);display:block;margin-bottom:4px}
+.tile .v{font-size:1.3rem;font-weight:800;font-variant-numeric:tabular-nums}
+.up{color:var(--up)} .dn{color:var(--dn)}
+h2{font-size:1.05rem;margin:34px 0 10px;padding-left:10px;border-left:4px solid var(--gold)}
+table{border-collapse:collapse;width:100%;background:var(--card);font-size:.84rem;font-variant-numeric:tabular-nums}
+th,td{border:1px solid var(--line);padding:6px 8px;text-align:center;white-space:nowrap}
+th{background:#eef2f6;font-weight:700}
+tr.today{background:#fff8e6}
+.tblwrap{overflow-x:auto;border-radius:8px;margin-bottom:10px}
+.ev{background:var(--card);border:1.5px solid var(--line);border-radius:10px;padding:14px 16px;margin:14px 0}
+.ev.today{border-color:var(--gold);box-shadow:0 0 0 2px #f3e3bb}
+.ev h3{margin:0 0 8px;font-size:.98rem}
+.hm{border-collapse:collapse;font-size:.72rem;font-variant-numeric:tabular-nums}
+.hm th,.hm td{border:1px solid #e7ecf1;padding:4px 3px;min-width:38px;text-align:center}
+.hm th{background:#f2f5f8;font-weight:600}
+.hm .d0{outline:2px solid var(--gold);outline-offset:-2px;font-weight:800}
+.hm .rowl{background:#f2f5f8;font-weight:700;min-width:56px}
+.insight{background:var(--card);border:1.5px solid var(--line);border-left:4px solid var(--gold);border-radius:8px;padding:4px 18px 12px;font-size:.9rem;line-height:1.7}
+.note{color:var(--sub);font-size:.78rem;margin-top:26px;border-top:1px solid var(--line);padding-top:10px;line-height:1.6}
+b.r{color:var(--up)} b.b{color:var(--dn)}
+</style>
+<div class="wrap">
+<h1>고려신용정보(049720) 급등일 × 지수 반응</h1>
+<p class="sub">기준 A: 장중 고가 +20% 터치 · 기준 B: 종가 +10% 이상 · 전후 10거래일 일별 등락 · 수정주가 · 2016-01 ~ 2026-07-24 · 키움 API</p>
+
+<div class="tiles">
+<div class="tile"><span class="k">장중 +20% 터치 (10년)</span><span class="v">4회</span></div>
+<div class="tile"><span class="k">종가 +10% 이상 (10년)</span><span class="v">5회</span></div>
+<div class="tile"><span class="k">장중 +10% 터치 (10년)</span><span class="v">25회</span></div>
+<div class="tile"><span class="k">역대 최대 장중 상승</span><span class="v up">+27.7%</span><span class="k">2022-06-23</span></div>
+<div class="tile"><span class="k">역대 최대 종가 상승</span><span class="v up">+17.6%</span><span class="k">2026-07-24 (오늘)</span></div>
+</div>
+
+<h2>기준 A — 장중 고가 +20% 터치한 날 (4회)</h2>
+<div class="tblwrap"><table>
+<tr><th rowspan="2">급등일</th><th rowspan="2">장중 고점</th><th rowspan="2">종가 등락</th><th colspan="3">KOSPI 누적</th><th colspan="3">KOSDAQ 누적</th></tr>
+<tr><th>전 10일</th><th>당일</th><th>후 10일</th><th>전 10일</th><th>당일</th><th>후 10일</th></tr>
+<tr><td>2018-03-19</td><td class="up">+21.8%</td><td class="up">+4.0%</td><td class="up">+5.0%</td><td class="dn">-0.8%</td><td class="dn">-1.2%</td><td class="up">+5.8%</td><td class="dn">-1.5%</td><td class="dn">-1.5%</td></tr>
+<tr><td>2021-06-11</td><td class="up">+23.9%</td><td class="dn">-1.8%</td><td class="up">+1.1%</td><td class="up">+0.8%</td><td class="up">+1.6%</td><td class="up">+1.1%</td><td class="up">+0.3%</td><td class="up">+2.1%</td></tr>
+<tr><td>2022-06-23</td><td class="up">+27.7%</td><td class="up">+10.7%</td><td class="dn">-10.8%</td><td class="dn">-1.2%</td><td class="up">+0.9%</td><td class="dn">-14.8%</td><td class="dn">-4.4%</td><td class="up">+6.1%</td></tr>
+<tr class="today"><td>2026-07-24 ★오늘</td><td class="up">+23.5%</td><td class="up">+17.6%</td><td class="dn">-2.7%</td><td class="dn">-5.5%</td><td>진행중</td><td class="dn">-0.5%</td><td class="dn">-5.1%</td><td>진행중</td></tr>
+<tr style="background:#eef2f6"><td>평균(완료 3회)</td><td class="up">+24.5%</td><td class="up">+4.3%</td><td class="dn">-1.6%</td><td class="dn">-0.4%</td><td class="up">+0.4%</td><td class="dn">-2.6%</td><td class="dn">-1.9%</td><td class="up">+2.2%</td></tr>
+</table></div>
+
+<h2>이벤트별 전후 10거래일 — 일별 개별 등락률 (%)</h2>
+<p class="sub">각 셀 = 그날 하루 지수 등락률. 금색 테두리 = 급등 당일(D0). 셀 색 농도 = 등락 크기 (빨강 상승 / 파랑 하락)</p>
+<div id="events"></div>
+
+<h2>기준 B — 종가 +10% 이상 (5회) 요약</h2>
+<div class="tblwrap"><table>
+<tr><th rowspan="2">급등일</th><th rowspan="2">종목 등락</th><th colspan="3">KOSPI 누적</th><th colspan="3">KOSDAQ 누적</th></tr>
+<tr><th>전 10일</th><th>당일</th><th>후 10일</th><th>전 10일</th><th>당일</th><th>후 10일</th></tr>
+<tr><td>2020-05-07</td><td class="up">+10.0%</td><td class="up">+1.6%</td><td>-0.0%</td><td class="up">+3.6%</td><td class="up">+3.2%</td><td class="up">+1.5%</td><td class="up">+7.2%</td></tr>
+<tr><td>2022-06-20</td><td class="up">+10.1%</td><td class="dn">-8.6%</td><td class="dn">-2.0%</td><td class="dn">-3.8%</td><td class="dn">-10.4%</td><td class="dn">-3.6%</td><td class="dn">-6.1%</td></tr>
+<tr><td>2022-06-23</td><td class="up">+10.7%</td><td class="dn">-10.8%</td><td class="dn">-1.2%</td><td class="up">+0.9%</td><td class="dn">-14.9%</td><td class="dn">-4.4%</td><td class="up">+6.1%</td></tr>
+<tr><td>2022-07-06</td><td class="up">+10.8%</td><td>-0.0%</td><td class="dn">-2.1%</td><td class="up">+4.1%</td><td class="up">+0.5%</td><td class="dn">-0.8%</td><td class="up">+6.2%</td></tr>
+<tr class="today"><td>2026-07-24 ★</td><td class="up">+17.6%</td><td class="dn">-2.7%</td><td class="dn">-5.5%</td><td>진행중</td><td class="dn">-0.5%</td><td class="dn">-5.1%</td><td>진행중</td></tr>
+<tr style="background:#eef2f6"><td>평균(완료 4회)</td><td class="up">+10.4%</td><td class="dn">-4.5%</td><td class="dn">-1.4%</td><td class="up">+1.2%</td><td class="dn">-5.4%</td><td class="dn">-1.8%</td><td class="up">+3.3%</td></tr>
+</table></div>
+
+<h2>기준 C — 장중 고가 +10% 터치 (25회) · 일별 히트맵</h2>
+<p class="sub">접힌 목록을 열면 각 이벤트의 D-10~D+10 일별 지수 등락이 나옵니다. 요약: 당일 KOSPI 평균 -1.1% / 후10일 KOSDAQ 평균 +0.9% — 10% 기준은 신호가 약하며, <b>종가 +7% 이상 지킨 9회</b>만 후10일 KOSDAQ 평균 +2.9%로 유의미</p>
+<div class="tblwrap"><table>
+<tr><th rowspan="2">급등일</th><th rowspan="2">장중 고점</th><th rowspan="2">종가 등락</th><th colspan="3">KOSPI 누적</th><th colspan="3">KOSDAQ 누적</th></tr>
+<tr><th>전 10일</th><th>당일</th><th>후 10일</th><th>전 10일</th><th>당일</th><th>후 10일</th></tr>
+<tr><td>2016-02-11</td><td class="up">+19.0%</td><td class="up">+0.4%</td><td class="up">+1.3%</td><td class="dn">-2.9%</td><td class="up">+3.1%</td><td class="">-0.0%</td><td class="dn">-4.9%</td><td class="dn">-0.2%</td></tr>
+<tr><td>2017-07-28</td><td class="up">+19.3%</td><td class="up">+7.4%</td><td class="up">+1.2%</td><td class="dn">-1.7%</td><td class="dn">-3.4%</td><td class="up">+1.9%</td><td class="dn">-2.0%</td><td class="dn">-3.8%</td></tr>
+<tr><td>2017-11-30</td><td class="up">+14.5%</td><td class="up">+1.8%</td><td class="dn">-0.9%</td><td class="dn">-1.5%</td><td class="dn">-0.3%</td><td class="up">+0.2%</td><td class="dn">-1.3%</td><td class="dn">-0.1%</td></tr>
+<tr><td>2018-03-19</td><td class="up">+21.8%</td><td class="up">+4.0%</td><td class="up">+5.0%</td><td class="dn">-0.8%</td><td class="dn">-1.2%</td><td class="up">+5.8%</td><td class="dn">-1.5%</td><td class="dn">-1.5%</td></tr>
+<tr><td>2018-05-17</td><td class="up">+10.9%</td><td class="up">+1.7%</td><td class="dn">-1.8%</td><td class="dn">-0.5%</td><td class="dn">-0.4%</td><td class="dn">-2.4%</td><td class="up">+0.6%</td><td class="up">+3.2%</td></tr>
+<tr><td>2018-08-16</td><td class="up">+12.1%</td><td class="up">+7.9%</td><td class="dn">-2.1%</td><td class="dn">-0.8%</td><td class="up">+3.0%</td><td class="dn">-3.6%</td><td class="dn">-0.1%</td><td class="up">+5.7%</td></tr>
+<tr><td>2019-02-08</td><td class="up">+10.8%</td><td class="up">+3.6%</td><td class="up">+4.0%</td><td class="dn">-1.2%</td><td class="up">+2.5%</td><td class="up">+4.9%</td><td class="">-0.0%</td><td class="up">+2.0%</td></tr>
+<tr><td>2019-02-28</td><td class="up">+19.9%</td><td class="dn">-0.1%</td><td class="up">+0.4%</td><td class="dn">-1.8%</td><td class="dn">-0.9%</td><td class="up">+1.3%</td><td class="dn">-2.8%</td><td class="up">+2.3%</td></tr>
+<tr><td>2020-05-07</td><td class="up">+18.7%</td><td class="up">+10.0%</td><td class="up">+1.6%</td><td class="">-0.0%</td><td class="up">+3.6%</td><td class="up">+3.2%</td><td class="up">+1.5%</td><td class="up">+7.2%</td></tr>
+<tr><td>2020-10-27</td><td class="up">+10.1%</td><td class="dn">-1.6%</td><td class="dn">-2.5%</td><td class="dn">-0.6%</td><td class="up">+5.2%</td><td class="dn">-10.8%</td><td class="up">+0.7%</td><td class="up">+7.3%</td></tr>
+<tr><td>2021-06-11</td><td class="up">+23.9%</td><td class="dn">-1.8%</td><td class="up">+1.1%</td><td class="up">+0.8%</td><td class="up">+1.6%</td><td class="up">+1.1%</td><td class="up">+0.3%</td><td class="up">+2.1%</td></tr>
+<tr><td>2021-06-18</td><td class="up">+13.5%</td><td class="up">+3.9%</td><td class="up">+0.8%</td><td class="up">+0.1%</td><td class="up">+0.4%</td><td class="up">+1.6%</td><td class="up">+1.2%</td><td class="up">+2.2%</td></tr>
+<tr><td>2022-04-25</td><td class="up">+16.0%</td><td class="up">+4.9%</td><td class="up">+0.4%</td><td class="dn">-1.8%</td><td class="dn">-2.3%</td><td class="up">+0.1%</td><td class="dn">-2.5%</td><td class="dn">-4.9%</td></tr>
+<tr><td>2022-06-20</td><td class="up">+14.9%</td><td class="up">+10.1%</td><td class="dn">-8.6%</td><td class="dn">-2.0%</td><td class="dn">-3.8%</td><td class="dn">-10.4%</td><td class="dn">-3.6%</td><td class="dn">-6.1%</td></tr>
+<tr><td>2022-06-23</td><td class="up">+27.7%</td><td class="up">+10.7%</td><td class="dn">-10.8%</td><td class="dn">-1.2%</td><td class="up">+0.9%</td><td class="dn">-14.8%</td><td class="dn">-4.4%</td><td class="up">+6.1%</td></tr>
+<tr><td>2022-06-24</td><td class="up">+10.7%</td><td class="up">+3.7%</td><td class="dn">-10.8%</td><td class="up">+2.3%</td><td class="dn">-0.7%</td><td class="dn">-17.9%</td><td class="up">+5.0%</td><td class="up">+2.2%</td></tr>
+<tr><td>2022-07-06</td><td class="up">+13.2%</td><td class="up">+10.8%</td><td class="">-0.0%</td><td class="dn">-2.1%</td><td class="up">+4.1%</td><td class="up">+0.5%</td><td class="dn">-0.8%</td><td class="up">+6.2%</td></tr>
+<tr><td>2022-07-12</td><td class="up">+14.0%</td><td class="up">+7.4%</td><td class="dn">-3.4%</td><td class="dn">-1.0%</td><td class="up">+4.1%</td><td class="dn">-0.3%</td><td class="dn">-2.1%</td><td class="up">+5.2%</td></tr>
+<tr><td>2022-08-29</td><td class="up">+13.0%</td><td class="up">+8.4%</td><td class="dn">-1.9%</td><td class="dn">-2.2%</td><td class="dn">-0.6%</td><td class="dn">-3.5%</td><td class="dn">-2.8%</td><td class="up">+0.4%</td></tr>
+<tr><td>2022-09-14</td><td class="up">+14.6%</td><td class="up">+3.7%</td><td class="up">+0.9%</td><td class="dn">-1.6%</td><td class="dn">-10.0%</td><td class="up">+2.2%</td><td class="dn">-1.7%</td><td class="dn">-13.9%</td></tr>
+<tr><td>2022-09-26</td><td class="up">+13.1%</td><td class="up">+5.5%</td><td class="dn">-4.0%</td><td class="dn">-3.0%</td><td class="dn">-0.8%</td><td class="dn">-6.2%</td><td class="dn">-5.1%</td><td class="dn">-3.0%</td></tr>
+<tr><td>2022-09-30</td><td class="up">+12.8%</td><td class="dn">-2.6%</td><td class="dn">-8.9%</td><td class="dn">-0.7%</td><td class="up">+4.4%</td><td class="dn">-12.3%</td><td class="dn">-0.4%</td><td class="up">+3.6%</td></tr>
+<tr><td>2023-03-10</td><td class="up">+12.9%</td><td class="up">+2.3%</td><td class="dn">-0.8%</td><td class="dn">-1.0%</td><td class="up">+0.9%</td><td class="up">+3.3%</td><td class="dn">-2.5%</td><td class="up">+4.5%</td></tr>
+<tr><td>2024-07-19</td><td class="up">+12.8%</td><td class="up">+1.2%</td><td class="dn">-1.3%</td><td class="dn">-1.0%</td><td class="dn">-4.3%</td><td class="dn">-3.0%</td><td class="up">+0.8%</td><td class="dn">-6.0%</td></tr>
+<tr class="today"><td>2026-07-24 ★오늘</td><td class="up">+23.5%</td><td class="up">+17.6%</td><td class="dn">-2.7%</td><td class="dn">-5.5%</td><td>진행중</td><td class="dn">-0.5%</td><td class="dn">-5.1%</td><td>진행중</td></tr>
+<tr style="background:#eef2f6"><td>평균(완료 24회)</td><td></td><td></td><td class="dn">-1.7%</td><td class="dn">-1.1%</td><td class="up">+0.2%</td><td class="dn">-2.5%</td><td class="dn">-1.2%</td><td class="up">+0.9%</td></tr>
+</table></div>
+
+<p class="sub" style="margin-top:14px">이벤트별 일별 히트맵 (클릭해서 펼치기):</p>
+<div id="events10"></div>
+
+<h2>해석</h2>
+<div class="insight">
+<p><b>1. 급등은 두 유형.</b> ① <b>장중 스파이크형</b>(2018·2021): 조용한 시장에서 장중 +20%를 찍고 종가에 대부분 반납 — 단발성 수급/뉴스 트레이딩이며 이후 지수와의 연관성이 약함. ② <b class="r">시장 패닉형</b>(2022-06·오늘): 지수 급락일에 급등분을 종가까지 지킴 — 경기침체·부실채권 수혜 논리의 헤지 매수.</p>
+<p><b>2. 패닉형은 시장 단기 바닥 부근에서 출현.</b> 2022-06-23의 경우 D+1 코스닥 +5.0%, D+2 +2.7% 반등이 나왔고 그 지점이 그 해 급락장의 실질 바닥권이었습니다. 종가 +10% 기준 완료 4회에서도 후 10일 코스닥 평균 +3.3% (3회가 +6%대).</p>
+<p><b>3. 오늘(7/24)은 패닉형 + 역대 최대 종가 상승.</b> 직전 10일이 이미 롤러코스터(-8.9%~+6.2% 일교차)였고 당일 지수 -5%대 폭락 — 과거 패턴대로면 향후 10거래일 반등 여부가 관전 포인트입니다. 표본이 적다는 한계는 유의.</p>
+</div>
+
+<p class="note">색상: <b class="r">빨강 = 상승</b> · <b class="b">파랑 = 하락</b> (국내 관례). D0 = 급등 당일. 데이터: 키움증권 REST API 수정주가 일봉 2,589거래일 · 지수 KOSPI(001)·KOSDAQ(101). 2026-07-24 이벤트의 D+1~D+10은 미래 구간이라 공란.</p>
+</div>
+<script>
+const EVENTS = [
+{date:"2018-03-19", ihigh:21.8, close:4.0, today:false, days:[
+{o:-10,k:-1.1,q:-1.8},{o:-9,k:1.5,q:1.7},{o:-8,k:-0.4,q:-2.1},{o:-7,k:1.3,q:1.5},{o:-6,k:1.1,q:1.4},{o:-5,k:1.0,q:2.1},{o:-4,k:0.4,q:0.2},{o:-3,k:-0.3,q:0.1},{o:-2,k:0.2,q:0.4},{o:-1,k:0.1,q:0.5},{o:0,k:-0.8,q:-1.5},{o:1,k:0.4,q:1.1},{o:2,k:-0.0,q:-0.5},{o:3,k:0.4,q:-1.6},{o:4,k:-3.2,q:-4.8},{o:5,k:0.8,q:2.9},{o:6,k:0.6,q:0.6},{o:7,k:-1.3,q:-0.9},{o:8,k:0.7,q:1.8},{o:9,k:0.4,q:0.6},{o:10,k:-0.1,q:-0.4}]},
+{date:"2021-06-11", ihigh:23.9, close:-1.8, today:false, days:[
+{o:-10,k:0.7,q:0.3},{o:-9,k:0.5,q:0.4},{o:-8,k:0.6,q:0.3},{o:-7,k:0.1,q:-0.3},{o:-6,k:0.7,q:0.9},{o:-5,k:-0.2,q:-0.3},{o:-4,k:0.4,q:-0.2},{o:-3,k:-0.1,q:0.0},{o:-2,k:-1.0,q:-0.7},{o:-1,k:0.3,q:0.9},{o:0,k:0.8,q:0.3},{o:1,k:0.1,q:0.6},{o:2,k:0.2,q:-0.0},{o:3,k:0.6,q:0.1},{o:4,k:-0.4,q:0.5},{o:5,k:0.1,q:1.2},{o:6,k:-0.8,q:-0.5},{o:7,k:0.7,q:0.1},{o:8,k:0.4,q:0.5},{o:9,k:0.3,q:-0.4},{o:10,k:0.5,q:-0.1}]},
+{date:"2022-06-23", ihigh:27.7, close:10.7, today:false, days:[
+{o:-10,k:-0.0,q:0.2},{o:-9,k:-1.1,q:-0.8},{o:-8,k:-3.5,q:-4.7},{o:-7,k:-0.5,q:-0.6},{o:-6,k:-1.8,q:-2.9},{o:-5,k:0.2,q:0.3},{o:-4,k:-0.4,q:-0.4},{o:-3,k:-2.0,q:-3.6},{o:-2,k:0.8,q:1.1},{o:-1,k:-2.7,q:-4.0},{o:0,k:-1.2,q:-4.4},{o:1,k:2.3,q:5.0},{o:2,k:1.5,q:2.7},{o:3,k:0.8,q:-0.1},{o:4,k:-1.8,q:-0.9},{o:5,k:-1.9,q:-2.2},{o:6,k:-1.2,q:-2.1},{o:7,k:-0.2,q:-0.9},{o:8,k:1.8,q:3.9},{o:9,k:-2.1,q:-0.8},{o:10,k:1.8,q:1.8}]},
+{date:"2026-07-24 ★오늘", ihigh:23.5, close:17.6, today:true, days:[
+{o:-10,k:0.6,q:1.1},{o:-9,k:2.5,q:5.5},{o:-8,k:-8.9,q:-4.5},{o:-7,k:0.7,q:-1.9},{o:-6,k:6.2,q:5.8},{o:-5,k:-6.4,q:-4.5},{o:-4,k:-4.5,q:-5.3},{o:-3,k:3.6,q:0.5},{o:-2,k:0.7,q:-0.3},{o:-1,k:4.4,q:5.2},{o:0,k:-5.5,q:-5.1},{o:1},{o:2},{o:3},{o:4},{o:5},{o:6},{o:7},{o:8},{o:9},{o:10}]},
+];
+function cell(v, isD0){
+  if(v===undefined) return `<td class="${isD0?'d0':''}" style="color:#aab4be">–</td>`;
+  const a = Math.min(Math.abs(v)/6, 1);
+  const bg = v>=0 ? `rgba(214,60,47,${0.08+a*0.5})` : `rgba(38,96,196,${0.08+a*0.5})`;
+  const fg = a>0.55 ? "#fff" : "inherit";
+  return `<td class="${isD0?'d0':''}" style="background:${bg};color:${fg}">${v>0?"+":""}${v.toFixed(1)}</td>`;
+}
+document.getElementById("events").innerHTML = EVENTS.map(e=>`
+<div class="ev${e.today?" today":""}">
+<h3>${e.date} — 장중 고가 <span class="up">+${e.ihigh}%</span> · 종가 <span class="${e.close>=0?"up":"dn"}">${e.close>0?"+":""}${e.close}%</span></h3>
+<div class="tblwrap"><table class="hm">
+<tr><th class="rowl">D</th>${e.days.map(d=>`<th class="${d.o===0?'d0':''}">${d.o>0?"+"+d.o:d.o}</th>`).join("")}</tr>
+<tr><td class="rowl">KOSPI</td>${e.days.map(d=>cell(d.k, d.o===0)).join("")}</tr>
+<tr><td class="rowl">KOSDAQ</td>${e.days.map(d=>cell(d.q, d.o===0)).join("")}</tr>
+</table></div>
+</div>`).join("");
+const EVENTS10 = [
+{date:"2016-02-11",ihigh:19.0,close:0.4,today:false,days:[{o:-10,k:0.7,q:1.6},{o:-9,k:-1.1,q:-0.4},{o:-8,k:1.4,q:-0.5},{o:-7,k:0.5,q:0.9},{o:-6,k:0.3,q:0.2},{o:-5,k:0.7,q:0.4},{o:-4,k:-0.9,q:-0.1},{o:-3,k:-0.8,q:-0.6},{o:-2,k:1.4,q:0.4},{o:-1,k:0.1,q:-0.3},{o:0,k:-2.9,q:-4.9},{o:1,k:-1.4,q:-6.1},{o:2,k:1.5,q:2.1},{o:3,k:1.4,q:2.2},{o:4,k:-0.2,q:-1.8},{o:5,k:1.3,q:2.4},{o:6,k:0.4,q:1.0},{o:7,k:0.0,q:0.9},{o:8,k:-0.1,q:-1.2},{o:9,k:-0.1,q:0.3},{o:10,k:0.3,q:0.4}]},
+{date:"2017-07-28",ihigh:19.3,close:7.4,today:false,days:[{o:-10,k:0.2,q:0.2},{o:-9,k:0.4,q:0.9},{o:-8,k:0.0,q:0.6},{o:-7,k:0.2,q:1.1},{o:-6,k:0.5,q:0.7},{o:-5,k:0.3,q:0.0},{o:-4,k:0.1,q:0.1},{o:-3,k:-0.5,q:-1.0},{o:-2,k:-0.2,q:-0.5},{o:-1,k:0.4,q:-0.1},{o:0,k:-1.7,q:-2.0},{o:1,k:0.1,q:-0.4},{o:2,k:0.8,q:0.4},{o:3,k:0.2,q:0.7},{o:4,k:-1.7,q:-2.2},{o:5,k:0.4,q:-0.2},{o:6,k:0.1,q:1.1},{o:7,k:-0.2,q:0.5},{o:8,k:-1.1,q:-1.4},{o:9,k:-0.4,q:-0.4},{o:10,k:-1.7,q:-1.8}]},
+{date:"2017-11-30",ihigh:14.5,close:1.8,today:false,days:[{o:-10,k:0.7,q:1.6},{o:-9,k:-0.0,q:-0.6},{o:-8,k:-0.2,q:1.2},{o:-7,k:0.1,q:0.5},{o:-6,k:0.4,q:-1.1},{o:-5,k:-0.1,q:2.0},{o:-4,k:0.3,q:-0.5},{o:-3,k:-1.4,q:0.0},{o:-2,k:0.3,q:-2.5},{o:-1,k:-0.1,q:1.1},{o:0,k:-1.5,q:-1.3},{o:1,k:-0.0,q:2.1},{o:2,k:1.1,q:-0.7},{o:3,k:0.3,q:-1.1},{o:4,k:-1.4,q:-0.7},{o:5,k:-0.5,q:-1.9},{o:6,k:0.1,q:-1.2},{o:7,k:0.3,q:2.7},{o:8,k:-0.4,q:-0.5},{o:9,k:0.8,q:1.6},{o:10,k:-0.4,q:-0.2}]},
+{date:"2018-03-19",ihigh:21.8,close:4.0,today:false,days:[{o:-10,k:-1.1,q:-1.8},{o:-9,k:1.5,q:1.7},{o:-8,k:-0.4,q:-2.1},{o:-7,k:1.3,q:1.5},{o:-6,k:1.1,q:1.4},{o:-5,k:1.0,q:2.1},{o:-4,k:0.4,q:0.2},{o:-3,k:-0.3,q:0.1},{o:-2,k:0.3,q:0.4},{o:-1,k:0.1,q:0.4},{o:0,k:-0.8,q:-1.5},{o:1,k:0.4,q:1.1},{o:2,k:-0.0,q:-0.5},{o:3,k:0.4,q:-1.6},{o:4,k:-3.2,q:-4.8},{o:5,k:0.8,q:2.9},{o:6,k:0.6,q:0.6},{o:7,k:-1.3,q:-0.9},{o:8,k:0.7,q:1.8},{o:9,k:0.4,q:0.6},{o:10,k:-0.1,q:-0.4}]},
+{date:"2018-05-17",ihigh:10.9,close:1.7,today:false,days:[{o:-10,k:-0.4,q:-0.6},{o:-9,k:-0.7,q:-0.6},{o:-8,k:-1.0,q:-1.1},{o:-7,k:-0.5,q:-3.4},{o:-6,k:-0.2,q:2.9},{o:-5,k:0.8,q:0.5},{o:-4,k:0.5,q:1.3},{o:-3,k:-0.1,q:-0.8},{o:-2,k:-0.7,q:0.5},{o:-1,k:0.1,q:-1.5},{o:0,k:-0.5,q:0.6},{o:1,k:0.5,q:1.6},{o:2,k:0.2,q:0.4},{o:3,k:0.3,q:-0.4},{o:4,k:-0.2,q:0.5},{o:5,k:-0.2,q:-0.6},{o:6,k:0.7,q:1.3},{o:7,k:-0.9,q:-1.1},{o:8,k:-2.0,q:0.5},{o:9,k:0.6,q:0.6},{o:10,k:0.7,q:0.4}]},
+{date:"2018-08-16",ihigh:12.1,close:7.9,today:false,days:[{o:-10,k:0.5,q:1.9},{o:-9,k:-1.6,q:-1.1},{o:-8,k:0.8,q:1.0},{o:-7,k:-0.1,q:-0.9},{o:-6,k:0.6,q:0.4},{o:-5,k:0.1,q:-0.1},{o:-4,k:0.1,q:0.7},{o:-3,k:-0.9,q:-0.6},{o:-2,k:-1.5,q:-3.7},{o:-1,k:0.5,q:0.8},{o:0,k:-0.8,q:-0.1},{o:1,k:0.3,q:1.5},{o:2,k:0.0,q:-0.3},{o:3,k:1.0,q:2.3},{o:4,k:0.1,q:-0.2},{o:5,k:0.4,q:0.7},{o:6,k:0.5,q:0.9},{o:7,k:0.3,q:0.4},{o:8,k:0.2,q:-0.4},{o:9,k:0.3,q:0.6},{o:10,k:-0.1,q:0.2}]},
+{date:"2019-02-08",ihigh:10.8,close:3.6,today:false,days:[{o:-10,k:-0.3,q:-0.2},{o:-9,k:0.5,q:0.2},{o:-8,k:0.8,q:1.3},{o:-7,k:1.5,q:1.0},{o:-6,k:-0.0,q:0.4},{o:-5,k:0.3,q:-0.5},{o:-4,k:1.0,q:0.6},{o:-3,k:-0.1,q:0.2},{o:-2,k:-0.1,q:0.0},{o:-1,k:-0.0,q:1.7},{o:0,k:-1.2,q:-0.0},{o:1,k:0.2,q:0.6},{o:2,k:0.4,q:-0.4},{o:3,k:0.5,q:1.3},{o:4,k:1.1,q:0.3},{o:5,k:-1.3,q:-0.5},{o:6,k:0.7,q:0.9},{o:7,k:-0.2,q:0.4},{o:8,k:1.1,q:0.4},{o:9,k:-0.0,q:-0.4},{o:10,k:0.1,q:-0.5}]},
+{date:"2019-02-28",ihigh:19.9,close:-0.1,today:false,days:[{o:-10,k:1.1,q:0.3},{o:-9,k:-1.3,q:-0.5},{o:-8,k:0.7,q:0.9},{o:-7,k:-0.2,q:0.4},{o:-6,k:1.1,q:0.4},{o:-5,k:-0.0,q:-0.4},{o:-4,k:0.1,q:-0.5},{o:-3,k:0.1,q:0.9},{o:-2,k:-0.3,q:-0.4},{o:-1,k:0.4,q:0.7},{o:0,k:-1.8,q:-2.8},{o:1,k:-0.2,q:2.3},{o:2,k:-0.5,q:-0.0},{o:3,k:-0.2,q:-0.2},{o:4,k:-0.5,q:-1.3},{o:5,k:-1.3,q:-0.1},{o:6,k:0.0,q:0.4},{o:7,k:0.9,q:2.1},{o:8,k:-0.4,q:0.0},{o:9,k:0.3,q:0.1},{o:10,k:0.9,q:-0.9}]},
+{date:"2020-05-07",ihigh:18.7,close:10.0,today:false,days:[{o:-10,k:-0.8,q:0.5},{o:-9,k:-1.0,q:-1.4},{o:-8,k:0.9,q:1.0},{o:-7,k:1.0,q:1.4},{o:-6,k:-1.3,q:-1.7},{o:-5,k:1.8,q:2.2},{o:-4,k:0.6,q:-0.3},{o:-3,k:0.7,q:0.0},{o:-2,k:-2.7,q:-0.5},{o:-1,k:1.8,q:2.6},{o:0,k:-0.0,q:1.5},{o:1,k:0.9,q:2.1},{o:2,k:-0.5,q:0.4},{o:3,k:-0.7,q:-0.1},{o:4,k:0.9,q:1.1},{o:5,k:-0.8,q:-0.1},{o:6,k:0.1,q:0.2},{o:7,k:0.5,q:-0.2},{o:8,k:2.2,q:0.8},{o:9,k:0.5,q:1.8},{o:10,k:0.4,q:1.0}]},
+{date:"2020-10-27",ihigh:10.1,close:-1.6,today:false,days:[{o:-10,k:-0.0,q:-0.2},{o:-9,k:-0.9,q:-1.2},{o:-8,k:-0.8,q:-2.0},{o:-7,k:-0.8,q:-1.3},{o:-6,k:0.2,q:-1.4},{o:-5,k:0.5,q:0.3},{o:-4,k:0.5,q:0.7},{o:-3,k:-0.7,q:-2.2},{o:-2,k:0.2,q:-0.6},{o:-1,k:-0.7,q:-3.7},{o:0,k:-0.6,q:0.7},{o:1,k:0.6,q:2.9},{o:2,k:-0.8,q:1.0},{o:3,k:-2.6,q:-2.6},{o:4,k:1.5,q:1.3},{o:5,k:1.9,q:1.9},{o:6,k:0.6,q:1.0},{o:7,k:2.4,q:2.2},{o:8,k:0.1,q:-0.9},{o:9,k:1.3,q:1.7},{o:10,k:0.2,q:-1.2}]},
+{date:"2021-06-11",ihigh:23.9,close:-1.8,today:false,days:[{o:-10,k:0.7,q:0.3},{o:-9,k:0.5,q:0.4},{o:-8,k:0.6,q:0.3},{o:-7,k:0.1,q:-0.4},{o:-6,k:0.7,q:0.9},{o:-5,k:-0.2,q:-0.3},{o:-4,k:0.4,q:-0.2},{o:-3,k:-0.1,q:0.0},{o:-2,k:-1.0,q:-0.7},{o:-1,k:0.3,q:0.9},{o:0,k:0.8,q:0.3},{o:1,k:0.1,q:0.6},{o:2,k:0.2,q:-0.0},{o:3,k:0.6,q:0.1},{o:4,k:-0.4,q:0.5},{o:5,k:0.1,q:1.2},{o:6,k:-0.8,q:-0.5},{o:7,k:0.7,q:0.1},{o:8,k:0.4,q:0.5},{o:9,k:0.3,q:-0.4},{o:10,k:0.5,q:-0.0}]},
+{date:"2021-06-18",ihigh:13.5,close:3.9,today:false,days:[{o:-10,k:-0.2,q:-0.3},{o:-9,k:0.4,q:-0.2},{o:-8,k:-0.1,q:0.0},{o:-7,k:-1.0,q:-0.7},{o:-6,k:0.3,q:0.9},{o:-5,k:0.8,q:0.3},{o:-4,k:0.1,q:0.6},{o:-3,k:0.2,q:-0.0},{o:-2,k:0.6,q:0.1},{o:-1,k:-0.4,q:0.5},{o:0,k:0.1,q:1.2},{o:1,k:-0.8,q:-0.5},{o:2,k:0.7,q:0.1},{o:3,k:0.4,q:0.5},{o:4,k:0.3,q:-0.4},{o:5,k:0.5,q:-0.0},{o:6,k:-0.0,q:0.6},{o:7,k:-0.5,q:0.5},{o:8,k:0.3,q:0.7},{o:9,k:-0.4,q:0.6},{o:10,k:-0.0,q:0.2}]},
+{date:"2022-04-25",ihigh:16.0,close:4.9,today:false,days:[{o:-10,k:-0.3,q:-1.4},{o:-9,k:-1.0,q:-0.9},{o:-8,k:1.9,q:1.5},{o:-7,k:0.0,q:0.1},{o:-6,k:-0.8,q:-0.4},{o:-5,k:-0.1,q:-0.7},{o:-4,k:1.0,q:1.5},{o:-3,k:-0.0,q:-0.3},{o:-2,k:0.4,q:0.1},{o:-1,k:-0.9,q:-0.7},{o:0,k:-1.8,q:-2.5},{o:1,k:0.4,q:1.3},{o:2,k:-1.1,q:-1.6},{o:3,k:1.1,q:-0.4},{o:4,k:1.0,q:1.4},{o:5,k:-0.3,q:-0.3},{o:6,k:-0.3,q:0.6},{o:7,k:-0.1,q:-0.8},{o:8,k:-1.2,q:-1.8},{o:9,k:-1.3,q:-2.6},{o:10,k:-0.5,q:-0.5}]},
+{date:"2022-06-20",ihigh:14.9,close:10.1,today:false,days:[{o:-10,k:0.4,q:0.0},{o:-9,k:-1.7,q:-2.0},{o:-8,k:-0.0,q:0.1},{o:-7,k:-0.0,q:0.3},{o:-6,k:-1.1,q:-0.8},{o:-5,k:-3.5,q:-4.7},{o:-4,k:-0.5,q:-0.6},{o:-3,k:-1.8,q:-2.9},{o:-2,k:0.2,q:0.3},{o:-1,k:-0.4,q:-0.4},{o:0,k:-2.0,q:-3.6},{o:1,k:0.7,q:1.1},{o:2,k:-2.7,q:-4.0},{o:3,k:-1.2,q:-4.4},{o:4,k:2.3,q:5.0},{o:5,k:1.5,q:2.7},{o:6,k:0.8,q:-0.1},{o:7,k:-1.8,q:-0.9},{o:8,k:-1.9,q:-2.2},{o:9,k:-1.2,q:-2.1},{o:10,k:-0.2,q:-0.9}]},
+{date:"2022-06-23",ihigh:27.7,close:10.7,today:false,days:[{o:-10,k:-0.0,q:0.3},{o:-9,k:-1.1,q:-0.8},{o:-8,k:-3.5,q:-4.7},{o:-7,k:-0.5,q:-0.6},{o:-6,k:-1.8,q:-2.9},{o:-5,k:0.2,q:0.3},{o:-4,k:-0.4,q:-0.4},{o:-3,k:-2.0,q:-3.6},{o:-2,k:0.7,q:1.1},{o:-1,k:-2.7,q:-4.0},{o:0,k:-1.2,q:-4.4},{o:1,k:2.3,q:5.0},{o:2,k:1.5,q:2.7},{o:3,k:0.8,q:-0.1},{o:4,k:-1.8,q:-0.9},{o:5,k:-1.9,q:-2.2},{o:6,k:-1.2,q:-2.1},{o:7,k:-0.2,q:-0.9},{o:8,k:1.8,q:3.9},{o:9,k:-2.1,q:-0.8},{o:10,k:1.8,q:1.8}]},
+{date:"2022-06-24",ihigh:10.7,close:3.7,today:false,days:[{o:-10,k:-1.1,q:-0.8},{o:-9,k:-3.5,q:-4.7},{o:-8,k:-0.5,q:-0.6},{o:-7,k:-1.8,q:-2.9},{o:-6,k:0.2,q:0.3},{o:-5,k:-0.4,q:-0.4},{o:-4,k:-2.0,q:-3.6},{o:-3,k:0.7,q:1.1},{o:-2,k:-2.7,q:-4.0},{o:-1,k:-1.2,q:-4.4},{o:0,k:2.3,q:5.0},{o:1,k:1.5,q:2.7},{o:2,k:0.8,q:-0.1},{o:3,k:-1.8,q:-0.9},{o:4,k:-1.9,q:-2.2},{o:5,k:-1.2,q:-2.1},{o:6,k:-0.2,q:-0.9},{o:7,k:1.8,q:3.9},{o:8,k:-2.1,q:-0.8},{o:9,k:1.8,q:1.8},{o:10,k:0.7,q:1.1}]},
+{date:"2022-07-06",ihigh:13.2,close:10.8,today:false,days:[{o:-10,k:-2.7,q:-4.0},{o:-9,k:-1.2,q:-4.4},{o:-8,k:2.3,q:5.0},{o:-7,k:1.5,q:2.7},{o:-6,k:0.8,q:-0.1},{o:-5,k:-1.8,q:-0.9},{o:-4,k:-1.9,q:-2.2},{o:-3,k:-1.2,q:-2.1},{o:-2,k:-0.2,q:-0.9},{o:-1,k:1.8,q:3.9},{o:0,k:-2.1,q:-0.8},{o:1,k:1.8,q:1.8},{o:2,k:0.7,q:1.1},{o:3,k:-0.4,q:0.1},{o:4,k:-1.0,q:-2.1},{o:5,k:0.5,q:1.7},{o:6,k:-0.3,q:0.4},{o:7,k:0.4,q:-0.5},{o:8,k:1.9,q:1.9},{o:9,k:-0.2,q:0.7},{o:10,k:0.7,q:1.1}]},
+{date:"2022-07-12",ihigh:14.0,close:7.4,today:false,days:[{o:-10,k:0.8,q:-0.1},{o:-9,k:-1.8,q:-0.9},{o:-8,k:-1.9,q:-2.2},{o:-7,k:-1.2,q:-2.1},{o:-6,k:-0.2,q:-0.9},{o:-5,k:1.8,q:3.9},{o:-4,k:-2.1,q:-0.8},{o:-3,k:1.8,q:1.8},{o:-2,k:0.7,q:1.1},{o:-1,k:-0.4,q:0.1},{o:0,k:-1.0,q:-2.1},{o:1,k:0.5,q:1.7},{o:2,k:-0.3,q:0.4},{o:3,k:0.4,q:-0.5},{o:4,k:1.9,q:1.9},{o:5,k:-0.2,q:0.7},{o:6,k:0.7,q:1.1},{o:7,k:0.9,q:0.6},{o:8,k:-0.7,q:-0.7},{o:9,k:0.4,q:-0.0},{o:10,k:0.4,q:0.0}]},
+{date:"2022-08-29",ihigh:13.0,close:8.4,today:false,days:[{o:-10,k:0.2,q:-0.1},{o:-9,k:0.2,q:0.4},{o:-8,k:-0.7,q:-0.9},{o:-7,k:-0.3,q:-0.2},{o:-6,k:-0.6,q:-1.4},{o:-5,k:-1.2,q:-2.2},{o:-4,k:-1.1,q:-1.6},{o:-3,k:0.5,q:1.2},{o:-2,k:1.2,q:1.8},{o:-1,k:0.2,q:-0.6},{o:0,k:-2.2,q:-2.8},{o:1,k:1.0,q:2.2},{o:2,k:0.9,q:1.3},{o:3,k:-2.3,q:-2.3},{o:4,k:-0.3,q:-0.3},{o:5,k:-0.2,q:-1.8},{o:6,k:0.3,q:1.0},{o:7,k:-1.4,q:-1.4},{o:8,k:0.3,q:1.3},{o:9,k:2.7,q:2.4},{o:10,k:-1.6,q:-1.7}]},
+{date:"2022-09-14",ihigh:14.6,close:3.7,today:false,days:[{o:-10,k:-2.2,q:-2.8},{o:-9,k:1.0,q:2.2},{o:-8,k:0.9,q:1.3},{o:-7,k:-2.3,q:-2.3},{o:-6,k:-0.3,q:-0.3},{o:-5,k:-0.2,q:-1.8},{o:-4,k:0.3,q:1.0},{o:-3,k:-1.4,q:-1.4},{o:-2,k:0.3,q:1.3},{o:-1,k:2.7,q:2.4},{o:0,k:-1.6,q:-1.7},{o:1,k:-0.4,q:-0.2},{o:2,k:-0.8,q:-1.5},{o:3,k:-1.1,q:-2.4},{o:4,k:0.5,q:1.1},{o:5,k:-0.9,q:-0.7},{o:6,k:-0.6,q:-0.5},{o:7,k:-1.8,q:-2.9},{o:8,k:-3.0,q:-5.1},{o:9,k:0.1,q:0.8},{o:10,k:-2.5,q:-3.5}]},
+{date:"2022-09-26",ihigh:13.1,close:5.5,today:false,days:[{o:-10,k:0.3,q:1.3},{o:-9,k:2.7,q:2.4},{o:-8,k:-1.6,q:-1.7},{o:-7,k:-0.4,q:-0.2},{o:-6,k:-0.8,q:-1.5},{o:-5,k:-1.1,q:-2.4},{o:-4,k:0.5,q:1.1},{o:-3,k:-0.9,q:-0.7},{o:-2,k:-0.6,q:-0.5},{o:-1,k:-1.8,q:-2.9},{o:0,k:-3.0,q:-5.1},{o:1,k:0.1,q:0.8},{o:2,k:-2.5,q:-3.5},{o:3,k:0.1,q:0.2},{o:4,k:-0.7,q:-0.4},{o:5,k:2.5,q:3.6},{o:6,k:0.3,q:-1.6},{o:7,k:1.0,q:3.0},{o:8,k:-0.2,q:-1.1},{o:9,k:-1.8,q:-4.2},{o:10,k:0.5,q:0.3}]},
+{date:"2022-09-30",ihigh:12.8,close:-2.6,today:false,days:[{o:-10,k:-0.8,q:-1.5},{o:-9,k:-1.1,q:-2.4},{o:-8,k:0.5,q:1.1},{o:-7,k:-0.9,q:-0.7},{o:-6,k:-0.6,q:-0.5},{o:-5,k:-1.8,q:-2.9},{o:-4,k:-3.0,q:-5.1},{o:-3,k:0.1,q:0.8},{o:-2,k:-2.5,q:-3.5},{o:-1,k:0.1,q:0.2},{o:0,k:-0.7,q:-0.4},{o:1,k:2.5,q:3.6},{o:2,k:0.3,q:-1.6},{o:3,k:1.0,q:3.0},{o:4,k:-0.2,q:-1.1},{o:5,k:-1.8,q:-4.2},{o:6,k:0.5,q:0.3},{o:7,k:-1.8,q:-3.0},{o:8,k:2.3,q:4.1},{o:9,k:0.3,q:0.6},{o:10,k:1.4,q:2.2}]},
+{date:"2023-03-10",ihigh:12.9,close:2.3,today:false,days:[{o:-10,k:0.9,q:0.6},{o:-9,k:-0.6,q:-0.6},{o:-8,k:-0.9,q:0.2},{o:-7,k:0.4,q:1.4},{o:-6,k:0.6,q:-0.6},{o:-5,k:0.2,q:1.9},{o:-4,k:1.3,q:1.8},{o:-3,k:0.0,q:-0.1},{o:-2,k:-1.3,q:-0.2},{o:-1,k:-0.5,q:-0.6},{o:0,k:-1.0,q:-2.5},{o:1,k:0.7,q:0.0},{o:2,k:-2.6,q:-3.9},{o:3,k:1.3,q:3.0},{o:4,k:-0.1,q:0.1},{o:5,k:0.7,q:2.0},{o:6,k:-0.7,q:0.6},{o:7,k:0.4,q:0.0},{o:8,k:1.2,q:1.4},{o:9,k:0.3,q:-0.2},{o:10,k:-0.4,q:1.5}]},
+{date:"2024-07-19",ihigh:12.8,close:1.2,today:false,days:[{o:-10,k:1.3,q:0.8},{o:-9,k:-0.2,q:1.4},{o:-8,k:0.3,q:0.1},{o:-7,k:0.0,q:-0.2},{o:-6,k:0.8,q:-0.7},{o:-5,k:-1.2,q:-0.2},{o:-4,k:0.1,q:0.3},{o:-3,k:0.2,q:-1.6},{o:-2,k:-0.8,q:-1.2},{o:-1,k:-0.7,q:-0.8},{o:0,k:-1.0,q:0.8},{o:1,k:-1.1,q:-2.3},{o:2,k:0.4,q:0.3},{o:3,k:-0.6,q:0.3},{o:4,k:-1.7,q:-2.1},{o:5,k:0.8,q:0.0},{o:6,k:1.2,q:1.3},{o:7,k:-1.0,q:-0.5},{o:8,k:1.2,q:-0.1},{o:9,k:0.3,q:1.3},{o:10,k:-3.7,q:-4.2}]},
+{date:"2026-07-24",ihigh:23.5,close:17.6,today:true,days:[{o:-10,k:0.6,q:1.1},{o:-9,k:2.5,q:5.5},{o:-8,k:-8.9,q:-4.5},{o:-7,k:0.7,q:-1.9},{o:-6,k:6.2,q:5.8},{o:-5,k:-6.4,q:-4.5},{o:-4,k:-4.5,q:-5.3},{o:-3,k:3.6,q:0.5},{o:-2,k:0.7,q:-0.3},{o:-1,k:4.4,q:5.2},{o:0,k:-5.5,q:-5.1},{o:1},{o:2},{o:3},{o:4},{o:5},{o:6},{o:7},{o:8},{o:9},{o:10}]}
+];
+
+document.getElementById("events10").innerHTML = EVENTS10.map(e=>`
+<details class="ev${e.today?" today":""}" ${e.today?"open":""} style="margin:8px 0;padding:10px 14px">
+<summary style="cursor:pointer;font-weight:700;font-size:.9rem">${e.date}${e.today?" ★오늘":""} — 장중 <span class="up">+${e.ihigh}%</span> · 종가 <span class="${e.close>=0?"up":"dn"}">${e.close>0?"+":""}${e.close}%</span></summary>
+<div class="tblwrap" style="margin-top:8px"><table class="hm">
+<tr><th class="rowl">D</th>${e.days.map(d=>`<th class="${d.o===0?'d0':''}">${d.o>0?"+"+d.o:d.o}</th>`).join("")}</tr>
+<tr><td class="rowl">KOSPI</td>${e.days.map(d=>cell(d.k, d.o===0)).join("")}</tr>
+<tr><td class="rowl">KOSDAQ</td>${e.days.map(d=>cell(d.q, d.o===0)).join("")}</tr>
+</table></div>
+</details>`).join("");
+</script>

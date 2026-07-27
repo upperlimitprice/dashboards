@@ -1,0 +1,93 @@
+<title>LPDDR5X 데이터센터 침투 — Micron×Meta 백서 분석</title>
+<style>
+:root{--ink:#1c2530;--sub:#67737f;--line:#dce3ea;--up:#d63c2f;--dn:#2660c4;--paper:#f5f7f9;--card:#fff;--acc:#5b3fa8;--accbg:#f1edfa}
+body{font-family:'Apple SD Gothic Neo','Noto Sans KR',sans-serif;margin:0;background:var(--paper);color:var(--ink)}
+.wrap{max-width:900px;margin:0 auto;padding:34px 20px 90px}
+.eyebrow{font-size:.78rem;letter-spacing:.08em;color:var(--acc);font-weight:800}
+h1{font-size:1.45rem;margin:6px 0 4px;letter-spacing:-.01em;text-wrap:balance}
+.sub{color:var(--sub);font-size:.85rem}
+.hero{background:linear-gradient(135deg,#241a45,#5b3fa8);color:#fff;border-radius:16px;padding:28px;margin:22px 0;text-align:center}
+.hero .rule{font-size:1.35rem;font-weight:800;line-height:1.55}
+.hero .rule b{color:#ffd47e}
+.hero .memo{margin-top:10px;font-size:.9rem;color:#cfc6ea}
+h2{font-size:1.02rem;margin:34px 0 12px;padding-left:10px;border-left:4px solid var(--acc)}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px}
+.tile{background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:16px 18px}
+.tile .v{font-size:1.8rem;font-weight:800;color:var(--acc);font-variant-numeric:tabular-nums}
+.tile .k{font-size:.8rem;color:var(--sub);line-height:1.5}
+table{border-collapse:collapse;width:100%;background:var(--card);font-size:.85rem;font-variant-numeric:tabular-nums}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:center}
+th{background:#eef2f6} td.l{text-align:left}
+.tblwrap{overflow-x:auto;border-radius:8px}
+.insight{background:var(--card);border:1.5px solid var(--line);border-left:4px solid var(--acc);border-radius:10px;padding:6px 18px 12px;margin:12px 0;font-size:.9rem;line-height:1.75}
+.insight h3{font-size:.95rem;margin:10px 0 4px;color:var(--acc)}
+.chain{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin:16px 0;font-size:.88rem;font-weight:700}
+.chain .c{background:var(--accbg);border:1.5px solid #cabfe8;border-radius:999px;padding:8px 16px}
+.chain .a{color:var(--acc);font-weight:800}
+.warn{background:#fff7e2;border:1.5px solid #e6cf9b;border-radius:10px;padding:4px 18px 12px;font-size:.85rem;line-height:1.7;color:#5c4a1e}
+.note{color:var(--sub);font-size:.76rem;margin-top:24px;border-top:1px solid var(--line);padding-top:10px;line-height:1.6}
+.up{color:var(--up)}
+</style>
+<div class="wrap">
+<span class="eyebrow">MICRON × META WHITE PAPER · 2026-07</span>
+<h1>LPDDR5X, 모바일을 넘어 데이터센터 표준으로 — 백서 핵심과 투자 인사이트</h1>
+<p class="sub">"LPDDR for General-Purpose and AI Workloads in Large-Scale Data Center Deployments" · Micron 5인 + Meta 4인 공저 · Meta DCPerf 벤치마크 기반</p>
+
+<div class="hero">
+  <div class="rule">메타가 직접 검증했다:<br>LPDDR5X는 DDR5 대비 <b>전력 최대 75%↓</b>, 시스템 전력의 <b>7% 미만</b><br>AI뿐 아니라 <b>일반 서버(GPC)까지</b> 하이퍼스케일 표준이 될 수 있다</div>
+  <div class="memo">SOCAMM2 모듈 폼팩터가 "납땜 고정"이라는 LPDDR의 마지막 약점(수리·증설 불가)을 제거 — 소켓당 최대 2TB</div>
+</div>
+
+<h2>① 백서 핵심 수치 4가지</h2>
+<div class="tiles">
+<div class="tile"><div class="v">&lt;7%</div><div class="k"><b>전력</b> — 시스템 전력 중 DRAM 비중 6.8% (Tensor Rebatching 실측). DDR5의 약 1/3, 최대 75% 낮은 DRAM 전력</div></div>
+<div class="tile"><div class="v">2~3x</div><div class="k"><b>용량 효과</b> — 용량 2배(512GB/소켓) 시 Spark SQL 디스크 스필 제거로 처리량 2~3배 (스필 발생 시 최대 38.8배 느려짐)</div></div>
+<div class="tile"><div class="v">+13%</div><div class="k"><b>대역폭</b> — 8533 vs 6400 MT/s에서 실효 대역폭 +13% → AI 파이프라인(Tensor Rebatching) 처리량 +11%, IPC +18%</div></div>
+<div class="tile"><div class="v">-9%</div><div class="k"><b>지연</b> — 웹서빙(MediaWiki) P99 테일 레이턴시 12~20ms 단축 — SLA 민감 서비스에 유효</div></div>
+</div>
+
+<h2>② 테스트 플랫폼 — 용량 vs 속도 트레이드오프</h2>
+<div class="tblwrap"><table>
+<tr><th></th><th>SKU1 (용량형)</th><th>SKU2 (속도형)</th></tr>
+<tr><td class="l">CPU</td><td colspan="2">ARM 72코어/소켓 (동일)</td></tr>
+<tr><td class="l">메모리 용량</td><td><b>512GB/소켓 (1TB)</b></td><td>256GB/소켓 (512GB)</td></tr>
+<tr><td class="l">속도</td><td>6400 MT/s · 384GB/s</td><td><b>8533 MT/s · 512GB/s</b></td></tr>
+<tr><td class="l">랭크</td><td>4랭크 (적층↑ → 속도 제약)</td><td>2랭크</td></tr>
+<tr><td class="l">이긴 워크로드</td><td>Spark 등 <b>용량 민감형</b> (스필 제거)</td><td>AI 파이프라인·웹서빙 등 <b>대역폭/지연 민감형</b></td></tr>
+</table></div>
+<p class="sub">시사점: 랭크를 쌓으면 용량은 늘지만 속도가 깎이는 물리적 트레이드오프 — 결국 "고용량이면서 고속"을 가능케 하는 <b>패키징·모듈 기술(SOCAMM2)</b>이 병목이자 부가가치의 위치</p>
+
+<h2>③ 왜 지금인가 — 3가지 구조 변화</h2>
+<div class="insight">
+<h3>1. 전력이 데이터센터의 최우선 제약이 됐다</h3>
+<p>AI 랙 전력밀도가 치솟으며 "성능/와트"가 구매 기준이 됨. 메모리가 시스템 전력의 두 자릿수%를 먹는 DDR5 대비, LPDDR5X는 같은 대역폭을 1/3 전력으로 제공 — TCO 논리가 하이퍼스케일러를 움직이는 중.</p>
+<h3>2. SOCAMM2가 마지막 장벽을 제거했다</h3>
+<p>LPDDR의 약점이던 납땜 고정(수리 불가) 문제를 모듈화로 해결. 256GB 모듈로 소켓당 최대 2TB — 서버 운영 요건(서비스성)과 모바일 메모리의 효율을 동시에 충족.</p>
+<h3>3. NVIDIA를 넘어 '일반 서버'로 확장 신호</h3>
+<p>지금까지 LPDDR-in-DC는 NVIDIA Grace(GB200/300) 종속 스토리였음. 이 백서는 <b>Meta가 자사 표준 벤치마크(DCPerf)로 일반 컴퓨팅(웹서빙·Spark)까지 검증</b>했다는 점이 핵심 — ARM 범용 서버 전반으로 LPDDR 침투가 열리는 신호탄.</p>
+</div>
+
+<h2>④ 투자 인사이트 — 수혜 밸류체인</h2>
+<div class="chain">
+<span class="c">LPDDR5X 칩<br><small>마이크론 · 삼성전자 · SK하이닉스</small></span><span class="a">→</span>
+<span class="c">SOCAMM2 모듈·기판<br><small>모듈 PCB: 티엘비 · 심텍</small></span><span class="a">→</span>
+<span class="c">테스트·후공정<br><small>ISC·리노공업(소켓) · 테크윙(핸들러)</small></span><span class="a">→</span>
+<span class="c">ARM 서버 생태계<br><small>Grace·Ampere 서버 ODM</small></span>
+</div>
+<div class="insight">
+<p><b>① 총 DRAM 수요의 구조적 증가</b> — LPDDR DC 침투는 DDR5 잠식이 아니라 "서버 1대당 메모리 용량 증가 + 신규 폼팩터 프리미엄"으로 blended ASP에 우호적. 모바일 수요에 묶여 있던 LPDDR이 서버 사이클을 타게 되는 것이 본질.</p>
+<p><b>② 국내 직접 수혜는 모듈 PCB</b> — SOCAMM 기판은 이미 실적으로 확인되는 중: 티엘비는 SOCAMM 매출 가이던스를 200억→700억으로 상향(7/20 IR노트, ASP 일반 모듈의 3배+). 이 백서는 그 수요가 NVIDIA 전용이 아니라 범용 서버로 확대될 수 있음을 시사 — 물량 전망의 상방 요인.</p>
+<p><b>③ 삼성·하이닉스에도 기회</b> — 백서는 마이크론 문서지만 SOCAMM2는 JEDEC 표준화 흐름 위에 있어 3사 경쟁 구도. LPDDR5X→9600MT/s, 고용량 적층 경쟁에서 패키징 역량이 차별화 포인트.</p>
+<p><b>④ 관전 포인트</b> — 메타의 실제 대량 채택 여부(이 백서는 그 전 단계인 공동 검증), 타 하이퍼스케일러(구글·MS) 추종, SOCAMM2 벤더 이원화 시점.</p>
+</div>
+
+<h2>⑤ 리스크·반론</h2>
+<div class="warn">
+<p>- <b>용량-속도 트레이드오프</b>: 4랭크 고용량 구성은 속도가 깎임(6400 vs 8533) — DDR5 MRDIMM·CXL 메모리 확장 등 경쟁 솔루션의 반격 여지</p>
+<p>- <b>원가</b>: LPDDR+SOCAMM 조합의 GB당 비용이 RDIMM 대비 아직 높음 — TCO(전력 절감)로 정당화되는 워크로드부터 순차 침투</p>
+<p>- <b>백서의 성격</b>: 마이크론 마케팅 문서라는 점 감안 — 다만 Meta 엔지니어 4인 공저 + Meta 내부 벤치마크 사용은 통상의 벤더 백서보다 무게 있음</p>
+</div>
+
+<p class="note">원문: Micron White Paper "LPDDR for General-Purpose and AI Workloads in Large-Scale Data Center Deployments" (Rev A, 2026-07) — Micron 5인·Meta 4인 공저.
+분석·정리: 2026-07-27, tech 섹터 봇 학습 완료(data/tech/docs). 본 자료는 투자 참고용이며 투자 권유가 아닙니다.</p>
+</div>
