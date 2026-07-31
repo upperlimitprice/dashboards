@@ -27,13 +27,13 @@ h1{font-size:1.3rem} h2{font-size:1.1rem;margin:0 0 6px} .sub{color:#67737f;font
 <div class='hero'>
 <div class='hl'>🚦 🇰🇷 KR OngkooScore 업데이트</div>
 <div class='hrow'><span>기준일 2026-07-31</span><span class='up'>KOSPI 6,595.45 (▲1,001.89, +17.91%)</span></div>
-<div class='hrow'><b>OngkooScore: 68.2</b><span>ADR KOSPI 88.4 / KOSDAQ 79.7</span><span>VIX(변동성): 94.7</span></div>
+<div class='hrow'><b>OngkooScore: 68.2</b><span>ADR KOSPI 88.1 / KOSDAQ 80</span><span>VIX(변동성): 94.8</span></div>
 </div>
 <div class='grid'><div class='card'>
 <h2>🇰🇷 한국 시장 신호등</h2>
-<p class='sub'>기준일 2026-07-31 · KOSPI 6,608 (+18.13%)</p>
+<p class='sub'>기준일 2026-07-31 · KOSPI 6,595 (+17.91%)</p>
 <div class='scorebox'>Market Score <b>50</b>/100</div>
-<div class='tiles'><div class='tile'><div class='tname'>OngkooScore</div><div class='lamp' style='background:#e8b000'></div><div class='tval'>68.2</div></div><div class='tile'><div class='tname'>ADR</div><div class='lamp' style='background:#e8b000'></div><div class='tval'>82.4</div></div><div class='tile'><div class='tname'>Momentum</div><div class='lamp' style='background:#e8b000'></div><div class='tval'>98.9</div></div><div class='tile'><div class='tname'>RSI</div><div class='lamp' style='background:#e8b000'></div><div class='tval'>45.3</div></div><div class='tile'><div class='tname'>VIX</div><div class='lamp' style='background:#e8b000'></div><div class='tval'>94.7</div></div><div class='tile'><div class='tname'>E-Ratio</div><div class='lamp' style='background:#67737f'></div><div class='tval'>0.38</div></div></div>
+<div class='tiles'><div class='tile'><div class='tname'>OngkooScore</div><div class='lamp' style='background:#e8b000'></div><div class='tval'>68.2</div></div><div class='tile'><div class='tname'>ADR</div><div class='lamp' style='background:#e8b000'></div><div class='tval'>82.4</div></div><div class='tile'><div class='tname'>Momentum</div><div class='lamp' style='background:#e8b000'></div><div class='tval'>98.7</div></div><div class='tile'><div class='tname'>RSI</div><div class='lamp' style='background:#e8b000'></div><div class='tval'>45.2</div></div><div class='tile'><div class='tname'>VIX</div><div class='lamp' style='background:#e8b000'></div><div class='tval'>94.8</div></div><div class='tile'><div class='tname'>E-Ratio</div><div class='lamp' style='background:#67737f'></div><div class='tval'>0.39</div></div></div>
 <p class='sub'>스코어 추이는 데이터가 쌓이면 표시됩니다.</p>
 </div><div class='card'>
 <h2>🇺🇸 미국 시장 신호등</h2>
@@ -45,6 +45,30 @@ h1{font-size:1.3rem} h2{font-size:1.1rem;margin:0 0 6px} .sub{color:#67737f;font
 <div class='card' style='margin-top:16px'>
 <h2>🔻 언제가 바닥일까? — 바닥 신호 체크리스트 (KR)</h2>
 <p class='sub'>3개 조건 동시 충족 시 역사적 바닥 근접 신호 · 현재 <b>1/3</b> 충족</p>
-<table class='bt'><tr><th>조건</th><th>현재값</th><th>기준</th></tr><tr><td class='l'>⬜ 옹쿠스코어 10점 미만</td><td>68.2점</td><td>&lt; 10</td></tr><tr><td class='l'>⬜ 지수 RSI 과매도권</td><td>45.3</td><td>&le; 30</td></tr><tr><td class='l'>✅ 변동성 급등 (60일평균 +2σ 돌파)</td><td>실현변동성 101.8%</td><td>&gt; 96.9%</td></tr></table>
+<table class='bt'><tr><th>조건</th><th>현재값</th><th>기준</th></tr><tr><td class='l'>⬜ 옹쿠스코어 10점 미만</td><td>68.2점</td><td>&lt; 10</td></tr><tr><td class='l'>⬜ 지수 RSI 과매도권</td><td>45.2</td><td>&le; 30</td></tr><tr><td class='l'>✅ 변동성 급등 (60일평균 +2σ 돌파)</td><td>실현변동성 101.8%</td><td>&gt; 96.9%</td></tr></table>
+</div>
+<div class='card' style='margin-top:16px'>
+<h2>📖 용어 · 산식 설명</h2>
+<details open><summary><b>Market Score</b> — 시장 건전성 종합 점수 (0~100)</summary>
+<p class='sub'>아래 개별 지표들의 신호(🟢/🟡/🔴)를 가중 합산한 종합 점수. 높을수록 시장 건전성 양호, 낮을수록 위험 신호 우세.</p></details>
+<details><summary><b>OngkooScore</b> — 종합 시장 온도계 (0~100)</summary>
+<p class='sub'>추세·수급·심리 지표를 결합한 종합 점수. 높을수록 과열, 낮을수록 침체. <b>10점 미만은 역사적 바닥권</b>에서 나타나는 극단 침체 신호로 해석.</p></details>
+<details><summary><b>ADR (20D)</b> — 등락비율 (Advance-Decline Ratio)</summary>
+<p class='sub'>산식: 최근 20거래일 <b>상승 종목수 합계 ÷ 하락 종목수 합계 × 100</b>.<br>
+100 초과 = 오른 종목이 더 많음(상승 우위), 100 미만 = 하락 우위. 통상 120 이상 과열, 70~75 이하 과매도로 봄. 지수는 대형주가 끌어올려도 ADR이 낮으면 시장의 폭(breadth)이 좁다는 뜻 — KOSPI·KOSDAQ을 분리해 대형주 쏠림/중소형주 약세 괴리를 확인.</p></details>
+<details><summary><b>Momentum (125D)</b> — 중기 추세 위치</summary>
+<p class='sub'>산식: <b>현재 지수 ÷ 125거래일(약 6개월) 이동평균 × 100</b>.<br>
+100 초과면 지수가 중기 추세선 위(상승 추세), 미만이면 아래. 이격도와 같은 개념의 장기 버전.</p></details>
+<details><summary><b>RSI (14D)</b> — 상대강도지수</summary>
+<p class='sub'>산식: <b>RSI = 100 − 100/(1+RS)</b>, RS = 최근 14거래일 평균 상승폭 ÷ 평균 하락폭.<br>
+0~100 범위. 70 이상 과매수, <b>30 이하 과매도</b>(바닥 신호 조건). 하락이 상승보다 압도적으로 컸을 때 낮아짐.</p></details>
+<details><summary><b>VIX (변동성 프록시)</b></summary>
+<p class='sub'>시장 변동성 수준을 나타내는 지표 (미국은 S&amp;P500 옵션 내재변동성 VIX, 한국은 KOSPI 변동성 프록시). 급락장에서 급등해 '공포지수'로 불림. 변동성 급등은 투매 국면 = 바닥 형성 과정에서 흔히 관찰됨.</p></details>
+<details><summary><b>E-Ratio</b> — 엣지 비율 (Edge Ratio)</summary>
+<p class='sub'>신호 발생 후 일정 기간의 <b>유리한 방향 최대폭(MFE) ÷ 불리한 방향 최대폭(MAE)</b>을 변동성으로 정규화한 값. 1보다 크면 현재 신호에 통계적 우위(엣지)가 있음, 1 미만이면 신호 추종의 기대값이 낮음.</p></details>
+<details><summary><b>실현변동성 (20D)</b> — 바닥 체크리스트 지표</summary>
+<p class='sub'>산식: <b>최근 20거래일 일간수익률(로그)의 표준편차 × √252 × 100</b> (연율화 %). 옵션가격 없이 실제 가격 움직임만으로 계산한 변동성.</p></details>
+<details><summary><b>60일평균 +2σ 돌파</b> — 변동성 급등 판정</summary>
+<p class='sub'>실현변동성이 <b>자기 자신의 60거래일 평균 + 2×표준편차</b>를 넘으면 통계적으로 상위 2~3%에 해당하는 이상 급등으로 판정. 지수가 단기 저점권에 있으면서 이 조건이 켜지면 투매 클라이맥스(capitulation) 가능성 — 바닥 신호 3조건 중 하나.</p></details>
 </div>
 </div>
