@@ -43,21 +43,15 @@ a:hover{border-color:#b07d1e;background:#fffbf0}small{color:#6b7683;font-weight:
                      + "</small></a>")
 
     parts.append("<h2>분석 리포트</h2>")
-    for f in ("fx-flow.html", "fx-flow-5y.html", "kci.html", "lpddr.html"):
+    # 목록 제외: kci.html, lpddr.html, calls/ (2026-07-31 사용자 요청 — 직접 링크로는 접근 가능)
+    for f in ("fx-flow.html", "fx-flow-5y.html"):
         if (ROOT / f).exists():
             t, d = DESC[f]
             parts.append(f'<a href="{f}">{t}<small>{d}</small></a>')
 
-    calls = sorted(ROOT.glob("calls/*.html"), key=lambda p: p.stem.split("-", 1)[1], reverse=True)
-    if calls:
-        parts.append(f"<h2>어닝콜 분기 변화분석 ({len(calls)})</h2>")
-        for p in calls:
-            tk, dt = p.stem.split("-", 1)
-            parts.append(f'<a href="calls/{p.name}">📞 {tk}<small>{dt}</small></a>')
-
     parts.append("</body></html>")
     (ROOT / "index.html").write_text("\n".join(parts), encoding="utf-8")
-    print(f"index.html 생성 — flows {len(flows)}, calls {len(calls)}")
+    print(f"index.html 생성 — flows {len(flows)}")
 
 
 if __name__ == "__main__":
