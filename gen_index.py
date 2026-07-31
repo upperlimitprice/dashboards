@@ -9,6 +9,7 @@ DESC = {
     "signals.html": ("🚦 시장 신호등 (국내·미국)", "Market Score · ADR · 모멘텀 · RSI · VIX · E-Ratio"),
     "kr-breadth.html": ("📉 KOSPI 이격도·신용잔고", "60일 이격도(1990~) · 3개월 수익률 · 신용잔고/시총"),
     "cds.html": ("🏦 빅테크 5년 CDS 트래커", "MSFT·GOOGL·AMZN·META·NVDA·ORCL·CRWV 신용위험"),
+    "funds.html": ("💼 주체별 증시자금", "외국인 보유액·비중 · 국내(기관+개인) · 투자자예탁금 · 신용융자"),
     "kci.html": ("📈 고려신용정보 급등 분석", "장중 +10% 이상 25회 전후 수익률 히트맵"),
     "fx-flow.html": ("💱 환율×외국인 수급 공식", "원화 1% 절하당 외국인 순매도 효과"),
     "fx-flow-5y.html": ("💱 환율×수급 5개년 백테스트", "연도별·환율구간별 민감도 매트릭스"),
@@ -30,7 +31,7 @@ a:hover{border-color:#b07d1e;background:#fffbf0}small{color:#6b7683;font-weight:
 <h1>📊 쩜상리서치 대시보드</h1>"""]
 
     parts.append("<h2>데일리 모니터</h2>")
-    for f in ("signals.html", "kr-breadth.html", "cds.html"):
+    for f in ("signals.html", "kr-breadth.html", "funds.html", "cds.html"):
         if (ROOT / f).exists():
             t, d = DESC[f]
             parts.append(f'<a href="{f}">{t}<small>{d}</small></a>')
