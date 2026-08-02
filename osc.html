@@ -199,10 +199,15 @@ async function renderGrid(kind){
     }
   }else{
     if(!TOPS) TOPS=await fetch('osc/tops.json?v='+Date.now()).then(r=>r.json());
-    items=TOPS.top[kind].map(([tk,nm],i)=>({tk,name:nm,meta:`시총대비 순매수 ${i+1}위`}));
-    sub=`기준일 ${TOPS.date} · ${kind} 시총대비 순매수 Top20 (수급 페이지와 동일 기준) — 카드를 누르면 메인 차트로 이동`;
+    if(!BOTTOM) BOTTOM=await fetch('osc/bottom.json?v='+Date.now()).then(r=>r.json());
+    const botSet=new Set((BOTTOM.list||[]).map(x=>x[0]));
+    const pkSet=new Set((BOTTOM.top||[]).map(x=>x[0]));
+    items=TOPS.top[kind].map(([tk,nm],i)=>({tk,
+      name:nm+(botSet.has(tk)?" <span style='color:#e30613;font-weight:800'>●바닥</span>":pkSet.has(tk)?" <span style='color:#1f6fd6;font-weight:800'>●상승</span>":""),
+      meta:`시총대비 순매수 ${i+1}위`}));
+    sub=`기준일 ${TOPS.date} · ${kind} 시총대비 순매수 Top20 · <span style='color:#e30613'>●바닥 변곡 근접</span> / <span style='color:#1f6fd6'>●상승 변곡 근접</span> — 카드를 누르면 메인 차트로 이동`;
   }
-  $('gridSub').textContent=sub;
+  $('gridSub').innerHTML=sub;
   $('grid').innerHTML='<div id="msg">불러오는 중…</div>';
   const cells=[];
   for(const it of items){
