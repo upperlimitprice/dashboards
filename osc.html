@@ -25,10 +25,27 @@ input{flex:1;min-width:230px}
 #modal .foot{display:flex;justify-content:space-between;margin-top:14px}
 .btn2{font:inherit;padding:9px 16px;border-radius:9px;border:1.5px solid #ccd5dd;background:#fff;cursor:pointer}
 .btn2.pri{background:#1f6fd6;color:#fff;border-color:#1f6fd6;font-weight:700}
+#tabs{display:flex;gap:6px;flex-wrap:wrap;margin:16px 0 4px}
+.tab{font:inherit;font-size:.85rem;padding:8px 13px;border:1.5px solid #ccd5dd;border-radius:20px;background:#fff;cursor:pointer;color:#444}
+.tab.on{background:#1f3b73;color:#fff;border-color:#1f3b73;font-weight:700}
+.minigrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+.mini{background:#fff;border:1px solid #ccd5dd;border-radius:10px;padding:10px 12px;cursor:pointer}
+.mini:hover{border-color:#1f6fd6}
+.mini .mh{font-size:.8rem;font-weight:700;display:flex;justify-content:space-between}
+.mini .mh small{color:#8a94a0;font-weight:400}
+.mini .mb{font-size:.68rem;color:#8a94a0;margin-top:2px}
 </style>
 <div class='wrap'>
 <h1>📊 수급 오실레이터</h1>
 <p class='sub'>시가총액(검정, 좌축) vs 수급 오실레이터(빨강, 우축) · 오실레이터 = 5일 (외국인+기관 순매수합)/시총의 MACD(12·26·9) 히스토그램 · 평일 자동 갱신</p>
+<div id='tabs'>
+<button class='tab on' data-t='main'>메인</button>
+<button class='tab' data-t='사모펀드'>사모펀드 순매수 상위</button>
+<button class='tab' data-t='투신'>투신 순매수 상위</button>
+<button class='tab' data-t='연기금'>연기금 순매수 상위</button>
+<button class='tab' data-t='외국인'>외국인 순매수 상위</button>
+<button class='tab' data-t='bottom'>🔻 바닥 변곡 근접</button>
+</div>
 <div class='bar'>
 <select id='sec'><option value=''>섹터 전체</option></select>
 <select id='per'><option value='30'>30일</option><option value='60'>60일</option><option value='78' selected>78일 (기본)</option><option value='120'>120일</option><option value='0'>전체</option></select>
@@ -42,6 +59,10 @@ input{flex:1;min-width:230px}
 <div class='meta' id='mt'>종목을 검색하세요</div>
 <div class='legend'><b class='mc'>━ 시가총액</b> &nbsp; <b class='os'>━ 수급오실레이터</b> (0선 점선)</div>
 <div id='chart'><div id='msg'>종목명을 입력하면 차트가 표시됩니다</div></div>
+</div>
+<div id='gridPage' style='display:none'>
+<p class='sub' id='gridSub'></p>
+<div id='grid' class='minigrid'></div>
 </div>
 </div>
 <div id='modal'><div class='box'>
@@ -133,9 +154,72 @@ function draw(){
   s+='</svg>';
   $('chart').innerHTML=s;
 }
+let TOPS=null, BOTTOM=null;
+async function loadShard(sh){
+  if(!cacheShard[sh]) cacheShard[sh]=await fetch(`osc/s${sh}.json`).then(r=>r.json());
+  return cacheShard[sh];
+}
+function miniSvg(rec,per){
+  let pts=[];
+  for(let i=0;i<rec.m.length;i++) if(rec.m[i]!=null) pts.push({m:rec.m[i],o:rec.o[i]});
+  if(per>0)pts=pts.slice(-per);
+  const W=240,H=110,T=6,B=6,PH=H-T-B;
+  const mLo=Math.min(...pts.map(p=>p.m)),mHi=Math.max(...pts.map(p=>p.m));
+  const oM=Math.max(...pts.map(p=>Math.abs(p.o)))||1e-6;
+  const X=i=>4+i*(W-8)/Math.max(1,pts.length-1);
+  const Ym=v=>T+PH*0.55*(1-(v-mLo)/((mHi-mLo)||1));
+  const Yo=v=>T+PH*(1-(v+1.15*oM)/(2.3*oM));
+  let sv=`<svg viewBox='0 0 ${W} ${H}' style='width:100%'>`;
+  sv+=`<line x1='4' y1='${Yo(0)}' x2='${W-4}' y2='${Yo(0)}' stroke='#e8cdca' stroke-dasharray='3 3' stroke-width='.7'/>`;
+  sv+=`<polyline points='${pts.map((p,i)=>X(i).toFixed(1)+','+Ym(p.m).toFixed(1)).join(' ')}' fill='none' stroke='#333' stroke-width='1.7'/>`;
+  sv+=`<polyline points='${pts.map((p,i)=>X(i).toFixed(1)+','+Yo(p.o).toFixed(1)).join(' ')}' fill='none' stroke='#e30613' stroke-width='1.7'/>`;
+  return sv+'</svg>';
+}
+async function renderGrid(kind){
+  const per=+$('per').value||78;
+  let items=[], sub='';
+  if(kind==='bottom'){
+    if(!BOTTOM) BOTTOM=await fetch('osc/bottom.json').then(r=>r.json());
+    items=BOTTOM.list.map(x=>({tk:x[0],name:x[1],meta:`바닥평균 대비 ${(x[2]*100).toFixed(0)}% · osc ${(x[3]*100).toFixed(3)}%`}));
+    sub=`기준일 ${BOTTOM.date} · 오실레이터가 하락 중이며 과거 저점 변곡점 평균에 근접한 종목 (근접도순, 시총 500억+) — 카드를 누르면 메인 차트로 이동`;
+  }else{
+    if(!TOPS) TOPS=await fetch('osc/tops.json').then(r=>r.json());
+    items=TOPS.top[kind].map(([tk,nm],i)=>({tk,name:nm,meta:`시총대비 순매수 ${i+1}위`}));
+    sub=`기준일 ${TOPS.date} · ${kind} 시총대비 순매수 Top20 (수급 페이지와 동일 기준) — 카드를 누르면 메인 차트로 이동`;
+  }
+  $('gridSub').textContent=sub;
+  $('grid').innerHTML='<div id="msg">불러오는 중…</div>';
+  const cells=[];
+  for(const it of items){
+    const stock=IDX.stocks.find(x=>x[0]===it.tk);
+    if(!stock){continue;}
+    const shd=await loadShard(stock[2]);
+    const rec=shd[it.tk];
+    if(!rec)continue;
+    cells.push(`<div class='mini' onclick="gotoStock('${it.tk}')">
+      <div class='mh'><span>${it.name}</span><small>${it.tk}</small></div>
+      ${miniSvg(rec,per)}<div class='mb'>${it.meta}</div></div>`);
+  }
+  $('grid').innerHTML=cells.join('')||'<div id="msg">데이터 없음</div>';
+}
+function gotoStock(tk){
+  const st=IDX.stocks.find(x=>x[0]===tk);
+  if(!st)return;
+  document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('on',b.dataset.t==='main'));
+  $('gridPage').style.display='none';
+  document.querySelector('.card').style.display='';
+  $('q').value=st[1]; $('sec').value=''; fillNames(); show();
+  window.scrollTo({top:0});
+}
+document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x===b));
+  const t=b.dataset.t;
+  if(t==='main'){$('gridPage').style.display='none';document.querySelector('.card').style.display='';}
+  else{document.querySelector('.card').style.display='none';$('gridPage').style.display='';renderGrid(t);}
+}));
 $('q').addEventListener('change',show);
 $('q').addEventListener('keydown',e=>{if(e.key==='Enter')show();});
-$('per').addEventListener('change',()=>{if(cur&&cur.cmp)drawCompare(cur.cmp);else draw();});
+$('per').addEventListener('change',()=>{const t=document.querySelector('.tab.on').dataset.t;if(t!=='main')renderGrid(t);else if(cur&&cur.cmp)drawCompare(cur.cmp);else draw();});
 $('sec').addEventListener('change',()=>{fillNames();if($('sec').value!=='')showSector(+$('sec').value);});
 $('cmp').addEventListener('click',()=>$('modal').style.display='flex');
 $('cmpGo').addEventListener('click',()=>{
