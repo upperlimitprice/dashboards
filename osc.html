@@ -189,6 +189,19 @@ async function loadShard(sh){
   if(!cacheShard[sh]) cacheShard[sh]=await fetch(`osc/s${sh}.json`).then(r=>r.json());
   return cacheShard[sh];
 }
+function inflectCol(rec){
+  const o=rec.o.filter(x=>x!=null);
+  if(o.length<60) return null;
+  const last=o[o.length-1];
+  const tr=[],pk=[];
+  for(let j=2;j<o.length-2;j++){
+    if(o[j]<0&&o[j]<=o[j-1]&&o[j]<=o[j+1]&&o[j]<=o[j-2]&&o[j]<=o[j+2])tr.push(o[j]);
+    if(o[j]>0&&o[j]>=o[j-1]&&o[j]>=o[j+1]&&o[j]>=o[j-2]&&o[j]>=o[j+2])pk.push(o[j]);
+  }
+  if(tr.length>=3&&last<0&&last<=tr.reduce((a,b)=>a+b,0)/tr.length)return '#c0392b';
+  if(pk.length>=3&&last>0&&last>=pk.reduce((a,b)=>a+b,0)/pk.length)return '#1f6fd6';
+  return null;
+}
 function miniSvg(rec,per){
   let pts=[];
   for(let i=0;i<rec.m.length;i++) if(rec.m[i]!=null) pts.push({m:rec.m[i],o:rec.o[i]});
@@ -210,11 +223,13 @@ async function renderGrid(kind){
   let items=[], sub='';
   if(kind==='sectors'){
     $('gridSub').textContent=`전체 ${SEC.length}개 섹터·지수 합산 오실레이터 — 카드를 누르면 메인 차트로 이동`;
+    const scol=SEC.map(x=>inflectCol(x));
+    $('gridSub').innerHTML+=" · <b style='color:#c0392b'>빨강=상승 변곡 임박</b> / <b style='color:#1f6fd6'>파랑=하락 변곡 임박</b>";
     $('grid').innerHTML=SEC.map((x,i)=>`<div class='mini' onclick="gotoSector(${i})">
-      <div class='mh'><span>${x.n}</span><small>${x.t.length}종목</small></div>
+      <div class='mh'><span${scol[i]?` style='color:${scol[i]}'`:''}>${x.n}</span><small>${x.t.length}종목</small></div>
       ${miniSvg(x,per)}<div class='mb'>구성종목 시총합 · 합산 수급</div></div>`).join('');
     $('glistT').textContent=`섹터 리스트 (${SEC.length})`;
-    $('glist').innerHTML=SEC.map((x,i)=>`<button class='pitem' onclick='gotoSector(${i})'>${x.n}<small>${x.t.length}</small></button>`).join('');
+    $('glist').innerHTML=SEC.map((x,i)=>`<button class='pitem' onclick='gotoSector(${i})'${scol[i]?` style='color:${scol[i]};font-weight:700'`:''}>${x.n}<small>${x.t.length}</small></button>`).join('');
     return;
   }
   if(kind==='bottom'||kind==='peak'){
