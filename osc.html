@@ -46,6 +46,7 @@ input{flex:1;min-width:230px}
 <button class='tab' data-t='외국인'>외국인 순매수 상위</button>
 <button class='tab' data-t='sectors'>섹터별 모아보기</button>
 <button class='tab' data-t='bottom'>🔻 바닥 변곡 근접</button>
+<button class='tab' data-t='peak'>🔺 상승 변곡 근접</button>
 </div>
 <div class='bar'>
 <select id='sec'><option value=''>섹터 전체</option></select>
@@ -187,10 +188,15 @@ async function renderGrid(kind){
       ${miniSvg(x,per)}<div class='mb'>구성종목 시총합 · 합산 수급</div></div>`).join('');
     return;
   }
-  if(kind==='bottom'){
+  if(kind==='bottom'||kind==='peak'){
     if(!BOTTOM) BOTTOM=await fetch('osc/bottom.json?v='+Date.now()).then(r=>r.json());
-    items=BOTTOM.list.map(x=>({tk:x[0],name:x[1],meta:`바닥평균 대비 ${(x[2]*100).toFixed(0)}% · osc ${(x[3]*100).toFixed(3)}%`}));
-    sub=`기준일 ${BOTTOM.date} · 오실레이터가 하락 중이며 과거 저점 변곡점 평균에 근접한 종목 (근접도순, 시총 500억+) — 카드를 누르면 메인 차트로 이동`;
+    if(kind==='bottom'){
+      items=BOTTOM.list.map(x=>({tk:x[0],name:x[1],meta:`바닥평균 대비 ${(x[2]*100).toFixed(0)}% · osc ${(x[3]*100).toFixed(3)}%`}));
+      sub=`기준일 ${BOTTOM.date} · 전종목(섹터 제외) 중 오실레이터가 하락 중이며 과거 저점 변곡점 평균에 근접한 종목 (근접도순, 시총 500억+) — 카드를 누르면 메인 차트로 이동`;
+    }else{
+      items=(BOTTOM.top||[]).map(x=>({tk:x[0],name:x[1],meta:`고점평균 대비 ${(x[2]*100).toFixed(0)}% · osc ${(x[3]*100).toFixed(3)}%`}));
+      sub=`기준일 ${BOTTOM.date} · 전종목(섹터 제외) 중 오실레이터가 상승 중이며 과거 고점 변곡점 평균에 근접한 종목 (근접도순, 시총 500억+) — 카드를 누르면 메인 차트로 이동`;
+    }
   }else{
     if(!TOPS) TOPS=await fetch('osc/tops.json?v='+Date.now()).then(r=>r.json());
     items=TOPS.top[kind].map(([tk,nm],i)=>({tk,name:nm,meta:`시총대비 순매수 ${i+1}위`}));
