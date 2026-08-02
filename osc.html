@@ -76,7 +76,7 @@ input{flex:1;min-width:230px}
 <script>
 let IDX=null, SEC=null, cacheShard={}, cur=null;
 const $=id=>document.getElementById(id);
-Promise.all([fetch('osc/index.json').then(r=>r.json()), fetch('osc/sectors.json').then(r=>r.json())]).then(([d,sec])=>{
+Promise.all([fetch('osc/index.json?v='+Date.now()).then(r=>r.json()), fetch('osc/sectors.json').then(r=>r.json())]).then(([d,sec])=>{
   IDX=d; SEC=sec;
   const wi=[],idx=[];
   sec.forEach((x,i)=>(x.c.startsWith('WI')&&!x.c.startsWith('WI0')?wi:idx).push(`<option value='${i}'>${x.n} (${x.t.length})</option>`));
@@ -188,11 +188,11 @@ async function renderGrid(kind){
     return;
   }
   if(kind==='bottom'){
-    if(!BOTTOM) BOTTOM=await fetch('osc/bottom.json').then(r=>r.json());
+    if(!BOTTOM) BOTTOM=await fetch('osc/bottom.json?v='+Date.now()).then(r=>r.json());
     items=BOTTOM.list.map(x=>({tk:x[0],name:x[1],meta:`바닥평균 대비 ${(x[2]*100).toFixed(0)}% · osc ${(x[3]*100).toFixed(3)}%`}));
     sub=`기준일 ${BOTTOM.date} · 오실레이터가 하락 중이며 과거 저점 변곡점 평균에 근접한 종목 (근접도순, 시총 500억+) — 카드를 누르면 메인 차트로 이동`;
   }else{
-    if(!TOPS) TOPS=await fetch('osc/tops.json').then(r=>r.json());
+    if(!TOPS) TOPS=await fetch('osc/tops.json?v='+Date.now()).then(r=>r.json());
     items=TOPS.top[kind].map(([tk,nm],i)=>({tk,name:nm,meta:`시총대비 순매수 ${i+1}위`}));
     sub=`기준일 ${TOPS.date} · ${kind} 시총대비 순매수 Top20 (수급 페이지와 동일 기준) — 카드를 누르면 메인 차트로 이동`;
   }
