@@ -34,6 +34,14 @@ input{flex:1;min-width:230px}
 .mini .mh{font-size:.8rem;font-weight:700;display:flex;justify-content:space-between}
 .mini .mh small{color:#8a94a0;font-weight:400}
 .mini .mb{font-size:.68rem;color:#8a94a0;margin-top:2px}
+.duo{display:grid;grid-template-columns:1fr 210px;gap:14px;align-items:start}
+@media(max-width:900px){.duo{grid-template-columns:1fr}}
+.panel{background:#fff;border:1px solid #ccd5dd;border-radius:12px;padding:12px 14px;position:sticky;top:12px}
+.panel h3{margin:0 0 8px;font-size:.85rem;color:#67737f}
+.plist{max-height:72vh;overflow-y:auto}
+.pitem{display:block;width:100%;text-align:left;font:inherit;font-size:.8rem;padding:6px 4px;border:0;border-bottom:1px solid #f0f3f6;background:none;cursor:pointer;color:#20262e}
+.pitem:hover{color:#1f6fd6}
+.pitem small{color:#9aa4ad;margin-left:4px}
 </style>
 <div class='wrap'>
 <h1>📊 수급 오실레이터 <small id='upd' style='font-size:.72rem;font-weight:400;color:#9aa4ad'></small></h1>
@@ -56,6 +64,7 @@ input{flex:1;min-width:230px}
 <datalist id='names'></datalist>
 <button id='cmp' class='btn'>⚖ 섹터 비교</button>
 </div>
+<div class='duo'>
 <div class='card'>
 <div class='ttl' id='nm'>—</div>
 <div id='chips'></div>
@@ -63,9 +72,14 @@ input{flex:1;min-width:230px}
 <div class='legend'><b class='mc'>━ 시가총액</b> &nbsp; <b class='os'>━ 수급오실레이터</b> (0선 점선)</div>
 <div id='chart'><div id='msg'>종목명을 입력하면 차트가 표시됩니다</div></div>
 </div>
+<div class='panel' id='recentP'><h3>🕘 최근 검색</h3><div class='plist' id='recentL'></div></div>
+</div>
 <div id='gridPage' style='display:none'>
 <p class='sub' id='gridSub'></p>
+<div class='duo'>
 <div id='grid' class='minigrid'></div>
+<div class='panel'><h3 id='glistT'>종목 리스트</h3><div class='plist' id='glist'></div></div>
+</div>
 </div>
 </div>
 <div id='modal'><div class='box'>
@@ -87,6 +101,7 @@ Promise.all([fetch('osc/index.json?v='+Date.now()).then(r=>r.json()), fetch('osc
   fillNames();
   $('mt').textContent=`총 ${d.stocks.length.toLocaleString()}종목 · ${sec.length}섹터 · 최신 데이터 ${fmtD(d.dates[d.dates.length-1])}`;
   if(d.updated){$('upd').textContent=`최종 업데이트 ${d.updated}`;document.title=`수급 오실레이터 · ${d.updated} 업데이트`;}
+  renderRecent();
   $('q').value='삼성전자'; show();
 });
 function fillNames(){
@@ -102,11 +117,22 @@ function find(q){
   return pool.find(s=>s[1]===q)||pool.find(s=>s[0]===q)
     ||pool.find(s=>s[1].toLowerCase().includes(q.toLowerCase()))||IDX.stocks.find(s=>s[1]===q);
 }
+function pushRecent(tk,name){
+  let r=JSON.parse(localStorage.getItem('oscRecent')||'[]');
+  r=r.filter(x=>x[0]!==tk); r.unshift([tk,name]); r=r.slice(0,30);
+  localStorage.setItem('oscRecent',JSON.stringify(r)); renderRecent();
+}
+function renderRecent(){
+  const r=JSON.parse(localStorage.getItem('oscRecent')||'[]');
+  document.getElementById('recentL').innerHTML=r.map(([tk,nm])=>
+    `<button class='pitem' onclick='gotoStock("${tk}")'>${nm}<small>${tk}</small></button>`).join('')
+    ||"<div class='empty' style='font-size:.75rem;color:#9aa4ad'>검색 이력이 여기 쌓입니다</div>";
+}
 async function show(){
   const hit=find($('q').value); if(!hit) return;
   const [tk,name,sh]=hit;
   if(!cacheShard[sh]) cacheShard[sh]=await fetch(`osc/s${sh}.json`).then(r=>r.json());
-  cur={tk,name,rec:cacheShard[sh][tk]}; 
+  cur={tk,name,rec:cacheShard[sh][tk]}; pushRecent(tk,name); 
   $('chips').innerHTML=(hit[3]||[]).map(c=>{const x=SEC.find(y=>y.c===c);return x?`<span class='chip'>${x.n}</span>`:'';}).join('');
   draw();
 }
@@ -187,6 +213,8 @@ async function renderGrid(kind){
     $('grid').innerHTML=SEC.map((x,i)=>`<div class='mini' onclick="gotoSector(${i})">
       <div class='mh'><span>${x.n}</span><small>${x.t.length}종목</small></div>
       ${miniSvg(x,per)}<div class='mb'>구성종목 시총합 · 합산 수급</div></div>`).join('');
+    $('glistT').textContent=`섹터 리스트 (${SEC.length})`;
+    $('glist').innerHTML=SEC.map((x,i)=>`<button class='pitem' onclick='gotoSector(${i})'>${x.n}<small>${x.t.length}</small></button>`).join('');
     return;
   }
   if(kind==='bottom'||kind==='peak'){
@@ -223,6 +251,8 @@ async function renderGrid(kind){
       ${miniSvg(rec,per)}<div class='mb'>${it.meta}</div></div>`);
   }
   $('grid').innerHTML=cells.join('')||'<div id="msg">데이터 없음</div>';
+  $('glistT').textContent=`종목 리스트 (${items.length})`;
+  $('glist').innerHTML=items.map(it=>`<button class='pitem' onclick='gotoStock("${it.tk}")'>${it.name.replace(/<[^>]+>/g,'')}<small>${it.tk}</small></button>`).join('');
 }
 function gotoSector(i){
   document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('on',b.dataset.t==='main'));
