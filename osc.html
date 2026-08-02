@@ -55,7 +55,7 @@ input{flex:1;min-width:230px}
 <button class='tab' data-t='외국인전체'>외국인 순매수 상위 (전체 금액)</button>
 <button class='tab' data-t='sectors'>섹터별 모아보기</button>
 <button class='tab' data-t='bottom' style='color:#c0392b'>🔺 상승 변곡 임박</button>
-<button class='tab' data-t='peak' style='color:#1f6fd6'>🔽 하락 변곡 임박</button>
+<button class='tab' data-t='peak' style='color:#1f6fd6'>▼ 하락 변곡 임박</button>
 </div>
 <div class='bar'>
 <select id='sec'><option value=''>섹터 전체</option></select>
@@ -224,7 +224,7 @@ async function renderGrid(kind){
       sub=`기준일 ${BOTTOM.date} · <b style='color:#c0392b'>상승 변곡 임박</b> — 현재 오실레이터가 과거 상승 변곡점(하락→상승 전환) 평균보다 낮은 종목. 평균 대비 %가 클수록(극단) 상승 전환이 더 임박 (전종목, 시총 500억+)`;
     }else{
       items=(BOTTOM.top||[]).map(x=>({tk:x[0],name:x[1],meta:`하락변곡점 평균 대비 ${(x[2]*100).toFixed(0)}% · osc ${(x[3]*100).toFixed(3)}%`}));
-      sub=`기준일 ${BOTTOM.date} · <b style='color:#1f6fd6'>하락 변곡 임박</b> — 현재 오실레이터가 과거 하락 변곡점(상승→하락 전환) 평균보다 높은 종목. 평균 대비 %가 클수록 하락 전환이 더 임박 (전종목, 시총 500억+)`;
+      sub=`기준일 ${BOTTOM.date} · <b style='color:#1f6fd6'>▼ 하락 변곡 임박</b> — 현재 오실레이터가 과거 하락 변곡점(상승→하락 전환) 평균보다 높은 종목. 평균 대비 %가 클수록 하락 전환이 더 임박 (전종목, 시총 500억+)`;
     }
   }else{
     if(!TOPS) TOPS=await fetch('osc/tops.json?v='+Date.now()).then(r=>r.json());
