@@ -92,18 +92,28 @@ function render(){
 function go(e,h){if(e.target.closest('a,.x'))return;location.href=h;}
 function rm(e,k){e.preventDefault();e.stopPropagation();state.main=state.main.filter(x=>x!==k);save();render();return false;}
 function addW(k){state.main.push(k);save();render();}
+function syncOrder(){
+  state.main=[...document.querySelectorAll('#main .card[draggable]')].map(x=>x.dataset.k);
+  save();  // 드래그 순간마다 즉시 저장 — 새로고침해도 마지막 배치 유지
+}
 function wireDrag(){
   const box=document.getElementById('main');let drag=null;
+  box.addEventListener('dragover',e=>e.preventDefault());
+  box.addEventListener('drop',e=>{e.preventDefault();syncOrder();});
   box.querySelectorAll('.card[draggable]').forEach(el=>{
     el.addEventListener('dragstart',()=>{drag=el;el.style.opacity=.4;});
-    el.addEventListener('dragend',()=>{if(drag)drag.style.opacity=1;drag=null;
-      state.main=[...box.querySelectorAll('.card[draggable]')].map(x=>x.dataset.k);save();});
+    el.addEventListener('dragend',()=>{if(drag)drag.style.opacity=1;drag=null;syncOrder();});
     el.addEventListener('dragover',e=>{e.preventDefault();
       if(!drag||drag===el)return;
       const r=el.getBoundingClientRect();
-      box.insertBefore(drag, e.clientY<r.top+r.height/2?el:el.nextSibling);});
+      box.insertBefore(drag, e.clientY<r.top+r.height/2?el:el.nextSibling);
+      syncOrder();});
   });
 }
+window.addEventListener('pageshow',()=>{ /* 뒤로가기 복원 시에도 저장된 배치 재적용 */
+  const s2=JSON.parse(localStorage.getItem(KEY)||'null');
+  if(s2&&Array.isArray(s2.main)){state=s2;state.main=state.main.filter(k=>REG.some(x=>x.k===k));render();}
+});
 render();
 </script>
 </body></html>"""
