@@ -101,7 +101,7 @@ function draw(){
   $('nm').textContent=`${name} (${tk})`;
   const lastM=pts[pts.length-1].m, lastO=pts[pts.length-1].o;
   $('mt').textContent=`${fmtD(pts[0].d)} ~ ${fmtD(pts[pts.length-1].d)} · 시총 ${lastM>=10000?(lastM/10000).toFixed(1)+'조':lastM.toLocaleString()+'억'} · 오실레이터 ${(lastO*100).toFixed(3)}%p`;
-  const W=1000,H=470,L=78,R=78,T=16,B=56,PH=H-T-B;
+  const W=1000,H=496,L=78,R=78,T=16,B=82,PH=H-T-B;
   const mv=pts.map(p=>p.m), ov=pts.map(p=>p.o);
   const nice=r=>{const p=Math.pow(10,Math.floor(Math.log10(r)));return [1,2,2.5,5,10].map(x=>x*p).find(x=>x>=r);};
   // 좌축(시총): 0부터 시작, 라운드 눈금 ~8등분 (엑셀 방식)
@@ -125,11 +125,11 @@ function draw(){
   }
   if(o0<0&&o1>0) s+=`<line x1='${L}' y1='${Yo(0)}' x2='${W-R}' y2='${Yo(0)}' stroke='#c9ced4' stroke-width='.9'/>`;
   const st=Math.max(1,Math.floor(pts.length/10));
-  for(let i=0;i<pts.length;i+=st) s+=`<text x='${X(i)}' y='${H-30}' font-size='10.5' fill='#67737f' text-anchor='middle' transform='rotate(-35 ${X(i)} ${H-30})'>${fmtD(pts[i].d)}</text>`;
-  s+=`<polyline points='${pts.map((p,i)=>X(i).toFixed(1)+','+Ym(p.m).toFixed(1)).join(' ')}' fill='none' stroke='#333' stroke-width='2.4'/>`;
-  s+=`<polyline points='${pts.map((p,i)=>X(i).toFixed(1)+','+Yo(p.o).toFixed(1)).join(' ')}' fill='none' stroke='#e30613' stroke-width='2.4'/>`;
-  s+=`<text x='${W/2-90}' y='${H-4}' font-size='12' fill='#333' font-weight='700' text-anchor='end'>━ ${name} 시가총액</text>`;
-  s+=`<text x='${W/2+10}' y='${H-4}' font-size='12' fill='#e30613' font-weight='700'>━ ${name} 오실레이터</text>`;
+  for(let i=0;i<pts.length;i+=st) s+=`<text x='${X(i)}' y='${H-52}' font-size='10.5' fill='#67737f' text-anchor='middle' transform='rotate(-35 ${X(i)} ${H-52})'>${fmtD(pts[i].d)}</text>`;
+  s+=`<polyline points='${pts.map((p,i)=>X(i).toFixed(1)+','+Ym(p.m).toFixed(1)).join(' ')}' fill='none' stroke='#333' stroke-width='3.2'/>`;
+  s+=`<polyline points='${pts.map((p,i)=>X(i).toFixed(1)+','+Yo(p.o).toFixed(1)).join(' ')}' fill='none' stroke='#e30613' stroke-width='3.2'/>`;
+  s+=`<text x='${W/2-40}' y='${H-8}' font-size='13' fill='#333' font-weight='700' text-anchor='end'>━ ${name} 시가총액</text>`;
+  s+=`<text x='${W/2+40}' y='${H-8}' font-size='13' fill='#e30613' font-weight='700'>━ ${name} 오실레이터</text>`;
   s+='</svg>';
   $('chart').innerHTML=s;
 }
