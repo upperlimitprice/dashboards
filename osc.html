@@ -56,7 +56,9 @@ let IDX=null, SEC=null, cacheShard={}, cur=null;
 const $=id=>document.getElementById(id);
 Promise.all([fetch('osc/index.json').then(r=>r.json()), fetch('osc/sectors.json').then(r=>r.json())]).then(([d,sec])=>{
   IDX=d; SEC=sec;
-  $('sec').innerHTML="<option value=''>섹터 전체</option>"+sec.map((x,i)=>`<option value='${i}'>${x.n} (${x.t.length})</option>`).join('');
+  const wi=[],idx=[];
+  sec.forEach((x,i)=>(x.c.startsWith('WI')&&!x.c.startsWith('WI0')?wi:idx).push(`<option value='${i}'>${x.n} (${x.t.length})</option>`));
+  $('sec').innerHTML="<option value=''>섹터 전체</option><optgroup label='WI26 업종'>"+wi.join('')+"</optgroup><optgroup label='KRX / WISE / WMI 지수'>"+idx.join('')+"</optgroup>";
   $('slist').innerHTML=sec.map((x,i)=>`<label><span><input type='checkbox' value='${i}'> ${x.n}</span><small>(${x.t.length}종목)</small></label>`).join('');
   fillNames();
   $('mt').textContent=`총 ${d.stocks.length.toLocaleString()}종목 · ${sec.length}섹터 · 최신 데이터 ${fmtD(d.dates[d.dates.length-1])}`;
