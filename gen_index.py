@@ -12,6 +12,7 @@ DESC = {
     "tanker.html": ("🛢 탱커 운임 마켓", "VLCC·수에즈막스 WS · LPG/LNG · BCTI · 선가 · 픽스처"),
     "funds.html": ("💼 주체별 증시자금", "외국인 보유액·비중 · 국내(기관+개인) · 투자자예탁금 · 신용융자"),
     "kci.html": ("📈 고려신용정보 급등 분석", "장중 +10% 이상 25회 전후 수익률 히트맵"),
+    "parts-trend.html": ("📦 전자부품 리드타임 트렌드", "Future Electronics 월간 — 카테고리별 리드타임·가격 방향"),
     "fx-flow.html": ("💱 환율×외국인 수급 공식", "원화 1% 절하당 외국인 순매도 효과"),
     "fx-flow-5y.html": ("💱 환율×수급 5개년 백테스트", "연도별·환율구간별 민감도 매트릭스"),
     "lpddr.html": ("🧠 LPDDR 백서 (Micron×Meta)", "AI 서버 LPDDR 채택 기술 분석"),
@@ -46,7 +47,7 @@ a:hover{border-color:#b07d1e;background:#fffbf0}small{color:#6b7683;font-weight:
 
     parts.append("<h2>분석 리포트</h2>")
     # 목록 제외: kci.html, lpddr.html, calls/ (2026-07-31 사용자 요청 — 직접 링크로는 접근 가능)
-    for f in ("fx-flow.html", "fx-flow-5y.html"):
+    for f in ("parts-trend.html", "fx-flow.html", "fx-flow-5y.html"):
         if (ROOT / f).exists():
             t, d = DESC[f]
             parts.append(f'<a href="{f}">{t}<small>{d}</small></a>')
