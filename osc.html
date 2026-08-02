@@ -12,42 +12,82 @@ input{flex:1;min-width:230px}
 .legend{font-size:.8rem;color:#444;margin-bottom:6px}
 .legend b.mc{color:#111}.legend b.os{color:#c0392b}
 #msg{color:#67737f;padding:30px;text-align:center}
+.btn{font:inherit;padding:9px 14px;border:1.5px solid #1f6fd6;border-radius:9px;background:#fff;color:#1f6fd6;font-weight:700;cursor:pointer}
+.btn:hover{background:#eef5fe}
+#chips{margin:2px 0 6px}
+.chip{display:inline-block;font-size:.7rem;color:#1f6fd6;border:1px solid #bcd6f5;border-radius:20px;padding:2px 9px;margin-right:5px;background:#f3f8ff}
+#modal{position:fixed;inset:0;background:rgba(20,26,34,.45);display:none;align-items:center;justify-content:center;z-index:10}
+#modal .box{background:#fff;border-radius:14px;max-width:560px;width:92%;max-height:82vh;display:flex;flex-direction:column;padding:20px}
+#modal h3{margin:0 0 10px;font-size:1.05rem}
+#slist{overflow-y:auto;border:1px solid #e2e8ee;border-radius:9px;padding:8px 12px;flex:1}
+#slist label{display:flex;justify-content:space-between;padding:6px 2px;font-size:.88rem;cursor:pointer}
+#slist small{color:#8a94a0}
+#modal .foot{display:flex;justify-content:space-between;margin-top:14px}
+.btn2{font:inherit;padding:9px 16px;border-radius:9px;border:1.5px solid #ccd5dd;background:#fff;cursor:pointer}
+.btn2.pri{background:#1f6fd6;color:#fff;border-color:#1f6fd6;font-weight:700}
 </style>
 <div class='wrap'>
 <h1>📊 수급 오실레이터</h1>
 <p class='sub'>시가총액(검정, 좌축) vs 수급 오실레이터(빨강, 우축) · 오실레이터 = 5일 (외국인+기관 순매수합)/시총의 MACD(12·26·9) 히스토그램 · 평일 자동 갱신</p>
 <div class='bar'>
+<select id='sec'><option value=''>섹터 전체</option></select>
+<select id='per'><option value='30'>30일</option><option value='60'>60일</option><option value='78' selected>78일 (기본)</option><option value='120'>120일</option><option value='0'>전체</option></select>
 <input id='q' list='names' placeholder='종목명 또는 코드 검색 (예: 삼성전자, 005930)' autocomplete='off'>
 <datalist id='names'></datalist>
-<select id='per'><option value='39'>39일</option><option value='78' selected>78일 (기본)</option><option value='156'>156일</option><option value='0'>전체</option></select>
+<button id='cmp' class='btn'>⚖ 섹터 비교</button>
 </div>
 <div class='card'>
 <div class='ttl' id='nm'>—</div>
+<div id='chips'></div>
 <div class='meta' id='mt'>종목을 검색하세요</div>
 <div class='legend'><b class='mc'>━ 시가총액</b> &nbsp; <b class='os'>━ 수급오실레이터</b> (0선 점선)</div>
 <div id='chart'><div id='msg'>종목명을 입력하면 차트가 표시됩니다</div></div>
 </div>
 </div>
+<div id='modal'><div class='box'>
+<h3>⚖ 섹터 비교 — 여러 섹터 오실레이터 한 번에 보기</h3>
+<div class='sub' style='margin-bottom:8px'>비교할 섹터 선택 (최대 12개)</div>
+<div id='slist'></div>
+<div class='foot'><button class='btn2' onclick="document.getElementById('modal').style.display='none'">닫기</button>
+<button class='btn2 pri' id='cmpGo'>비교 차트 보기</button></div>
+</div></div>
 <script>
-let IDX=null, cacheShard={}, cur=null;
+let IDX=null, SEC=null, cacheShard={}, cur=null;
 const $=id=>document.getElementById(id);
-fetch('osc/index.json').then(r=>r.json()).then(d=>{
-  IDX=d;
-  $('names').innerHTML=d.stocks.map(s=>`<option value="${s[1]}">${s[0]}</option>`).join('');
-  $('mt').textContent=`총 ${d.stocks.length.toLocaleString()}종목 · 최신 데이터 ${fmtD(d.dates[d.dates.length-1])}`;
+Promise.all([fetch('osc/index.json').then(r=>r.json()), fetch('osc/sectors.json').then(r=>r.json())]).then(([d,sec])=>{
+  IDX=d; SEC=sec;
+  $('sec').innerHTML="<option value=''>섹터 전체</option>"+sec.map((x,i)=>`<option value='${i}'>${x.n} (${x.t.length})</option>`).join('');
+  $('slist').innerHTML=sec.map((x,i)=>`<label><span><input type='checkbox' value='${i}'> ${x.n}</span><small>(${x.t.length}종목)</small></label>`).join('');
+  fillNames();
+  $('mt').textContent=`총 ${d.stocks.length.toLocaleString()}종목 · ${sec.length}섹터 · 최신 데이터 ${fmtD(d.dates[d.dates.length-1])}`;
   $('q').value='삼성전자'; show();
 });
+function fillNames(){
+  const si=$('sec').value;
+  const pool=si===''?IDX.stocks:IDX.stocks.filter(s=>SEC[+si].t.includes(s[0]));
+  $('names').innerHTML=pool.map(s=>`<option value="${s[1]}">${s[0]}</option>`).join('');
+}
 function fmtD(d){return d.slice(0,4)+'-'+d.slice(4,6)+'-'+d.slice(6);}
 function find(q){
   q=q.trim(); if(!q||!IDX) return null;
-  return IDX.stocks.find(s=>s[1]===q)||IDX.stocks.find(s=>s[0]===q)
-    ||IDX.stocks.find(s=>s[1].toLowerCase().includes(q.toLowerCase()));
+  const si=$('sec').value;
+  const pool=si===''?IDX.stocks:IDX.stocks.filter(s=>SEC[+si].t.includes(s[0]));
+  return pool.find(s=>s[1]===q)||pool.find(s=>s[0]===q)
+    ||pool.find(s=>s[1].toLowerCase().includes(q.toLowerCase()))||IDX.stocks.find(s=>s[1]===q);
 }
 async function show(){
   const hit=find($('q').value); if(!hit) return;
   const [tk,name,sh]=hit;
   if(!cacheShard[sh]) cacheShard[sh]=await fetch(`osc/s${sh}.json`).then(r=>r.json());
-  cur={tk,name,rec:cacheShard[sh][tk]}; draw();
+  cur={tk,name,rec:cacheShard[sh][tk]}; 
+  $('chips').innerHTML=(hit[3]||[]).map(c=>{const x=SEC.find(y=>y.c===c);return x?`<span class='chip'>${x.n}</span>`:'';}).join('');
+  draw();
+}
+function showSector(i){
+  const x=SEC[i];
+  cur={tk:x.c,name:x.n+' (합산)',rec:x};
+  $('chips').innerHTML=`<span class='chip'>${x.t.length}종목 합산</span>`;
+  draw();
 }
 function draw(){
   if(!cur) return;
@@ -93,5 +133,47 @@ function draw(){
 }
 $('q').addEventListener('change',show);
 $('q').addEventListener('keydown',e=>{if(e.key==='Enter')show();});
-$('per').addEventListener('change',draw);
+$('per').addEventListener('change',()=>{if(cur&&cur.cmp)drawCompare(cur.cmp);else draw();});
+$('sec').addEventListener('change',()=>{fillNames();if($('sec').value!=='')showSector(+$('sec').value);});
+$('cmp').addEventListener('click',()=>$('modal').style.display='flex');
+$('cmpGo').addEventListener('click',()=>{
+  const sel=[...document.querySelectorAll('#slist input:checked')].map(e=>+e.value).slice(0,12);
+  if(!sel.length)return;
+  $('modal').style.display='none';
+  cur={cmp:sel}; drawCompare(sel);
+});
+const PAL=['#1f6fd6','#e30613','#2eaa5e','#f28e2b','#8b1e3f','#00a3a3','#7048c8','#c8a400','#e91e8c','#5f6b7a','#3d8f2f','#1c2530'];
+function drawCompare(sel){
+  const per=+$('per').value;
+  $('nm').textContent='섹터 비교 — 수급 오실레이터';
+  $('chips').innerHTML=sel.map((i,k)=>`<span class='chip' style='color:${PAL[k]};border-color:${PAL[k]}'>${SEC[i].n}</span>`).join('');
+  const series=sel.map(i=>{
+    const x=SEC[i]; let pts=[];
+    for(let j=0;j<x.m.length;j++) if(x.o[j]!=null) pts.push({d:IDX.dates[x.s+j],o:x.o[j]});
+    if(per>0)pts=pts.slice(-per); return pts;
+  });
+  const all=series.flat();
+  $('mt').textContent=`${fmtD(all[0].d)} ~ ${fmtD(all[all.length-1].d)} · ${sel.length}개 섹터 오실레이터(%)`;
+  const W=1000,H=470,L=78,R=30,T=16,B=56,PH=H-T-B;
+  const oLo=Math.min(...all.map(p=>p.o),0), oHi=Math.max(...all.map(p=>p.o),0);
+  const nice=r=>{const p=Math.pow(10,Math.floor(Math.log10(r)));return [1,2,2.5,5,10].map(x=>x*p).find(x=>x>=r);};
+  const stp=nice((oHi-oLo)/8||1e-6), o0=Math.floor(oLo/stp)*stp, o1=Math.ceil(oHi/stp)*stp;
+  const nD=Math.round((o1-o0)/stp);
+  const Yo=v=>T+PH*(1-(v-o0)/(o1-o0));
+  const n=Math.max(...series.map(sr=>sr.length));
+  const X=i=>L+i*(W-L-R)/Math.max(1,n-1);
+  let s2=`<svg viewBox='0 0 ${W} ${H}' style='width:100%;background:#fff'>`;
+  for(let k=0;k<=nD;k++){const v=o0+stp*k,y=Yo(v);
+    s2+=`<line x1='${L}' y1='${y}' x2='${W-R}' y2='${y}' stroke='${Math.abs(v)<1e-12?'#c9ced4':'#eef1f4'}'/>`;
+    s2+=`<text x='${L-6}' y='${y+4}' font-size='11' fill='#444' text-anchor='end'>${(v*100).toFixed(2)}%</text>`;}
+  const base=series.reduce((a,b)=>b.length>a.length?b:a,[]);
+  const st=Math.max(1,Math.floor(base.length/10));
+  for(let i=0;i<base.length;i+=st) s2+=`<text x='${X(i)}' y='${H-30}' font-size='10.5' fill='#67737f' text-anchor='middle' transform='rotate(-35 ${X(i)} ${H-30})'>${fmtD(base[i].d)}</text>`;
+  series.forEach((sr,k)=>{
+    const off=n-sr.length;
+    s2+=`<polyline points='${sr.map((p,i)=>X(i+off).toFixed(1)+','+Yo(p.o).toFixed(1)).join(' ')}' fill='none' stroke='${PAL[k]}' stroke-width='2'/>`;
+  });
+  s2+='</svg>';
+  $('chart').innerHTML=s2;
+}
 </script>
