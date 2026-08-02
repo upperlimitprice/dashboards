@@ -19,6 +19,9 @@ h2{font-size:.92rem;margin:0 0 10px;color:#6b7683}
 .add:hover{background:#eef5fe}
 .hint{font-size:.72rem;color:#9aa4ad;margin-top:10px}
 .empty{color:#9aa4ad;font-size:.82rem;padding:8px 0}
+body:not(.admin) .x,body:not(.admin) #side,body:not(.admin) h2 small{display:none}
+body:not(.admin) .layout{grid-template-columns:1fr}
+body:not(.admin) .card{cursor:pointer}
 </style></head><body>
 <h1>📊 쩜상리서치 대시보드</h1>
 <div class='layout'>
@@ -29,6 +32,12 @@ h2{font-size:.92rem;margin:0 0 10px;color:#6b7683}
 <script>
 const REG=[{"k": "signals.html", "t": "🚦 시장 신호등 (국내·미국)", "d": "Market Score · ADR · 모멘텀 · RSI · VIX · E-Ratio", "h": "signals.html", "on": true}, {"k": "kr-breadth.html", "t": "📉 KOSPI 이격도·신용잔고", "d": "60일 이격도(1990~) · 3개월 수익률 · 신용잔고/시총", "h": "kr-breadth.html", "on": true}, {"k": "funds.html", "t": "💼 주체별 증시자금", "d": "외국인 보유액·비중 · 국내(기관+개인) · 투자자예탁금 · 신용융자", "h": "funds.html", "on": true}, {"k": "cds.html", "t": "🏦 빅테크 5년 CDS 트래커", "d": "MSFT·GOOGL·AMZN·META·NVDA·ORCL·CRWV 신용위험", "h": "cds.html", "on": true}, {"k": "tanker.html", "t": "🛢 탱커 운임 마켓", "d": "VLCC·수에즈막스 WS · LPG/LNG · BCTI · 선가 · 픽스처", "h": "tanker.html", "on": true}, {"k": "osc.html", "t": "📊 수급 오실레이터", "d": "종목·섹터 검색 — 시총 vs 수급 MACD · 주체별 상위 · 바닥 근접", "h": "osc.html", "on": true}, {"k": "flows", "t": "💰 수급 주체별 시총대비 Top20 (2026-07-31)", "d": "사모·투신·연기금·외국인·프로그램 순매수/순매도 · 과거: <a href='flows/2026-07-30.html'>2026-07-30</a>", "h": "flows/2026-07-31.html", "on": true}, {"k": "parts-trend.html", "t": "📦 전자부품 리드타임 트렌드", "d": "Future Electronics 월간 — 카테고리별 리드타임·가격 방향", "h": "parts-trend.html", "on": true}, {"k": "fx-flow.html", "t": "💱 환율×외국인 수급 공식", "d": "원화 1% 절하당 외국인 순매도 효과", "h": "fx-flow.html", "on": true}, {"k": "fx-flow-5y.html", "t": "💱 환율×수급 5개년 백테스트", "d": "연도별·환율구간별 민감도 매트릭스", "h": "fx-flow-5y.html", "on": true}, {"k": "kci.html", "t": "📈 고려신용정보 급등 분석", "d": "장중 +10% 이상 25회 전후 수익률 히트맵", "h": "kci.html", "on": false}, {"k": "lpddr.html", "t": "🧠 LPDDR 백서 (Micron×Meta)", "d": "AI 서버 LPDDR 채택 기술 분석", "h": "lpddr.html", "on": false}, {"k": "calls", "t": "📞 어닝콜 분기 변화분석", "d": "총 25건 · 최신: <a href='calls/AAPL-2026-07-30.html'>AAPL</a> · <a href='calls/AMZN-2026-07-30.html'>AMZN</a> · <a href='calls/MSFT-2026-07-29.html'>MSFT</a> · <a href='calls/TER-2026-07-29.html'>TER</a> · <a href='calls/META-2026-07-29.html'>META</a> · <a href='calls/TSLA-2026-07-22.html'>TSLA</a>", "h": "calls/AAPL-2026-07-30.html", "on": false}];
 const KEY='dashLayout2';
+const ADMIN_IPS=['222.108.214.107'];
+const ADMIN_PASS='jjeomsang-only';
+let ADMIN=localStorage.getItem('dashAdmin')==='1';
+const q=new URLSearchParams(location.search);
+if(q.get('admin')===ADMIN_PASS){ADMIN=true;localStorage.setItem('dashAdmin','1');}
+if(q.get('admin')==='off'){ADMIN=false;localStorage.removeItem('dashAdmin');}
 let state=JSON.parse(localStorage.getItem(KEY)||'null');
 if(!state||!Array.isArray(state.main)) state={main:REG.filter(x=>x.on).map(x=>x.k)};
 state.main=state.main.filter(k=>REG.some(x=>x.k===k));
@@ -49,6 +58,7 @@ function syncOrder(){
   save();  // 드래그 순간마다 즉시 저장 — 새로고침해도 마지막 배치 유지
 }
 function wireDrag(){
+  if(!ADMIN)return;
   const box=document.getElementById('main');let drag=null;
   box.addEventListener('dragover',e=>e.preventDefault());
   box.addEventListener('drop',e=>{e.preventDefault();syncOrder();});
@@ -66,6 +76,22 @@ window.addEventListener('pageshow',()=>{ /* 뒤로가기 복원 시에도 저장
   const s2=JSON.parse(localStorage.getItem(KEY)||'null');
   if(s2&&Array.isArray(s2.main)){state=s2;state.main=state.main.filter(k=>REG.some(x=>x.k===k));render();}
 });
+function applyAdmin(){
+  if(ADMIN){document.body.classList.add('admin');return;}
+  // 방문자: 기본 배치 고정 + 편집 UI 숨김
+  state={main:REG.filter(x=>x.on).map(x=>x.k)};
+  document.body.classList.remove('admin');
+  render();
+}
 render();
+applyAdmin();
+if(!ADMIN){
+  fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(d=>{
+    if(ADMIN_IPS.includes(d.ip)){ADMIN=true;localStorage.setItem('dashAdmin','1');
+      state=JSON.parse(localStorage.getItem(KEY)||'null')||{main:REG.filter(x=>x.on).map(x=>x.k)};
+      state.main=(state.main||[]).filter(k=>REG.some(x=>x.k===k));
+      document.body.classList.add('admin');render();}
+  }).catch(()=>{});
+}
 </script>
 </body></html>

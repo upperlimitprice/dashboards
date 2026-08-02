@@ -67,6 +67,9 @@ h2{font-size:.92rem;margin:0 0 10px;color:#6b7683}
 .add:hover{background:#eef5fe}
 .hint{font-size:.72rem;color:#9aa4ad;margin-top:10px}
 .empty{color:#9aa4ad;font-size:.82rem;padding:8px 0}
+body:not(.admin) .x,body:not(.admin) #side,body:not(.admin) h2 small{display:none}
+body:not(.admin) .layout{grid-template-columns:1fr}
+body:not(.admin) .card{cursor:pointer}
 </style></head><body>
 <h1>📊 쩜상리서치 대시보드</h1>
 <div class='layout'>
@@ -77,6 +80,12 @@ h2{font-size:.92rem;margin:0 0 10px;color:#6b7683}
 <script>
 const REG=__REG__;
 const KEY='dashLayout2';
+const ADMIN_IPS=['222.108.214.107'];
+const ADMIN_PASS='jjeomsang-only';
+let ADMIN=localStorage.getItem('dashAdmin')==='1';
+const q=new URLSearchParams(location.search);
+if(q.get('admin')===ADMIN_PASS){ADMIN=true;localStorage.setItem('dashAdmin','1');}
+if(q.get('admin')==='off'){ADMIN=false;localStorage.removeItem('dashAdmin');}
 let state=JSON.parse(localStorage.getItem(KEY)||'null');
 if(!state||!Array.isArray(state.main)) state={main:REG.filter(x=>x.on).map(x=>x.k)};
 state.main=state.main.filter(k=>REG.some(x=>x.k===k));
@@ -97,6 +106,7 @@ function syncOrder(){
   save();  // 드래그 순간마다 즉시 저장 — 새로고침해도 마지막 배치 유지
 }
 function wireDrag(){
+  if(!ADMIN)return;
   const box=document.getElementById('main');let drag=null;
   box.addEventListener('dragover',e=>e.preventDefault());
   box.addEventListener('drop',e=>{e.preventDefault();syncOrder();});
@@ -114,7 +124,23 @@ window.addEventListener('pageshow',()=>{ /* 뒤로가기 복원 시에도 저장
   const s2=JSON.parse(localStorage.getItem(KEY)||'null');
   if(s2&&Array.isArray(s2.main)){state=s2;state.main=state.main.filter(k=>REG.some(x=>x.k===k));render();}
 });
+function applyAdmin(){
+  if(ADMIN){document.body.classList.add('admin');return;}
+  // 방문자: 기본 배치 고정 + 편집 UI 숨김
+  state={main:REG.filter(x=>x.on).map(x=>x.k)};
+  document.body.classList.remove('admin');
+  render();
+}
 render();
+applyAdmin();
+if(!ADMIN){
+  fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(d=>{
+    if(ADMIN_IPS.includes(d.ip)){ADMIN=true;localStorage.setItem('dashAdmin','1');
+      state=JSON.parse(localStorage.getItem(KEY)||'null')||{main:REG.filter(x=>x.on).map(x=>x.k)};
+      state.main=(state.main||[]).filter(k=>REG.some(x=>x.k===k));
+      document.body.classList.add('admin');render();}
+  }).catch(()=>{});
+}
 </script>
 </body></html>"""
     page = page.replace("__REG__", reg_json)
