@@ -220,10 +220,10 @@ async function renderGrid(kind){
   if(kind==='bottom'||kind==='peak'){
     if(!BOTTOM) BOTTOM=await fetch('osc/bottom.json?v='+Date.now()).then(r=>r.json());
     if(kind==='bottom'){
-      items=BOTTOM.list.map(x=>({tk:x[0],name:x[1],meta:`상승변곡점 평균 대비 ${(x[2]*100).toFixed(0)}% · osc ${(x[3]*100).toFixed(3)}%`}));
+      items=BOTTOM.list.map(x=>({tk:x[0],name:x[1],col:'#c0392b',meta:`상승변곡점 평균 대비 ${(x[2]*100).toFixed(0)}% · osc ${(x[3]*100).toFixed(3)}%`}));
       sub=`기준일 ${BOTTOM.date} · <b style='color:#c0392b'>상승 변곡 임박</b> — 현재 오실레이터가 과거 상승 변곡점(하락→상승 전환) 평균보다 낮은 종목. 평균 대비 %가 클수록(극단) 상승 전환이 더 임박 (전종목, 시총 500억+)`;
     }else{
-      items=(BOTTOM.top||[]).map(x=>({tk:x[0],name:x[1],meta:`하락변곡점 평균 대비 ${(x[2]*100).toFixed(0)}% · osc ${(x[3]*100).toFixed(3)}%`}));
+      items=(BOTTOM.top||[]).map(x=>({tk:x[0],name:x[1],col:'#1f6fd6',meta:`하락변곡점 평균 대비 ${(x[2]*100).toFixed(0)}% · osc ${(x[3]*100).toFixed(3)}%`}));
       sub=`기준일 ${BOTTOM.date} · <b style='color:#1f6fd6'>▼ 하락 변곡 임박</b> — 현재 오실레이터가 과거 하락 변곡점(상승→하락 전환) 평균보다 높은 종목. 평균 대비 %가 클수록 하락 전환이 더 임박 (전종목, 시총 500억+)`;
     }
   }else{
@@ -233,6 +233,7 @@ async function renderGrid(kind){
     const pkSet=new Set((BOTTOM.top||[]).map(x=>x[0]));
     if(!TOPS.top[kind]){$('gridSub').textContent='이 목록은 다음 수급 갱신(평일 16:00) 이후 제공됩니다';$('grid').innerHTML='';return;}
     items=TOPS.top[kind].map(([tk,nm],i)=>({tk,
+      col:botSet.has(tk)?'#c0392b':pkSet.has(tk)?'#1f6fd6':null,
       name:nm+(botSet.has(tk)?" <span style='color:#eba7a2;font-weight:600;font-size:.6rem'>●상승변곡</span>":pkSet.has(tk)?" <span style='color:#a8c4ea;font-weight:600;font-size:.6rem'>●하락변곡</span>":""),
       meta:`${kind==='외국인전체'?'금액':'시총대비'} 순매수 ${i+1}위`}));
     sub=`기준일 ${TOPS.date} · ${kind==='외국인전체'?'외국인 전체 금액':kind+' 시총대비'} 순매수 Top20 · <span style='color:#e30613'>●상승 변곡 임박</span> / <span style='color:#1f6fd6'>●하락 변곡 임박</span> — 카드를 누르면 메인 차트로 이동`;
@@ -252,7 +253,7 @@ async function renderGrid(kind){
   }
   $('grid').innerHTML=cells.join('')||'<div id="msg">데이터 없음</div>';
   $('glistT').textContent=`종목 리스트 (${items.length})`;
-  $('glist').innerHTML=items.map(it=>`<button class='pitem' onclick='gotoStock("${it.tk}")'>${it.name.replace(/<[^>]+>/g,'')}<small>${it.tk}</small></button>`).join('');
+  $('glist').innerHTML=items.map(it=>`<button class='pitem' onclick='gotoStock("${it.tk}")'${it.col?` style='color:${it.col};font-weight:700'`:''}>${it.name.replace(/<[^>]+>/g,'').replace(/●(상승|하락)변곡/,'')}<small>${it.tk}</small></button>`).join('');
 }
 function gotoSector(i){
   document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('on',b.dataset.t==='main'));
