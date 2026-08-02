@@ -77,10 +77,10 @@ function draw(){
   const nDiv=Math.round((m1-mLo)/step);
   for(let k=0;k<=nDiv;k++){const v=mLo+step*k,y=Ym(v);
     s+=`<line x1='${L}' y1='${y}' x2='${W-R}' y2='${y}' stroke='#eef1f4'/>`;
-    s+=`<text x='${L-6}' y='${y+4}' font-size='11' fill='#67737f' text-anchor='end'>${v>=10000?(v/10000).toFixed(v>=100000?0:1)+'조':Math.round(v).toLocaleString()}</text>`;}
-  for(const w of [2*oM,oM,0,-oM]){const y=Yo(w);
-    s+=`<line x1='${L}' y1='${y}' x2='${W-R}' y2='${y}' stroke='${w===0?'#f2c9c4':'#f7ecea'}' ${w===0?"stroke-dasharray='4 4'":''}/>`;
+    s+=`<text x='${L-6}' y='${y+4}' font-size='11' fill='#67737f' text-anchor='end'>${v>=10000?(v/10000).toFixed(v>=100000?0:1)+'조':Math.round(v).toLocaleString()}</text>`;
+    const w=((1-(y-T)/PH)*4.4-1.2)*oM;  // 같은 그리드 라인의 오실레이터 환산값
     s+=`<text x='${W-R+6}' y='${y+4}' font-size='11' fill='#c0392b'>${(w*100).toFixed(2)}%</text>`;}
+  s+=`<line x1='${L}' y1='${Yo(0)}' x2='${W-R}' y2='${Yo(0)}' stroke='#c0392b' stroke-dasharray='4 4' stroke-width='.8' opacity='.5'/>`;
   const st=Math.max(1,Math.floor(pts.length/8));
   for(let i=0;i<pts.length;i+=st) s+=`<text x='${X(i)}' y='${H-14}' font-size='10.5' fill='#9aa4ad' text-anchor='middle'>${pts[i].d.slice(4,6)}/${pts[i].d.slice(6)}</text>`;
   s+=`<polyline points='${pts.map((p,i)=>X(i).toFixed(1)+','+Ym(p.m).toFixed(1)).join(' ')}' fill='none' stroke='#111' stroke-width='1.9'/>`;
