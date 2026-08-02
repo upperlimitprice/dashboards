@@ -30,7 +30,7 @@ def main():
             flows = sorted(ROOT.glob("flows/*.html"), reverse=True)
             if not flows:
                 continue
-            href = f"flows/{flows[0].name}"
+            href = f"flows/{flows[0].name}?v={int(flows[0].stat().st_mtime)}"
             title += f" ({flows[0].stem})"
             desc = ("사모·투신·연기금·외국인·프로그램 순매수/순매도 · 과거: "
                     + " · ".join(f"<a href='flows/{p.name}'>{p.stem}</a>" for p in flows[1:6]))
