@@ -5,7 +5,7 @@ h1{font-size:1.35rem}
 .layout{display:grid;grid-template-columns:1fr 290px;gap:22px;align-items:start}
 @media(max-width:860px){.layout{grid-template-columns:1fr}}
 h2{font-size:.92rem;margin:0 0 10px;color:#6b7683}
-.card{position:relative;display:block;padding:14px 40px 14px 18px;border:1.5px solid #dde3e9;border-radius:11px;margin:10px 0;text-decoration:none;color:#20262e;font-weight:600;background:#fff}
+.card{position:relative;display:block;padding:14px 40px 14px 18px;border:1.5px solid #dde3e9;border-radius:11px;margin:10px 0;color:#20262e;font-weight:600;background:#fff;cursor:pointer}
 .card:hover{border-color:#b07d1e;background:#fffbf0}
 .card small{color:#6b7683;font-weight:400;display:block;margin-top:3px;font-size:.78rem}
 .card small a{color:#1f6fd6;text-decoration:none}
@@ -36,19 +36,20 @@ function save(){localStorage.setItem(KEY,JSON.stringify(state));}
 function item(k){return REG.find(x=>x.k===k);}
 function render(){
   const main=document.getElementById('main');
-  main.innerHTML=state.main.map(k=>{const x=item(k);return `<a class='card' draggable='true' data-k='${x.k}' href='${x.h}'>${x.t}<small>${x.d}</small><button class='x' title='보관함으로' onclick='return rm(event,"${x.k}")'>✕</button></a>`;}).join('')||"<div class='empty'>보관함에서 ＋를 눌러 위젯을 추가하세요</div>";
+  main.innerHTML=state.main.map(k=>{const x=item(k);return `<div class='card' draggable='true' data-k='${x.k}' onclick='go(event,"${x.h}")'>${x.t}<small>${x.d}</small><button class='x' title='보관함으로' onclick='return rm(event,"${x.k}")'>✕</button></div>`;}).join('')||"<div class='empty'>보관함에서 ＋를 눌러 위젯을 추가하세요</div>";
   const rest=REG.filter(x=>!state.main.includes(x.k));
   document.getElementById('sideList').innerHTML=rest.map(x=>`<div class='sitem'><span class='nm'>${x.t}</span><button class='add' onclick='addW("${x.k}")'>＋</button></div>`).join('')||"<div class='empty'>모든 위젯이 메인에 있습니다</div>";
   wireDrag();
 }
+function go(e,h){if(e.target.closest('a,.x'))return;location.href=h;}
 function rm(e,k){e.preventDefault();e.stopPropagation();state.main=state.main.filter(x=>x!==k);save();render();return false;}
 function addW(k){state.main.push(k);save();render();}
 function wireDrag(){
   const box=document.getElementById('main');let drag=null;
-  box.querySelectorAll('a[draggable]').forEach(el=>{
+  box.querySelectorAll('.card[draggable]').forEach(el=>{
     el.addEventListener('dragstart',()=>{drag=el;el.style.opacity=.4;});
     el.addEventListener('dragend',()=>{if(drag)drag.style.opacity=1;drag=null;
-      state.main=[...box.querySelectorAll('a[draggable]')].map(x=>x.dataset.k);save();});
+      state.main=[...box.querySelectorAll('.card[draggable]')].map(x=>x.dataset.k);save();});
     el.addEventListener('dragover',e=>{e.preventDefault();
       if(!drag||drag===el)return;
       const r=el.getBoundingClientRect();
