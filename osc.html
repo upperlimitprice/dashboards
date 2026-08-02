@@ -42,8 +42,14 @@ input{flex:1;min-width:230px}
 .pitem{display:block;width:100%;text-align:left;font:inherit;font-size:.8rem;padding:6px 4px;border:0;border-bottom:1px solid #f0f3f6;background:none;cursor:pointer;color:#20262e}
 .pitem:hover{color:#1f6fd6}
 .pitem small{color:#9aa4ad;margin-left:4px}
+.navbtn{font:inherit;font-size:1rem;width:34px;height:34px;border:1.5px solid #ccd5dd;border-radius:9px;background:#fff;cursor:pointer;color:#444;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.navbtn:disabled{opacity:.35;cursor:default}
+.navbtn:not(:disabled):hover{border-color:#1f6fd6;color:#1f6fd6}
 </style>
 <div class='wrap'>
+<div id='nav' style='position:fixed;top:10px;left:12px;z-index:20;display:flex;gap:6px'>
+<button id='navB' class='navbtn' title='이전'>←</button><button id='navF' class='navbtn' title='앞으로'>→</button>
+</div>
 <h1>📊 수급 오실레이터 <small id='upd' style='font-size:.72rem;font-weight:400;color:#9aa4ad'></small></h1>
 <p class='sub'>시가총액(검정, 좌축) vs 수급 오실레이터(빨강, 우축) · 오실레이터 = 5일 (외국인+기관 순매수합)/시총의 MACD(12·26·9) 히스토그램 · 평일 자동 갱신</p>
 <div id='tabs'>
@@ -66,7 +72,6 @@ input{flex:1;min-width:230px}
 </div>
 <div class='duo'>
 <div class='card'>
-<button id='back' style='display:none;font:inherit;font-size:.78rem;padding:5px 12px;margin-bottom:8px;border:1.5px solid #ccd5dd;border-radius:8px;background:#fff;cursor:pointer;color:#444'>← 이전 목록으로</button>
 <div class='ttl' id='nm'>—</div>
 <div id='chips'></div>
 <div class='meta' id='mt'>종목을 검색하세요</div>
@@ -103,12 +108,6 @@ Promise.all([fetch('osc/index.json?v='+Date.now()).then(r=>r.json()), fetch('osc
   $('mt').textContent=`총 ${d.stocks.length.toLocaleString()}종목 · ${sec.length}섹터 · 최신 데이터 ${fmtD(d.dates[d.dates.length-1])}`;
   if(d.updated){$('upd').textContent=`최종 업데이트 ${d.updated}`;document.title=`수급 오실레이터 · ${d.updated} 업데이트`;}
   renderRecent();
-  document.getElementById('back').onclick=()=>{
-    if(!prevTab)return;
-    const b=document.querySelector(`.tab[data-t='${prevTab}']`);
-    if(b)b.click();
-    $('back').style.display='none';
-  };
   $('q').value='삼성전자'; show();
 });
 function fillNames(){
@@ -139,11 +138,12 @@ async function show(){
   const hit=find($('q').value); if(!hit) return;
   const [tk,name,sh]=hit;
   if(!cacheShard[sh]) cacheShard[sh]=await fetch(`osc/s${sh}.json`).then(r=>r.json());
-  cur={tk,name,rec:cacheShard[sh][tk]}; pushRecent(tk,name); 
+  cur={tk,name,rec:cacheShard[sh][tk]}; pushRecent(tk,name); hpush({t:'main',tk}); 
   $('chips').innerHTML=(hit[3]||[]).map(c=>{const x=SEC.find(y=>y.c===c);return x?`<span class='chip'>${x.n}</span>`:'';}).join('');
   draw();
 }
 function showSector(i){
+  hpush({t:'main',sec:i});
   const x=SEC[i];
   cur={tk:x.c,name:x.n+' (합산)',rec:x};
   $('chips').innerHTML=`<span class='chip'>${x.t.length}종목 합산</span>`;
@@ -277,13 +277,7 @@ async function renderGrid(kind){
   $('glistT').textContent=`종목 리스트 (${items.length})`;
   $('glist').innerHTML=items.map(it=>`<button class='pitem' onclick='gotoStock("${it.tk}")'${it.col?` style='color:${it.col};font-weight:700'`:''}>${it.name.replace(/<[^>]+>/g,'').replace(/●(상승|하락)변곡/,'')}<small>${it.tk}</small></button>`).join('');
 }
-let prevTab=null;
-function rememberTab(){
-  const t=document.querySelector('.tab.on');
-  if(t&&t.dataset.t!=='main'){prevTab=t.dataset.t;$('back').style.display='';}
-}
-$('back').addEventListener?0:0;
-function gotoSector(i){rememberTab();
+function gotoSector(i){
   document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('on',b.dataset.t==='main'));
   $('gridPage').style.display='none';
   document.querySelector('.duo').style.display='';
@@ -294,7 +288,6 @@ function gotoSector(i){rememberTab();
 function gotoStock(tk){
   const st=IDX.stocks.find(x=>x[0]===tk);
   if(!st)return;
-  rememberTab();
   document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('on',b.dataset.t==='main'));
   $('gridPage').style.display='none';
   document.querySelector('.duo').style.display='';
@@ -305,10 +298,34 @@ function gotoStock(tk){
 document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{
   document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x===b));
   const t=b.dataset.t;
+  if(t!=='main')hpush({t});
   const bar=document.querySelector('.bar'), duoMain=document.querySelector('.duo');
-  if(t==='main'){$('gridPage').style.display='none';duoMain.style.display='';bar.style.display='';$('back').style.display='none';}
+  if(t==='main'){$('gridPage').style.display='none';duoMain.style.display='';bar.style.display='';}
   else{duoMain.style.display='none';bar.style.display='none';$('gridPage').style.display='';renderGrid(t);}
 }));
+// 페이지 내 탐색 히스토리 (← →)
+let HIST=[], HPOS=-1, NAVIGATING=false;
+function hpush(st){
+  if(NAVIGATING)return;
+  HIST=HIST.slice(0,HPOS+1); HIST.push(st); HPOS=HIST.length-1; hbtn();
+}
+function hbtn(){$('navB').disabled=HPOS<=0;$('navF').disabled=HPOS>=HIST.length-1;}
+function happly(st){
+  NAVIGATING=true;
+  try{
+    if(st.t==='main'){
+      document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('on',b.dataset.t==='main'));
+      $('gridPage').style.display='none';document.querySelector('.duo').style.display='';document.querySelector('.bar').style.display='';
+      if(st.sec!=null){$('sec').value=String(st.sec);fillNames();showSector(st.sec);}
+      else if(st.tk){const s2=IDX.stocks.find(x=>x[0]===st.tk);if(s2){$('q').value=s2[1];show();}}
+    }else{
+      const b=document.querySelector(`.tab[data-t='${st.t}']`);
+      if(b)b.click();
+    }
+  }finally{NAVIGATING=false;hbtn();}
+}
+$('navB').onclick=()=>{if(HPOS>0){HPOS--;happly(HIST[HPOS]);}};
+$('navF').onclick=()=>{if(HPOS<HIST.length-1){HPOS++;happly(HIST[HPOS]);}};
 $('q').addEventListener('change',show);
 $('q').addEventListener('keydown',e=>{if(e.key==='Enter')show();});
 $('per').addEventListener('change',()=>{const t=document.querySelector('.tab.on').dataset.t;if(t!=='main')renderGrid(t);else if(cur&&cur.cmp)drawCompare(cur.cmp);else draw();});
