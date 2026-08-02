@@ -33,18 +33,40 @@ a{display:block;padding:13px 18px;border:1.5px solid #dde3e9;border-radius:10px;
 a:hover{border-color:#b07d1e;background:#fffbf0}small{color:#6b7683;font-weight:400;display:block;margin-top:3px}</style></head><body>
 <h1>📊 쩜상리서치 대시보드</h1>"""]
 
-    parts.append("<h2>데일리 모니터</h2>")
+    parts.append("<h2>데일리 모니터 <small style='font-weight:400;color:#9aa4ad'>(드래그로 순서 변경 — 브라우저에 저장됨)</small></h2>")
+    parts.append("<div id='daily'>")
     for f in ("signals.html", "kr-breadth.html", "funds.html", "cds.html", "tanker.html", "osc.html"):
         if (ROOT / f).exists():
             t, d = DESC[f]
-            parts.append(f'<a href="{f}">{t}<small>{d}</small></a>')
+            parts.append(f'<a draggable="true" data-k="{f}" href="{f}">{t}<small>{d}</small></a>')
     flows = sorted(ROOT.glob("flows/*.html"), reverse=True)
     if flows:
         latest = flows[0]
-        parts.append(f'<a href="flows/{latest.name}">💰 수급 주체별 시총대비 Top20 (최신 {latest.stem})'
+        parts.append(f'<a draggable="true" data-k="flows" href="flows/{latest.name}">💰 수급 주체별 시총대비 Top20 (최신 {latest.stem})'
                      f'<small>사모·투신·연기금·외국인·프로그램 순매수/순매도'
                      + (" · 과거: " + " · ".join(f'<a style="display:inline;border:0;padding:0" href="flows/{p.name}">{p.stem}</a>' for p in flows[1:6]) if len(flows) > 1 else "")
                      + "</small></a>")
+    parts.append("</div>")
+    parts.append("""<script>
+(function(){
+  const box=document.getElementById('daily');
+  const KEY='dailyOrder';
+  const saved=JSON.parse(localStorage.getItem(KEY)||'[]');
+  if(saved.length){
+    saved.forEach(k=>{const el=box.querySelector(`[data-k="${k}"]`);if(el)box.appendChild(el);});
+  }
+  let drag=null;
+  box.querySelectorAll('a[draggable]').forEach(el=>{
+    el.addEventListener('dragstart',e=>{drag=el;el.style.opacity=.4;});
+    el.addEventListener('dragend',()=>{drag&&(drag.style.opacity=1);drag=null;
+      localStorage.setItem(KEY,JSON.stringify([...box.querySelectorAll('a[draggable]')].map(x=>x.dataset.k)));});
+    el.addEventListener('dragover',e=>{e.preventDefault();
+      if(!drag||drag===el)return;
+      const r=el.getBoundingClientRect();
+      box.insertBefore(drag, e.clientY < r.top+r.height/2 ? el : el.nextSibling);});
+  });
+})();
+</script>""")
 
     parts.append("<h2>분석 리포트</h2>")
     # 목록 제외: kci.html, lpddr.html, calls/ (2026-07-31 사용자 요청 — 직접 링크로는 접근 가능)

@@ -4,14 +4,36 @@ h1{font-size:1.35rem}h2{font-size:1rem;margin:28px 0 6px;color:#6b7683}
 a{display:block;padding:13px 18px;border:1.5px solid #dde3e9;border-radius:10px;margin:9px 0;text-decoration:none;color:#20262e;font-weight:600}
 a:hover{border-color:#b07d1e;background:#fffbf0}small{color:#6b7683;font-weight:400;display:block;margin-top:3px}</style></head><body>
 <h1>📊 쩜상리서치 대시보드</h1>
-<h2>데일리 모니터</h2>
-<a href="signals.html">🚦 시장 신호등 (국내·미국)<small>Market Score · ADR · 모멘텀 · RSI · VIX · E-Ratio</small></a>
-<a href="kr-breadth.html">📉 KOSPI 이격도·신용잔고<small>60일 이격도(1990~) · 3개월 수익률 · 신용잔고/시총</small></a>
-<a href="funds.html">💼 주체별 증시자금<small>외국인 보유액·비중 · 국내(기관+개인) · 투자자예탁금 · 신용융자</small></a>
-<a href="cds.html">🏦 빅테크 5년 CDS 트래커<small>MSFT·GOOGL·AMZN·META·NVDA·ORCL·CRWV 신용위험</small></a>
-<a href="tanker.html">🛢 탱커 운임 마켓<small>VLCC·수에즈막스 WS · LPG/LNG · BCTI · 선가 · 픽스처</small></a>
-<a href="osc.html">📊 수급 오실레이터<small>종목 검색 — 시가총액 vs 외국인·기관 수급 MACD (2,455종목)</small></a>
-<a href="flows/2026-07-31.html">💰 수급 주체별 시총대비 Top20 (최신 2026-07-31)<small>사모·투신·연기금·외국인·프로그램 순매수/순매도 · 과거: <a style="display:inline;border:0;padding:0" href="flows/2026-07-30.html">2026-07-30</a></small></a>
+<h2>데일리 모니터 <small style='font-weight:400;color:#9aa4ad'>(드래그로 순서 변경 — 브라우저에 저장됨)</small></h2>
+<div id='daily'>
+<a draggable="true" data-k="signals.html" href="signals.html">🚦 시장 신호등 (국내·미국)<small>Market Score · ADR · 모멘텀 · RSI · VIX · E-Ratio</small></a>
+<a draggable="true" data-k="kr-breadth.html" href="kr-breadth.html">📉 KOSPI 이격도·신용잔고<small>60일 이격도(1990~) · 3개월 수익률 · 신용잔고/시총</small></a>
+<a draggable="true" data-k="funds.html" href="funds.html">💼 주체별 증시자금<small>외국인 보유액·비중 · 국내(기관+개인) · 투자자예탁금 · 신용융자</small></a>
+<a draggable="true" data-k="cds.html" href="cds.html">🏦 빅테크 5년 CDS 트래커<small>MSFT·GOOGL·AMZN·META·NVDA·ORCL·CRWV 신용위험</small></a>
+<a draggable="true" data-k="tanker.html" href="tanker.html">🛢 탱커 운임 마켓<small>VLCC·수에즈막스 WS · LPG/LNG · BCTI · 선가 · 픽스처</small></a>
+<a draggable="true" data-k="osc.html" href="osc.html">📊 수급 오실레이터<small>종목 검색 — 시가총액 vs 외국인·기관 수급 MACD (2,455종목)</small></a>
+<a draggable="true" data-k="flows" href="flows/2026-07-31.html">💰 수급 주체별 시총대비 Top20 (최신 2026-07-31)<small>사모·투신·연기금·외국인·프로그램 순매수/순매도 · 과거: <a style="display:inline;border:0;padding:0" href="flows/2026-07-30.html">2026-07-30</a></small></a>
+</div>
+<script>
+(function(){
+  const box=document.getElementById('daily');
+  const KEY='dailyOrder';
+  const saved=JSON.parse(localStorage.getItem(KEY)||'[]');
+  if(saved.length){
+    saved.forEach(k=>{const el=box.querySelector(`[data-k="${k}"]`);if(el)box.appendChild(el);});
+  }
+  let drag=null;
+  box.querySelectorAll('a[draggable]').forEach(el=>{
+    el.addEventListener('dragstart',e=>{drag=el;el.style.opacity=.4;});
+    el.addEventListener('dragend',()=>{drag&&(drag.style.opacity=1);drag=null;
+      localStorage.setItem(KEY,JSON.stringify([...box.querySelectorAll('a[draggable]')].map(x=>x.dataset.k)));});
+    el.addEventListener('dragover',e=>{e.preventDefault();
+      if(!drag||drag===el)return;
+      const r=el.getBoundingClientRect();
+      box.insertBefore(drag, e.clientY < r.top+r.height/2 ? el : el.nextSibling);});
+  });
+})();
+</script>
 <h2>분석 리포트</h2>
 <a href="parts-trend.html">📦 전자부품 리드타임 트렌드<small>Future Electronics 월간 — 카테고리별 리드타임·가격 방향</small></a>
 <a href="fx-flow.html">💱 환율×외국인 수급 공식<small>원화 1% 절하당 외국인 순매도 효과</small></a>
