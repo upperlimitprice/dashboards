@@ -69,7 +69,7 @@ function draw(){
   const oM=Math.max(Math.abs(Math.min(...ov)),Math.abs(Math.max(...ov)))*1.1||1e-6;
   const X=i=>L+i*(W-L-R)/Math.max(1,pts.length-1);
   // 겹침 최소화: 시총 = 상단 58% 밴드, 오실레이터 = 하단 32% 밴드로 분리
-  const PH=H-T-B, mB=T+PH*0.58, oT=T+PH*0.68;
+  const PH=H-T-B, mB=T+PH*0.46, oT=T+PH*0.60;
   const Ym=v=>T+(mB-T)*(1-(v-m0)/(m1-m0));
   const Yo=v=>oT+(H-B-oT)*(1-(v+oM)/(2*oM));
   let s=`<svg viewBox='0 0 ${W} ${H}' style='width:100%;background:#fff'>`;
