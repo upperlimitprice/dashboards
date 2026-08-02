@@ -84,7 +84,7 @@ Promise.all([fetch('osc/index.json?v='+Date.now()).then(r=>r.json()), fetch('osc
   $('slist').innerHTML=sec.map((x,i)=>`<label><span><input type='checkbox' value='${i}'> ${x.n}</span><small>(${x.t.length}종목)</small></label>`).join('');
   fillNames();
   $('mt').textContent=`총 ${d.stocks.length.toLocaleString()}종목 · ${sec.length}섹터 · 최신 데이터 ${fmtD(d.dates[d.dates.length-1])}`;
-  if(d.updated) $('upd').textContent=`최종 업데이트 ${d.updated}`;
+  if(d.updated){$('upd').textContent=`최종 업데이트 ${d.updated}`;document.title=`수급 오실레이터 · ${d.updated} 업데이트`;}
   $('q').value='삼성전자'; show();
 });
 function fillNames(){
