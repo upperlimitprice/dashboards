@@ -54,8 +54,8 @@ input{flex:1;min-width:230px}
 <button class='tab' data-t='외국인'>외국인 순매수 상위 (시총대비)</button>
 <button class='tab' data-t='외국인전체'>외국인 순매수 상위 (전체 금액)</button>
 <button class='tab' data-t='sectors'>섹터별 모아보기</button>
-<button class='tab' data-t='bottom' style='color:#c0392b'>🔺 상승 변곡 임박</button>
-<button class='tab' data-t='peak' style='color:#1f6fd6'>▼ 하락 변곡 임박</button>
+<button class='tab' data-t='bottom' style='color:#c0392b;font-weight:800'>🔺 상승 변곡 임박</button>
+<button class='tab' data-t='peak' style='color:#1f6fd6;font-weight:800'>▼ 하락 변곡 임박</button>
 </div>
 <div class='bar'>
 <select id='sec'><option value=''>섹터 전체</option></select>
@@ -257,7 +257,8 @@ async function renderGrid(kind){
 function gotoSector(i){
   document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('on',b.dataset.t==='main'));
   $('gridPage').style.display='none';
-  document.querySelector('.card').style.display='';
+  document.querySelector('.duo').style.display='';
+  document.querySelector('.bar').style.display='';
   $('sec').value=String(i); fillNames(); showSector(i);
   window.scrollTo({top:0});
 }
@@ -266,15 +267,17 @@ function gotoStock(tk){
   if(!st)return;
   document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('on',b.dataset.t==='main'));
   $('gridPage').style.display='none';
-  document.querySelector('.card').style.display='';
+  document.querySelector('.duo').style.display='';
+  document.querySelector('.bar').style.display='';
   $('q').value=st[1]; $('sec').value=''; fillNames(); show();
   window.scrollTo({top:0});
 }
 document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{
   document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x===b));
   const t=b.dataset.t;
-  if(t==='main'){$('gridPage').style.display='none';document.querySelector('.card').style.display='';}
-  else{document.querySelector('.card').style.display='none';$('gridPage').style.display='';renderGrid(t);}
+  const bar=document.querySelector('.bar'), duoMain=document.querySelector('.duo');
+  if(t==='main'){$('gridPage').style.display='none';duoMain.style.display='';bar.style.display='';}
+  else{duoMain.style.display='none';bar.style.display='none';$('gridPage').style.display='';renderGrid(t);}
 }));
 $('q').addEventListener('change',show);
 $('q').addEventListener('keydown',e=>{if(e.key==='Enter')show();});
