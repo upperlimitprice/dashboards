@@ -66,6 +66,7 @@ input{flex:1;min-width:230px}
 </div>
 <div class='duo'>
 <div class='card'>
+<button id='back' style='display:none;font:inherit;font-size:.78rem;padding:5px 12px;margin-bottom:8px;border:1.5px solid #ccd5dd;border-radius:8px;background:#fff;cursor:pointer;color:#444'>← 이전 목록으로</button>
 <div class='ttl' id='nm'>—</div>
 <div id='chips'></div>
 <div class='meta' id='mt'>종목을 검색하세요</div>
@@ -102,6 +103,12 @@ Promise.all([fetch('osc/index.json?v='+Date.now()).then(r=>r.json()), fetch('osc
   $('mt').textContent=`총 ${d.stocks.length.toLocaleString()}종목 · ${sec.length}섹터 · 최신 데이터 ${fmtD(d.dates[d.dates.length-1])}`;
   if(d.updated){$('upd').textContent=`최종 업데이트 ${d.updated}`;document.title=`수급 오실레이터 · ${d.updated} 업데이트`;}
   renderRecent();
+  document.getElementById('back').onclick=()=>{
+    if(!prevTab)return;
+    const b=document.querySelector(`.tab[data-t='${prevTab}']`);
+    if(b)b.click();
+    $('back').style.display='none';
+  };
   $('q').value='삼성전자'; show();
 });
 function fillNames(){
@@ -270,7 +277,13 @@ async function renderGrid(kind){
   $('glistT').textContent=`종목 리스트 (${items.length})`;
   $('glist').innerHTML=items.map(it=>`<button class='pitem' onclick='gotoStock("${it.tk}")'${it.col?` style='color:${it.col};font-weight:700'`:''}>${it.name.replace(/<[^>]+>/g,'').replace(/●(상승|하락)변곡/,'')}<small>${it.tk}</small></button>`).join('');
 }
-function gotoSector(i){
+let prevTab=null;
+function rememberTab(){
+  const t=document.querySelector('.tab.on');
+  if(t&&t.dataset.t!=='main'){prevTab=t.dataset.t;$('back').style.display='';}
+}
+$('back').addEventListener?0:0;
+function gotoSector(i){rememberTab();
   document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('on',b.dataset.t==='main'));
   $('gridPage').style.display='none';
   document.querySelector('.duo').style.display='';
@@ -281,6 +294,7 @@ function gotoSector(i){
 function gotoStock(tk){
   const st=IDX.stocks.find(x=>x[0]===tk);
   if(!st)return;
+  rememberTab();
   document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('on',b.dataset.t==='main'));
   $('gridPage').style.display='none';
   document.querySelector('.duo').style.display='';
@@ -292,7 +306,7 @@ document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{
   document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x===b));
   const t=b.dataset.t;
   const bar=document.querySelector('.bar'), duoMain=document.querySelector('.duo');
-  if(t==='main'){$('gridPage').style.display='none';duoMain.style.display='';bar.style.display='';}
+  if(t==='main'){$('gridPage').style.display='none';duoMain.style.display='';bar.style.display='';$('back').style.display='none';}
   else{duoMain.style.display='none';bar.style.display='none';$('gridPage').style.display='';renderGrid(t);}
 }));
 $('q').addEventListener('change',show);
