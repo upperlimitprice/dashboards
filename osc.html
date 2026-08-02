@@ -59,32 +59,35 @@ function draw(){
   $('nm').textContent=`${name} (${tk})`;
   const lastM=pts[pts.length-1].m, lastO=pts[pts.length-1].o;
   $('mt').textContent=`${fmtD(pts[0].d)} ~ ${fmtD(pts[pts.length-1].d)} · 시총 ${lastM>=10000?(lastM/10000).toFixed(1)+'조':lastM.toLocaleString()+'억'} · 오실레이터 ${(lastO*100).toFixed(3)}%p`;
-  const W=1000,H=430,L=74,R=74,T=16,B=42;
+  const W=1000,H=470,L=78,R=78,T=16,B=56,PH=H-T-B;
   const mv=pts.map(p=>p.m), ov=pts.map(p=>p.o);
-  // 시총 축: 4등분 나이스 스케일 (1/2/2.5/5×10^n 단위로 반올림)
-  const lo=Math.min(...mv), hi=Math.max(...mv);
-  const rough=(hi-lo)/4||lo*0.1||1, pow=Math.pow(10,Math.floor(Math.log10(rough)));
-  const step=[1,2,2.5,5,10].map(x=>x*pow).find(x=>x>=rough);
-  const m0=Math.floor(lo/step)*step, m1=m0+step*Math.max(4,Math.ceil((hi-m0)/step));
-  const oM=Math.max(Math.abs(Math.min(...ov)),Math.abs(Math.max(...ov)))*1.1||1e-6;
+  const nice=r=>{const p=Math.pow(10,Math.floor(Math.log10(r)));return [1,2,2.5,5,10].map(x=>x*p).find(x=>x>=r);};
+  // 좌축(시총): 0부터 시작, 라운드 눈금 ~8등분 (엑셀 방식)
+  const mHi=Math.max(...mv), mStep=nice(mHi/8), nDiv=Math.ceil(mHi/mStep*1.0001)+0;
+  const m1=mStep*nDiv;
+  // 우축(오실레이터): 라운드 눈금, 그리드 수를 좌축과 동일하게 맞춤
+  const oLo=Math.min(...ov,0), oHi=Math.max(...ov,0);
+  let oStep=nice(Math.max((oHi-oLo)/nDiv,1e-7));
+  let o0=Math.floor(oLo/oStep)*oStep;
+  while(o0+nDiv*oStep<oHi*1.0001){oStep=nice(oStep*1.01);o0=Math.floor(oLo/oStep)*oStep;}
+  const o1=o0+nDiv*oStep;
   const X=i=>L+i*(W-L-R)/Math.max(1,pts.length-1);
-  // 전체 높이 공유하되 축 범위로 시각 분리: 시총은 아래 1칸 여유(위쪽 배치),
-  // 오실레이터는 범위를 -1.2~+3.2배로 넓혀 붉은 선이 하단에 머물게 함
-  const PH=H-T-B, mLo=m0-step;
-  const Ym=v=>T+PH*(1-(v-mLo)/(m1-mLo));
-  const Yo=v=>T+PH*(1-(v+1.2*oM)/(4.4*oM));
+  const Ym=v=>T+PH*(1-v/m1);
+  const Yo=v=>T+PH*(1-(v-o0)/(o1-o0));
   let s=`<svg viewBox='0 0 ${W} ${H}' style='width:100%;background:#fff'>`;
-  const nDiv=Math.round((m1-mLo)/step);
-  for(let k=0;k<=nDiv;k++){const v=mLo+step*k,y=Ym(v);
+  for(let k=0;k<=nDiv;k++){
+    const y=T+PH*(1-k/nDiv), mvv=mStep*k, ovv=o0+oStep*k;
     s+=`<line x1='${L}' y1='${y}' x2='${W-R}' y2='${y}' stroke='#eef1f4'/>`;
-    s+=`<text x='${L-6}' y='${y+4}' font-size='11' fill='#67737f' text-anchor='end'>${v>=10000?(v/10000).toFixed(v>=100000?0:1)+'조':Math.round(v).toLocaleString()}</text>`;
-    const w=((1-(y-T)/PH)*4.4-1.2)*oM;  // 같은 그리드 라인의 오실레이터 환산값
-    s+=`<text x='${W-R+6}' y='${y+4}' font-size='11' fill='#c0392b'>${(w*100).toFixed(2)}%</text>`;}
-  s+=`<line x1='${L}' y1='${Yo(0)}' x2='${W-R}' y2='${Yo(0)}' stroke='#c0392b' stroke-dasharray='4 4' stroke-width='.8' opacity='.5'/>`;
-  const st=Math.max(1,Math.floor(pts.length/8));
-  for(let i=0;i<pts.length;i+=st) s+=`<text x='${X(i)}' y='${H-14}' font-size='10.5' fill='#9aa4ad' text-anchor='middle'>${pts[i].d.slice(4,6)}/${pts[i].d.slice(6)}</text>`;
-  s+=`<polyline points='${pts.map((p,i)=>X(i).toFixed(1)+','+Ym(p.m).toFixed(1)).join(' ')}' fill='none' stroke='#111' stroke-width='1.9'/>`;
-  s+=`<polyline points='${pts.map((p,i)=>X(i).toFixed(1)+','+Yo(p.o).toFixed(1)).join(' ')}' fill='none' stroke='#c0392b' stroke-width='1.9'/>`;
+    s+=`<text x='${L-6}' y='${y+4}' font-size='11' fill='#444' text-anchor='end'>${mvv>=10000?(mvv/10000).toLocaleString(undefined,{maximumFractionDigits:1})+'조':Math.round(mvv).toLocaleString()}</text>`;
+    s+=`<text x='${W-R+6}' y='${y+4}' font-size='11' fill='#c0392b'>${(ovv*100).toFixed(2)}%</text>`;
+  }
+  if(o0<0&&o1>0) s+=`<line x1='${L}' y1='${Yo(0)}' x2='${W-R}' y2='${Yo(0)}' stroke='#c9ced4' stroke-width='.9'/>`;
+  const st=Math.max(1,Math.floor(pts.length/10));
+  for(let i=0;i<pts.length;i+=st) s+=`<text x='${X(i)}' y='${H-30}' font-size='10.5' fill='#67737f' text-anchor='middle' transform='rotate(-35 ${X(i)} ${H-30})'>${fmtD(pts[i].d)}</text>`;
+  s+=`<polyline points='${pts.map((p,i)=>X(i).toFixed(1)+','+Ym(p.m).toFixed(1)).join(' ')}' fill='none' stroke='#333' stroke-width='2.4'/>`;
+  s+=`<polyline points='${pts.map((p,i)=>X(i).toFixed(1)+','+Yo(p.o).toFixed(1)).join(' ')}' fill='none' stroke='#e30613' stroke-width='2.4'/>`;
+  s+=`<text x='${W/2-90}' y='${H-4}' font-size='12' fill='#333' font-weight='700' text-anchor='end'>━ ${name} 시가총액</text>`;
+  s+=`<text x='${W/2+10}' y='${H-4}' font-size='12' fill='#e30613' font-weight='700'>━ ${name} 오실레이터</text>`;
   s+='</svg>';
   $('chart').innerHTML=s;
 }
