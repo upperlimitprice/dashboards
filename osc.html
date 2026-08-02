@@ -36,7 +36,7 @@ input{flex:1;min-width:230px}
 .mini .mb{font-size:.68rem;color:#8a94a0;margin-top:2px}
 </style>
 <div class='wrap'>
-<h1>📊 수급 오실레이터</h1>
+<h1>📊 수급 오실레이터 <small id='upd' style='font-size:.72rem;font-weight:400;color:#9aa4ad'></small></h1>
 <p class='sub'>시가총액(검정, 좌축) vs 수급 오실레이터(빨강, 우축) · 오실레이터 = 5일 (외국인+기관 순매수합)/시총의 MACD(12·26·9) 히스토그램 · 평일 자동 갱신</p>
 <div id='tabs'>
 <button class='tab on' data-t='main'>메인</button>
@@ -44,6 +44,7 @@ input{flex:1;min-width:230px}
 <button class='tab' data-t='투신'>투신 순매수 상위</button>
 <button class='tab' data-t='연기금'>연기금 순매수 상위</button>
 <button class='tab' data-t='외국인'>외국인 순매수 상위</button>
+<button class='tab' data-t='sectors'>섹터별 모아보기</button>
 <button class='tab' data-t='bottom'>🔻 바닥 변곡 근접</button>
 </div>
 <div class='bar'>
@@ -83,6 +84,7 @@ Promise.all([fetch('osc/index.json').then(r=>r.json()), fetch('osc/sectors.json'
   $('slist').innerHTML=sec.map((x,i)=>`<label><span><input type='checkbox' value='${i}'> ${x.n}</span><small>(${x.t.length}종목)</small></label>`).join('');
   fillNames();
   $('mt').textContent=`총 ${d.stocks.length.toLocaleString()}종목 · ${sec.length}섹터 · 최신 데이터 ${fmtD(d.dates[d.dates.length-1])}`;
+  if(d.updated) $('upd').textContent=`최종 업데이트 ${d.updated}`;
   $('q').value='삼성전자'; show();
 });
 function fillNames(){
@@ -178,6 +180,13 @@ function miniSvg(rec,per){
 async function renderGrid(kind){
   const per=+$('per').value||78;
   let items=[], sub='';
+  if(kind==='sectors'){
+    $('gridSub').textContent=`전체 ${SEC.length}개 섹터·지수 합산 오실레이터 — 카드를 누르면 메인 차트로 이동`;
+    $('grid').innerHTML=SEC.map((x,i)=>`<div class='mini' onclick="gotoSector(${i})">
+      <div class='mh'><span>${x.n}</span><small>${x.t.length}종목</small></div>
+      ${miniSvg(x,per)}<div class='mb'>구성종목 시총합 · 합산 수급</div></div>`).join('');
+    return;
+  }
   if(kind==='bottom'){
     if(!BOTTOM) BOTTOM=await fetch('osc/bottom.json').then(r=>r.json());
     items=BOTTOM.list.map(x=>({tk:x[0],name:x[1],meta:`바닥평균 대비 ${(x[2]*100).toFixed(0)}% · osc ${(x[3]*100).toFixed(3)}%`}));
@@ -201,6 +210,13 @@ async function renderGrid(kind){
       ${miniSvg(rec,per)}<div class='mb'>${it.meta}</div></div>`);
   }
   $('grid').innerHTML=cells.join('')||'<div id="msg">데이터 없음</div>';
+}
+function gotoSector(i){
+  document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('on',b.dataset.t==='main'));
+  $('gridPage').style.display='none';
+  document.querySelector('.card').style.display='';
+  $('sec').value=String(i); fillNames(); showSector(i);
+  window.scrollTo({top:0});
 }
 function gotoStock(tk){
   const st=IDX.stocks.find(x=>x[0]===tk);
