@@ -223,6 +223,31 @@ function draw(){
   s+=`<text x='${W/2+40}' y='${H-8}' font-size='13' fill='#e30613' font-weight='700'>━ ${name} 오실레이터</text>`;
   s+='</svg>';
   $('chart').innerHTML=s;
+  bindTip(pts,W,L,R);
+}
+let TIP=null;
+function bindTip(pts,W,L,R){
+  if(!TIP){
+    TIP=document.createElement('div');
+    TIP.style.cssText='position:fixed;display:none;background:#16181d;color:#fff;padding:8px 11px;border-radius:8px;font-size:12px;line-height:1.6;pointer-events:none;z-index:50;box-shadow:0 3px 12px rgba(0,0,0,.25)';
+    document.body.appendChild(TIP);
+  }
+  const box=$('chart');
+  box.onmousemove=e=>{
+    const r=box.getBoundingClientRect();
+    const fx=(e.clientX-r.left)/r.width*W;
+    let i=Math.round((fx-L)/(W-L-R)*(pts.length-1));
+    i=Math.max(0,Math.min(pts.length-1,i));
+    const p=pts[i];
+    const mv=p.m>=10000?(p.m/10000).toFixed(2)+'조':p.m.toLocaleString()+'억';
+    TIP.innerHTML=`<div style='color:#9aa4ad'>${fmtD(p.d)}</div>`
+      +`<div><span style='color:#aaa'>●</span> 시가총액: <b>${mv}</b></div>`
+      +`<div><span style='color:#e30613'>●</span> 오실레이터: <b>${(p.o*100).toFixed(3)}%</b></div>`;
+    TIP.style.display='block';
+    TIP.style.left=Math.min(e.clientX+14,innerWidth-TIP.offsetWidth-8)+'px';
+    TIP.style.top=(e.clientY+14)+'px';
+  };
+  box.onmouseleave=()=>{TIP.style.display='none';};
 }
 let TOPS=null, BOTTOM=null;
 async function loadShard(sh){
