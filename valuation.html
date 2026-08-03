@@ -3,6 +3,8 @@
 body{font-family:'Apple SD Gothic Neo','Noto Sans KR',sans-serif;background:#f4f6f8;margin:0;color:#1c2530}
 .wrap{max-width:1060px;margin:0 auto;padding:28px 16px 70px}
 h1{font-size:1.3rem} h2{font-size:1.05rem;margin:28px 0 8px} .sub{color:#67737f;font-size:.85rem}
+.up{color:#d63c2f;font-weight:700} .dn{color:#2660c4;font-weight:700}
+td,th{padding:5px 8px} td.l{text-align:left;font-size:.76rem;color:#67737f} td{text-align:center}
 .cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:16px 0}
 @media(max-width:900px){.cards{grid-template-columns:1fr 1fr}}
 .kcard{background:#fff;border:1px solid #ccd5dd;border-radius:12px;padding:13px 15px}
@@ -18,6 +20,15 @@ h1{font-size:1.3rem} h2{font-size:1.05rem;margin:28px 0 8px} .sub{color:#67737f;
 <div class='kcard'><div class='kt'>밸류에이션 (지수/24M이평)</div><div class='kv'>+62.7%</div><div class='kd'>상관 r=+0.78 타깃</div></div>
 <div class='kcard'><div class='kt'>예탁금 12M 증가율</div><div class='kv'>+51.6%</div><div class='kd'>단일 최강 팩터 (r=+0.63)</div></div>
 <div class='kcard'><div class='kt'>금리 12M 변화 (선행경보)</div><div class='kv'>+1.31%p</div><div class='kd'>12개월 후 밸류와 r=−0.53</div></div>
+</div>
+<h2 style='margin-top:20px'>🔮 향후 밸류에이션 방향 — n개월 선행 모델 요약</h2>
+<div class='box'>
+<table style='border-collapse:collapse;width:100%;font-size:.84rem'>
+<tr style='color:#67737f'><th style='text-align:left'>시계</th><th>예상 밸류에이션*</th><th>현재(+63%) 대비</th><th style='text-align:left'>근거 (선행지표 → 개별 예측)</th></tr>
+<tr><td><b>3개월 후</b></td><td><b>+37%</b></td><td class='dn'>-25%p ▼ 수축</td><td class='l'>온도Z(r=+0.68→+53%) · 예탁금12M증가율(r=+0.62→+21%)</td></tr><tr><td><b>6개월 후</b></td><td><b>+22%</b></td><td class='dn'>-41%p ▼ 수축</td><td class='l'>예탁금12M증가율(r=+0.49→+19%) · 온도Z(r=+0.44→+43%) · 금리12M변화(r=-0.33→-4%)</td></tr><tr><td><b>12개월 후</b></td><td><b>-3%</b></td><td class='dn'>-66%p ▼ 수축</td><td class='l'>기업심리(역발상)(r=-0.45→-1%) · 금리12M변화(r=-0.44→-8%) · 제조업PMI(역발상)(r=-0.43→-1%)</td></tr>
+</table>
+<div style='margin-top:8px'>단기 지표부터 수축 전환 — 유동성 유입 둔화를 주시해야 합니다.</div>
+<div style='color:#9aa4ad;font-size:.75rem;margin-top:6px'>* 각 시계의 최강 선행지표들로 단변량 회귀 예측을 |r| 가중 평균. 밸류에이션 = 지수/24개월 이평 괴리%. 인샘플 추정이므로 방향·상대 크기 참고용 (점추정 아님).</div>
 </div>
 <h2>① 밸류에이션 온도 Z vs 실제 밸류에이션 (r=+0.78)</h2>
 <p class='sub'>빨간 선이 <b>온도 Z</b>(금리·물가·예탁금 4개 팩터의 가중 합성), 남색 선이 <b>실제 밸류에이션</b>(KOSPI가 자신의 24개월 평균에서 얼마나 떨어져 있는지)을 같은 눈금으로 표준화한 것입니다. 두 선이 같이 움직일수록 산식이 유효하다는 뜻이고, 160개월 동안 상관 0.78로 동행했습니다. <b>보는 법</b>: 빨간 선이 0 위로 높이 올라가면 유동성·거시 환경이 밸류에이션 과열을 지지하는 국면, 0 아래로 깊이 내려가면 침체 국면입니다. 두 선이 벌어지는 순간이 오히려 신호 — 빨간 선(환경)은 내려가는데 남색 선(실제 밸류)이 높게 버티면 "환경 대비 고평가"로 조정 취약, 반대로 빨간 선이 먼저 돌아서면 회복 선행 가능성.</p>
