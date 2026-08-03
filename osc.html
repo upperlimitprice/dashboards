@@ -45,6 +45,8 @@ input{flex:1;min-width:230px}
 .navbtn{font:inherit;font-size:1rem;width:34px;height:34px;border:1.5px solid #ccd5dd;border-radius:9px;background:#fff;cursor:pointer;color:#444;box-shadow:0 1px 4px rgba(0,0,0,.06)}
 .navbtn:disabled{opacity:.35;cursor:default}
 .navbtn:not(:disabled):hover{border-color:#1f6fd6;color:#1f6fd6}
+.ozb{font:inherit;font-size:.74rem;padding:3px 10px;border:1px solid #ccd5dd;border-radius:7px;background:#fff;cursor:pointer}
+.ozb.on{background:#1f3b73;color:#fff;border-color:#1f3b73}
 </style>
 <div class='wrap'>
 <div id='nav' style='position:fixed;top:10px;left:12px;z-index:20;display:flex;gap:6px'>
@@ -75,6 +77,12 @@ input{flex:1;min-width:230px}
 <div class='ttl' id='nm'>—</div>
 <div id='chips'></div>
 <div class='meta' id='mt'>종목을 검색하세요</div>
+<div style='display:flex;gap:6px;align-items:center;margin:4px 0 6px;font-size:.76rem'>
+<span style='color:#67737f'>Zoom</span>
+<button class='ozb' data-d='0'>전체</button><button class='ozb' data-d='252'>1년</button>
+<button class='ozb' data-d='126'>6m</button><button class='ozb' data-d='63'>3m</button>
+<button class='ozb' data-d='21'>1m</button>
+</div>
 <div class='legend'><b class='mc'>━ 시가총액</b> &nbsp; <b class='os'>━ 수급오실레이터</b> (0선 점선)</div>
 <div id='chart'><div id='msg'>종목명을 입력하면 차트가 표시됩니다</div></div>
 </div>
@@ -151,7 +159,8 @@ function showSector(i){
 }
 function draw(){
   if(!cur) return;
-  const {tk,name,rec}=cur, per=+$('per').value;
+  const {tk,name,rec}=cur;
+  const per=(window.ZDAYS!=null)?window.ZDAYS:+$('per').value;
   let pts=[];
   for(let i=0;i<rec.m.length;i++) if(rec.m[i]!=null)
     pts.push({d:IDX.dates[rec.s+i], m:rec.m[i], o:rec.o[i]});
@@ -326,9 +335,14 @@ function happly(st){
 }
 $('navB').onclick=()=>{if(HPOS>0){HPOS--;happly(HIST[HPOS]);}};
 $('navF').onclick=()=>{if(HPOS<HIST.length-1){HPOS++;happly(HIST[HPOS]);}};
+document.querySelectorAll('.ozb').forEach(b=>b.addEventListener('click',()=>{
+  window.ZDAYS=+b.dataset.d;
+  document.querySelectorAll('.ozb').forEach(x=>x.classList.toggle('on',x===b));
+  if(cur&&!cur.cmp)draw();
+}));
 $('q').addEventListener('change',show);
 $('q').addEventListener('keydown',e=>{if(e.key==='Enter')show();});
-$('per').addEventListener('change',()=>{const t=document.querySelector('.tab.on').dataset.t;if(t!=='main')renderGrid(t);else if(cur&&cur.cmp)drawCompare(cur.cmp);else draw();});
+$('per').addEventListener('change',()=>{window.ZDAYS=null;document.querySelectorAll('.ozb').forEach(x=>x.classList.remove('on'));const t=document.querySelector('.tab.on').dataset.t;if(t!=='main')renderGrid(t);else if(cur&&cur.cmp)drawCompare(cur.cmp);else draw();});
 $('sec').addEventListener('change',()=>{fillNames();if($('sec').value!=='')showSector(+$('sec').value);});
 $('cmp').addEventListener('click',()=>$('modal').style.display='flex');
 $('cmpGo').addEventListener('click',()=>{
