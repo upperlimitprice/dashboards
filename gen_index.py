@@ -90,10 +90,27 @@ let ADMIN=localStorage.getItem('dashAdmin')==='1';
 const q=new URLSearchParams(location.search);
 if(q.get('admin')===ADMIN_PASS){ADMIN=true;localStorage.setItem('dashAdmin','1');}
 if(q.get('admin')==='off'){ADMIN=false;localStorage.removeItem('dashAdmin');}
+let PUB=null;   // 관리자가 발행한 공개 배치 (layout.json)
+let GH=localStorage.getItem('dashGH')||'';
+if(q.get('ghtoken')){GH=q.get('ghtoken');localStorage.setItem('dashGH',GH);history.replaceState(null,'',location.pathname);}
 let state=JSON.parse(localStorage.getItem(KEY)||'null');
 if(!state||!Array.isArray(state.main)) state={main:REG.filter(x=>x.on).map(x=>x.k)};
 state.main=state.main.filter(k=>REG.some(x=>x.k===k));
-function save(){localStorage.setItem(KEY,JSON.stringify(state));}
+async function publish(){
+  if(!GH)return;
+  try{
+    const api='https://api.github.com/repos/upperlimitprice/dashboards/contents/layout.json';
+    const h={'Authorization':'Bearer '+GH,'Accept':'application/vnd.github+json'};
+    const cur=await fetch(api,{headers:h}).then(r=>r.ok?r.json():null);
+    await fetch(api,{method:'PUT',headers:h,body:JSON.stringify({
+      message:'layout update',
+      content:btoa(unescape(encodeURIComponent(JSON.stringify({main:state.main})))),
+      sha:cur?cur.sha:undefined})});
+  }catch(e){}
+}
+let pubT=null;
+function save(){localStorage.setItem(KEY,JSON.stringify(state));
+  if(GH){clearTimeout(pubT);pubT=setTimeout(publish,2500);}}
 function item(k){return REG.find(x=>x.k===k);}
 function render(){
   const main=document.getElementById('main');
@@ -130,13 +147,14 @@ window.addEventListener('pageshow',()=>{ /* 뒤로가기 복원 시에도 저장
 });
 function applyAdmin(){
   if(ADMIN){document.body.classList.add('admin');return;}
-  // 방문자: 기본 배치 고정 + 편집 UI 숨김
-  state={main:REG.filter(x=>x.on).map(x=>x.k)};
+  // 방문자: 관리자가 발행한 배치(layout.json) 적용, 없으면 기본 배치
+  const base=(PUB&&Array.isArray(PUB.main))?PUB.main.filter(k=>REG.some(x=>x.k===k)):REG.filter(x=>x.on).map(x=>x.k);
+  state={main:base};
   document.body.classList.remove('admin');
   render();
 }
 render();
-applyAdmin();
+fetch('layout.json?v='+Date.now()).then(r=>r.ok?r.json():null).then(j=>{PUB=j;applyAdmin();}).catch(()=>applyAdmin());
 if(!ADMIN){
   fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(d=>{
     if(ADMIN_IPS.includes(d.ip)){ADMIN=true;localStorage.setItem('dashAdmin','1');
