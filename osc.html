@@ -219,14 +219,8 @@ function draw(){
   for(let i=0;i<pts.length;i+=st) s+=`<text x='${X(i)}' y='${H-52}' font-size='10.5' fill='#67737f' text-anchor='middle' transform='rotate(-35 ${X(i)} ${H-52})'>${fmtD(pts[i].d)}</text>`;
   s+=`<polyline points='${pts.map((p,i)=>X(i).toFixed(1)+','+Ym(p.m).toFixed(1)).join(' ')}' fill='none' stroke='#333' stroke-width='3.2'/>`;
   s+=`<polyline points='${pts.map((p,i)=>X(i).toFixed(1)+','+Yo(p.o).toFixed(1)).join(' ')}' fill='none' stroke='#e30613' stroke-width='3.2'/>`;
-  const dotR=pts.length<=45?3.4:pts.length<=90?2.6:pts.length<=140?2:1.4;
-  const dstep=pts.length>200?Math.ceil(pts.length/200):1;
-  for(let i=0;i<pts.length;i+=dstep){
-    s+=`<circle cx='${X(i).toFixed(1)}' cy='${Ym(pts[i].m).toFixed(1)}' r='${dotR}' fill='#fff' stroke='#333' stroke-width='1.4'/>`;
-    s+=`<circle cx='${X(i).toFixed(1)}' cy='${Yo(pts[i].o).toFixed(1)}' r='${dotR}' fill='#fff' stroke='#e30613' stroke-width='1.4'/>`;
-  }
-  s+=`<circle id='hovM' r='${dotR+2.6}' fill='#333' stroke='#fff' stroke-width='1.5' style='display:none'/>`;
-  s+=`<circle id='hovO' r='${dotR+2.6}' fill='#e30613' stroke='#fff' stroke-width='1.5' style='display:none'/>`;
+  s+=`<circle id='hovM' r='5' fill='#333' stroke='#fff' stroke-width='1.6' style='display:none'/>`;
+  s+=`<circle id='hovO' r='5' fill='#e30613' stroke='#fff' stroke-width='1.6' style='display:none'/>`;
   s+=`<text x='${W/2-40}' y='${H-8}' font-size='13' fill='#333' font-weight='700' text-anchor='end'>━ ${name} 시가총액</text>`;
   s+=`<text x='${W/2+40}' y='${H-8}' font-size='13' fill='#e30613' font-weight='700'>━ ${name} 오실레이터</text>`;
   s+='</svg>';
