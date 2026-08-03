@@ -124,7 +124,7 @@ async function renderInsight(){
   try{
     if(!TOPS) TOPS=await fetch('osc/tops.json?v='+Date.now()).then(r=>r.json());
     if(!BOTTOM) BOTTOM=await fetch('osc/bottom.json?v='+Date.now()).then(r=>r.json());
-    const W={'사모펀드':3,'투신':2,'연기금':1};
+    const W={'사모펀드':2,'투신':1.5,'연기금':1};
     const score=src=>{const m={};for(const a in W)(src[a]||[]).forEach(([tk])=>m[tk]=(m[tk]||0)+W[a]);return m;};
     const bs=score(TOPS.top||{}), ss=score(TOPS.sell||{});
     const nameOf=tk=>{const st=IDX.stocks.find(x=>x[0]===tk);return st?st[1]:tk;};
@@ -135,7 +135,7 @@ async function renderInsight(){
       .sort((a,b)=>b.sc-a.sc||b.r-a.r).slice(0,8);
     const fmt=l=>l.map(x=>`<a href='#' onclick='gotoStock("${x.tk}");return false' style='color:inherit'><b>${x.nm}</b></a> <small style='color:#8a94a0'>(${x.tag} 매수·근접 ${(x.r*100).toFixed(0)}%)</small>`).join(' · ');
     const fmt2=l=>l.map(x=>`<a href='#' onclick='gotoStock("${x.tk}");return false' style='color:inherit'><b>${x.nm}</b></a> <small style='color:#8a94a0'>(${x.tag} 매도·근접 ${(x.r*100).toFixed(0)}%)</small>`).join(' · ');
-    let h=`<b>📌 데일리 수급×변곡 인사이트</b> <small style='color:#9aa4ad'>기준일 ${TOPS.date} · 수급 가중치 사모(3)&gt;투신(2)&gt;연기금(1) × 변곡 근접도(100%=변곡점 평균 도달)</small><br>`;
+    let h=`<b>📌 데일리 수급×변곡 인사이트</b> <small style='color:#9aa4ad'>기준일 ${TOPS.date} · 수급 가중치 사모(2)&gt;투신(1.5)&gt;연기금(1) × 변곡 근접도(100%=변곡점 평균 도달)</small><br>`;
     h+=`<span style='color:#c0392b;font-weight:700'>🔴 의미있는 매수타점</span> — 주체 순매수 유입 + 상승 변곡 임박: `+(buys.length?fmt(buys):'해당 없음')+`<br>`;
     h+=`<span style='color:#1f6fd6;font-weight:700'>🔵 의미있는 매도타점</span> — 주체 순매도 이탈 + 하락 변곡 임박: `+(sells.length?fmt2(sells):'해당 없음');
     const el=document.getElementById('insight');
