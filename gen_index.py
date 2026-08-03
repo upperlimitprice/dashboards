@@ -11,6 +11,7 @@ ITEMS = [
     ("funds.html", "💼 주체별 증시자금", "외국인 보유액·비중 · 국내(기관+개인) · 투자자예탁금 · 신용융자", True),
     ("cds.html", "🏦 빅테크 5년 CDS 트래커", "MSFT·GOOGL·AMZN·META·NVDA·ORCL·CRWV 신용위험", True),
     ("tanker.html", "🛢 탱커 운임 마켓", "VLCC·수에즈막스 WS · LPG/LNG · BCTI · 선가 · 픽스처", True),
+    ("valuation.html", "🌡 밸류에이션 온도", "금리·물가·예탁금 조합 지표 vs KOSPI 밸류 (r=0.78) · 금리 12M 선행 경보", True),
     ("osc.html", "📊 수급 오실레이터", "종목·섹터 검색 — 시총 vs 수급 MACD · 주체별 상위 · 바닥 근접", True),
     ("flows", "💰 수급 주체별 시총대비 Top20", "", True),
     ("parts-trend.html", "📦 전자부품 리드타임 트렌드", "Future Electronics 월간 — 카테고리별 리드타임·가격 방향", True),
