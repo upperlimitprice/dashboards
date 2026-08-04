@@ -8,6 +8,7 @@ ROOT = Path(__file__).resolve().parent
 ITEMS = [
     ("signals.html", "🚦 시장 신호등 (국내·미국)", "Market Score · ADR · 모멘텀 · RSI · VIX · E-Ratio", True),
     ("kr-breadth.html", "📉 KOSPI 이격도·신용잔고", "60일 이격도(1990~) · 3개월 수익률 · 신용잔고/시총", True),
+    ("kospi-ff.html", "🌏 KOSPI 외국인 현·선물 추이", "현물+선물 순매수 합산 20/60/120MA · 수급 방향/모멘텀 시그널", True),
     ("funds.html", "💼 주체별 증시자금", "외국인 보유액·비중 · 국내(기관+개인) · 투자자예탁금 · 신용융자", True),
     ("cds.html", "🏦 빅테크 5년 CDS 트래커", "MSFT·GOOGL·AMZN·META·NVDA·ORCL·CRWV 신용위험", True),
     ("tanker.html", "🛢 탱커 운임 마켓", "VLCC·수에즈막스 WS · LPG/LNG · BCTI · 선가 · 픽스처", True),
