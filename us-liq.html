@@ -5,9 +5,11 @@ body{font-family:'Apple SD Gothic Neo','Noto Sans KR',sans-serif;background:#f4f
 h1{font-size:1.3rem} h2{font-size:1.05rem;margin:28px 0 8px} .sub{color:#67737f;font-size:.85rem}
 .duo2{display:grid;grid-template-columns:1fr 280px;gap:22px;align-items:start;margin-top:6px}
 @media(max-width:900px){.duo2{grid-template-columns:1fr}}
-.kcard{background:#fff;border:1px solid #ccd5dd;border-radius:12px;padding:14px 18px;display:inline-block;min-width:230px;margin-right:10px}
-.kt{font-size:.78rem;color:#67737f} .kv{font-size:1.5rem;font-weight:800;margin:3px 0}
-.kd{font-size:.72rem;color:#9aa4ad}
+.cards4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:10px 0}
+@media(max-width:980px){.cards4{grid-template-columns:1fr 1fr}}
+.kcard{background:#fff;border:1px solid #ccd5dd;border-radius:12px;padding:12px 14px}
+.kt{font-size:.72rem;color:#67737f;white-space:nowrap;overflow:hidden;text-overflow:ellipsis} .kv{font-size:1.3rem;font-weight:800;margin:3px 0}
+.kd{font-size:.68rem;color:#9aa4ad;line-height:1.5}
 table{border-collapse:collapse;width:100%;background:#fff;font-size:.76rem}
 th,td{border:1px solid #ccd5dd;padding:5px 8px;text-align:center} td.l{text-align:left}
 th{background:#1f3b73;color:#fff}
@@ -17,11 +19,13 @@ th{background:#1f3b73;color:#fff}
 <h1>💵 미국 유동성 (US Liquidity Index)</h1>
 <div class='box' style='margin:12px 0 6px'><b>🧭 향후 유동성 방향 — 데이터 기반 요약</b> <span style='color:#9aa4ad;font-size:.75rem'>(기준 2026-07-29, 매일 자동 재계산)</span><br>· 연준 BS는 최근 12주 주당 +2.4B달러 페이스 — 사실상 중립(QT 종료 국면)<br>· RRP 잔액 3B달러 — 완충 소진: 재무부 발행이 곧바로 시중 유동성을 흡수하는 구간<br>· QRA(08-03): 3분기 차입 $739B(+$68B 상향)이나 <b>현재 TGA 966B가 9월말 목표 950B를 이미 +16B 상회</b> — 추가 재충전 흡수 부담 없음. 연말 목표 850B까지면 오히려 ~116B 방출(유동성 +) 여지. 단, RRP 완충 소진 상태의 대규모 발행은 금리 상방 압력이라는 별도 리스크<br>· TGA 966B달러 (12주 +106B) — 재충전 진행 중 = 유동성 흡수 지속. 다음 QRA(2026-08-05)의 발행 규모가 단기 방향의 최대 변수<br><b>종합: 중립~완만한 수축</b> — 12주 누적 -0.08T달러. QRA 발행 규모와 QT 종료 시점이 방향을 가를 것</div>
 <p class='sub'>유동성 = 연준 대차대조표(Reserve Bank Credit) − 재무부 현금잔고(TGA) − 역레포(RRP) · 주간, 최근 5년 · 매일 자동 갱신 · 출처: 연준 H.4.1 / 재무부 / 뉴욕연준 (전부 공식 원천)</p>
+<div class='cards4'>
 <div class='kcard'><div class='kt'>현재 유동성</div><div class='kv'>$5.77T</div><div class='kd'>4주 변화 -0.03T</div></div>
 <div class='kcard'><div class='kt'>TGA</div><div class='kv'>$0.97T</div><div class='kd'>재무부 현금 — 늘면 유동성 흡수</div></div>
 <div class='kcard'><div class='kt'>RRP</div><div class='kv'>$0.003T</div><div class='kd'>역레포 — 대기 자금</div></div>
-<div class='kcard' style='vertical-align:top'><div class='kt'>🏦 재무부 QRA (2026-08-03)</div>
+<div class='kcard' ><div class='kt'>🏦 재무부 QRA (2026-08-03)</div>
 <div class='kv'>$739B</div><div class='kd'>3분기 차입(+$68B↑) · 9월말 TGA 목표 $950B · 12월말 $850B</div></div>
+</div>
 <div class='duo2'>
 <div>
 <h2>① US Liquidity Index — 통합 차트 ($조, 2018~)</h2>
