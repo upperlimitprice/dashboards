@@ -85,7 +85,7 @@ input{flex:1;min-width:230px}
 <button class='ozb' data-d='21'>1m</button>
 </div>
 <div class='legend'><b class='mc'>━ 시가총액</b> &nbsp; <b class='os'>━ 수급오실레이터</b> (0선 점선)</div>
-<div id='chart'><div id='msg'>종목명을 입력하면 차트가 표시됩니다</div></div>
+<div id='chart'><div id='msg'>종목명을 입력하면 차트가 표시됩니다 (차트에서 드래그=구간 확대, 더블클릭=해제)</div></div>
 </div>
 <div class='panel' id='recentP'><h3>🕘 최근 검색</h3><div class='plist' id='recentL'></div></div>
 </div>
@@ -188,7 +188,8 @@ function draw(){
   let pts=[];
   for(let i=0;i<rec.m.length;i++) if(rec.m[i]!=null)
     pts.push({d:IDX.dates[rec.s+i], m:rec.m[i], o:rec.o[i]});
-  if(per>0) pts=pts.slice(-per);
+  if(window.ZSEL){pts=pts.filter(p=>p.d>=window.ZSEL[0]&&p.d<=window.ZSEL[1]); if(pts.length<5){window.ZSEL=null;}}
+  if(!window.ZSEL&&per>0) pts=pts.slice(-per);
   $('nm').textContent=`${name} (${tk})`;
   const lastM=pts[pts.length-1].m, lastO=pts[pts.length-1].o;
   $('mt').textContent=`${fmtD(pts[0].d)} ~ ${fmtD(pts[pts.length-1].d)} · 시총 ${lastM>=10000?(lastM/10000).toFixed(1)+'조':lastM.toLocaleString()+'억'} · 오실레이터 ${(lastO*100).toFixed(3)}%p`;
@@ -257,6 +258,27 @@ function bindTip(pts,W,L,R){
   box.onmouseleave=()=>{TIP.style.display='none';
     const hm=box.querySelector('#hovM'), ho=box.querySelector('#hovO');
     if(hm){hm.style.display='none';ho.style.display='none';}};
+  // 드래그 박스 줌
+  box.style.position='relative';
+  let selDiv=box.querySelector('.selbox');
+  if(!selDiv){selDiv=document.createElement('div');selDiv.className='selbox';
+    selDiv.style.cssText='position:absolute;top:0;bottom:0;background:rgba(31,111,214,.15);border:1px solid #1f6fd6;display:none;pointer-events:none';
+    box.appendChild(selDiv);}
+  let sx=null;
+  const fx2i=cx=>{const r=box.getBoundingClientRect();const fx=(cx-r.left)/r.width*W;
+    return Math.max(0,Math.min(pts.length-1,Math.round((fx-L)/(W-L-R)*(pts.length-1))));};
+  box.onmousedown=e=>{sx=e.clientX;const r=box.getBoundingClientRect();
+    selDiv.style.left=(e.clientX-r.left)+'px';selDiv.style.width='0';selDiv.style.display='block';e.preventDefault();};
+  box.onmousemove_orig=box.onmousemove;
+  box.onmousemove=e=>{box.onmousemove_orig(e);
+    if(sx!=null){const r=box.getBoundingClientRect();
+      selDiv.style.left=Math.min(sx,e.clientX)-r.left+'px';
+      selDiv.style.width=Math.abs(e.clientX-sx)+'px';}};
+  box.onmouseup=e=>{if(sx==null)return;
+    const i0=fx2i(Math.min(sx,e.clientX)), i1=fx2i(Math.max(sx,e.clientX));
+    selDiv.style.display='none';const _sx=sx;sx=null;
+    if(Math.abs(e.clientX-_sx)>20&&i1>i0+2){window.ZSEL=[pts[i0].d,pts[i1].d];draw();}};
+  box.ondblclick=()=>{window.ZSEL=null;draw();};
 }
 let TOPS=null, BOTTOM=null;
 async function loadShard(sh){
