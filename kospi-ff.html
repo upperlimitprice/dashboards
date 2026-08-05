@@ -143,8 +143,10 @@ h1{font-size:1.3rem} .sub{color:#67737f;font-size:.85rem}
       return new Date(D(m.d0)+fr*(D(m.d1)-D(m.d0)));};
     const a=f(Math.min(sx,e.clientX)),b=f(Math.max(sx,e.clientX));
     sel.style.display='none';const _sx=sx;sx=null;
+    if(Math.abs(e.clientX-_sx)<=20)return;
+    if(e.clientX<_sx){render('All');return;}   // 좌측 드래그 = 줌 해제
     const fmt=t=>String(t.getUTCFullYear()*1e4+(t.getUTCMonth()+1)*100+t.getUTCDate());
-    if(Math.abs(e.clientX-_sx)>20)renderRange(fmt(a),fmt(b));});
+    renderRange(fmt(a),fmt(b));});
   box.addEventListener('dblclick',()=>render('All'));
 })();
 </script>
