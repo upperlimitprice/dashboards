@@ -55,23 +55,28 @@ input{flex:1;min-width:230px}
 <h1>📊 수급 오실레이터 <small id='upd' style='font-size:.72rem;font-weight:400;color:#9aa4ad'></small> <button id='mref' onclick='manualRefresh("osc",this)' style='font-size:.68rem;padding:3px 10px;border:1px solid #ccd5dd;border-radius:6px;background:#fff;color:#5f6b7a;cursor:pointer;vertical-align:middle'>🔄 데이터 갱신</button></h1>
 <script>
 async function manualRefresh(job,btn){
-  const GH=localStorage.getItem('dashGH')||'';
-  if(!GH){alert('관리자 전용 기능입니다 (토큰 미등록)');return;}
   btn.disabled=true;btn.textContent='요청 중…';
+  const reset=t=>{btn.textContent=t;setTimeout(()=>{btn.textContent='🔄 데이터 갱신';btn.disabled=false;},5000);};
+  let res=null;
   try{
-    const api='https://api.github.com/repos/upperlimitprice/dashboards/contents/refresh_request.json';
-    const h={'Authorization':'Bearer '+GH,'Accept':'application/vnd.github+json'};
-    const cur=await fetch(api,{headers:h}).then(r=>r.ok?r.json():null);
-    const r=await fetch(api,{method:'PUT',headers:h,body:JSON.stringify({
-      message:'refresh '+job,
-      content:btoa(JSON.stringify({job:job,ts:Date.now()})),
-      sha:cur?cur.sha:undefined})});
-    if(!r.ok)throw 0;
-  }catch(e){btn.textContent='요청 실패';setTimeout(()=>{btn.textContent='🔄 데이터 갱신';btn.disabled=false;},3000);return;}
-  let s=150;
-  const iv=setInterval(()=>{s--;btn.textContent=`갱신 중… ${s}s`;
-    if(s<=0){clearInterval(iv);location.href=location.pathname+'?v='+Date.now();}},1000);
-  btn.textContent=`갱신 중… ${s}s`;
+    const ep=(await fetch('endpoint.json?v='+Date.now()).then(r=>r.json())).url;
+    res=await fetch(ep+'/refresh',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({job:job})}).then(r=>r.json());
+  }catch(e){reset('갱신 서버 오프라인');return;}
+  if(res.status==='cooldown'){reset(`잠시 후 재시도 (${res.wait}초)`);return;}
+  if(res.status!=='started'&&res.status!=='busy'){reset('요청 실패');return;}
+  const before=(IDX&&IDX.updated)||'';
+  let s=0;
+  btn.textContent='갱신 중…';
+  const iv=setInterval(async()=>{
+    s+=20;
+    btn.textContent=`갱신 중… ${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`;
+    try{
+      const d=await fetch('osc/index.json?v='+Date.now()).then(r=>r.json());
+      if(d.updated&&d.updated!==before){clearInterval(iv);location.href=location.pathname+'?v='+Date.now();}
+    }catch(e){}
+    if(s>=900){clearInterval(iv);reset('시간 초과 — 잠시 후 새로고침 해보세요');}
+  },20000);
 }
 </script>
 <p class='sub'>시가총액(검정, 좌축) vs 수급 오실레이터(빨강, 우축) · 오실레이터 = 5일 (외국인+기관 순매수합)/시총의 MACD(12·26·9) 히스토그램 · 평일 자동 갱신</p>
