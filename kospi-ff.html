@@ -118,5 +118,33 @@ h1{font-size:1.3rem} .sub{color:#67737f;font-size:.85rem}
   }
   document.querySelectorAll('.fzb').forEach(b=>b.addEventListener('click',()=>render(b.dataset.z)));
   render('All');
+  // 드래그 박스 줌
+  box.style.position='relative';
+  const sel=document.createElement('div');
+  sel.style.cssText='position:absolute;top:0;bottom:0;background:rgba(31,111,214,.15);border:1px solid #1f6fd6;display:none;pointer-events:none';
+  box.appendChild(sel);
+  let sx=null;
+  function renderRange(c0,c1){
+    const S=FULL.map(sr=>({...sr,p:sr.p.filter(x=>x[0]>=c0&&x[0]<=c1)}));
+    if(S[4].p.length<5)return;
+    const bak=FULL.map(sr=>sr.p);
+    FULL.forEach((sr,i)=>sr.p=S[i].p);
+    render('All');
+    FULL.forEach((sr,i)=>sr.p=bak[i]);
+  }
+  box.addEventListener('mousedown',e=>{sx=e.clientX;const r=box.getBoundingClientRect();
+    sel.style.left=(e.clientX-r.left)+'px';sel.style.width='0';sel.style.display='block';e.preventDefault();});
+  box.addEventListener('mousemove',e=>{if(sx!=null){const r=box.getBoundingClientRect();
+    sel.style.left=Math.min(sx,e.clientX)-r.left+'px';sel.style.width=Math.abs(e.clientX-sx)+'px';}});
+  box.addEventListener('mouseup',e=>{if(sx==null)return;
+    const m=JSON.parse(box.dataset.meta);
+    const r=box.getBoundingClientRect();
+    const f=cx=>{let fr=((cx-r.left)/r.width*m.w-m.l)/(m.w-m.l-m.r);fr=Math.max(0,Math.min(1,fr));
+      return new Date(D(m.d0)+fr*(D(m.d1)-D(m.d0)));};
+    const a=f(Math.min(sx,e.clientX)),b=f(Math.max(sx,e.clientX));
+    sel.style.display='none';const _sx=sx;sx=null;
+    const fmt=t=>String(t.getUTCFullYear()*1e4+(t.getUTCMonth()+1)*100+t.getUTCDate());
+    if(Math.abs(e.clientX-_sx)>20)renderRange(fmt(a),fmt(b));});
+  box.addEventListener('dblclick',()=>render('All'));
 })();
 </script>
