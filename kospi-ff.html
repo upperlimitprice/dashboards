@@ -132,11 +132,12 @@ h1{font-size:1.3rem} .sub{color:#67737f;font-size:.85rem}
     render('All');
     FULL.forEach((sr,i)=>sr.p=bak[i]);
   }
-  box.addEventListener('mousedown',e=>{sx=e.clientX;const r=box.getBoundingClientRect();
-    sel.style.left=(e.clientX-r.left)+'px';sel.style.width='0';sel.style.display='block';e.preventDefault();});
-  box.addEventListener('mousemove',e=>{if(sx!=null){const r=box.getBoundingClientRect();
-    sel.style.left=Math.min(sx,e.clientX)-r.left+'px';sel.style.width=Math.abs(e.clientX-sx)+'px';}});
-  box.addEventListener('mouseup',e=>{if(sx==null)return;
+  const dragMove=e=>{if(sx==null)return;const r=box.getBoundingClientRect();
+    sel.style.left=Math.max(0,Math.min(sx,e.clientX)-r.left)+'px';
+    sel.style.width=Math.abs(e.clientX-sx)+'px';};
+  const dragUp=e=>{document.removeEventListener('mousemove',dragMove);
+    document.removeEventListener('mouseup',dragUp);
+    if(sx==null)return;
     const m=JSON.parse(box.dataset.meta);
     const r=box.getBoundingClientRect();
     const f=cx=>{let fr=((cx-r.left)/r.width*m.w-m.l)/(m.w-m.l-m.r);fr=Math.max(0,Math.min(1,fr));
@@ -144,9 +145,14 @@ h1{font-size:1.3rem} .sub{color:#67737f;font-size:.85rem}
     const a=f(Math.min(sx,e.clientX)),b=f(Math.max(sx,e.clientX));
     sel.style.display='none';const _sx=sx;sx=null;
     if(Math.abs(e.clientX-_sx)<=20)return;
-    if(e.clientX<_sx){render('All');return;}   // 좌측 드래그 = 줌 해제
+    if(e.clientX<_sx){render('All');return;}
     const fmt=t=>String(t.getUTCFullYear()*1e4+(t.getUTCMonth()+1)*100+t.getUTCDate());
-    renderRange(fmt(a),fmt(b));});
+    renderRange(fmt(a),fmt(b));};
+  box.addEventListener('mousedown',e=>{sx=e.clientX;const r=box.getBoundingClientRect();
+    sel.style.left=(e.clientX-r.left)+'px';sel.style.width='0';sel.style.display='block';
+    document.addEventListener('mousemove',dragMove);
+    document.addEventListener('mouseup',dragUp);
+    e.preventDefault();});
   box.addEventListener('dblclick',()=>render('All'));
 })();
 </script>
