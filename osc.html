@@ -277,7 +277,9 @@ function bindTip(pts,W,L,R){
   box.onmouseup=e=>{if(sx==null)return;
     const i0=fx2i(Math.min(sx,e.clientX)), i1=fx2i(Math.max(sx,e.clientX));
     selDiv.style.display='none';const _sx=sx;sx=null;
-    if(Math.abs(e.clientX-_sx)>20&&i1>i0+2){window.ZSEL=[pts[i0].d,pts[i1].d];draw();}};
+    if(Math.abs(e.clientX-_sx)<=20)return;
+    if(e.clientX<_sx){window.ZSEL=null;draw();return;}   // 좌측 드래그 = 줌 해제
+    if(i1>i0+2){window.ZSEL=[pts[i0].d,pts[i1].d];draw();}};
   box.ondblclick=()=>{window.ZSEL=null;draw();};
 }
 let TOPS=null, BOTTOM=null;
