@@ -270,18 +270,17 @@ function bindTip(pts,W,L,R){
   const dragMove=e=>{if(sx==null)return;const r=box.getBoundingClientRect();
     selDiv.style.left=Math.max(0,Math.min(sx,e.clientX)-r.left)+'px';
     selDiv.style.width=Math.abs(e.clientX-sx)+'px';};
-  const dragUp=e=>{document.removeEventListener('mousemove',dragMove);
-    document.removeEventListener('mouseup',dragUp);
-    if(sx==null)return;
+  const dragUp=e=>{if(sx==null)return;
     const i0=fx2i(Math.min(sx,e.clientX)), i1=fx2i(Math.max(sx,e.clientX));
     selDiv.style.display='none';const _sx=sx;sx=null;
     if(Math.abs(e.clientX-_sx)<=20)return;
     if(e.clientX<_sx){window.ZSEL=null;draw();return;}
     if(i1>i0+2){window.ZSEL=[pts[i0].d,pts[i1].d];draw();}};
-  box.onmousedown=e=>{sx=e.clientX;const r=box.getBoundingClientRect();
+  box.onpointerdown=e=>{sx=e.clientX;const r=box.getBoundingClientRect();
     selDiv.style.left=(e.clientX-r.left)+'px';selDiv.style.width='0';selDiv.style.display='block';
-    document.addEventListener('mousemove',dragMove);
-    document.addEventListener('mouseup',dragUp);
+    box.setPointerCapture(e.pointerId);   // 축·창 밖으로 나가도 이벤트 계속 수신
+    box.onpointermove=dragMove;
+    box.onpointerup=ev=>{box.releasePointerCapture(ev.pointerId);box.onpointermove=null;box.onpointerup=null;dragUp(ev);};
     e.preventDefault();};
   box.ondblclick=()=>{window.ZSEL=null;draw();};
 }
