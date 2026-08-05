@@ -135,9 +135,7 @@ h1{font-size:1.3rem} .sub{color:#67737f;font-size:.85rem}
   const dragMove=e=>{if(sx==null)return;const r=box.getBoundingClientRect();
     sel.style.left=Math.max(0,Math.min(sx,e.clientX)-r.left)+'px';
     sel.style.width=Math.abs(e.clientX-sx)+'px';};
-  const dragUp=e=>{document.removeEventListener('mousemove',dragMove);
-    document.removeEventListener('mouseup',dragUp);
-    if(sx==null)return;
+  const dragUp=e=>{if(sx==null)return;
     const m=JSON.parse(box.dataset.meta);
     const r=box.getBoundingClientRect();
     const f=cx=>{let fr=((cx-r.left)/r.width*m.w-m.l)/(m.w-m.l-m.r);fr=Math.max(0,Math.min(1,fr));
@@ -148,10 +146,13 @@ h1{font-size:1.3rem} .sub{color:#67737f;font-size:.85rem}
     if(e.clientX<_sx){render('All');return;}
     const fmt=t=>String(t.getUTCFullYear()*1e4+(t.getUTCMonth()+1)*100+t.getUTCDate());
     renderRange(fmt(a),fmt(b));};
-  box.addEventListener('mousedown',e=>{sx=e.clientX;const r=box.getBoundingClientRect();
+  box.addEventListener('pointerdown',e=>{sx=e.clientX;const r=box.getBoundingClientRect();
     sel.style.left=(e.clientX-r.left)+'px';sel.style.width='0';sel.style.display='block';
-    document.addEventListener('mousemove',dragMove);
-    document.addEventListener('mouseup',dragUp);
+    box.setPointerCapture(e.pointerId);
+    const pm=ev=>dragMove(ev);
+    const pu=ev=>{box.releasePointerCapture(ev.pointerId);box.removeEventListener('pointermove',pm);box.removeEventListener('pointerup',pu);dragUp(ev);};
+    box.addEventListener('pointermove',pm);
+    box.addEventListener('pointerup',pu);
     e.preventDefault();});
   box.addEventListener('dblclick',()=>render('All'));
 })();
