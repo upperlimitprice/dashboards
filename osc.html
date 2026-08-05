@@ -267,19 +267,22 @@ function bindTip(pts,W,L,R){
   let sx=null;
   const fx2i=cx=>{const r=box.getBoundingClientRect();const fx=(cx-r.left)/r.width*W;
     return Math.max(0,Math.min(pts.length-1,Math.round((fx-L)/(W-L-R)*(pts.length-1))));};
-  box.onmousedown=e=>{sx=e.clientX;const r=box.getBoundingClientRect();
-    selDiv.style.left=(e.clientX-r.left)+'px';selDiv.style.width='0';selDiv.style.display='block';e.preventDefault();};
-  box.onmousemove_orig=box.onmousemove;
-  box.onmousemove=e=>{box.onmousemove_orig(e);
-    if(sx!=null){const r=box.getBoundingClientRect();
-      selDiv.style.left=Math.min(sx,e.clientX)-r.left+'px';
-      selDiv.style.width=Math.abs(e.clientX-sx)+'px';}};
-  box.onmouseup=e=>{if(sx==null)return;
+  const dragMove=e=>{if(sx==null)return;const r=box.getBoundingClientRect();
+    selDiv.style.left=Math.max(0,Math.min(sx,e.clientX)-r.left)+'px';
+    selDiv.style.width=Math.abs(e.clientX-sx)+'px';};
+  const dragUp=e=>{document.removeEventListener('mousemove',dragMove);
+    document.removeEventListener('mouseup',dragUp);
+    if(sx==null)return;
     const i0=fx2i(Math.min(sx,e.clientX)), i1=fx2i(Math.max(sx,e.clientX));
     selDiv.style.display='none';const _sx=sx;sx=null;
     if(Math.abs(e.clientX-_sx)<=20)return;
-    if(e.clientX<_sx){window.ZSEL=null;draw();return;}   // 좌측 드래그 = 줌 해제
+    if(e.clientX<_sx){window.ZSEL=null;draw();return;}
     if(i1>i0+2){window.ZSEL=[pts[i0].d,pts[i1].d];draw();}};
+  box.onmousedown=e=>{sx=e.clientX;const r=box.getBoundingClientRect();
+    selDiv.style.left=(e.clientX-r.left)+'px';selDiv.style.width='0';selDiv.style.display='block';
+    document.addEventListener('mousemove',dragMove);
+    document.addEventListener('mouseup',dragUp);
+    e.preventDefault();};
   box.ondblclick=()=>{window.ZSEL=null;draw();};
 }
 let TOPS=null, BOTTOM=null;
