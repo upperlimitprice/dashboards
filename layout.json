@@ -1,1 +1,19 @@
-{"main": ["signals.html", "kr-breadth.html", "funds.html", "cds.html", "tanker.html", "us-liq.html", "valuation.html", "tval.html", "etf.html", "osc.html", "flows", "parts-trend.html", "fx-flow.html"]}
+{
+ "main": [
+  "signals.html",
+  "kr-breadth.html",
+  "funds.html",
+  "cds.html",
+  "tanker.html",
+  "us-liq.html",
+  "valuation.html",
+  "tval.html",
+  "etf.html",
+  "osc.html",
+  "sector-toppick.html",
+  "taiwan-revenue.html",
+  "flows",
+  "parts-trend.html",
+  "fx-flow.html"
+ ]
+}
