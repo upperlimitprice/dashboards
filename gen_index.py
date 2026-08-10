@@ -67,6 +67,11 @@ h2{font-size:.92rem;margin:0 0 10px;color:#6b7683}
 .card small a{color:#1f6fd6;text-decoration:none}
 .x{position:absolute;top:8px;right:10px;border:0;background:none;color:#c2cad2;font-size:1.05rem;cursor:pointer;line-height:1}
 .x:hover{color:#d63c2f}
+.rf{position:absolute;bottom:8px;right:10px;border:1px solid #dde3e9;background:#fff;color:#6b7683;font-size:.72rem;border-radius:7px;padding:2px 7px;cursor:pointer;font-weight:600}
+.rf:hover{border-color:#1f6fd6;color:#1f6fd6}
+.rf:disabled{opacity:.6;cursor:default}
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1c2530;color:#fff;font-size:.82rem;padding:9px 16px;border-radius:9px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:99}
+#toast.show{opacity:.95}
 #side{background:#fff;border:1.5px solid #dde3e9;border-radius:12px;padding:14px 16px;position:sticky;top:16px}
 .sitem{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:9px 2px;border-bottom:1px solid #f0f3f6;font-size:.85rem}
 .sitem:last-child{border-bottom:0}
@@ -87,6 +92,33 @@ body:not(.admin) .card{cursor:pointer}
 </div>
 <script>
 const REG=__REG__;
+// 카드 → 갱신 서버 잡 매핑 (수동 갱신 버튼)
+const JOB={"signals.html":"signals","kr-breadth.html":"breadth","funds.html":"breadth","valuation.html":"breadth",
+"kospi-ff.html":"kospiff","cds.html":"cds","tanker.html":"tanker","us-liq.html":"usliq","tval.html":"tval",
+"etf.html":"tval","osc.html":"osc","leaders.html":"leaders","taiwan-revenue.html":"taiwan","flows":"flows"};
+let EP=null;
+async function ep(){if(EP!==null)return EP;try{EP=(await fetch('endpoint.json?'+Date.now()).then(r=>r.json())).url;}catch(e){EP='';}return EP;}
+async function refresh(e,k){
+  e.preventDefault();e.stopPropagation();
+  const btn=e.target;const job=JOB[k];if(!job)return false;
+  const url=await ep();
+  if(!url){btn.textContent='서버꺼짐';setTimeout(()=>btn.textContent='↻',2500);return false;}
+  btn.textContent='…';btn.disabled=true;
+  try{
+    const r=await fetch(url+'/refresh',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({job})}).then(x=>x.json());
+    if(r.status==='started'){btn.textContent='갱신중';setTimeout(()=>{btn.textContent='↻';btn.disabled=false;},120000);
+      toast(`${job} 갱신 시작 — 1~3분 후 해당 페이지를 새로고침하세요`);}
+    else if(r.status==='cooldown'){btn.textContent='↻';btn.disabled=false;toast(`쿨다운: ${r.wait}초 후 다시 시도`);}
+    else if(r.status==='busy'){btn.textContent='↻';btn.disabled=false;toast('이미 갱신 중입니다');}
+    else{btn.textContent='↻';btn.disabled=false;}
+  }catch(err){btn.textContent='실패';setTimeout(()=>{btn.textContent='↻';btn.disabled=false;},2500);}
+  return false;
+}
+function toast(msg){
+  let t=document.getElementById('toast');
+  if(!t){t=document.createElement('div');t.id='toast';document.body.appendChild(t);}
+  t.textContent=msg;t.className='show';setTimeout(()=>t.className='',4000);
+}
 const KEY='dashLayout2';
 const ADMIN_IPS=['222.108.214.107'];
 const ADMIN_PASS='jjeomsang-only';
@@ -118,12 +150,12 @@ function save(){localStorage.setItem(KEY,JSON.stringify(state));
 function item(k){return REG.find(x=>x.k===k);}
 function render(){
   const main=document.getElementById('main');
-  main.innerHTML=state.main.map(k=>{const x=item(k);return `<div class='card' draggable='true' data-k='${x.k}' onclick='go(event,"${x.h}")'>${x.t}<small>${x.d}</small><button class='x' title='보관함으로' onclick='return rm(event,"${x.k}")'>✕</button></div>`;}).join('')||"<div class='empty'>보관함에서 ＋를 눌러 위젯을 추가하세요</div>";
+  main.innerHTML=state.main.map(k=>{const x=item(k);const rf=JOB[x.k]?`<button class='rf' title='데이터 수동 갱신' onclick='return refresh(event,"${x.k}")'>↻</button>`:'';return `<div class='card' draggable='true' data-k='${x.k}' onclick='go(event,"${x.h}")'>${x.t}<small>${x.d}</small>${rf}<button class='x' title='보관함으로' onclick='return rm(event,"${x.k}")'>✕</button></div>`;}).join('')||"<div class='empty'>보관함에서 ＋를 눌러 위젯을 추가하세요</div>";
   const rest=REG.filter(x=>!state.main.includes(x.k));
   document.getElementById('sideList').innerHTML=rest.map(x=>`<div class='sitem'><span class='nm'>${x.t}</span><button class='add' onclick='addW("${x.k}")'>＋</button></div>`).join('')||"<div class='empty'>모든 위젯이 메인에 있습니다</div>";
   wireDrag();
 }
-function go(e,h){if(e.target.closest('a,.x'))return;location.href=h;}
+function go(e,h){if(e.target.closest('a,.x,.rf'))return;location.href=h;}
 function rm(e,k){e.preventDefault();e.stopPropagation();state.main=state.main.filter(x=>x!==k);save();render();return false;}
 function addW(k){state.main.push(k);save();render();}
 function syncOrder(){
