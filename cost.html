@@ -44,7 +44,7 @@ button.dl{background:#1f6f43;color:#fff;border:0;border-radius:8px;padding:8px 1
 <button class='md on' id='p_y3' onclick='setPer("y3")'>최근 3개년</button>
 <button class='md' id='p_all' onclick='setPer("all")'>전체</button>
 <small class='gray'> · 선택 기간에 숫자가 없는 항목은 자동 생략</small></div>
-<button class='dl' onclick='dlcsv()'>📥 엑셀(CSV) 다운로드</button>
+<button class='dl' onclick='dlxlsx()'>📥 엑셀 모델 다운로드 (.xlsx)</button>
 <div id='mwrap' style='display:none'>
 <h2>손익 모델 <small class='gray'>(분기 flow)</small>
 <button class='md on' id='bAmt' onclick='setMode("amt")'>억원</button><button class='md' id='bPct' onclick='setMode("pct")'>% of Sales</button></h2>
@@ -61,6 +61,7 @@ button.dl{background:#1f6f43;color:#fff;border:0;border-radius:8px;padding:8px 1
 <script>
 const IDX=JSON.parse(document.getElementById('idx').textContent);
 const cache={};let CUR=null;
+const qd=p=>/^\d{4}Q[1-4]$/.test(p)?p[5]+'Q'+p.slice(2,4):p;
 const fmt=v=>v==null?'-':Math.abs(v)>=10000?(v/10000).toFixed(2)+'조':Math.round(v).toLocaleString();
 const pc=v=>v==null?'-':`<span class='${v>0?'up':'dn'}'>${v>0?'+':''}${v.toFixed(1)}%</span>`;
 const q=document.getElementById('q'),sug=document.getElementById('sug');
@@ -133,7 +134,7 @@ function renderModel(){
   CUR.model={qs,rows};
   const rev=q=>e.is[q]?e.is[q]['매출액']:null;
   const allIqs=Object.keys(e.is).sort();
-  let h='<table><tr><th>항목</th>'+qs.map(q=>`<th>${q}</th>`).join('')+'<th>YoY</th></tr>';
+  let h='<table><tr><th>항목</th>'+qs.map(q=>`<th>${qd(q)}</th>`).join('')+'<th>YoY</th></tr>';
   for(const r of rows){
     const isRev=r.name==='매출액';
     const cells=qs.map((q,i)=>{
@@ -166,7 +167,7 @@ function mkTbl(data,ps,yoyGap){
   const labs=labOrder(data,ps);
   const last=ps[ps.length-1];
   const tot=p=>{const d=data[p]||{};const t=Object.keys(d).find(k=>/합\s*계/.test(k));return t?d[t]:Object.values(d).reduce((a,b)=>a+b,0);};
-  let h='<table><tr><th>항목</th>'+ps.map(p=>`<th>${p}</th>`).join('')+'<th>비중(최근)</th><th>YoY</th></tr>';
+  let h='<table><tr><th>항목</th>'+ps.map(p=>`<th>${qd(p)}</th>`).join('')+'<th>비중(최근)</th><th>YoY</th></tr>';
   for(const lb of labs){
     const isTot=/합\s*계/.test(lb);
     const vals=ps.map(p=>(data[p]||{})[lb]);
@@ -177,20 +178,82 @@ function mkTbl(data,ps,yoyGap){
   }
   return h+'</table>';
 }
+async function dlxlsx(){
+  if(!CUR)return;
+  if(!window.ExcelJS){
+    await new Promise(res=>{const s=document.createElement('script');
+      s.src='https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js';
+      s.onload=res;s.onerror=res;document.head.appendChild(s);});
+  }
+  if(!window.ExcelJS){dlcsv();return;}  // 오프라인 폴백
+  const {nm,tk,e}=CUR;
+  const wb=new ExcelJS.Workbook();
+  const ws=wb.addWorksheet('모델',{views:[{state:'frozen',xSplit:1,ySplit:2}]});
+  ws.getColumn(1).width=30;
+  const NAVY='FF243A52',CORE='FFF0F4F9',SUBC='FF41566B',OTH='FF8A6D3B';
+  const thin={style:'thin',color:{argb:'FFD8E0E8'}};
+  const B={top:thin,bottom:thin,left:thin,right:thin};
+  let r=1;
+  const t=ws.getCell(r,1);t.value=`${nm} (${tk}) — 손익·비용구조 모델`;
+  t.font={bold:true,size:14,color:{argb:'FF1C2530'}};
+  ws.getCell(r,2).value='단위: 억원 · 분기=3개월 flow · upperlimitprice.github.io/dashboards/cost.html';
+  ws.getCell(r,2).font={size:9,color:{argb:'FF778899'}};
+  r+=2;
+  function section(title,ps,rowdefs,pct){
+    const st=ws.getCell(r,1);st.value=title;st.font={bold:true,size:11,color:{argb:'FF1F3B73'}};r++;
+    ws.getCell(r,1).value='항목';
+    ps.forEach((p,i)=>{ws.getCell(r,i+2).value=qd(p);});
+    for(let c=1;c<=ps.length+1;c++){const h=ws.getCell(r,c);
+      h.fill={type:'pattern',pattern:'solid',fgColor:{argb:NAVY}};
+      h.font={bold:true,color:{argb:'FFFFFFFF'}};h.border=B;
+      h.alignment={horizontal:c===1?'left':'right'};
+      if(c>1)ws.getColumn(c).width=Math.max(ws.getColumn(c).width||0,11);}
+    r++;
+    rowdefs.forEach(rd=>{
+      const c1=ws.getCell(r,1);c1.value=rd.name;c1.border=B;
+      const isCore=rd.cls&&rd.cls.includes('core'),isSub=rd.cls&&rd.cls.includes('sub'),isOth=rd.cls&&rd.cls.includes('oth');
+      if(isCore)c1.font={bold:true};
+      if(isSub){c1.alignment={indent:1};c1.font={color:{argb:isOth?OTH:SUBC},italic:!!isOth};}
+      rd.vals.forEach((v,i)=>{
+        const c=ws.getCell(r,i+2);c.border=B;
+        if(v!=null){
+          if(pct){const rv=e.is&&e.is[ps[i]]?e.is[ps[i]]['매출액']:null;
+            if(rd.name==='매출액'){c.value=v;c.numFmt='#,##0.0';}
+            else if(rv){c.value=v/rv;c.numFmt='0.0%';}}
+          else{c.value=v;c.numFmt='#,##0.0;[Blue]-#,##0.0';}
+        }
+        if(isCore){c.font={bold:true};c.fill={type:'pattern',pattern:'solid',fgColor:{argb:CORE}};}
+        if(isOth)c.font={italic:true,color:{argb:OTH}};
+      });
+      if(isCore)c1.fill={type:'pattern',pattern:'solid',fgColor:{argb:CORE}};
+      r++;});
+    r++;
+  }
+  const toDefs=(data,ps)=>labOrder(data,ps).map(lb=>({name:lb,cls:/합\s*계/.test(lb)?'core':'',
+    vals:ps.map(p=>(data[p]||{})[lb]??null)}));
+  if(CUR.model)section('손익 모델 (억원)',CUR.model.qs,CUR.model.rows,false);
+  if(CUR.model)section('손익 모델 (% of Sales)',CUR.model.qs,CUR.model.rows,true);
+  if(Object.keys(e.q).length){const ps=perSlice(Object.keys(e.q).sort());section('비용 성격별 — 분기 flow (억원)',ps,toDefs(e.q,ps),false);}
+  if(Object.keys(e.a).length){const ys=Object.keys(e.a).sort();section('비용 성격별 — 연간 (억원)',ys,toDefs(e.a,ys),false);}
+  const buf=await wb.xlsx.writeBuffer();
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}));
+  a.download=`${nm}_모델.xlsx`;a.click();
+}
 function dlcsv(){
   if(!CUR)return;
   const {nm,e}=CUR;
   const rows=[];
   const dump=(title,data,ps)=>{
-    rows.push([title]);rows.push(['항목',...ps]);
+    rows.push([title]);rows.push(['항목',...ps.map(qd)]);
     labOrder(data,ps).forEach(lb=>rows.push([lb,...ps.map(p=>(data[p]||{})[lb]??'')]));
     rows.push([]);
   };
   if(CUR.model){
-    rows.push(['손익 모델 (억원)']);rows.push(['항목',...CUR.model.qs]);
+    rows.push(['손익 모델 (억원)']);rows.push(['항목',...CUR.model.qs.map(qd)]);
     CUR.model.rows.forEach(r=>rows.push([r.name,...r.vals.map(v=>v??'')]));
     rows.push([]);
-    rows.push(['손익 모델 (% of Sales)']);rows.push(['항목',...CUR.model.qs]);
+    rows.push(['손익 모델 (% of Sales)']);rows.push(['항목',...CUR.model.qs.map(qd)]);
     const rev=q=>CUR.e.is[q]?CUR.e.is[q]['매출액']:null;
     CUR.model.rows.forEach(r=>rows.push([r.name,...r.vals.map((v,i)=>{
       const rv=rev(CUR.model.qs[i]);return v!=null&&rv?(v/rv*100).toFixed(2)+'%':'';})]));
