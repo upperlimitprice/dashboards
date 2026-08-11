@@ -49,7 +49,7 @@ button.dl{background:#1f6f43;color:#fff;border:0;border-radius:8px;padding:8px 1
 <h2>손익 모델 <small class='gray'>(분기 flow)</small>
 <button class='md on' id='bAmt' onclick='setMode("amt")'>억원</button><button class='md' id='bPct' onclick='setMode("pct")'>% of Sales</button></h2>
 <div class='tblwrap' id='t_m'></div>
-<p style='font-size:.73rem;color:#889'>└ = 세부항목(사업부별 매출·판관비 주석) — 분기마다 공시 항목이 다르면 전체 합집합 기준으로 표시(없는 분기는 -), 세부 합과 총액의 차이는 <i>기타(차액)</i> 행에 표시 · % of Sales 모드에서 매출액 행은 금액 유지</p>
+<p style='font-size:.73rem;color:#889'>- 들여쓰기 행 = 세부항목(사업부별 매출·판관비 주석) — 분기마다 공시 항목이 다르면 전체 합집합 기준으로 표시(없는 분기는 -), 세부 합과 총액의 차이는 <i>기타(차액)</i> 행에 표시 · % of Sales 모드에서 매출액 행은 금액 유지</p>
 </div>
 <h2>비용 성격별 — 분기 flow <small class='gray'>(YoY = 전년 동기 대비)</small></h2>
 <div class='tblwrap' id='t_q'></div>
@@ -115,14 +115,14 @@ function buildModel(e){
   const rows=[];
   const push=(name,fn,cls)=>rows.push({name,vals:qs.map(fn),cls});
   push('매출액',q=>g(e.is,q,'매출액'),'core');
-  segL.forEach(lb=>push('└ '+lb,q=>g(e.seg,q,lb),'sub'));
-  if(segL.length)push('└ 기타/미분류(차액)',q=>{const r=g(e.is,q,'매출액'),s=sum(e.seg,q,segL);
+  segL.forEach(lb=>push('- '+lb,q=>g(e.seg,q,lb),'sub'));
+  if(segL.length)push('- 기타/미분류(차액)',q=>{const r=g(e.is,q,'매출액'),s=sum(e.seg,q,segL);
     return r!=null&&s!=null&&Math.abs(r-s)>0.5?r-s:null;},'sub oth');
   push('매출원가',q=>g(e.is,q,'매출원가'),'');
   push('매출총이익',q=>g(e.is,q,'매출총이익'),'core');
   push('판매비와관리비',q=>g(e.is,q,'판매비와관리비'),'');
-  sgaL.forEach(lb=>push('└ '+lb,q=>g(e.sga,q,lb),'sub'));
-  if(sgaL.length)push('└ 기타(차액)',q=>{const t=g(e.is,q,'판매비와관리비'),s=sum(e.sga,q,sgaL);
+  sgaL.forEach(lb=>push('- '+lb,q=>g(e.sga,q,lb),'sub'));
+  if(sgaL.length)push('- 기타(차액)',q=>{const t=g(e.is,q,'판매비와관리비'),s=sum(e.sga,q,sgaL);
     return t!=null&&s!=null&&Math.abs(t-s)>0.5?t-s:null;},'sub oth');
   push('영업이익',q=>g(e.is,q,'영업이익'),'core');
   push('당기순이익',q=>g(e.is,q,'당기순이익'),'core');
@@ -151,7 +151,7 @@ function renderModel(){
   document.getElementById('t_m').innerHTML=h+'</table>';
 }
 function buildRowVal(e,name,q){
-  const nm=name.replace(/^└ /,'');
+  const nm=name.replace(/^- /,'');
   if(e.is[q]&&e.is[q][nm]!=null)return e.is[q][nm];
   if(e.seg&&e.seg[q]&&e.seg[q][nm]!=null)return e.seg[q][nm];
   if(e.sga&&e.sga[q]&&e.sga[q][nm]!=null)return e.sga[q][nm];
