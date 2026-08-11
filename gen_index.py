@@ -195,7 +195,10 @@ function applyAdmin(){
   render();
 }
 render();
-fetch('layout.json?v='+Date.now()).then(r=>r.ok?r.json():null).then(j=>{PUB=j;applyAdmin();}).catch(()=>applyAdmin());
+fetch('layout.json?v='+Date.now()).then(r=>r.ok?r.json():null).then(j=>{PUB=j;
+  // 발행 배치에 새로 추가된 카드는 관리자 로컬 배치에도 자동 합류
+  if(PUB&&Array.isArray(PUB.main))PUB.main.forEach(k=>{if(REG.some(x=>x.k===k)&&!state.main.includes(k))state.main.push(k);});
+  applyAdmin();}).catch(()=>applyAdmin());
 if(!ADMIN){
   fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(d=>{
     if(ADMIN_IPS.includes(d.ip)){ADMIN=true;localStorage.setItem('dashAdmin','1');
