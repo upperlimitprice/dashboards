@@ -21,6 +21,7 @@ ITEMS = [
     ("taiwan-revenue.html", "🇹🇼 대만 AI 밸류체인 월매출", "MOPS 의무공시 — 26그룹 128종목 · 월별 매출·MoM·YoY (매일 갱신)", True),
     ("sector-toppick.html", "🏆 섹터 탑픽 보고서 (2026-08-10)", "30개 섹터 모멘텀 랭킹 · 탑픽 TOP15 · 종목별 3줄 요약", True),
     ("orders.html", "📋 수주잔고 트래커", "DART 정기보고서 수주상황 전수 파싱 — 기업 검색·분기 추이 · QoQ/YoY 증가 상위", True),
+    ("cost.html", "🧮 비용구조 모델", "비용의 성격별 분류 전수 파싱 — 기업 검색 · 분기 flow·연간 매트릭스 · 엑셀 다운로드", True),
     ("flows", "💰 수급 주체별 시총대비 Top20", "", True),
     ("parts-trend.html", "📦 전자부품 리드타임 트렌드", "Future Electronics 월간 — 카테고리별 리드타임·가격 방향", True),
     ("fx-flow.html", "💱 환율×외국인 수급 공식", "원화 1% 절하당 외국인 순매도 효과", True),
@@ -97,7 +98,7 @@ const REG=__REG__;
 const JOB={"signals.html":"signals","kr-breadth.html":"breadth","funds.html":"breadth","valuation.html":"breadth",
 "kospi-ff.html":"kospiff","cds.html":"cds","tanker.html":"tanker","us-liq.html":"usliq","tval.html":"tval",
 "etf.html":"tval","osc.html":"osc","leaders.html":"leaders","taiwan-revenue.html":"taiwan","flows":"flows",
-"orders.html":"orders"};
+"orders.html":"orders","cost.html":"cost"};
 let EP=null;
 async function ep(){if(EP!==null)return EP;try{EP=(await fetch('endpoint.json?'+Date.now()).then(r=>r.json())).url;}catch(e){EP='';}return EP;}
 async function refresh(e,k){
