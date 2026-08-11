@@ -20,6 +20,7 @@ ITEMS = [
     ("leaders.html", "🎯 주도 섹터·주도주 포착", "RS(가중)·자금·신고가·눌림·수급·펀더 스코어 — 추세추종 아카이브 기준 계량화 · 일정 캘린더", True),
     ("taiwan-revenue.html", "🇹🇼 대만 AI 밸류체인 월매출", "MOPS 의무공시 — 26그룹 128종목 · 월별 매출·MoM·YoY (매일 갱신)", True),
     ("sector-toppick.html", "🏆 섹터 탑픽 보고서 (2026-08-10)", "30개 섹터 모멘텀 랭킹 · 탑픽 TOP15 · 종목별 3줄 요약", True),
+    ("orders.html", "📋 수주잔고 트래커", "DART 정기보고서 수주상황 전수 파싱 — 기업 검색·분기 추이 · QoQ/YoY 증가 상위", True),
     ("flows", "💰 수급 주체별 시총대비 Top20", "", True),
     ("parts-trend.html", "📦 전자부품 리드타임 트렌드", "Future Electronics 월간 — 카테고리별 리드타임·가격 방향", True),
     ("fx-flow.html", "💱 환율×외국인 수급 공식", "원화 1% 절하당 외국인 순매도 효과", True),
@@ -95,7 +96,8 @@ const REG=__REG__;
 // 카드 → 갱신 서버 잡 매핑 (수동 갱신 버튼)
 const JOB={"signals.html":"signals","kr-breadth.html":"breadth","funds.html":"breadth","valuation.html":"breadth",
 "kospi-ff.html":"kospiff","cds.html":"cds","tanker.html":"tanker","us-liq.html":"usliq","tval.html":"tval",
-"etf.html":"tval","osc.html":"osc","leaders.html":"leaders","taiwan-revenue.html":"taiwan","flows":"flows"};
+"etf.html":"tval","osc.html":"osc","leaders.html":"leaders","taiwan-revenue.html":"taiwan","flows":"flows",
+"orders.html":"orders"};
 let EP=null;
 async function ep(){if(EP!==null)return EP;try{EP=(await fetch('endpoint.json?'+Date.now()).then(r=>r.json())).url;}catch(e){EP='';}return EP;}
 async function refresh(e,k){
