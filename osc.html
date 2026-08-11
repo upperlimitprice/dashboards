@@ -103,12 +103,14 @@ async function manualRefresh(job,btn){
 <div class='card'>
 <div class='ttl' id='nm'>—</div>
 <div id='chips'></div>
-<div class='meta' id='mt'>종목을 검색하세요</div>
-<div style='display:flex;gap:6px;align-items:center;margin:4px 0 6px;font-size:.76rem'>
+<div style='display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin:4px 0 6px'>
+<div class='meta' id='mt' style='margin-bottom:0'>종목을 검색하세요</div>
+<div style='display:flex;gap:6px;align-items:center;font-size:.76rem;flex:none'>
 <span style='color:#67737f'>Zoom</span>
 <button class='ozb' data-d='0'>전체</button><button class='ozb' data-d='252'>1년</button>
 <button class='ozb' data-d='126'>6m</button><button class='ozb' data-d='63'>3m</button>
 <button class='ozb' data-d='21'>1m</button>
+</div>
 </div>
 <div class='legend'><b class='mc'>━ 시가총액</b> &nbsp; <b class='os'>━ 수급오실레이터</b> (0선 점선)</div>
 <div id='chart'><div id='msg'>종목명을 입력하면 차트가 표시됩니다 (차트에서 드래그=구간 확대, 더블클릭=해제)</div></div>
