@@ -59,7 +59,7 @@ for(const tk in OB){
   let streak=0;
   for(let i=ps.length-1;i>0;i--){if(e.series[ps[i]]>e.series[ps[i-1]])streak++;else break;}
   const isHigh=last>=Math.max(...ps.map(p=>e.series[p]));
-  rows.push({tk,n:e.n,s:e.sector||e.s,last,lastP,qoq:prev?(last-prev)/Math.abs(prev)*100:null,
+  rows.push({tk,n:e.name,s:e.sector,last,lastP,qoq:prev?(last-prev)/Math.abs(prev)*100:null,
              yoy:yoyV?(last-yoyV)/Math.abs(yoyV)*100:null,streak,np:ps.length,hi:isHigh,src:e.src});
 }
 function tbl(el,list,cols){
@@ -86,7 +86,7 @@ function show(tk){
   const e=OB[tk],ps=Object.keys(e.series).sort();
   const r=rows.find(x=>x.tk===tk);
   document.getElementById('chartbox').style.display='block';
-  document.getElementById('cname').textContent=`${e.n} (${tk})`;
+  document.getElementById('cname').textContent=`${e.name} (${tk})`;
   document.getElementById('cstats').innerHTML=
     (e.ind?`<b>${e.ind}</b>${e.prod?' · '+e.prod:''}<br>`:'')
     +`최신 ${r.lastP} 수주잔고 <b>${fmt(r.last)}</b>${r.hi?' 🏆<b style="color:#d63c2f">역대 최고</b>':''} · QoQ ${r.qoq!=null?pc(r.qoq):'-'} · YoY ${r.yoy!=null?pc(r.yoy):'-'} · 연속증가 ${r.streak}분기 · ${r.np}개 분기`
