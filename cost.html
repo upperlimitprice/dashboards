@@ -38,16 +38,22 @@ button.dl{background:#1f6f43;color:#fff;border:0;border-radius:8px;padding:8px 1
 <div class='box' id='result'>
 <h2 id='cname'></h2>
 <div id='meta' class='sub'></div>
+<div style='margin:6px 0'>기간:
+<button class='md' id='p_q1' onclick='setPer("q1")'>최근 1분기</button>
+<button class='md' id='p_y1' onclick='setPer("y1")'>최근 1개년</button>
+<button class='md on' id='p_y3' onclick='setPer("y3")'>최근 3개년</button>
+<button class='md' id='p_all' onclick='setPer("all")'>전체</button>
+<small class='gray'> · 선택 기간에 숫자가 없는 항목은 자동 생략</small></div>
 <button class='dl' onclick='dlcsv()'>📥 엑셀(CSV) 다운로드</button>
 <div id='mwrap' style='display:none'>
-<h2>손익 모델 <small class='gray'>(분기 flow · 최근 12개 분기)</small>
+<h2>손익 모델 <small class='gray'>(분기 flow)</small>
 <button class='md on' id='bAmt' onclick='setMode("amt")'>억원</button><button class='md' id='bPct' onclick='setMode("pct")'>% of Sales</button></h2>
 <div class='tblwrap' id='t_m'></div>
 <p style='font-size:.73rem;color:#889'>└ = 세부항목(사업부별 매출·판관비 주석) — 분기마다 공시 항목이 다르면 전체 합집합 기준으로 표시(없는 분기는 -), 세부 합과 총액의 차이는 <i>기타(차액)</i> 행에 표시 · % of Sales 모드에서 매출액 행은 금액 유지</p>
 </div>
-<h2>비용 성격별 — 분기 flow <small class='gray'>(최근 12개 분기 · YoY = 전년 동기 대비)</small></h2>
+<h2>비용 성격별 — 분기 flow <small class='gray'>(YoY = 전년 동기 대비)</small></h2>
 <div class='tblwrap' id='t_q'></div>
-<h2>비용 성격별 — 연간 <small class='gray'>(최근 5개년)</small></h2>
+<h2>비용 성격별 — 연간</h2>
 <div class='tblwrap' id='t_a'></div>
 </div>
 </div>
@@ -73,13 +79,25 @@ async function show(nm){
   const qs=Object.keys(e.q).sort(),ys=Object.keys(e.a).sort();
   const iqs=Object.keys(e.is||{}).sort();
   document.getElementById('meta').innerHTML=`섹터 ${e.s} · 손익 ${iqs.length}개 분기 · 성격별 분기 ${qs.length}개 · 연간 ${ys.length}개년`;
-  document.getElementById('mwrap').style.display=iqs.length?'block':'none';
-  if(iqs.length)renderModel();
-  document.getElementById('t_q').innerHTML=qs.length?mkTbl(e.q,qs.slice(-12),4):'<p class="sub">성격별 주석 미공시</p>';
-  document.getElementById('t_a').innerHTML=ys.length?mkTbl(e.a,ys.slice(-5),1):'<p class="sub">성격별 주석 미공시</p>';
+  renderAll();
   window.scrollTo({top:0,behavior:'smooth'});
 }
-let MODE='amt';
+let MODE='amt',PER='y3';
+const PERN={q1:1,y1:4,y3:12,all:1e9};
+const perSlice=a=>a.slice(-Math.min(a.length,PERN[PER]));
+function renderAll(){
+  const e=CUR.e;
+  const qs=Object.keys(e.q).sort(),ys=Object.keys(e.a).sort();
+  const iqs=Object.keys(e.is||{}).sort();
+  document.getElementById('mwrap').style.display=iqs.length?'block':'none';
+  if(iqs.length)renderModel();
+  const yn=PER==='all'?1e9:PER==='y3'?3:1;
+  document.getElementById('t_q').innerHTML=qs.length?mkTbl(e.q,perSlice(qs),4):'<p class="sub">성격별 주석 미공시</p>';
+  document.getElementById('t_a').innerHTML=ys.length?mkTbl(e.a,ys.slice(-Math.min(ys.length,yn)),1):'<p class="sub">성격별 주석 미공시</p>';
+}
+function setPer(p){PER=p;
+  ['q1','y1','y3','all'].forEach(x=>document.getElementById('p_'+x).classList.toggle('on',x===p));
+  if(CUR)renderAll();}
 function setMode(m){MODE=m;
   document.getElementById('bAmt').classList.toggle('on',m==='amt');
   document.getElementById('bPct').classList.toggle('on',m==='pct');
@@ -90,7 +108,7 @@ function labOrderD(data,ps){
     if(!/합\s*계|총\s*계/.test(k)&&!seen.includes(k))seen.push(k);}));
   return seen;}
 function buildModel(e){
-  const qs=Object.keys(e.is).sort().slice(-12);
+  const qs=perSlice(Object.keys(e.is).sort());
   const g=(d,q,k)=>d&&d[q]?d[q][k]:undefined;
   const sum=(d,q,ls)=>{let s=0,any=false;ls.forEach(l=>{const v=g(d,q,l);if(v!=null){s+=v;any=true;}});return any?s:null;};
   const segL=labOrderD(e.seg,qs),sgaL=labOrderD(e.sga,qs);
@@ -108,7 +126,7 @@ function buildModel(e){
     return t!=null&&s!=null&&Math.abs(t-s)>0.5?t-s:null;},'sub oth');
   push('영업이익',q=>g(e.is,q,'영업이익'),'core');
   push('당기순이익',q=>g(e.is,q,'당기순이익'),'core');
-  return {qs,rows};
+  return {qs,rows:rows.filter(r=>r.vals.some(v=>v!=null))};  // 기간 내 무데이터 항목 생략
 }
 function renderModel(){
   const e=CUR.e,{qs,rows}=buildModel(e);
