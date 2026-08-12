@@ -253,7 +253,7 @@ function show(tk){
   const lg="<p style='font-size:.75rem;color:#889;margin:6px 0 0'>"
     +(showSegs.length?showSegs.map((sg,si)=>`<span style='color:${SEGC[si%8]}'>■</span> ${sg}`).join(' · '):"<span style='color:#2660c4'>■</span> 전사 가동률")
     +(Object.keys(F).length?" · <span style='color:#c3d2e2'>▮</span> 분기 매출 · <span style='color:#7cc79b'>●</span> GPM · <span style='color:#f0b072'>●</span> OPM <small>(연한 선 — % 좌축 공용)</small>":"")
-    +" · 마우스를 올리면 분기별 수치</p>";
+    +"</p>";
   document.getElementById('chart').innerHTML=s+lg;
   const svg=document.getElementById('utsvg');
   svg.addEventListener('mousemove',ev=>{
