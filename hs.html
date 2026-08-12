@@ -32,7 +32,7 @@ button.tab.on{background:#243a52;color:#fff;border-color:#243a52}
 <div class='box'>
 <input id='q' placeholder='트랙 검색 (예: 삼성전자 디램, 원텍, 변압기, 풍산…)' autocomplete='off'>
 <ul id='sug'></ul>
-<h2 id='cname' style='margin-top:10px'>월별 수출액</h2>
+<div style='display:flex;justify-content:space-between;align-items:center;margin-top:10px'><h2 id='cname' style='margin:0'>월별 수출액</h2><button class='tab' id='vbtn' onclick='toggleView()' style='margin:0'>🔢 표로 보기</button></div>
 <div id='cstats'>트랙을 검색하거나 아래 랭킹에서 클릭하면 차트가 표시됩니다</div>
 <div id='chart'></div>
 </div>
@@ -100,9 +100,27 @@ q.addEventListener('input',()=>{
   const hits=rows.filter(r=>r.n.includes(v)).slice(0,14);
   sug.innerHTML=hits.map(r=>`<li onclick='show("${r.k.replace(/"/g,'&quot;')}")'>${r.n}</li>`).join('');
 });
+let VMODE='chart',CURKEY=null;
+function toggleView(){VMODE=VMODE==='chart'?'table':'chart';
+  document.getElementById('vbtn').textContent=VMODE==='chart'?'🔢 표로 보기':'📊 차트로 보기';
+  if(CURKEY)show(CURKEY);}
+function tableView(k){
+  const e=HS[k],ms=Object.keys(e.series).sort().slice(-24);
+  let h="<div style='overflow-x:auto'><table><tr><th>구분</th>"+ms.map(m=>`<th>${m.slice(2)}</th>`).join('')+"</tr>";
+  h+=`<tr style='font-weight:700;background:#f7f9fb'><td>수출액</td>`+ms.map(m=>`<td>${fmt(e.series[m])}</td>`).join('')+'</tr>';
+  h+=`<tr><td>YoY</td>`+ms.map(m=>{const py=e.series[(+m.slice(0,4)-1)+m.slice(4)];
+    return `<td>${py?pc((e.series[m]-py)/py*100):'-'}</td>`;}).join('')+'</tr>';
+  return h+'</table></div>';
+}
 function show(k){
+  CURKEY=k;
   const e=HS[k],ms=Object.keys(e.series).sort(),n=ms.length;
   const r=rows.find(x=>x.k===k);
+  if(VMODE==='table'){
+    document.getElementById('cname').textContent=e.label+' — 월별 수출 표';
+    document.getElementById('cstats').innerHTML=`최근 ${r.last} <b>${fmt(r.lv)}</b> · YoY ${r.yoy!=null?pc(r.yoy):'-'} · 3M YoY ${r.yoy3!=null?pc(r.yoy3):'-'}`;
+    document.getElementById('chart').innerHTML=tableView(k);
+    return;}
   document.getElementById('cname').textContent=e.label+' — 월별 수출액';
   document.getElementById('cstats').innerHTML=
     `최근 ${r.last} <b>${fmt(r.lv)}</b>${r.hi?' 🏆<b style="color:#d63c2f">월 수출 사상 최대</b>':''} · YoY ${r.yoy!=null?pc(r.yoy):'-'} · 최근 3개월 YoY ${r.yoy3!=null?pc(r.yoy3):'-'} · ${n}개월`
