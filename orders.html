@@ -111,14 +111,14 @@ q.addEventListener('input',()=>{
 });
 // 차트 (공란 기본 → 검색/클릭 시 데이터)
 const SEGC=['#2660c4','#f28e2b','#2e9e5b','#8e5cc8','#c0392b','#0f6b66','#b8860b','#7f8c8d'];
-const W=980,H=260,L=56,B=34,T=14,R=8;
+const W=980,H=260,L=56,B=34,T=14,R=46;
 function frame(mx,n,ps){
   let s=`<svg id='obsvg' viewBox='0 0 ${W} ${H}' style='width:100%;background:#fbfcfe;border:1px solid #e3e9ef;border-radius:8px'>`;
   for(let g=1;g<=4;g++){const y=T+(H-T-B)*g/4;
     s+=`<line x1='${L}' y1='${y}' x2='${W-R}' y2='${y}' stroke='#eef1f5'/>`;
     if(mx)s+=`<text x='${L-5}' y='${T+(H-T-B)*(1-g/4)+4}' font-size='9' fill='#8a94a0' text-anchor='end'>${fmt(mx*g/4)}</text>`;}
   const X=i=>L+(W-L-R)*(n===1?0.5:i/(n-1));
-  ps.forEach((p,i)=>{if(n<=24||i%2===n%2)s+=`<text x='${X(i).toFixed(1)}' y='${H-16}' font-size='8.5' fill='#8a94a0' text-anchor='middle'>${qlab(p)}</text>`;});
+  ps.forEach((p,i)=>{const lastL=i===n-1;if(lastL||((n<=24||i%2===n%2)&&(n<=24||i<n-2)))s+=`<text x='${X(i).toFixed(1)}' y='${H-16}' font-size='${lastL?9.5:8.5}' font-weight='${lastL?700:400}' fill='${lastL?'#33414f':'#8a94a0'}' text-anchor='middle'>${qlab(p)}</text>`;});
   return s;
 }
 function emptyChart(){
