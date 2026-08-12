@@ -37,6 +37,9 @@ button.tab.on{background:#243a52;color:#fff;border-color:#243a52}
 <div id='chart'></div>
 </div>
 <div class='box'>
+<div style='margin:0 0 8px'>섹터:
+<select id='secf' onchange='setSec(this.value)' style='font-size:.85rem;padding:5px 8px;border:1.5px solid #b9c7d4;border-radius:8px'></select>
+</div>
 <div id='tabs'>
 <button class='tab on' data-t='high' onclick='showTab("high")'>🏆 수주잔고 신고가</button>
 <button class='tab' data-t='qoq' onclick='showTab("qoq")'>🔺 QoQ 증가율 상위</button>
@@ -67,7 +70,7 @@ for(const tk in OB){
   const isHigh=last>=Math.max(...ps.map(p=>e.series[p]));
   const cov=e.ttm&&e.ttm>50?last/e.ttm:null;
   if(cov!=null&&cov>40)continue;  // 잔고가 연매출 40배 초과 = 다중통화 표 등 파싱 신뢰불가 → 제외
-  rows.push({tk,n:e.name,last,lastP,qoq:prev?(last-prev)/Math.abs(prev)*100:null,
+  rows.push({tk,n:e.name,s:e.sector||'',last,lastP,qoq:prev?(last-prev)/Math.abs(prev)*100:null,
              yoy:yoyV?(last-yoyV)/Math.abs(yoyV)*100:null,streak,np:ps.length,hi:isHigh,src:e.src,cov,ttm:e.ttm});
 }
 // 툴팁 공용
@@ -79,15 +82,29 @@ function tipShow(html,ev){
   tip.style.top=(ev.clientY+window.scrollY+10)+'px';}
 function tipHide(){if(tip)tip.style.display='none';}
 // 탭 리스트
-const nm2=r=>(r.src==='u'?'<span style="color:#1f8a4c">✔</span> ':'')+r.n+(r.hi?' 🏆':'');
+const SECKO={tech:'테크·반도체',chemical:'화학',auto:'자동차',bio:'바이오·제약',steel:'철강·금속',food:'음식료',
+construction:'건설',robot:'기계·로봇',medtech:'의료기기',fashion:'섬유·의류',appliance:'가전·생활',battery:'2차전지',
+cosmetics:'화장품',industrial:'상사·자본재',network:'통신장비',ship:'조선',power:'전력기기',transport:'운송',
+holdings:'지주',utility:'유틸리티',retail:'유통',software:'소프트웨어',leisure:'레저',finance:'금융',media:'미디어',
+internetgame:'인터넷·게임',edu:'교육',defense:'방산',misc:'기타','':'미분류'};
+let SECF='';
+function setSec(s){SECF=s;render();}
+const bySec=()=>SECF?rows.filter(r=>r.s===SECF):rows;
+const nm2=r=>(r.src==='u'?'<span style="color:#1f8a4c">✔</span> ':'')+r.n+(r.hi?' 🏆':'')+` <small style='color:#98a3ae'>${SECKO[r.s]||r.s||''}</small>`;
 const base=[['기업',nm2,null],['잔고',r=>fmt(r.last),'last'],['QoQ',r=>r.qoq!=null?pc(r.qoq):'-','qoq'],['YoY',r=>r.yoy!=null?pc(r.yoy):'-','yoy'],['연속↑',r=>r.streak? r.streak+'분기':'-','streak'],['잔고/매출(TTM)',r=>r.cov!=null?'<b>'+r.cov.toFixed(2)+'x</b>':'-','cov']];
 const TABS={
- high:{pool:()=>rows.filter(r=>r.hi&&r.np>=8&&r.last>=300),def:['yoy',-1]},
- qoq:{pool:()=>rows.filter(r=>r.qoq!=null&&r.last>=300),def:['qoq',-1]},
- yoy:{pool:()=>rows.filter(r=>r.yoy!=null&&r.last>=300),def:['yoy',-1]},
- streak:{pool:()=>rows.filter(r=>r.streak>=3&&r.last>=300),def:['streak',-1]},
- cov:{pool:()=>rows.filter(r=>r.cov!=null&&r.last>=300),def:['cov',-1]},
- size:{pool:()=>rows.slice(),def:['last',-1]}};
+ high:{pool:()=>bySec().filter(r=>r.hi&&r.np>=8&&r.last>=300),def:['yoy',-1]},
+ qoq:{pool:()=>bySec().filter(r=>r.qoq!=null&&r.last>=300),def:['qoq',-1]},
+ yoy:{pool:()=>bySec().filter(r=>r.yoy!=null&&r.last>=300),def:['yoy',-1]},
+ streak:{pool:()=>bySec().filter(r=>r.streak>=3&&r.last>=300),def:['streak',-1]},
+ cov:{pool:()=>bySec().filter(r=>r.cov!=null&&r.last>=300),def:['cov',-1]},
+ size:{pool:()=>bySec().slice(),def:['last',-1]}};
+(function(){
+  const cnt={};rows.forEach(r=>{cnt[r.s]=(cnt[r.s]||0)+1;});
+  const opts=Object.entries(cnt).sort((a,b)=>b[1]-a[1])
+    .map(([s,n])=>`<option value='${s}'>${SECKO[s]||s||'미분류'} (${n})</option>`).join('');
+  document.getElementById('secf').innerHTML=`<option value=''>전체 섹터 (${rows.length})</option>`+opts;
+})();
 let CURT='high',SORT={k:null,d:-1};
 function setSort(k){if(SORT.k===k)SORT.d=-SORT.d;else SORT={k,d:-1};render();}
 function rowTip(tk){
