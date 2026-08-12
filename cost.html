@@ -143,12 +143,26 @@ function chartView(e){
     const leg="<p style='font-size:.74rem;color:#889;margin:4px 0 10px'>"+items.map((it,si)=>`<span style='color:${SEGC[si%9]}'>■</span> ${it}`).join(' · ')+"</p>";
     return {svg:s,leg};
   }
-  // ⓪ 매출 구성 누적막대: 원가+판관비+영업이익(+기타차액) = 매출
-  const rvItems=['매출원가','판매비와관리비','영업이익','기타(차액)'];
-  const rvAt=(q,it)=>{const d=e.is[q]||{};
-    if(it==='기타(차액)'){const r=d['매출액'],s=(d['매출원가']||0)+(d['판매비와관리비']||0)+(d['영업이익']||0);
-      return r!=null?Math.max(0,r-s):0;}
-    return Math.max(0,d[it]||0);};
+  // ⓪ 매출 구성 누적막대: 사업부별 매출 블록 (없으면 전체 매출 단일)
+  const seg=e.seg||{};
+  const segL=labOrderD(seg,qs);
+  let rvItems,rvAt;
+  if(segL.length){
+    const lastSq=qs.filter(q=>seg[q]).slice(-1)[0];
+    segL.sort((a,b)=>((seg[lastSq]||{})[b]||0)-((seg[lastSq]||{})[a]||0));
+    const top=segL.slice(0,7),rest=segL.slice(7);
+    rvItems=top.concat(rest.length?['기타(합)']:[]).concat(['기타/미분류(차액)']);
+    rvAt=(q,it)=>{const d=seg[q]||{};
+      if(it==='기타(합)')return rest.reduce((s,l)=>s+Math.max(0,d[l]||0),0);
+      if(it==='기타/미분류(차액)'){const r=(e.is[q]||{})['매출액'];
+        if(r==null||!seg[q])return 0;
+        const s=Object.values(d).reduce((a,b)=>a+Math.max(0,b),0);
+        return Math.max(0,r-s);}
+      return Math.max(0,d[it]||0);};
+  }else{
+    rvItems=['매출액'];
+    rvAt=(q,it)=>Math.max(0,(e.is[q]||{})['매출액']||0);
+  }
   const c0=stackChart('cch0',rvItems,rvAt,'매출 구성');
   // ① 비용 성격별 스택
   const cq=e.q||{};
@@ -189,7 +203,7 @@ function chartView(e){
   s2+=xl2+'</svg>';
   const leg2="<p style='font-size:.74rem;color:#889;margin:4px 0'>"+LN.map(([nm,,col])=>`<span style='color:${col}'>■</span> ${nm}`).join(' · ')+" (% of Sales)</p>";
   window.__CCH={qs,rvItems,rvAt,items,dataAt,pts,LN,rev,X,W,L,R,n};
-  return "<h2 style='margin:6px 0'>매출 구성 누적 막대 <small class='gray'>(원가+판관비+영업이익 = 매출, 억원)</small></h2>"+c0.svg+c0.leg
+  return "<h2 style='margin:6px 0'>매출 구성 누적 막대 <small class='gray'>(사업부별 매출 블록"+(segL.length?"":" — 부문 공시 없음, 전체 매출")+", 억원)</small></h2>"+c0.svg+c0.leg
        +"<h2 style='margin:6px 0'>비용 구성 누적 막대 <small class='gray'>(억원)</small></h2>"+c1.svg+c1.leg
        +"<h2 style='margin:6px 0'>수익성 지표 추이 <small class='gray'>(선그래프)</small></h2>"+s2+leg2;
 }
