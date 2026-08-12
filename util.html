@@ -1,5 +1,5 @@
 <!doctype html><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'>
-<title>가동률 트래커 · 2026-08-11</title>
+<title>가동률 트래커 · 2026-08-12</title>
 <style>
 body{font-family:'Apple SD Gothic Neo',sans-serif;background:#f4f6f8;color:#1c2530;margin:0}
 .wrap{max-width:1080px;margin:0 auto;padding:18px}
@@ -26,7 +26,7 @@ button.tab.on{background:#243a52;color:#fff;border-color:#243a52}
 </style>
 <div class='wrap'>
 <h1>🏭 가동률 트래커</h1>
-<p class='sub'>기준 2026-08-11 · DART 정기보고서 '가동률' 표 전수 파싱 · 944개 기업 · 부문(공장·라인) 단위 평균가동률 %, 보고서 기간 평균 · 매일 밤 자동 갱신<br>
+<p class='sub'>기준 2026-08-12 · DART 정기보고서 '가동률' 표 전수 파싱 · 944개 기업 · 부문(공장·라인) 단위 평균가동률 %, 보고서 기간 평균 · 매일 밤 자동 갱신<br>
 ※ 표 양식이 제각각이라 일부 부문명·수치 오차 가능 · 증설(생산능력 확대) 중 가동률 상승 = 실적 레버리지 신호로 활용</p>
 <div class='box'>
 <input id='q' placeholder='기업명 검색 (예: 에스앤에스텍, HD한국조선해양, 한화에어로스페이스…)' autocomplete='off'>
@@ -36,6 +36,9 @@ button.tab.on{background:#243a52;color:#fff;border-color:#243a52}
 <div id='chart'></div>
 </div>
 <div class='box'>
+<div style='margin:0 0 8px'>섹터:
+<select id='secf' onchange='setSec(this.value)' style='font-size:.85rem;padding:5px 8px;border:1.5px solid #b9c7d4;border-radius:8px'></select>
+</div>
 <div id='tabs'>
 <button class='tab on' data-t='yoy' onclick='showTab("yoy")'>🔺 가동률 YoY 상승</button>
 <button class='tab' data-t='qoq' onclick='showTab("qoq")'>🔺 QoQ 상승</button>
@@ -72,13 +75,27 @@ function tShow(h,ev){if(!tip){tip=document.createElement('div');tip.id='uttip';d
  tip.style.left=Math.min(window.innerWidth-210,ev.clientX+14)+'px';
  tip.style.top=(ev.clientY+window.scrollY+10)+'px';}
 const tHide=()=>{if(tip)tip.style.display='none';};
-const base=[['기업',r=>r.n],['최근',r=>qlab(r.lastP)],['가동률',r=>'<b>'+r.last.toFixed(1)+'%</b>'],
+const base=[['기업',r=>r.n+` <small style='color:#98a3ae'>${SECKO[r.s]||r.s}</small>`],['최근',r=>qlab(r.lastP)],['가동률',r=>'<b>'+r.last.toFixed(1)+'%</b>'],
   ['QoQ',r=>r.qoq!=null?pp(r.qoq):'-'],['YoY',r=>r.yoy!=null?pp(r.yoy):'-']];
+const SECKO={tech:'테크·반도체',chemical:'화학',auto:'자동차',bio:'바이오·제약',steel:'철강·금속',food:'음식료',
+construction:'건설',robot:'기계·로봇',medtech:'의료기기',fashion:'섬유·의류',appliance:'가전·생활',battery:'2차전지',
+cosmetics:'화장품',industrial:'상사·자본재',network:'통신장비',ship:'조선',power:'전력기기',transport:'운송',
+holdings:'지주',utility:'유틸리티',retail:'유통',software:'소프트웨어',leisure:'레저',finance:'금융',media:'미디어',
+internetgame:'인터넷·게임',edu:'교육',defense:'방산',misc:'기타'};
+let SECF='';
+function setSec(s){SECF=s;showTab(document.querySelector('#tabs .tab.on').dataset.t);}
+const bySec=()=>SECF?rows.filter(r=>r.s===SECF):rows;
+(function(){
+  const cnt={};rows.forEach(r=>{cnt[r.s]=(cnt[r.s]||0)+1;});
+  const opts=Object.entries(cnt).sort((a,b)=>b[1]-a[1])
+    .map(([s,n])=>`<option value='${s}'>${SECKO[s]||s} (${n})</option>`).join('');
+  document.getElementById('secf').innerHTML=`<option value=''>전체 섹터 (${rows.length})</option>`+opts;
+})();
 const TABS={
- yoy:{list:()=>rows.filter(r=>r.yoy!=null&&r.np>=4).sort((a,b)=>b.yoy-a.yoy).slice(0,40)},
- qoq:{list:()=>rows.filter(r=>r.qoq!=null).sort((a,b)=>b.qoq-a.qoq).slice(0,40)},
- high:{list:()=>rows.filter(r=>r.last>=90).sort((a,b)=>(b.yoy??-99)-(a.yoy??-99)).slice(0,40)},
- drop:{list:()=>rows.filter(r=>r.yoy!=null&&r.np>=4).sort((a,b)=>a.yoy-b.yoy).slice(0,40)}};
+ yoy:{list:()=>bySec().filter(r=>r.yoy!=null&&r.np>=4).sort((a,b)=>b.yoy-a.yoy).slice(0,40)},
+ qoq:{list:()=>bySec().filter(r=>r.qoq!=null).sort((a,b)=>b.qoq-a.qoq).slice(0,40)},
+ high:{list:()=>bySec().filter(r=>r.last>=90).sort((a,b)=>(b.yoy??-99)-(a.yoy??-99)).slice(0,40)},
+ drop:{list:()=>bySec().filter(r=>r.yoy!=null&&r.np>=4).sort((a,b)=>a.yoy-b.yoy).slice(0,40)}};
 function rowTip(tk){
   const e=UT[tk],ps=Object.keys(e.series).sort().slice(-4);
   return `<b>${e.name}</b><br>`+ps.map(p=>`${qlab(p)}: ${rep(e,p).toFixed(1)}%`).join('<br>');}
