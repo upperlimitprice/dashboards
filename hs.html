@@ -131,6 +131,7 @@ function tableView(k){
 }
 function show(k){
   CURKEY=k;
+  try{history.replaceState(null,'','#'+encodeURIComponent(k));}catch(_){}
   const e=HS[k],ms=Object.keys(e.series).sort(),n=ms.length;
   const r=rows.find(x=>x.k===k);
   if(VMODE==='table'){
@@ -170,4 +171,5 @@ function show(k){
   svg.addEventListener('mouseleave',tHide);
   document.getElementById('chart').scrollIntoView({behavior:'smooth',block:'center'});
 }
+try{const H0=decodeURIComponent(location.hash.slice(1));if(H0&&HS[H0])show(H0);}catch(_){}
 </script>
