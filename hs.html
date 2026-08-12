@@ -125,7 +125,7 @@ function renderSug(){
 }
 function pickSug(i){
   const r=SUGL[i];if(!r)return;
-  q.value=r.r.n;SUGL=[];renderSug();
+  q.value=r.n;SUGL=[];renderSug();
   show(r.k);
 }
 q.addEventListener('input',()=>{
