@@ -7,9 +7,13 @@ h1{font-size:1.3rem;margin:6px 0 2px}
 .sub{color:#667;font-size:.8rem;margin:0 0 12px}
 .box{background:#fff;border:1px solid #ccd5dd;border-radius:12px;padding:14px 16px;margin:10px 0}
 input#q{width:100%;box-sizing:border-box;font-size:1rem;padding:10px 12px;border:1.5px solid #9fb2c2;border-radius:10px}
-#sug{margin:4px 0 0;padding:0;list-style:none}
-#sug li{display:inline-block;background:#eef2f6;border-radius:8px;padding:4px 10px;margin:3px 4px 0 0;font-size:.82rem;cursor:pointer}
-#sug li:hover{background:#dde7f0}
+#qwrap{position:relative}
+#sug{margin:0;padding:0;list-style:none;position:absolute;top:100%;left:0;right:0;background:#fff;border:1.5px solid #9fb2c2;border-top:0;border-radius:0 0 10px 10px;max-height:300px;overflow-y:auto;z-index:60;box-shadow:0 8px 18px rgba(20,30,45,.12);display:none}
+#sug.open{display:block}
+#sug li{display:flex;justify-content:space-between;gap:10px;padding:9px 14px;font-size:.88rem;cursor:pointer;border-bottom:1px solid #f0f3f6}
+#sug li:last-child{border-bottom:0}
+#sug li:hover,#sug li.sel{background:#eef5fe}
+#sug li small{color:#8a97a5}
 table{border-collapse:collapse;width:100%;font-size:.82rem}
 th{background:#243a52;color:#fff;padding:7px 13px;font-weight:600;text-align:right;white-space:nowrap;position:sticky;top:0}
 th:first-child,td:first-child{text-align:left}
@@ -30,8 +34,8 @@ button.tab.on{background:#243a52;color:#fff;border-color:#243a52}
 <p class='sub'>기준 2026-08-12 · 기업-지역(세관)-품목-HS 단위 월별 수출액(USD) 211개 트랙 — 분기 실적 선행 프록시<br>
 ※ 수기 정리본(26.08.15) 기반 · 관세청 API 연동됨 · 관심 트랙 추가: dart_meta/hs_watch.json(국가 단위) 또는 정리본 갱신 후 hs_import_user.py</p>
 <div class='box'>
-<input id='q' placeholder='트랙 검색 (예: 삼성전자 디램, 원텍, 변압기, 풍산…)' autocomplete='off'>
-<ul id='sug'></ul>
+<div id='qwrap'><input id='q' placeholder='트랙 검색 (예: 삼성전자 디램, 원텍, 변압기, 풍산…)' autocomplete='off'>
+<ul id='sug'></ul></div>
 <div style='display:flex;justify-content:space-between;align-items:center;margin-top:10px'><h2 id='cname' style='margin:0'>월별 수출액</h2><button class='tab' id='vbtn' onclick='toggleView()' style='margin:0'>🔢 표로 보기</button></div>
 <div id='cstats'>트랙을 검색하거나 아래 랭킹에서 클릭하면 차트가 표시됩니다</div>
 <div id='chart'></div>
@@ -108,15 +112,35 @@ function render(){
 }
 showTab('up');
 const q=document.getElementById('q'),sug=document.getElementById('sug');
-q.addEventListener('keydown',ev=>{if(ev.key==='Enter'){const v=q.value.trim();
-  const hit=rows.find(r=>r.n===v)||rows.find(r=>r.n.includes(v));
-  if(hit){show(hit.k);sug.innerHTML='';}}});
+let SUGL=[],SEL=-1;
+function renderSug(){
+  if(!SUGL.length){sug.classList.remove('open');sug.innerHTML='';return;}
+  sug.innerHTML=SUGL.map((r,i)=>`<li class='${i===SEL?"sel":""}' data-i='${i}'><span>${r.n}</span><small>${fmt(r.lv)}</small></li>`).join('');
+  sug.classList.add('open');
+  sug.querySelectorAll('li').forEach(li=>{
+    li.addEventListener('mousedown',ev=>{ev.preventDefault();pickSug(+li.dataset.i);});
+    li.addEventListener('mouseenter',()=>{SEL=+li.dataset.i;
+      sug.querySelectorAll('li').forEach(x=>x.classList.toggle('sel',+x.dataset.i===SEL));});
+  });
+}
+function pickSug(i){
+  const r=SUGL[i];if(!r)return;
+  q.value=r.r.n;SUGL=[];renderSug();
+  show(r.k);
+}
 q.addEventListener('input',()=>{
-  const v=q.value.trim();sug.innerHTML='';
-  if(!v)return;
-  const hits=rows.filter(r=>r.n.includes(v)).slice(0,14);
-  sug.innerHTML=hits.map(r=>`<li onclick='show("${r.k.replace(/"/g,'&quot;')}")'>${r.n}</li>`).join('');
+  const v=q.value.trim();
+  if(!v){SUGL=[];renderSug();return;}
+  SUGL=rows.filter(r=>r.n.includes(v)).slice(0,12);SEL=-1;renderSug();
 });
+q.addEventListener('keydown',ev=>{
+  if(ev.key==='ArrowDown'){ev.preventDefault();if(SUGL.length){SEL=(SEL+1)%SUGL.length;renderSug();}}
+  else if(ev.key==='ArrowUp'){ev.preventDefault();if(SUGL.length){SEL=(SEL-1+SUGL.length)%SUGL.length;renderSug();}}
+  else if(ev.key==='Enter'){ev.preventDefault();
+    if(SUGL.length)pickSug(SEL>=0?SEL:0);}
+  else if(ev.key==='Escape'){SUGL=[];renderSug();}
+});
+q.addEventListener('blur',()=>setTimeout(()=>{SUGL=[];renderSug();},150));
 let VMODE='chart',CURKEY=null;
 function toggleView(){VMODE=VMODE==='chart'?'table':'chart';
   document.getElementById('vbtn').textContent=VMODE==='chart'?'🔢 표로 보기':'📊 차트로 보기';
