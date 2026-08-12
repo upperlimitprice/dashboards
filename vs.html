@@ -175,7 +175,7 @@ async function dlvs(nm,e,obs){
   setc(4,2,'종가:');setc(5,2,'시가총액(백만 원):');
   setc(7,2,'분기별 재무데이터 (단위: 억 원)',{b:1,fill:'FF000000',w:1});
   years.forEach((y,yi)=>setc(7,4+yi,String(y%100)+'Y',{b:1,fill:'FF000000',w:1}));
-  qcols.forEach((q,i)=>setc(7,QC0+i,q[4]+'Q'+q.slice(2,4),{b:1,fill:'FF000000',w:1}));
+  qcols.forEach((q,i)=>setc(7,QC0+i,q[5]+'Q'+q.slice(2,4),{b:1,fill:'FF000000',w:1}));
   // 본문
   const R={};let r=9;
   R.rev=r;valRow(r,'매출액',q=>gv(e.is,q,'매출액'),{b:1,fill:'FFEEEEEE',core:1});r++;
@@ -254,7 +254,7 @@ async function dlvs(nm,e,obs){
   [['비용의 성격별 분류',e.q],['판매비와관리비',e.sga]].forEach(([tt,dat])=>{
     const qs2=Object.keys(dat||{}).sort();if(!qs2.length)return;
     cset(cr,2,tt,{b:1});
-    qs2.forEach((q,i)=>cset(cr,3+i,q[4]+'Q'+q.slice(2,4),{b:1}));cr++;
+    qs2.forEach((q,i)=>cset(cr,3+i,q[5]+'Q'+q.slice(2,4),{b:1}));cr++;
     const labs=[];qs2.forEach(q=>Object.keys(dat[q]).forEach(k=>{if(!labs.includes(k))labs.push(k);}));
     labs.forEach(k=>{cset(cr,2,k.slice(0,24));
       qs2.forEach((q,i)=>{const v=dat[q][k];if(v!=null)cset(cr,3+i,Math.round(v*10)/10,{fmt:'#,##0'});});cr++;});
