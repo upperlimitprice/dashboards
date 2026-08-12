@@ -70,20 +70,37 @@ function tShow(h,ev){if(!tip){tip=document.createElement('div');tip.id='hstip';d
  tip.style.left=Math.min(window.innerWidth-200,ev.clientX+12)+'px';
  tip.style.top=(ev.clientY+window.scrollY+10)+'px';}
 const tHide=()=>{if(tip)tip.style.display='none';};
-const base=[['트랙',r=>r.n+(r.hi?' 🏆':'')],['최근월',r=>r.last],['수출액',r=>fmt(r.lv)],
-  ['YoY',r=>r.yoy!=null?pc(r.yoy):'-'],['3M YoY',r=>r.yoy3!=null?'<b>'+(r.yoy3>0?'+':'')+r.yoy3.toFixed(1)+'%</b>':'-']];
+const base=[['트랙',r=>r.n+(r.hi?' 🏆':''),null],['최근월',r=>r.last,null],['수출액',r=>fmt(r.lv),'lv'],
+  ['YoY',r=>r.yoy!=null?pc(r.yoy):'-','yoy'],['3M YoY',r=>r.yoy3!=null?'<b>'+(r.yoy3>0?'+':'')+r.yoy3.toFixed(1)+'%</b>':'-','yoy3']];
 const TABS={
- up:{list:()=>rows.filter(r=>r.yoy3!=null&&r.lv>=1e5).sort((a,b)=>b.yoy3-a.yoy3).slice(0,40)},
- dn:{list:()=>rows.filter(r=>r.yoy3!=null&&r.lv>=1e5).sort((a,b)=>a.yoy3-b.yoy3).slice(0,40)},
- hi:{list:()=>rows.filter(r=>r.hi&&r.nm>=13).sort((a,b)=>(b.yoy3??-999)-(a.yoy3??-999)).slice(0,40)},
- sz:{list:()=>rows.slice().sort((a,b)=>b.lv-a.lv).slice(0,40)}};
+ up:{pool:()=>rows.filter(r=>r.yoy3!=null&&r.lv>=1e5),def:['yoy3',-1]},
+ dn:{pool:()=>rows.filter(r=>r.yoy3!=null&&r.lv>=1e5),def:['yoy3',1]},
+ hi:{pool:()=>rows.filter(r=>r.hi&&r.nm>=13),def:['yoy3',-1]},
+ sz:{pool:()=>rows.slice(),def:['lv',-1]}};
+let CURT='up',SORT={k:null,d:-1};
+function setSort(k){if(SORT.k===k)SORT.d=-SORT.d;else SORT={k,d:-1};render();}
 function rowTip(k){
   const e=HS[k],ms=Object.keys(e.series).sort().slice(-4);
   return `<b>${e.label}</b><br>`+ms.map(m=>`${m}: ${fmt(e.series[m])}`).join('<br>');}
-function showTab(t){
+function showTab(t){CURT=t;SORT={k:null,d:-1};render();}
+function render(){
+  const t=CURT;
   document.querySelectorAll('#tabs .tab').forEach(b=>b.classList.toggle('on',b.dataset.t===t));
-  document.getElementById('tabc').innerHTML='<table><tr>'+base.map(c=>`<th>${c[0]}</th>`).join('')
-    +'</tr>'+TABS[t].list().map(r=>`<tr class='rowc' data-k='${r.k}' onclick='show(this.dataset.k)'>`
+  const [dk,dd]=TABS[t].def;
+  const key=SORT.k||dk, dir=SORT.k?SORT.d:dd;
+  const list=TABS[t].pool().slice().sort((a,b)=>{
+    const av=a[key],bv=b[key];
+    if(av==null&&bv==null)return 0;
+    if(av==null)return 1;
+    if(bv==null)return -1;
+    return dir===-1?bv-av:av-bv;}).slice(0,60);
+  const th=base.map(c=>{
+    if(!c[2])return `<th>${c[0]}</th>`;
+    const active=key===c[2];
+    const arrow=active?(dir===-1?' ▼':' ▲'):' <span style="opacity:.45">⇅</span>';
+    return `<th style='cursor:pointer' onclick='setSort("${c[2]}")'>${c[0]}${arrow}</th>`;}).join('');
+  document.getElementById('tabc').innerHTML='<table><tr>'+th
+    +'</tr>'+list.map(r=>`<tr class='rowc' data-k='${r.k}' onclick='show(this.dataset.k)'>`
     +base.map(c=>`<td>${c[1](r)}</td>`).join('')+'</tr>').join('')+'</table>';
   document.querySelectorAll('#tabc tr.rowc').forEach(tr=>{
     tr.addEventListener('mousemove',ev=>tShow(rowTip(tr.dataset.k),ev));
