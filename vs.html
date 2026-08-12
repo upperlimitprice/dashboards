@@ -45,6 +45,9 @@ th:last-child,td:last-child{padding-right:26px}
 .tblwrap{overflow-x:auto}
 #vstip{position:absolute;display:none;background:#0b0e16;color:#fff;border:1px solid var(--bd);font-size:.74rem;line-height:1.55;padding:7px 10px;border-radius:8px;pointer-events:none;z-index:99}
 .lg{font-size:.73rem;color:var(--mut);margin-top:6px}
+.rephead{display:flex;justify-content:space-between;align-items:center;margin:0 0 10px}
+.dlb{background:var(--sur2);border:1px solid var(--bd);color:var(--tx);padding:7px 14px;border-radius:9px;cursor:pointer;font-size:.82rem;font-family:inherit}
+.dlb:hover{border-color:var(--acc);color:var(--acc)}
 </style>
 <div class='wrap'>
 <h1>📊 VS 재무·비용 리포트</h1>
@@ -123,6 +126,160 @@ function xlabels(W,H,L,R,qs,fq){
     if(last||n<=14||i%2===n%2)s+=`<text x='${X(i).toFixed(1)}' y='${H-10}' font-size='${last?9.5:8.5}' font-weight='${last?700:400}' fill='${last?'#c6cede':'#67718a'}' text-anchor='middle'>${fq(p)}</text>`;});
   return s;
 }
+// ── VS 엑셀 출력 (FS-Q 수식 모델 + 비용 RAW + 그래프 요약 + 수주 보조지표)
+async function dlvs(nm,e,obs){
+  if(!window.ExcelJS){
+    await new Promise(res=>{const s=document.createElement('script');
+      s.src='https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js';
+      s.onload=res;s.onerror=res;document.head.appendChild(s);});}
+  if(!window.ExcelJS){alert('엑셀 라이브러리 로드 실패 — 네트워크 확인');return;}
+  const colL=n=>{let s='';while(n>0){s=String.fromCharCode(65+(n-1)%26)+s;n=(n-1)/26|0;}return s;};
+  const nrm=s=>String(s).replace(/[\s,·ㆍ./()\-&+'"]+/g,'');
+  const allq=Object.keys(e.is).sort();
+  const y0=+allq[0].slice(0,4),y1=+allq[allq.length-1].slice(0,4);
+  const years=[];for(let y=y0;y<=y1;y++)years.push(y);
+  const qcols=[];years.forEach(y=>{for(let k=1;k<=4;k++)qcols.push(y+'Q'+k);});
+  const QC0=4+years.length+2;
+  const gv=(d,q,k)=>d&&d[q]&&d[q][k]!=null?d[q][k]:null;
+  const wb=new ExcelJS.Workbook();
+  const ws=wb.addWorksheet('FS-Q',{views:[{showGridLines:false,state:'frozen',xSplit:3,ySplit:8}]});
+  ws.getColumn(2).width=20;
+  for(let c=4;c<QC0+qcols.length;c++)ws.getColumn(c).width=9.5;
+  const F9={name:'맑은 고딕',size:9};
+  const setc=(r,c,v,o)=>{o=o||{};const cl=ws.getCell(r,c);
+    if(v!==undefined&&v!==null&&v!=='')cl.value=v;
+    cl.font=Object.assign({},F9,o.b?{bold:true}:{},o.w?{color:{argb:'FFFFFFFF'}}:{});
+    if(o.fill)cl.fill={type:'pattern',pattern:'solid',fgColor:{argb:o.fill}};
+    if(o.fmt)cl.numFmt=o.fmt;};
+  const yrRange=(yi,r)=>colL(QC0+yi*4)+r+':'+colL(QC0+yi*4+3)+r;
+  // 값 행: 연간=SUM 수식, 분기=raw
+  const valRow=(r,label,getQ,o)=>{o=o||{};
+    setc(r,2,label,{b:o.b,fill:o.fill});
+    years.forEach((y,yi)=>{const rng=yrRange(yi,r);
+      setc(r,4+yi,{formula:o.core?`SUM(${rng})`:`IF(COUNT(${rng})=0,"",SUM(${rng}))`},{b:o.b,fill:o.fill,fmt:'#,##0'});});
+    qcols.forEach((q,i)=>{const v=getQ(q);
+      setc(QC0? r:r, QC0+i, v==null?undefined:Math.round(v*10)/10, {b:o.b,fill:o.fill,fmt:'#,##0'});});};
+  const pctRow=(r,ref,label)=>{setc(r,2,label||'% of sales');
+    years.forEach((y,yi)=>{const c=colL(4+yi);
+      setc(r,4+yi,{formula:`IF(${c}${r-1}="","",IFERROR(${c}${r-1}/${c}$${ref},""))`},{fmt:'0.0%'});});
+    qcols.forEach((q,i)=>{const c=colL(QC0+i);
+      setc(r,QC0+i,{formula:`IF(${c}${r-1}="","",IFERROR(${c}${r-1}/${c}$${ref},""))`},{fmt:'0.0%'});});};
+  const yoyRow=(r,label)=>{setc(r,2,label||'% YoY');
+    years.forEach((y,yi)=>{if(!yi)return;const c=colL(4+yi),p=colL(3+yi);
+      setc(r,4+yi,{formula:`IFERROR((${c}${r-1}-${p}${r-1})/${p}${r-1},"")`},{fmt:'0.0%'});});
+    qcols.forEach((q,i)=>{if(i<4)return;const c=colL(QC0+i),p=colL(QC0+i-4);
+      setc(r,QC0+i,{formula:`IFERROR((${c}${r-1}-${p}${r-1})/${p}${r-1},"")`},{fmt:'0.0%'});});};
+  // 머리
+  setc(2,2,'쩜상리서치 VS',{b:1});
+  setc(3,2,'기업명:');setc(3,3,nm,{b:1});
+  setc(4,2,'종가:');setc(5,2,'시가총액(백만 원):');
+  setc(7,2,'분기별 재무데이터 (단위: 억 원)',{b:1,fill:'FF000000',w:1});
+  years.forEach((y,yi)=>setc(7,4+yi,String(y%100)+'Y',{b:1,fill:'FF000000',w:1}));
+  qcols.forEach((q,i)=>setc(7,QC0+i,q[4]+'Q'+q.slice(2,4),{b:1,fill:'FF000000',w:1}));
+  // 본문
+  const R={};let r=9;
+  R.rev=r;valRow(r,'매출액',q=>gv(e.is,q,'매출액'),{b:1,fill:'FFEEEEEE',core:1});r++;
+  yoyRow(r);r++;
+  setc(r,2,'매출액 컨센서스');r++;setc(r,2,'컨센 대비');r++;
+  setc(r,2,'사업부별 매출액',{b:1});r++;
+  const segLabs=[];Object.keys(e.seg||{}).sort().forEach(q=>Object.keys(e.seg[q]).forEach(k=>{if(!segLabs.includes(k))segLabs.push(k);}));
+  segLabs.forEach(sl=>{valRow(r,sl.slice(0,24),q=>gv(e.seg,q,sl));r++;yoyRow(r,'');r++;});
+  ['연결재고자산','별도재고자산','연결-별도재고자산'].forEach(lb=>{setc(r,2,lb);r++;});
+  r++;
+  // 매출원가 세부 = 성격별 − 판관비 동일항목 근사
+  setc(r,2,'매출원가',{b:1});r++;
+  const sgaBy={};Object.keys(e.sga||{}).forEach(q=>{sgaBy[q]={};Object.keys(e.sga[q]).forEach(k=>{sgaBy[q][nrm(k)]=e.sga[q][k];});});
+  const cogLabs=[];const lastCq=Object.keys(e.q||{}).sort().pop();
+  if(lastCq){Object.keys(e.q[lastCq]).filter(k=>!/합\s*계|총\s*계/.test(k))
+    .sort((a,b)=>Math.abs(e.q[lastCq][b])-Math.abs(e.q[lastCq][a])).slice(0,8).forEach(k=>cogLabs.push(k));}
+  const cogAt=(q,k)=>{const v=gv(e.q,q,k);if(v==null)return null;
+    const s=sgaBy[q]&&sgaBy[q][nrm(k)]||0;return v-s;};
+  const cogRows=[];
+  cogLabs.forEach(k=>{
+    if(!qcols.some(q=>{const v=cogAt(q,k);return v!=null&&Math.abs(v)>1;}))return;
+    cogRows.push(r);valRow(r,k.slice(0,24),q=>cogAt(q,k));r++;pctRow(r,R.rev);r++;});
+  // 기타(잔여) = 매출원가 − Σ세부
+  if(cogRows.length){
+    setc(r,2,'기타(잔여)');
+    years.forEach((y,yi)=>{const rng=yrRange(yi,r);
+      setc(r,4+yi,{formula:`IF(COUNT(${rng})=0,"",SUM(${rng}))`},{fmt:'#,##0'});});
+    qcols.forEach((q,i)=>{const cg=gv(e.is,q,'매출원가');if(cg==null)return;
+      let s=0,any=false;cogLabs.forEach(k=>{const v=cogAt(q,k);if(v!=null){s+=v;any=true;}});
+      if(any)setc(r,QC0+i,Math.round((cg-s)*10)/10,{fmt:'#,##0'});});
+    r++;pctRow(r,R.rev);r++;}
+  R.cogs=r;valRow(r,'매출원가',q=>gv(e.is,q,'매출원가'),{b:1,core:1});r++;
+  R.cogsr=r;pctRow(r,R.rev,'매출원가율');r++;
+  R.gp=r;valRow(r,'매출총이익',q=>gv(e.is,q,'매출총이익'),{b:1,core:1});r++;
+  R.gpm=r;pctRow(r,R.rev,'매출총이익률');r++;r++;
+  // 판관비 세부
+  setc(r,2,'판관비',{b:1});r++;
+  const sgaLabs=[];const lastSq=Object.keys(e.sga||{}).sort().pop();
+  if(lastSq){Object.keys(e.sga[lastSq]).filter(k=>!/합\s*계|총\s*계/.test(k))
+    .sort((a,b)=>Math.abs(e.sga[lastSq][b])-Math.abs(e.sga[lastSq][a])).slice(0,8).forEach(k=>sgaLabs.push(k));}
+  sgaLabs.forEach(k=>{valRow(r,k.slice(0,24),q=>gv(e.sga,q,k));r++;pctRow(r,R.rev);r++;});
+  if(sgaLabs.length){
+    setc(r,2,'기타(잔여)');
+    years.forEach((y,yi)=>{const rng=yrRange(yi,r);
+      setc(r,4+yi,{formula:`IF(COUNT(${rng})=0,"",SUM(${rng}))`},{fmt:'#,##0'});});
+    qcols.forEach((q,i)=>{const tot=gv(e.is,q,'판매비와관리비');if(tot==null)return;
+      let s=0,any=false;sgaLabs.forEach(k=>{const v=gv(e.sga,q,k);if(v!=null){s+=v;any=true;}});
+      if(any)setc(r,QC0+i,Math.round((tot-s)*10)/10,{fmt:'#,##0'});});
+    r++;pctRow(r,R.rev);r++;}
+  R.sga=r;valRow(r,'판관비',q=>gv(e.is,q,'판매비와관리비'),{b:1,core:1});r++;
+  R.sgar=r;pctRow(r,R.rev,'판관비율');r++;r++;
+  R.op=r;valRow(r,'영업이익',q=>gv(e.is,q,'영업이익'),{b:1,fill:'FFEEEEEE',core:1});r++;
+  R.opm=r;pctRow(r,R.rev,'영업이익률');r++;
+  setc(r,2,'영업이익 컨센서스');r++;setc(r,2,'컨센 대비');r++;
+  R.np=r;valRow(r,'당기순이익',q=>gv(e.is,q,'당기순이익'),{b:1,core:1});r++;
+  pctRow(r,R.rev,'순이익률');r++;
+  // ── 그래프(요약) 시트: FS-Q 연간 링크
+  const wg=wb.addWorksheet('그래프',{views:[{showGridLines:false}]});
+  wg.getColumn(2).width=20;
+  const gset=(rr,cc,v,o)=>{o=o||{};const cl=wg.getCell(rr,cc);cl.value=v;
+    cl.font=Object.assign({},F9,o.b?{bold:true}:{});if(o.fmt)cl.numFmt=o.fmt;};
+  gset(2,2,'분기별 재무데이터 (단위: 억 원)',{b:1});
+  years.forEach((y,yi)=>gset(2,4+yi,String(y%100)+'Y',{b:1}));
+  [['매출액',R.rev,'#,##0'],['% YoY',R.rev+1,'0.0%'],['매출원가',R.cogs,'#,##0'],['매출원가율',R.cogsr,'0.0%'],
+   ['매출총이익',R.gp,'#,##0'],['GPM',R.gpm,'0.0%'],['판관비',R.sga,'#,##0'],['판관비율',R.sgar,'0.0%'],
+   ['영업이익',R.op,'#,##0'],['OPM',R.opm,'0.0%'],['당기순이익',R.np,'#,##0']].forEach(([lb,rr,fm],k)=>{
+    gset(3+k,2,lb,{b:!/%|율|PM/.test(lb)});
+    years.forEach((y,yi)=>gset(3+k,4+yi,{formula:`'FS-Q'!${colL(4+yi)}${rr}`},{fmt:fm}));});
+  // ── 비용 RAW 시트
+  const wc=wb.addWorksheet('비용',{views:[{showGridLines:false}]});
+  wc.getColumn(2).width=20;
+  const cset=(rr,cc,v,o)=>{o=o||{};const cl=wc.getCell(rr,cc);if(v!==undefined&&v!==null)cl.value=v;
+    cl.font=Object.assign({},F9,o.b?{bold:true}:{});if(o.fmt)cl.numFmt=o.fmt;};
+  cset(1,2,'비용 RAW (분기 flow, 단위: 억 원)',{b:1});
+  let cr=3;
+  [['비용의 성격별 분류',e.q],['판매비와관리비',e.sga]].forEach(([tt,dat])=>{
+    const qs2=Object.keys(dat||{}).sort();if(!qs2.length)return;
+    cset(cr,2,tt,{b:1});
+    qs2.forEach((q,i)=>cset(cr,3+i,q[4]+'Q'+q.slice(2,4),{b:1}));cr++;
+    const labs=[];qs2.forEach(q=>Object.keys(dat[q]).forEach(k=>{if(!labs.includes(k))labs.push(k);}));
+    labs.forEach(k=>{cset(cr,2,k.slice(0,24));
+      qs2.forEach((q,i)=>{const v=dat[q][k];if(v!=null)cset(cr,3+i,Math.round(v*10)/10,{fmt:'#,##0'});});cr++;});
+    cr+=2;});
+  // ── 보조지표(수주) 시트
+  if(obs){
+    const wo=wb.addWorksheet('수주·보조지표',{views:[{showGridLines:false}]});
+    wo.getColumn(2).width=20;
+    const oset=(rr,cc,v,o)=>{o=o||{};const cl=wo.getCell(rr,cc);if(v!==undefined&&v!==null)cl.value=v;
+      cl.font=Object.assign({},F9,o.b?{bold:true}:{});if(o.fmt)cl.numFmt=o.fmt;};
+    oset(1,2,nm+' — 보조지표 (수주잔고)',{b:1});
+    const ops=Object.keys(obs.s).sort();
+    oset(3,2,'수주잔고 (단위: 억 원)',{b:1});
+    ops.forEach((p,i)=>oset(4,3+i,qlab(p),{b:1}));
+    oset(5,2,'수주잔고',{b:1});
+    ops.forEach((p,i)=>oset(5,3+i,Math.round(obs.s[p]*10)/10,{fmt:'#,##0'}));
+    const pls=[];ops.forEach(p=>{const d=obs.p&&obs.p[p];if(d)Object.keys(d).forEach(k=>{if(!pls.includes(k))pls.push(k);});});
+    pls.forEach((k,j)=>{oset(6+j,2,k.slice(0,24));
+      ops.forEach((p,i)=>{const d=obs.p&&obs.p[p];if(d&&d[k]!=null)oset(6+j,3+i,Math.round(d[k]*10)/10,{fmt:'#,##0'});});});
+  }
+  const buf=await wb.xlsx.writeBuffer();
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}));
+  a.download=nm+'_VS.xlsx';a.click();URL.revokeObjectURL(a.href);
+}
 // ── 리포트 렌더
 async function load(nm){
   if(!IDX[nm])return;
@@ -145,7 +302,7 @@ async function load(nm){
   const opm=lr?lo/lr*100:null,opmP=pq&&rev(pq)?(g(e.is,pq,'영업이익')/rev(pq)*100):null;
   const obs=ORD[tk];let obLast=null,obP=null;
   if(obs){obP=Object.keys(obs.s).sort();obLast=obs.s[obP[obP.length-1]];}
-  let html=`<div class='kpis'>
+  let html=`<div class='rephead'><b style='font-size:1.12rem'>${nm}</b><button id='dlvsb' class='dlb'>⬇ VS 엑셀 (.xlsx)</button></div><div class='kpis'>
    <div class='kpi'><small>${qd(lq)} 매출</small><b>${fmtU(lr)}</b></div>
    <div class='kpi'><small>영업이익</small><b>${fmtU(lo)}</b></div>
    <div class='kpi'><small>OPM</small><b>${opm!=null?opm.toFixed(1)+'%':'-'} ${opm!=null&&opmP!=null?pc(opm-opmP).replace('%','%p'):''}</b></div>
@@ -232,6 +389,7 @@ async function load(nm){
   }
   html+=`<p class='sub'>ⓘ 재고자산(연결/별도) 섹션은 파서 준비 중 · 원가/판관 분리 세부 대신 성격별 통합 세부를 사용</p>`;
   document.getElementById('rep').innerHTML=html;
+  document.getElementById('dlvsb').onclick=()=>dlvs(nm,e,obs);
   document.querySelector('.report').scrollIntoView({behavior:'smooth',block:'start'});
   // 호버
   hookHover('v1',qs,i=>{const p=qs[i];
