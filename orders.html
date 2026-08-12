@@ -203,10 +203,13 @@ function tableView(tk){
     return `<td>${v!=null?fmt(v):'-'}</td>`;}).join('')+'</tr>';});
   return h+'</table></div>';
 }
+const GLQ='2026.06';
+const nextYM=p=>{let y=+p.slice(0,4),m=+p.slice(5);m+=3;if(m>12){m=3;y++;}return y+'.'+String(m).padStart(2,'0');};
 function show(tk){
   CURKEY=tk;
   try{history.replaceState(null,'','#'+tk);}catch(_){}
-  const e=OB[tk],ps=Object.keys(e.series).sort();
+  const e=OB[tk];let ps=Object.keys(e.series).sort();
+  while(ps[ps.length-1]<GLQ)ps=ps.concat(nextYM(ps[ps.length-1]));
   const r=rows.find(x=>x.tk===tk);
   if(VMODE==='table'){
     document.getElementById('cname').textContent=`${e.name} (${tk}) — 수주잔고 표`;
