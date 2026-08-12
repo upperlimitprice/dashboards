@@ -1,32 +1,32 @@
 <!doctype html><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'>
 <title>가동률 트래커 · 2026-08-12</title>
 <style>
-body{font-family:'Apple SD Gothic Neo',sans-serif;background:#f4f6f8;color:#1c2530;margin:0}
+body{font-family:'Apple SD Gothic Neo',sans-serif;background:#eceff3;color:#232b34;margin:0}
 .wrap{max-width:1080px;margin:0 auto;padding:18px}
 h1{font-size:1.3rem;margin:6px 0 2px}
 .sub{color:#667;font-size:.8rem;margin:0 0 12px}
-.box{background:#fff;border:1px solid #ccd5dd;border-radius:12px;padding:14px 16px;margin:10px 0}
-input#q{width:100%;box-sizing:border-box;font-size:1rem;padding:10px 12px;border:1.5px solid #9fb2c2;border-radius:10px}
+.box{background:#f9fafc;border:1px solid #c9d2dc;border-radius:12px;padding:14px 16px;margin:10px 0}
+input#q{width:100%;box-sizing:border-box;font-size:1rem;padding:10px 12px;border:1.5px solid #a9b8c8;border-radius:10px}
 #qwrap{position:relative}
-#sug{margin:0;padding:0;list-style:none;position:absolute;top:100%;left:0;right:0;background:#fff;border:1.5px solid #9fb2c2;border-top:0;border-radius:0 0 10px 10px;max-height:300px;overflow-y:auto;z-index:60;box-shadow:0 8px 18px rgba(20,30,45,.12);display:none}
+#sug{margin:0;padding:0;list-style:none;position:absolute;top:100%;left:0;right:0;background:#f9fafc;border:1.5px solid #a9b8c8;border-top:0;border-radius:0 0 10px 10px;max-height:300px;overflow-y:auto;z-index:60;box-shadow:0 8px 18px rgba(20,30,45,.12);display:none}
 #sug.open{display:block}
 #sug li{display:flex;justify-content:space-between;gap:10px;padding:9px 14px;font-size:.88rem;cursor:pointer;border-bottom:1px solid #f0f3f6}
 #sug li:last-child{border-bottom:0}
-#sug li:hover,#sug li.sel{background:#eef5fe}
+#sug li:hover,#sug li.sel{background:#e6edf6}
 #sug li small{color:#8a97a5}
 table{border-collapse:collapse;width:100%;font-size:.82rem}
-th{background:#243a52;color:#fff;padding:7px 13px;font-weight:600;text-align:right;white-space:nowrap;position:sticky;top:0}
+th{background:#3d5a80;color:#fff;padding:7px 13px;font-weight:600;text-align:right;white-space:nowrap;position:sticky;top:0}
 th:first-child,td:first-child{text-align:left}
-td{padding:7px 13px;border-bottom:1px solid #e4e9ee;text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+td{padding:7px 13px;border-bottom:1px solid #dee4ea;text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
 th:last-child,td:last-child{padding-right:30px}
-tr.rowc{cursor:pointer} tr.rowc:hover{background:#f0f5fa}
-.up{color:#d63c2f}.dn{color:#2660c4}
+tr.rowc{cursor:pointer} tr.rowc:hover{background:#e9eef5}
+.up{color:#cf4f45}.dn{color:#3f6bab}
 h2{font-size:1rem;margin:4px 0 8px}
 small.gray{color:#778}
-button.tab{background:#eef2f6;border:1px solid #b9c7d4;border-radius:8px;padding:6px 13px;font-size:.84rem;cursor:pointer;margin:0 6px 8px 0}
-button.tab.on{background:#243a52;color:#fff;border-color:#243a52}
-#tabc{max-height:430px;overflow-y:auto;border-top:1px solid #e4e9ee}
-#uttip{position:absolute;display:none;background:#1c2530;color:#fff;font-size:.74rem;line-height:1.55;padding:7px 10px;border-radius:8px;pointer-events:none;z-index:99}
+button.tab{background:#edf0f4;border:1px solid #b4c1cf;border-radius:8px;padding:6px 13px;font-size:.84rem;cursor:pointer;margin:0 6px 8px 0}
+button.tab.on{background:#3d5a80;color:#fff;border-color:#3d5a80}
+#tabc{max-height:430px;overflow-y:auto;border-top:1px solid #dee4ea}
+#uttip{position:absolute;display:none;background:#232b34;color:#fff;font-size:.74rem;line-height:1.55;padding:7px 10px;border-radius:8px;pointer-events:none;z-index:99}
 #cstats{font-size:.83rem;color:#455;margin:4px 0 8px}
 </style>
 <div class='wrap'>
@@ -42,7 +42,7 @@ button.tab.on{background:#243a52;color:#fff;border-color:#243a52}
 </div>
 <div class='box'>
 <div style='margin:0 0 8px'>섹터:
-<select id='secf' onchange='setSec(this.value)' style='font-size:.85rem;padding:5px 8px;border:1.5px solid #b9c7d4;border-radius:8px'></select>
+<select id='secf' onchange='setSec(this.value)' style='font-size:.85rem;padding:5px 8px;border:1.5px solid #b4c1cf;border-radius:8px'></select>
 </div>
 <div id='tabs'>
 <button class='tab on' data-t='yoy' onclick='showTab("yoy")'>🔺 가동률 YoY 상승</button>
@@ -59,7 +59,7 @@ button.tab.on{background:#243a52;color:#fff;border-color:#243a52}
 const UT=JSON.parse(document.getElementById('utd').textContent);
 const qlab=p=>{const[y,m]=p.split('.');return (m/3|0)+'Q'+y.slice(2);};
 const pp=v=>`<span class='${v>0?'up':'dn'}'>${v>0?'+':''}${v.toFixed(1)}%p</span>`;
-const SEGC=['#2660c4','#f28e2b','#2e9e5b','#8e5cc8','#c0392b','#0f6b66','#b8860b','#7f8c8d'];
+const SEGC=['#3f6bab','#f28e2b','#2e9e5b','#8e5cc8','#c0392b','#0f6b66','#b8860b','#7f8c8d'];
 // 대표 가동률 = 합계 있으면 합계, 없으면 부문 평균
 function rep(e,p){const d=e.series[p];if(!d)return null;
   const parts=Object.entries(d).filter(([k])=>k!=='합계').map(([,v])=>v);
@@ -181,7 +181,7 @@ function tableView(tk){
   let h="<div style='overflow-x:auto'><table><tr><th>구분</th>"+ps.map(p=>`<th>${qlab(p)}</th>`).join('')+"</tr>";
   segs.forEach(sg=>{h+=`<tr><td>${sg}</td>`+ps.map(p=>{const v=e.series[p][sg];
     return `<td>${v!=null?v.toFixed(1)+'%':'-'}</td>`;}).join('')+'</tr>';});
-  h+=`<tr style='font-weight:700;background:#f7f9fb'><td>대표 가동률</td>`+ps.map(p=>`<td>${rep(e,p).toFixed(1)}%</td>`).join('')+'</tr>';
+  h+=`<tr style='font-weight:700;background:#f4f6f9'><td>대표 가동률</td>`+ps.map(p=>`<td>${rep(e,p).toFixed(1)}%</td>`).join('')+'</tr>';
   if(Object.keys(F).length){
     h+=`<tr><td>매출(억)</td>`+ps.map(p=>`<td>${F[p]?Math.round(F[p].r).toLocaleString():'-'}</td>`).join('')+'</tr>';
     h+=`<tr><td>GPM</td>`+ps.map(p=>`<td>${F[p]&&F[p].g!=null?F[p].g.toFixed(1)+'%':'-'}</td>`).join('')+'</tr>';
@@ -213,12 +213,12 @@ function show(tk){
   const uMax=Math.max(...allU,100);
   const mx=Math.max(112,Math.ceil((uMax*1.06)/10)*10);
   const X=i=>L+(W-L-R)*(n===1?0.5:i/(n-1)),Y=v=>T+(H-T-B)*(1-(v-mn)/(mx-mn));
-  let s=`<svg id='utsvg' viewBox='0 0 ${W} ${H}' style='width:100%;background:#fbfcfe;border:1px solid #e3e9ef;border-radius:8px'>`;
+  let s=`<svg id='utsvg' viewBox='0 0 ${W} ${H}' style='width:100%;background:#f6f8fb;border:1px solid #d9e0e8;border-radius:8px'>`;
   const step=mx>150?50:25;
   const gl=[];for(let g=0;g<=mx-8;g+=step)gl.push(g);
   if(!gl.includes(100)&&mx>=105)gl.push(100);
   for(const g of gl.sort((a,b)=>a-b)){if(g<mn)continue;const y=Y(g);
-    s+=`<line x1='${L}' y1='${y.toFixed(1)}' x2='${W-R}' y2='${y.toFixed(1)}' stroke='${g===100?'#d9c9a3':g===0&&mn<0?'#c9d3dc':'#eef1f5'}'/>`;
+    s+=`<line x1='${L}' y1='${y.toFixed(1)}' x2='${W-R}' y2='${y.toFixed(1)}' stroke='${g===100?'#d9c9a3':g===0&&mn<0?'#c9d3dc':'#e2e7ed'}'/>`;
     s+=`<text x='${L-4}' y='${(y+3).toFixed(1)}' font-size='9' fill='#8a94a0' text-anchor='end'>${g}%</text>`;}
   // 분기 매출 막대 (연한 배경 레이어, 우측 자체 스케일)
   const revs=ps.map(p=>F[p]?F[p].r:null);
@@ -245,13 +245,13 @@ function show(tk){
       if(v!=null)s+=`<circle cx='${X(i).toFixed(1)}' cy='${Y(v).toFixed(1)}' r='3' fill='${SEGC[si%8]}'/>`;});});
   if(!showSegs.length){ // 합계/전사 단일
     const pts=ps.map((p,i)=>`${X(i).toFixed(1)},${Y(rep(e,p)).toFixed(1)}`);
-    s+=`<polyline points='${pts.join(' ')}' fill='none' stroke='#2660c4' stroke-width='2.8'/>`;
-    ps.forEach((p,i)=>{s+=`<circle cx='${X(i).toFixed(1)}' cy='${Y(rep(e,p)).toFixed(1)}' r='3' fill='#2660c4'/>`;});
+    s+=`<polyline points='${pts.join(' ')}' fill='none' stroke='#3f6bab' stroke-width='2.8'/>`;
+    ps.forEach((p,i)=>{s+=`<circle cx='${X(i).toFixed(1)}' cy='${Y(rep(e,p)).toFixed(1)}' r='3' fill='#3f6bab'/>`;});
   }
   ps.forEach((p,i)=>{if(n<=20||i%2===n%2)s+=`<text x='${X(i).toFixed(1)}' y='${H-12}' font-size='8.5' fill='#8a94a0' text-anchor='middle'>${qlab(p)}</text>`;});
   s+='</svg>';
   const lg="<p style='font-size:.75rem;color:#889;margin:6px 0 0'>"
-    +(showSegs.length?showSegs.map((sg,si)=>`<span style='color:${SEGC[si%8]}'>■</span> ${sg}`).join(' · '):"<span style='color:#2660c4'>■</span> 전사 가동률")
+    +(showSegs.length?showSegs.map((sg,si)=>`<span style='color:${SEGC[si%8]}'>■</span> ${sg}`).join(' · '):"<span style='color:#3f6bab'>■</span> 전사 가동률")
     +(Object.keys(F).length?" · <span style='color:#c3d2e2'>▮</span> 분기 매출 · <span style='color:#7cc79b'>●</span> GPM · <span style='color:#f0b072'>●</span> OPM <small>(연한 선 — % 좌축 공용)</small>":"")
     +"</p>";
   document.getElementById('chart').innerHTML=s+lg;
