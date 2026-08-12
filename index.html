@@ -1,27 +1,27 @@
 <!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>대시보드</title>
 <style>
-body{font-family:'Apple SD Gothic Neo','Noto Sans KR',sans-serif;max-width:1080px;margin:40px auto;padding:0 20px;color:#20262e;background:#f7f8fa}
+body{font-family:'Apple SD Gothic Neo','Noto Sans KR',sans-serif;max-width:1080px;margin:40px auto;padding:0 20px;color:#20262e;background:#eceff3}
 h1{font-size:1.35rem}
 .layout{display:grid;grid-template-columns:1fr 290px;gap:22px;align-items:start}
 @media(max-width:860px){.layout{grid-template-columns:1fr}}
 h2{font-size:.92rem;margin:0 0 10px;color:#6b7683}
-.card{position:relative;display:block;padding:14px 40px 14px 18px;border:1.5px solid #dde3e9;border-radius:11px;margin:10px 0;color:#20262e;font-weight:600;background:#fff;cursor:pointer}
-.card:hover{border-color:#b07d1e;background:#fffbf0}
+.card{position:relative;display:block;padding:14px 40px 14px 18px;border:1.5px solid #c9d2dc;border-radius:11px;margin:10px 0;color:#20262e;font-weight:600;background:#f9fafc;cursor:pointer}
+.card:hover{border-color:#3d5a80;background:#f9fafcbf0}
 .card small{color:#6b7683;font-weight:400;display:block;margin-top:3px;font-size:.78rem}
-.card small a{color:#1f6fd6;text-decoration:none}
+.card small a{color:#3d5a80;text-decoration:none}
 .x{position:absolute;top:8px;right:10px;border:0;background:none;color:#c2cad2;font-size:1.05rem;cursor:pointer;line-height:1}
 .x:hover{color:#d63c2f}
-.rf{position:absolute;bottom:8px;right:10px;border:1px solid #dde3e9;background:#fff;color:#6b7683;font-size:.72rem;border-radius:7px;padding:2px 7px;cursor:pointer;font-weight:600}
-.rf:hover{border-color:#1f6fd6;color:#1f6fd6}
+.rf{position:absolute;bottom:8px;right:10px;border:1px solid #c9d2dc;background:#f9fafc;color:#6b7683;font-size:.72rem;border-radius:7px;padding:2px 7px;cursor:pointer;font-weight:600}
+.rf:hover{border-color:#3d5a80;color:#3d5a80}
 .rf:disabled{opacity:.6;cursor:default}
 #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1c2530;color:#fff;font-size:.82rem;padding:9px 16px;border-radius:9px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:99}
 #toast.show{opacity:.95}
-#side{background:#fff;border:1.5px solid #dde3e9;border-radius:12px;padding:14px 16px;position:sticky;top:16px}
-.sitem{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:9px 2px;border-bottom:1px solid #f0f3f6;font-size:.85rem}
+#side{background:#f9fafc;border:1.5px solid #c9d2dc;border-radius:12px;padding:14px 16px;position:sticky;top:16px}
+.sitem{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:9px 2px;border-bottom:1px solid #e6ebf1;font-size:.85rem}
 .sitem:last-child{border-bottom:0}
 .sitem .nm{color:#20262e}
-.add{border:1.5px solid #1f6fd6;color:#1f6fd6;background:#fff;border-radius:8px;font-size:.95rem;width:26px;height:26px;cursor:pointer;font-weight:700;flex:none}
-.add:hover{background:#eef5fe}
+.add{border:1.5px solid #3d5a80;color:#3d5a80;background:#f9fafc;border-radius:8px;font-size:.95rem;width:26px;height:26px;cursor:pointer;font-weight:700;flex:none}
+.add:hover{background:#e6edf6}
 .hint{font-size:.72rem;color:#9aa4ad;margin-top:10px}
 .empty{color:#9aa4ad;font-size:.82rem;padding:8px 0}
 body:not(.admin) .x,body:not(.admin) #side,body:not(.admin) h2 small{display:none}
