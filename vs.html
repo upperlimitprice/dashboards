@@ -66,6 +66,7 @@ const cache={};let CUR=null;
 const qd=p=>/^\d{4}Q[1-4]$/.test(p)?p[5]+'Q'+p.slice(2,4):p;
 const qlab=p=>{const[y,m]=p.split('.');return (m/3|0)+'Q'+y.slice(2);};
 const fmt=v=>v==null?'-':Math.abs(v)>=10000?(v/10000).toFixed(2)+'조':Math.round(v).toLocaleString();
+const fmtU=v=>v==null?'-':Math.abs(v)>=10000?(v/10000).toFixed(2)+'조':Math.round(v).toLocaleString()+'억';
 const pc=v=>v==null?'-':`<span class='${v>0?'up':'dn'}'>${v>0?'+':''}${v.toFixed(1)}%</span>`;
 const COLS=['#5b9bff','#f2a45c','#43c98a','#a58bf2','#ff6b5e','#57c7d4','#d4b106','#8b95ab'];
 let TIP=null;
@@ -145,11 +146,11 @@ async function load(nm){
   const obs=ORD[tk];let obLast=null,obP=null;
   if(obs){obP=Object.keys(obs.s).sort();obLast=obs.s[obP[obP.length-1]];}
   let html=`<div class='kpis'>
-   <div class='kpi'><small>${qd(lq)} 매출</small><b>${fmt(lr)}억</b></div>
-   <div class='kpi'><small>영업이익</small><b>${fmt(lo)}억</b></div>
+   <div class='kpi'><small>${qd(lq)} 매출</small><b>${fmtU(lr)}</b></div>
+   <div class='kpi'><small>영업이익</small><b>${fmtU(lo)}</b></div>
    <div class='kpi'><small>OPM</small><b>${opm!=null?opm.toFixed(1)+'%':'-'} ${opm!=null&&opmP!=null?pc(opm-opmP).replace('%','%p'):''}</b></div>
    <div class='kpi'><small>GPM</small><b>${lr&&lgp!=null?(lgp/lr*100).toFixed(1)+'%':'-'}</b></div>
-   ${obLast!=null?`<div class='kpi'><small>수주잔고 (${qlab(obP[obP.length-1])})</small><b>${fmt(obLast)}억</b></div>`:''}
+   ${obLast!=null?`<div class='kpi'><small>수주잔고 (${qlab(obP[obP.length-1])})</small><b>${fmtU(obLast)}</b></div>`:''}
   </div>`;
   // ① 손익: 매출 막대 + 원가율/GPM/OPM 라인
   const opmS=qs.map(q=>{const r=rev(q),v=g(e.is,q,'영업이익');return r&&v!=null?v/r*100:null;});
@@ -234,16 +235,16 @@ async function load(nm){
   document.querySelector('.report').scrollIntoView({behavior:'smooth',block:'start'});
   // 호버
   hookHover('v1',qs,i=>{const p=qs[i];
-    return `<b>${qd(p)}</b><br>매출 <b>${fmt(rev(p))}억</b><br>원가율 ${cgrS[i]!=null?cgrS[i].toFixed(1)+'%':'-'} · GPM ${gpmS[i]!=null?gpmS[i].toFixed(1)+'%':'-'} · OPM ${opmS[i]!=null?opmS[i].toFixed(1)+'%':'-'}`;});
+    return `<b>${qd(p)}</b><br>매출 <b>${fmtU(rev(p))}</b><br>원가율 ${cgrS[i]!=null?cgrS[i].toFixed(1)+'%':'-'} · GPM ${gpmS[i]!=null?gpmS[i].toFixed(1)+'%':'-'} · OPM ${opmS[i]!=null?opmS[i].toFixed(1)+'%':'-'}`;});
   [c2,c3,c4].forEach(c=>{if(!c)return;
     hookHover(c.sid,qs,i=>{const p=qs[i];
       let h=`<b>${qd(p)}</b>`;
-      c.items.forEach((it,si)=>{const v=c.at(p,it);if(v)h+=`<br><span style='color:${COLS[si%8]}'>■</span> ${it}: ${fmt(v)}억 (${c.pct(p,it).toFixed(1)}%)`;});
+      c.items.forEach((it,si)=>{const v=c.at(p,it);if(v)h+=`<br><span style='color:${COLS[si%8]}'>■</span> ${it}: ${fmtU(v)} (${c.pct(p,it).toFixed(1)}%)`;});
       return h;});});
   if(obs&&obP.length>=2){const ops=obP.slice(-16);
-    hookHover('v5',ops,i=>{const p=ops[i];let h=`<b>${qlab(p)}</b><br>잔고 <b>${fmt(obs.s[p])}억</b>`;
+    hookHover('v5',ops,i=>{const p=ops[i];let h=`<b>${qlab(p)}</b><br>잔고 <b>${fmtU(obs.s[p])}</b>`;
       const prt=obs.p&&obs.p[p];
-      if(prt)Object.entries(prt).sort((a,b)=>b[1]-a[1]).forEach(([sg,v],si)=>{h+=`<br><span style='color:${COLS[si%8]}'>■</span> ${sg}: ${fmt(v)}억`;});
+      if(prt)Object.entries(prt).sort((a,b)=>b[1]-a[1]).forEach(([sg,v],si)=>{h+=`<br><span style='color:${COLS[si%8]}'>■</span> ${sg}: ${fmtU(v)}`;});
       return h;});}
 }
 drawRecent();
