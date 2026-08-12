@@ -32,7 +32,7 @@ button.tab.on{background:#243a52;color:#fff;border-color:#243a52}
 <div class='box'>
 <input id='q' placeholder='기업명 검색 (예: 한화오션, HD한국조선해양, LIG…)' autocomplete='off'>
 <ul id='sug'></ul>
-<h2 id='cname' style='margin-top:10px'>수주잔고 추이</h2>
+<div style='display:flex;justify-content:space-between;align-items:center;margin-top:10px'><h2 id='cname' style='margin:0'>수주잔고 추이</h2><button class='tab' id='vbtn' onclick='toggleView()' style='margin:0'>🔢 표로 보기</button></div>
 <div id='cstats'>기업을 검색하거나 아래 랭킹에서 클릭하면 차트가 표시됩니다</div>
 <div id='chart'></div>
 </div>
@@ -132,9 +132,29 @@ function emptyChart(){
     +`<text x='${W/2}' y='${H/2}' font-size='13' fill='#b7c1cb' text-anchor='middle'>기업 검색 또는 랭킹 클릭 → 분기별 수주잔고 (법인·부문별 누적)</text></svg>`;
 }
 emptyChart();
+let VMODE='chart',CURKEY=null;
+function toggleView(){VMODE=VMODE==='chart'?'table':'chart';
+  document.getElementById('vbtn').textContent=VMODE==='chart'?'🔢 표로 보기':'📊 차트로 보기';
+  if(CURKEY)show(CURKEY);}
+function tableView(tk){
+  const e=OB[tk],ps=Object.keys(e.series).sort();
+  const P=e.parts||{};
+  const segs=[];ps.forEach(p=>Object.keys(P[p]||{}).forEach(sg=>{if(!segs.includes(sg))segs.push(sg);}));
+  let h="<div style='overflow-x:auto'><table><tr><th>구분</th>"+ps.map(p=>`<th>${qlab(p)}</th>`).join('')+"</tr>";
+  h+=`<tr style='font-weight:700;background:#f7f9fb'><td>수주잔고 합계</td>`+ps.map(p=>`<td>${fmt(e.series[p])}</td>`).join('')+'</tr>';
+  segs.forEach(sg=>{h+=`<tr><td>${sg}</td>`+ps.map(p=>{const v=(P[p]||{})[sg];
+    return `<td>${v!=null?fmt(v):'-'}</td>`;}).join('')+'</tr>';});
+  return h+'</table></div>';
+}
 function show(tk){
+  CURKEY=tk;
   const e=OB[tk],ps=Object.keys(e.series).sort();
   const r=rows.find(x=>x.tk===tk);
+  if(VMODE==='table'){
+    document.getElementById('cname').textContent=`${e.name} (${tk}) — 수주잔고 표`;
+    document.getElementById('cstats').innerHTML=`최신 ${qlab(r.lastP)} <b>${fmt(r.last)}</b> · QoQ ${r.qoq!=null?pc(r.qoq):'-'} · YoY ${r.yoy!=null?pc(r.yoy):'-'}${r.cov!=null?` · 커버리지 <b>${r.cov.toFixed(2)}x</b>`:''}`;
+    document.getElementById('chart').innerHTML=tableView(tk);
+    return;}
   document.getElementById('cname').textContent=`${e.name} (${tk}) — 수주잔고 추이`;
   document.getElementById('cstats').innerHTML=
     (e.ind?`<b>${e.ind}</b>${e.prod?' · '+e.prod:''} · `:'')
