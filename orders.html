@@ -218,7 +218,7 @@ function show(tk){
     (e.ind?`<b>${e.ind}</b>${e.prod?' · '+e.prod:''} · `:'')
     +`최신 ${qlab(r.lastP)} <b>${fmt(r.last)}</b>${r.hi?' 🏆<b style="color:#d63c2f">역대 최고</b>':''} · QoQ ${r.qoq!=null?pc(r.qoq):'-'} · YoY ${r.yoy!=null?pc(r.yoy):'-'} · 연속증가 ${r.streak}분기${r.cov!=null?` · 잔고/매출(TTM) <b>${r.cov.toFixed(2)}x</b>`:''} · ${r.np}개 분기`
     +` · <small style='color:${r.src==='u'?'#1f8a4c':'#889'}'>${r.src==='u'?'✔ 수기 검증본(참고)':'사업보고서 자동 파싱'}</small>`;
-  const n=ps.length,vals=ps.map(p=>e.series[p]),mx=Math.max(...vals)*1.12;
+  const n=ps.length,vals=ps.map(p=>e.series[p]??null),mx=Math.max(...vals.filter(v=>v!=null))*1.12;
   const X=i=>L+(W-L-R)*(n===1?0.5:i/(n-1)),bw=Math.max(3,Math.min(34,(W-L-R)/Math.max(1,n)*0.66));
   const P=e.parts||{};
   const segs=[];ps.forEach(p=>Object.keys(P[p]||{}).forEach(sg=>{if(!segs.includes(sg))segs.push(sg);}));
@@ -226,7 +226,8 @@ function show(tk){
   segs.sort((a,b)=>((P[lp]||{})[b]||0)-((P[lp]||{})[a]||0));
   let s=frame(mx,n,ps);
   ps.forEach((p,i)=>{
-    const v=vals[i],x=(X(i)-bw/2).toFixed(1),prt=P[p];
+    const v=vals[i];if(v==null)return;
+    const x=(X(i)-bw/2).toFixed(1),prt=P[p];
     if(prt&&segs.length){
       let y0=H-B;
       segs.forEach((sg,si)=>{const sv=prt[sg];if(!sv)return;
@@ -249,6 +250,7 @@ function show(tk){
     const vx=(ev.clientX-rc.left)*W/rc.width;
     const i=Math.max(0,Math.min(n-1,Math.round(n===1?0:(vx-L)/((W-L-R)/(n-1)))));
     const p=ps[i],prt=P[p];
+    if(e.series[p]==null){tipShow(`<b>${qlab(p)}</b><br><span style='color:#9fb0c0'>보고서 미반영 (반기·분기 제출 대기)</span>`,ev);return;}
     let h=`<b>${qlab(p)}</b><br>합계 <b>${fmt(e.series[p])}</b>`;
     if(prt)Object.entries(prt).sort((a,b)=>b[1]-a[1]).forEach(([sg,sv])=>{
       const si=segs.indexOf(sg);
