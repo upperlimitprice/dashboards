@@ -1,78 +1,103 @@
 <!doctype html><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'>
-<title>누적막대 색상 시안 5종</title>
+<title>메인 테마 × 누적막대 색상 시안 10종</title>
 <style>
-body{font-family:'Apple SD Gothic Neo',sans-serif;background:#f4f6f8;color:#1c2530;margin:0}
-.wrap{max-width:1080px;margin:0 auto;padding:20px 16px}
+body{font-family:'Apple SD Gothic Neo',sans-serif;background:#e9ecef;color:#1c2530;margin:0}
+.wrap{max-width:1160px;margin:0 auto;padding:20px 16px}
 h1{font-size:1.25rem;margin:6px 0 2px}
 .sub{color:#667;font-size:.8rem;margin:0 0 16px}
-.opt{background:#fff;border:1.5px solid #ccd5dd;border-radius:14px;padding:18px 20px;margin:0 0 18px}
-.opt h2{font-size:1.02rem;margin:0 0 2px}
-.opt .desc{color:#667;font-size:.8rem;margin:0 0 10px}
-.num{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:#243a52;color:#fff;font-weight:700;margin-right:9px;font-size:.95rem}
-.sw{display:flex;gap:6px;margin:8px 0 12px;flex-wrap:wrap}
-.sw div{width:52px;height:26px;border-radius:6px;position:relative}
-.sw span{position:absolute;top:29px;left:0;font-size:.6rem;color:#889;white-space:nowrap}
-.charts{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}
-@media(max-width:760px){.charts{grid-template-columns:1fr}}
-.cht{border:1px solid #e4e9ee;border-radius:10px;padding:10px 12px 6px}
-.cht b{font-size:.78rem;color:#556}
-.dark{background:#1b1e29;border-color:#2c3143}
-.dark b{color:#9aa5b8}
+.opt{border-radius:16px;margin:0 0 22px;overflow:hidden;border:1px solid #c8d0d8;box-shadow:0 2px 10px rgba(20,30,45,.06)}
+.head{display:flex;align-items:baseline;gap:10px;padding:12px 18px;background:#fff;border-bottom:1px solid #e2e7ec}
+.num{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:#243a52;color:#fff;font-weight:700;font-size:.95rem;flex:none;align-self:center}
+.head b{font-size:1.02rem}
+.head small{color:#667;font-size:.78rem}
+.mock{padding:22px 24px 18px}
+.mtitle{font-size:1.02rem;font-weight:700;margin:0 0 3px}
+.msub{font-size:.68rem;margin:0 0 12px}
+.kpis{display:flex;gap:10px;margin:0 0 12px;flex-wrap:wrap}
+.kpi{border-radius:11px;padding:9px 14px;min-width:128px}
+.kpi small{display:block;font-size:.63rem;margin-bottom:2px}
+.kpi b{font-size:.98rem}
+.chartbox{border-radius:12px;padding:12px 14px 8px}
+.lg{font-size:.68rem;margin-top:6px;line-height:1.8}
+.sw{display:flex;gap:5px;margin-top:10px}
+.sw i{width:38px;height:16px;border-radius:4px;display:block}
 svg{display:block;width:100%}
-.lg{font-size:.7rem;color:#889;margin:4px 0 4px;line-height:1.7}
-.dark .lg{color:#9aa5b8}
 </style>
 <div class='wrap'>
-<h1>🎨 누적 막대그래프 색상 시안 5종</h1>
-<p class='sub'>동일 차트(수주잔고형 6부문 · 비용구성형 7항목)에 색 구성만 다르게 적용 · 좌=밝은 배경(수주/가동률/비용 페이지) · 우=다크 배경(VS 리포트) · 번호로 선택해 주세요 · 모든 팔레트 색약(CVD) 인접 구분 검증 통과</p>
+<h1>🎨 메인 테마 × 누적막대 색상 — 시안 10종</h1>
+<p class='sub'>페이지 배경·카드·글자 톤(메인 색 체계)과 막대 팔레트를 함께 바꾼 조합입니다 · 각 시안은 실제 트래커 페이지 축소 목업 · 번호로 선택 (라이트 1~5 · 다크 6~10)</p>
 <div id='opts'></div>
 </div>
 <script>
-const PALS=[
- {n:1,t:'모던 커머셜',d:'채도를 한 단계 눌러 정돈한 비즈니스 톤 — 파랑·앰버·그린 균형, 기타=중립 블루그레이',
-  c:['#3B6FB6','#E8873A','#3FA07A','#8B6BC7','#D8556B','#2FA3B8','#C9A227','#808FB3']},
- {n:2,t:'노르딕 뮤트',d:'전체적으로 부드러운 저채도 파스텔 — 오래 봐도 눈이 편한 리포트 톤',
-  c:['#5E86C2','#DE8B4B','#6BAE78','#9F7EC4','#D26F82','#4FA3B2','#BFA84A','#98A2AE']},
- {n:3,t:'딥 주얼',d:'묵직한 보석 톤 — 진한 배경·인쇄물에서도 또렷, 프리미엄 리서치 느낌',
-  c:['#2B62A8','#C46A2E','#288A5B','#6E4FA3','#A83A4E','#188EA6','#9A7B1E','#5C6B7A']},
- {n:4,t:'블루 램프 + 앰버 액센트',d:'주력 부문은 파랑 농도 4단계, 강조 항목만 앰버 — 한 부문이 지배적인 기업에 최적',
-  c:['#215489','#2E6DB0','#5590CE','#7FB0DF','#E8871E','#4A6076','#C9A227','#8C6D4F']},
- {n:5,t:'CVD-세이프 비비드',d:'색약 안전 국제 표준(Okabe-Ito) 기반 — 선명하고 구분 극대화',
-  c:['#0072B2','#E69F00','#009E73','#CC79A7','#D55E00','#56B4E9','#BFA524','#8C7A68']},
+const THEMES=[
+ {n:1,t:'클래식 라이트 (현행 골격) × 모던 커머셜',d:'현행 회백 배경 유지, 막대만 정돈된 비즈니스 톤으로',
+  bg:'#f4f6f8',card:'#ffffff',bd:'#ccd5dd',tx:'#1c2530',dim:'#66727f',acc:'#243a52',kpi:'#ffffff',
+  bars:['#3B6FB6','#E8873A','#3FA07A','#8B6BC7','#D8556B','#2FA3B8','#C9A227','#808FB3'],grid:'#e8edf2'},
+ {n:2,t:'아이보리 페이퍼 × 딥 주얼',d:'따뜻한 종이 질감 배경 + 묵직한 보석 톤 — 증권사 지면 리포트 감성',
+  bg:'#f6f2ea',card:'#fffdf8',bd:'#ddd3c2',tx:'#2a2620',dim:'#8a8171',acc:'#7a4a21',kpi:'#fbf7ef',
+  bars:['#2B62A8','#C46A2E','#288A5B','#6E4FA3','#A83A4E','#188EA6','#9A7B1E','#5C6B7A'],grid:'#eee7da'},
+ {n:3,t:'쿨 그레이 스튜디오 × 노르딕 뮤트',d:'차분한 청회색 배경 + 저채도 파스텔 — 눈이 가장 편한 조합',
+  bg:'#eceff3',card:'#f9fafc',bd:'#c9d2dc',tx:'#232b34',dim:'#75818e',acc:'#3d5a80',kpi:'#f2f5f8',
+  bars:['#5E86C2','#DE8B4B','#6BAE78','#9F7EC4','#D26F82','#4FA3B2','#BFA84A','#98A2AE'],grid:'#e2e7ed'},
+ {n:4,t:'퓨어 화이트 하이컨트라스트 × 볼드 프라이머리',d:'순백 배경 + 가는 검정 테두리 + 선명한 원색 — 신문 인포그래픽 스타일',
+  bg:'#ffffff',card:'#ffffff',bd:'#222831',tx:'#111417',dim:'#5c6570',acc:'#111417',kpi:'#f7f8f9',
+  bars:['#1560BD','#F2790F','#0F8A4C','#7D3AC1','#D7263D','#0FA3B1','#B8860B','#6C757D'],grid:'#eceff1'},
+ {n:5,t:'세이지 그린 톤 × 어스 팔레트',d:'옅은 세이지 배경 + 그린 액센트 + 흙·숲 계열 막대 — 차분한 자연 톤',
+  bg:'#f0f4ef',card:'#fbfdfa',bd:'#c8d5c6',tx:'#22302a',dim:'#6f7f74',acc:'#2e6b4f',kpi:'#f4f8f3',
+  bars:['#2E6B4F','#C97B3D','#5B8FA8','#8A6BB1','#B5484D','#6FA35E','#B0902E','#7C8B85'],grid:'#e4ebe3'},
+ {n:6,t:'미드나잇 네이비 (VS 현행) × 소프트 비비드',d:'현행 VS 리포트 다크 골격, 막대는 다크에서 또렷한 소프트 비비드',
+  bg:'#12141d',card:'#1b1e29',bd:'#2c3143',tx:'#e8ecf3',dim:'#9aa5b8',acc:'#5b9bff',kpi:'#1f2330',
+  bars:['#5B9BFF','#F2A45C','#43C98A','#A58BF2','#FF6B5E','#57C7D4','#D4B106','#8B95AB'],grid:'#242a3c'},
+ {n:7,t:'딥 오션 블루 × 블루램프+앰버',d:'짙은 청남색 배경 + 파랑 농도 램프와 앰버 강조 — 주력 부문 강조형',
+  bg:'#0d1b2a',card:'#152638',bd:'#28405a',tx:'#e6eef6',dim:'#8fa6bc',acc:'#64b5f6',kpi:'#182c40',
+  bars:['#2E6DB0','#5590CE','#7FB0DF','#A9CBEA','#E8871E','#5A7CA0','#C9A227','#8C6D4F'],grid:'#1f3349'},
+ {n:8,t:'차콜 터미널 × CVD-세이프 비비드',d:'무채색 차콜 + 색약 안전 표준 원색 — 트레이딩 터미널 감성',
+  bg:'#17181c',card:'#1f2126',bd:'#33363d',tx:'#e9eaec',dim:'#9a9fa8',acc:'#e0a526',kpi:'#24262c',
+  bars:['#3D9BE9','#E69F00','#00B884','#E37DB4','#F1602D','#7BC8F0','#D0B62E','#9B8974'],grid:'#292b31'},
+ {n:9,t:'다크 그린 포레스트 × 웜 콘트라스트',d:'짙은 녹색 기운 다크 + 따뜻한 대비 막대 — 블룸버그 단말기 무드',
+  bg:'#101714',card:'#182019',bd:'#2b3a2e',tx:'#e7efe9',dim:'#93a698',acc:'#57c98a',kpi:'#1d2a20',
+  bars:['#57C98A','#E8A13C','#5B9BD5','#C77FB8','#E06055','#3FB8AF','#C9C34A','#8FA08F'],grid:'#223026'},
+ {n:10,t:'소프트 슬레이트 × 뮤트 파스텔 (다크 저자극)',d:'중간 명도 슬레이트 + 뮤트 파스텔 — 다크지만 부드러운 톤',
+  bg:'#22262f',card:'#2a2f3a',bd:'#3b4250',tx:'#e5e9f0',dim:'#a5aebc',acc:'#8fb4e3',kpi:'#2f3541',
+  bars:['#8FB4E3','#E3A878','#93C79B','#B99FDB','#DE8E9B','#7FC4CE','#CFC078','#9AA3B2'],grid:'#333947'},
 ];
-// 샘플 데이터 — 수주잔고형(6부문 × 16분기, 한화오션 스케일)
-const OSEG=['상선','해양 및 특수선','플랜트','E&I','EP 및 특수선','기타'];
-const OD=[];for(let i=0;i<16;i++){
-  const base=180000+i*9000;
-  OD.push([base*(0.62+0.10*Math.sin(i/3)),base*0.24,i>8?base*0.05:0,i<10?base*0.03:0,i>13?base*0.22:0,base*0.01]);}
-// 비용구성형(7항목 × 16분기, %of sales 스택)
-const CSEG=['원재료매입','외주가공비','종업원급여','감가상각비','지급수수료','운반비','기타'];
-const CD=[];for(let i=0;i<16;i++){
-  CD.push([34+4*Math.sin(i/2.5),15+2*Math.cos(i/3),11,4.5,3.2+0.8*Math.sin(i/2),2.4,8+1.5*Math.cos(i/4)]);}
-const QL=[];for(let y=22;y<=25;y++)for(let k=1;k<=4;k++)QL.push(k+'Q'+y);
-function stack(data,segs,cols,dark,pct){
-  const W=460,H=190,L=40,R=8,T=8,B=22,n=data.length;
-  const tots=data.map(r=>r.reduce((a,b)=>a+b,0));
-  const mx=Math.max(...tots)*1.08;
-  const X=i=>L+(W-L-R)*(i+0.5)/n, bw=(W-L-R)/n*0.62;
+const SEG=['상선','해양 및 특수선','플랜트','E&I','EP 및 특수선','기타'];
+const D=[];for(let i=0;i<14;i++){const b=180000+i*9500;
+  D.push([b*(0.60+0.10*Math.sin(i/3)),b*0.24,i>7?b*0.05:0,i<9?b*0.03:0,i>11?b*0.22:0,b*0.012]);}
+const QL=[];for(let y=23;y<=26;y++)for(let k=1;k<=4;k++)QL.push(k+'Q'+y);
+function stack(th){
+  const W=920,H=210,L=46,R=10,T=10,B=24,n=D.length;
+  const tots=D.map(r=>r.reduce((a,b)=>a+b,0)),mx=Math.max(...tots)*1.08;
+  const X=i=>L+(W-L-R)*(i+0.5)/n,bw=(W-L-R)/n*0.62;
   let s=`<svg viewBox='0 0 ${W} ${H}'>`;
   for(let g=0;g<=3;g++){const y=T+(H-T-B)*g/3;
-    s+=`<line x1='${L}' y1='${y}' x2='${W-R}' y2='${y}' stroke='${dark?'#2c3143':'#e8edf2'}'/>`;
-    s+=`<text x='${L-5}' y='${y+3}' font-size='8' fill='${dark?'#67718a':'#99a'}' text-anchor='end'>${pct?Math.round(mx*(1-g/3))+'%':Math.round(mx*(1-g/3)/10000)+'조'}</text>`;}
-  data.forEach((row,i)=>{let y0=H-B;
+    s+=`<line x1='${L}' y1='${y}' x2='${W-R}' y2='${y}' stroke='${th.grid}'/>`;
+    s+=`<text x='${L-6}' y='${y+3}' font-size='9' fill='${th.dim}' text-anchor='end'>${Math.round(mx*(1-g/3)/10000)}조</text>`;}
+  D.forEach((row,i)=>{let y0=H-B;
     row.forEach((v,si)=>{if(!v)return;const hp=(H-T-B)*v/mx;y0-=hp;
-      s+=`<rect x='${(X(i)-bw/2).toFixed(1)}' y='${y0.toFixed(1)}' width='${bw.toFixed(1)}' height='${Math.max(0,hp-0.6).toFixed(1)}' fill='${cols[si]}' rx='0.5'/>`;});});
-  QL.forEach((q,i)=>{if(i%2===0)s+=`<text x='${X(i).toFixed(1)}' y='${H-8}' font-size='7.5' fill='${dark?'#67718a':'#99a'}' text-anchor='middle'>${q}</text>`;});
-  s+='</svg>';
-  return s;
+      s+=`<rect x='${(X(i)-bw/2).toFixed(1)}' y='${y0.toFixed(1)}' width='${bw.toFixed(1)}' height='${Math.max(0,hp-0.7).toFixed(1)}' fill='${th.bars[si]}' rx='0.5'/>`;});});
+  QL.slice(0,n).forEach((q,i)=>{const last=i===n-1;
+    s+=`<text x='${X(i).toFixed(1)}' y='${H-8}' font-size='${last?9:8.5}' font-weight='${last?700:400}' fill='${last?th.tx:th.dim}' text-anchor='middle'>${q}</text>`;});
+  return s+'</svg>';
 }
-document.getElementById('opts').innerHTML=PALS.map(p=>{
-  const lgO=OSEG.map((sg,i)=>`<span style='color:${p.c[i]}'>■</span> ${sg}`).join(' · ');
-  const lgC=CSEG.map((sg,i)=>`<span style='color:${p.c[i]}'>■</span> ${sg}`).join(' · ');
-  return `<div class='opt'><h2><span class='num'>${p.n}</span>${p.t}</h2><p class='desc'>${p.d}</p>
-  <div class='sw'>${p.c.map(c=>`<div style='background:${c}'></div>`).join('')}</div>
-  <div class='charts'>
-    <div class='cht'><b>수주잔고형 (밝은 배경)</b>${stack(OD,OSEG,p.c,false,false)}<div class='lg'>${lgO}</div></div>
-    <div class='cht dark'><b>비용구성형 %of Sales (다크 배경)</b>${stack(CD,CSEG,p.c,true,true)}<div class='lg'>${lgC}</div></div>
+document.getElementById('opts').innerHTML=THEMES.map(th=>{
+  const kpi=(lb,v,dl,up)=>`<div class='kpi' style='background:${th.kpi};border:1px solid ${th.bd}'>
+    <small style='color:${th.dim}'>${lb}</small><b style='color:${th.tx}'>${v}</b>
+    <span style='font-size:.66rem;color:${up?"#e05c50":"#4b8ce0"}'> ${dl}</span></div>`;
+  return `<div class='opt'>
+  <div class='head'><span class='num'>${th.n}</span><b>${th.t}</b><small>${th.d}</small></div>
+  <div class='mock' style='background:${th.bg}'>
+    <p class='mtitle' style='color:${th.tx}'>📋 수주잔고 트래커</p>
+    <p class='msub' style='color:${th.dim}'>기준 2026-08-12 · DART 정기보고서 전수 파싱 · 분기말 수주잔고, 억원</p>
+    <div class='kpis'>
+      ${kpi('2Q26 잔고 (QoQ)','35.4조','+2.1조',true)}
+      ${kpi('신규수주 추정','4.8조','−0.6조',false)}
+      ${kpi('잔고/매출 커버리지','2.9x','+0.2x',true)}
+    </div>
+    <div class='chartbox' style='background:${th.card};border:1px solid ${th.bd}'>
+      ${stack(th)}
+      <div class='lg' style='color:${th.dim}'>${SEG.map((sg,i)=>`<span style='color:${th.bars[i]}'>■</span> ${sg}`).join(' · ')}</div>
+    </div>
+    <div class='sw'>${th.bars.map(c=>`<i style='background:${c}'></i>`).join('')}</div>
   </div></div>`;}).join('');
 </script>
