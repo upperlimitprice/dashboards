@@ -32,7 +32,7 @@ button.tab.on{background:#243a52;color:#fff;border-color:#243a52}
 <div class='box'>
 <input id='q' placeholder='기업명 검색 (예: 에스앤에스텍, HD한국조선해양, 한화에어로스페이스…)' autocomplete='off'>
 <ul id='sug'></ul>
-<h2 id='cname' style='margin-top:10px'>가동률 추이</h2>
+<div style='display:flex;justify-content:space-between;align-items:center;margin-top:10px'><h2 id='cname' style='margin:0'>가동률 추이</h2><button class='tab' id='vbtn' onclick='toggleView()' style='margin:0'>🔢 표로 보기</button></div>
 <div id='cstats'>기업을 검색하거나 아래 랭킹에서 클릭하면 부문별 라인 차트가 표시됩니다</div>
 <div id='chart'></div>
 </div>
@@ -146,8 +146,33 @@ q.addEventListener('input',()=>{
   const hits=rows.filter(r=>r.n.includes(v)).slice(0,12);
   sug.innerHTML=hits.map(r=>`<li onclick='show("${r.tk}")'>${r.n} <small>${r.last.toFixed(0)}%</small></li>`).join('');
 });
-function show(tk){
+let VMODE='chart',CURKEY=null;
+function toggleView(){VMODE=VMODE==='chart'?'table':'chart';
+  document.getElementById('vbtn').textContent=VMODE==='chart'?'🔢 표로 보기':'📊 차트로 보기';
+  if(CURKEY)show(CURKEY);}
+function tableView(tk){
   const e=UT[tk],ps=Object.keys(e.series).sort();
+  const F=e.fin||{};
+  const segs=[];ps.forEach(p=>Object.keys(e.series[p]).forEach(sg=>{if(sg!=='합계'&&!segs.includes(sg))segs.push(sg);}));
+  let h="<div style='overflow-x:auto'><table><tr><th>구분</th>"+ps.map(p=>`<th>${qlab(p)}</th>`).join('')+"</tr>";
+  segs.forEach(sg=>{h+=`<tr><td>${sg}</td>`+ps.map(p=>{const v=e.series[p][sg];
+    return `<td>${v!=null?v.toFixed(1)+'%':'-'}</td>`;}).join('')+'</tr>';});
+  h+=`<tr style='font-weight:700;background:#f7f9fb'><td>대표 가동률</td>`+ps.map(p=>`<td>${rep(e,p).toFixed(1)}%</td>`).join('')+'</tr>';
+  if(Object.keys(F).length){
+    h+=`<tr><td>매출(억)</td>`+ps.map(p=>`<td>${F[p]?Math.round(F[p].r).toLocaleString():'-'}</td>`).join('')+'</tr>';
+    h+=`<tr><td>GPM</td>`+ps.map(p=>`<td>${F[p]&&F[p].g!=null?F[p].g.toFixed(1)+'%':'-'}</td>`).join('')+'</tr>';
+    h+=`<tr><td>OPM</td>`+ps.map(p=>`<td>${F[p]&&F[p].o!=null?F[p].o.toFixed(1)+'%':'-'}</td>`).join('')+'</tr>';}
+  return h+'</table></div>';
+}
+function show(tk){
+  CURKEY=tk;
+  const e=UT[tk],ps=Object.keys(e.series).sort();
+  if(VMODE==='table'){
+    const r0=rows.find(x=>x.tk===tk);
+    document.getElementById('cname').textContent=`${e.name} (${tk}) — 가동률 표`;
+    document.getElementById('cstats').innerHTML=`최근 ${qlab(r0.lastP)} <b>${r0.last.toFixed(1)}%</b> · QoQ ${r0.qoq!=null?pp(r0.qoq):'-'} · YoY ${r0.yoy!=null?pp(r0.yoy):'-'}`;
+    document.getElementById('chart').innerHTML=tableView(tk);
+    return;}
   const r=rows.find(x=>x.tk===tk);
   document.getElementById('cname').textContent=`${e.name} (${tk}) — 부문별 가동률`;
   document.getElementById('cstats').innerHTML=
