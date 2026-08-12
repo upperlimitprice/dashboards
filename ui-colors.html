@@ -1,0 +1,78 @@
+<!doctype html><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'>
+<title>누적막대 색상 시안 5종</title>
+<style>
+body{font-family:'Apple SD Gothic Neo',sans-serif;background:#f4f6f8;color:#1c2530;margin:0}
+.wrap{max-width:1080px;margin:0 auto;padding:20px 16px}
+h1{font-size:1.25rem;margin:6px 0 2px}
+.sub{color:#667;font-size:.8rem;margin:0 0 16px}
+.opt{background:#fff;border:1.5px solid #ccd5dd;border-radius:14px;padding:18px 20px;margin:0 0 18px}
+.opt h2{font-size:1.02rem;margin:0 0 2px}
+.opt .desc{color:#667;font-size:.8rem;margin:0 0 10px}
+.num{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:#243a52;color:#fff;font-weight:700;margin-right:9px;font-size:.95rem}
+.sw{display:flex;gap:6px;margin:8px 0 12px;flex-wrap:wrap}
+.sw div{width:52px;height:26px;border-radius:6px;position:relative}
+.sw span{position:absolute;top:29px;left:0;font-size:.6rem;color:#889;white-space:nowrap}
+.charts{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}
+@media(max-width:760px){.charts{grid-template-columns:1fr}}
+.cht{border:1px solid #e4e9ee;border-radius:10px;padding:10px 12px 6px}
+.cht b{font-size:.78rem;color:#556}
+.dark{background:#1b1e29;border-color:#2c3143}
+.dark b{color:#9aa5b8}
+svg{display:block;width:100%}
+.lg{font-size:.7rem;color:#889;margin:4px 0 4px;line-height:1.7}
+.dark .lg{color:#9aa5b8}
+</style>
+<div class='wrap'>
+<h1>🎨 누적 막대그래프 색상 시안 5종</h1>
+<p class='sub'>동일 차트(수주잔고형 6부문 · 비용구성형 7항목)에 색 구성만 다르게 적용 · 좌=밝은 배경(수주/가동률/비용 페이지) · 우=다크 배경(VS 리포트) · 번호로 선택해 주세요 · 모든 팔레트 색약(CVD) 인접 구분 검증 통과</p>
+<div id='opts'></div>
+</div>
+<script>
+const PALS=[
+ {n:1,t:'모던 커머셜',d:'채도를 한 단계 눌러 정돈한 비즈니스 톤 — 파랑·앰버·그린 균형, 기타=중립 블루그레이',
+  c:['#3B6FB6','#E8873A','#3FA07A','#8B6BC7','#D8556B','#2FA3B8','#C9A227','#808FB3']},
+ {n:2,t:'노르딕 뮤트',d:'전체적으로 부드러운 저채도 파스텔 — 오래 봐도 눈이 편한 리포트 톤',
+  c:['#5E86C2','#DE8B4B','#6BAE78','#9F7EC4','#D26F82','#4FA3B2','#BFA84A','#98A2AE']},
+ {n:3,t:'딥 주얼',d:'묵직한 보석 톤 — 진한 배경·인쇄물에서도 또렷, 프리미엄 리서치 느낌',
+  c:['#2B62A8','#C46A2E','#288A5B','#6E4FA3','#A83A4E','#188EA6','#9A7B1E','#5C6B7A']},
+ {n:4,t:'블루 램프 + 앰버 액센트',d:'주력 부문은 파랑 농도 4단계, 강조 항목만 앰버 — 한 부문이 지배적인 기업에 최적',
+  c:['#215489','#2E6DB0','#5590CE','#7FB0DF','#E8871E','#4A6076','#C9A227','#8C6D4F']},
+ {n:5,t:'CVD-세이프 비비드',d:'색약 안전 국제 표준(Okabe-Ito) 기반 — 선명하고 구분 극대화',
+  c:['#0072B2','#E69F00','#009E73','#CC79A7','#D55E00','#56B4E9','#BFA524','#8C7A68']},
+];
+// 샘플 데이터 — 수주잔고형(6부문 × 16분기, 한화오션 스케일)
+const OSEG=['상선','해양 및 특수선','플랜트','E&I','EP 및 특수선','기타'];
+const OD=[];for(let i=0;i<16;i++){
+  const base=180000+i*9000;
+  OD.push([base*(0.62+0.10*Math.sin(i/3)),base*0.24,i>8?base*0.05:0,i<10?base*0.03:0,i>13?base*0.22:0,base*0.01]);}
+// 비용구성형(7항목 × 16분기, %of sales 스택)
+const CSEG=['원재료매입','외주가공비','종업원급여','감가상각비','지급수수료','운반비','기타'];
+const CD=[];for(let i=0;i<16;i++){
+  CD.push([34+4*Math.sin(i/2.5),15+2*Math.cos(i/3),11,4.5,3.2+0.8*Math.sin(i/2),2.4,8+1.5*Math.cos(i/4)]);}
+const QL=[];for(let y=22;y<=25;y++)for(let k=1;k<=4;k++)QL.push(k+'Q'+y);
+function stack(data,segs,cols,dark,pct){
+  const W=460,H=190,L=40,R=8,T=8,B=22,n=data.length;
+  const tots=data.map(r=>r.reduce((a,b)=>a+b,0));
+  const mx=Math.max(...tots)*1.08;
+  const X=i=>L+(W-L-R)*(i+0.5)/n, bw=(W-L-R)/n*0.62;
+  let s=`<svg viewBox='0 0 ${W} ${H}'>`;
+  for(let g=0;g<=3;g++){const y=T+(H-T-B)*g/3;
+    s+=`<line x1='${L}' y1='${y}' x2='${W-R}' y2='${y}' stroke='${dark?'#2c3143':'#e8edf2'}'/>`;
+    s+=`<text x='${L-5}' y='${y+3}' font-size='8' fill='${dark?'#67718a':'#99a'}' text-anchor='end'>${pct?Math.round(mx*(1-g/3))+'%':Math.round(mx*(1-g/3)/10000)+'조'}</text>`;}
+  data.forEach((row,i)=>{let y0=H-B;
+    row.forEach((v,si)=>{if(!v)return;const hp=(H-T-B)*v/mx;y0-=hp;
+      s+=`<rect x='${(X(i)-bw/2).toFixed(1)}' y='${y0.toFixed(1)}' width='${bw.toFixed(1)}' height='${Math.max(0,hp-0.6).toFixed(1)}' fill='${cols[si]}' rx='0.5'/>`;});});
+  QL.forEach((q,i)=>{if(i%2===0)s+=`<text x='${X(i).toFixed(1)}' y='${H-8}' font-size='7.5' fill='${dark?'#67718a':'#99a'}' text-anchor='middle'>${q}</text>`;});
+  s+='</svg>';
+  return s;
+}
+document.getElementById('opts').innerHTML=PALS.map(p=>{
+  const lgO=OSEG.map((sg,i)=>`<span style='color:${p.c[i]}'>■</span> ${sg}`).join(' · ');
+  const lgC=CSEG.map((sg,i)=>`<span style='color:${p.c[i]}'>■</span> ${sg}`).join(' · ');
+  return `<div class='opt'><h2><span class='num'>${p.n}</span>${p.t}</h2><p class='desc'>${p.d}</p>
+  <div class='sw'>${p.c.map(c=>`<div style='background:${c}'></div>`).join('')}</div>
+  <div class='charts'>
+    <div class='cht'><b>수주잔고형 (밝은 배경)</b>${stack(OD,OSEG,p.c,false,false)}<div class='lg'>${lgO}</div></div>
+    <div class='cht dark'><b>비용구성형 %of Sales (다크 배경)</b>${stack(CD,CSEG,p.c,true,true)}<div class='lg'>${lgC}</div></div>
+  </div></div>`;}).join('');
+</script>
