@@ -44,6 +44,7 @@ button.tab.on{background:#243a52;color:#fff;border-color:#243a52}
 <button class='tab' data-t='qoq' onclick='showTab("qoq")'>🔺 QoQ 상승</button>
 <button class='tab' data-t='high' onclick='showTab("high")'>🔥 90%+ 고가동</button>
 <button class='tab' data-t='drop' onclick='showTab("drop")'>🔻 가동률 급락</button>
+<button class='tab' data-t='tech' onclick='showTab("tech")'>🔬 테크·반도체</button>
 </div>
 <div id='tabc'></div>
 </div>
@@ -75,8 +76,9 @@ function tShow(h,ev){if(!tip){tip=document.createElement('div');tip.id='uttip';d
  tip.style.left=Math.min(window.innerWidth-210,ev.clientX+14)+'px';
  tip.style.top=(ev.clientY+window.scrollY+10)+'px';}
 const tHide=()=>{if(tip)tip.style.display='none';};
-const base=[['기업',r=>r.n+` <small style='color:#98a3ae'>${SECKO[r.s]||r.s}</small>`],['최근',r=>qlab(r.lastP)],['가동률',r=>'<b>'+r.last.toFixed(1)+'%</b>'],
-  ['QoQ',r=>r.qoq!=null?pp(r.qoq):'-'],['YoY',r=>r.yoy!=null?pp(r.yoy):'-']];
+const base=[['기업',r=>r.n+` <small style='color:#98a3ae'>${SECKO[r.s]||r.s}</small>`,null],['최근',r=>qlab(r.lastP),null],
+  ['가동률',r=>'<b>'+r.last.toFixed(1)+'%</b>','last'],
+  ['QoQ',r=>r.qoq!=null?pp(r.qoq):'-','qoq'],['YoY',r=>r.yoy!=null?pp(r.yoy):'-','yoy']];
 const SECKO={tech:'테크·반도체',chemical:'화학',auto:'자동차',bio:'바이오·제약',steel:'철강·금속',food:'음식료',
 construction:'건설',robot:'기계·로봇',medtech:'의료기기',fashion:'섬유·의류',appliance:'가전·생활',battery:'2차전지',
 cosmetics:'화장품',industrial:'상사·자본재',network:'통신장비',ship:'조선',power:'전력기기',transport:'운송',
@@ -92,17 +94,35 @@ const bySec=()=>SECF?rows.filter(r=>r.s===SECF):rows;
   document.getElementById('secf').innerHTML=`<option value=''>전체 섹터 (${rows.length})</option>`+opts;
 })();
 const TABS={
- yoy:{list:()=>bySec().filter(r=>r.yoy!=null&&r.np>=4).sort((a,b)=>b.yoy-a.yoy).slice(0,40)},
- qoq:{list:()=>bySec().filter(r=>r.qoq!=null).sort((a,b)=>b.qoq-a.qoq).slice(0,40)},
- high:{list:()=>bySec().filter(r=>r.last>=90).sort((a,b)=>(b.yoy??-99)-(a.yoy??-99)).slice(0,40)},
- drop:{list:()=>bySec().filter(r=>r.yoy!=null&&r.np>=4).sort((a,b)=>a.yoy-b.yoy).slice(0,40)}};
+ yoy:{pool:()=>bySec().filter(r=>r.yoy!=null&&r.np>=4),def:['yoy',-1]},
+ qoq:{pool:()=>bySec().filter(r=>r.qoq!=null),def:['qoq',-1]},
+ high:{pool:()=>bySec().filter(r=>r.last>=90),def:['yoy',-1]},
+ drop:{pool:()=>bySec().filter(r=>r.yoy!=null&&r.np>=4),def:['yoy',1]},
+ tech:{pool:()=>rows.filter(r=>r.s==='tech'),def:['last',-1]}};
+let CURT='yoy',SORT={k:null,d:-1};
+function setSort(k){if(SORT.k===k)SORT.d=-SORT.d;else SORT={k,d:-1};render();}
 function rowTip(tk){
   const e=UT[tk],ps=Object.keys(e.series).sort().slice(-4);
   return `<b>${e.name}</b><br>`+ps.map(p=>`${qlab(p)}: ${rep(e,p).toFixed(1)}%`).join('<br>');}
-function showTab(k){
+function showTab(k){CURT=k;SORT={k:null,d:-1};render();}
+function render(){
+  const k=CURT;
   document.querySelectorAll('#tabs .tab').forEach(b=>b.classList.toggle('on',b.dataset.t===k));
-  document.getElementById('tabc').innerHTML='<table><tr>'+base.map(c=>`<th>${c[0]}</th>`).join('')
-    +'</tr>'+TABS[k].list().map(r=>`<tr class='rowc' data-tk='${r.tk}' onclick='show("${r.tk}")'>`
+  const [dk,dd]=TABS[k].def;
+  const key=SORT.k||dk, dir=SORT.k?SORT.d:dd;
+  const list=TABS[k].pool().slice().sort((a,b)=>{
+    const av=a[key],bv=b[key];
+    if(av==null&&bv==null)return 0;
+    if(av==null)return 1;
+    if(bv==null)return -1;
+    return dir===-1 ? bv-av : av-bv;}).slice(0,60);
+  const th=base.map(c=>{
+    if(!c[2])return `<th>${c[0]}</th>`;
+    const active=key===c[2];
+    const arrow=active?(dir===-1?' ▼':' ▲'):' <span style="opacity:.45">⇅</span>';
+    return `<th style='cursor:pointer' onclick='setSort("${c[2]}")'>${c[0]}${arrow}</th>`;}).join('');
+  document.getElementById('tabc').innerHTML='<table><tr>'+th
+    +'</tr>'+list.map(r=>`<tr class='rowc' data-tk='${r.tk}' onclick='show("${r.tk}")'>`
     +base.map(c=>`<td>${c[1](r)}</td>`).join('')+'</tr>').join('')+'</table>';
   document.querySelectorAll('#tabc tr.rowc').forEach(tr=>{
     tr.addEventListener('mousemove',ev=>tShow(rowTip(tr.dataset.tk),ev));
