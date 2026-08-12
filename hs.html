@@ -91,6 +91,9 @@ function showTab(t){
 }
 showTab('up');
 const q=document.getElementById('q'),sug=document.getElementById('sug');
+q.addEventListener('keydown',ev=>{if(ev.key==='Enter'){const v=q.value.trim();
+  const hit=rows.find(r=>r.n===v)||rows.find(r=>r.n.includes(v));
+  if(hit){show(hit.k);sug.innerHTML='';}}});
 q.addEventListener('input',()=>{
   const v=q.value.trim();sug.innerHTML='';
   if(!v)return;
