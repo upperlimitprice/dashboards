@@ -66,6 +66,9 @@ const qd=p=>/^\d{4}Q[1-4]$/.test(p)?p[5]+'Q'+p.slice(2,4):p;
 const fmt=v=>v==null?'-':Math.abs(v)>=10000?(v/10000).toFixed(2)+'조':Math.round(v).toLocaleString();
 const pc=v=>v==null?'-':`<span class='${v>0?'up':'dn'}'>${v>0?'+':''}${v.toFixed(1)}%</span>`;
 const q=document.getElementById('q'),sug=document.getElementById('sug');
+q.addEventListener('keydown',ev=>{if(ev.key==='Enter'){const v=q.value.trim();
+  const ks=Object.keys(IDX);const hit=ks.find(n=>n===v)||ks.find(n=>n.includes(v));
+  if(hit){show(hit);sug.innerHTML='';}}});
 q.addEventListener('input',()=>{
   const v=q.value.trim();sug.innerHTML='';
   if(!v)return;
