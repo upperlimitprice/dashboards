@@ -1,8 +1,8 @@
 <!doctype html><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'>
 <title>VS 재무·비용 리포트 · 2026-08-12</title>
 <style>
-:root{--bg:#12141d;--sur:#1b1e29;--sur2:#232736;--bd:#2c3143;--tx:#e8ecf3;--dim:#9aa5b8;--mut:#67718a;
---acc:#5b9bff;--red:#ff6b5e;--grn:#43c98a;--org:#f2a45c;--pur:#a58bf2}
+:root{--bg:#eceff3;--sur:#f9fafc;--sur2:#eef1f6;--bd:#c9d2dc;--tx:#232b34;--dim:#5d6a78;--mut:#75818e;
+--acc:#3d5a80;--red:#cf4f45;--grn:#4d8f66;--org:#DE8B4B;--pur:#9F7EC4}
 body{font-family:'Apple SD Gothic Neo',sans-serif;background:var(--bg);color:var(--tx);margin:0}
 .wrap{max-width:1240px;margin:0 auto;padding:20px 16px}
 h1{font-size:1.25rem;margin:4px 0 2px;letter-spacing:-.02em}
@@ -16,13 +16,13 @@ input#q::placeholder{color:var(--mut)}
 #sug{margin:0;padding:0;list-style:none;position:absolute;top:100%;left:0;right:0;background:var(--sur2);border:1.5px solid var(--bd);border-top:0;border-radius:0 0 10px 10px;max-height:300px;overflow-y:auto;z-index:60;display:none}
 #sug.open{display:block}
 #sug li{display:flex;justify-content:space-between;gap:8px;padding:9px 13px;font-size:.86rem;cursor:pointer;border-bottom:1px solid var(--bd)}
-#sug li:hover,#sug li.sel{background:#2a3046}
+#sug li:hover,#sug li.sel{background:#e6edf6}
 #sug li small{color:var(--mut)}
 .rc{margin-top:12px}
 .rc h3{font-size:.78rem;color:var(--mut);margin:0 0 6px;font-weight:600}
 .rc a{display:flex;justify-content:space-between;padding:8px 10px;border-radius:9px;color:var(--dim);text-decoration:none;font-size:.86rem}
 .rc a:hover{background:var(--sur2);color:var(--tx)}
-.rc a.on{color:var(--acc);background:rgba(91,155,255,.1)}
+.rc a.on{color:var(--acc);background:rgba(61,90,128,.12)}
 .report{min-width:0}
 .empty{background:var(--sur);border:1px dashed var(--bd);border-radius:14px;padding:60px 20px;text-align:center;color:var(--mut)}
 .card{background:var(--sur);border:1px solid var(--bd);border-radius:14px;padding:16px 18px;margin:0 0 14px}
@@ -70,7 +70,7 @@ const qd=p=>/^\d{4}Q[1-4]$/.test(p)?p[5]+'Q'+p.slice(2,4):p;
 const fmt=v=>v==null?'-':Math.abs(v)>=10000?(v/10000).toFixed(2)+'조':Math.round(v).toLocaleString();
 const fmtU=v=>v==null?'-':Math.abs(v)>=10000?(v/10000).toFixed(2)+'조':Math.round(v).toLocaleString()+'억';
 const pc=v=>v==null?'-':`<span class='${v>0?'up':'dn'}'>${v>0?'+':''}${v.toFixed(1)}%</span>`;
-const COLS=['#5b9bff','#f2a45c','#43c98a','#a58bf2','#ff6b5e','#57c7d4','#d4b106','#8b95ab'];
+const COLS=['#5E86C2','#DE8B4B','#6BAE78','#9F7EC4','#D26F82','#4FA3B2','#BFA84A','#98A2AE'];
 let TIP=null;
 function tShow(h,ev){if(!TIP){TIP=document.createElement('div');TIP.id='vstip';document.body.appendChild(TIP);}
  TIP.innerHTML=h;TIP.style.display='block';
@@ -115,14 +115,14 @@ function hookHover(svgId,qs,htmlAt){
 function axes(W,H,L,B,T,R,mx,mn,fmtY){
   let s='';const step=(mx-mn)/4;
   for(let g=0;g<=4;g++){const v=mn+step*g,y=T+(H-T-B)*(1-(v-mn)/(mx-mn||1));
-    s+=`<line x1='${L}' y1='${y.toFixed(1)}' x2='${W-R}' y2='${y.toFixed(1)}' stroke='#242a3c'/>`;
-    s+=`<text x='${L-6}' y='${(y+3.5).toFixed(1)}' font-size='9' fill='#67718a' text-anchor='end'>${fmtY(v)}</text>`;}
+    s+=`<line x1='${L}' y1='${y.toFixed(1)}' x2='${W-R}' y2='${y.toFixed(1)}' stroke='#e2e7ed'/>`;
+    s+=`<text x='${L-6}' y='${(y+3.5).toFixed(1)}' font-size='9' fill='#75818e' text-anchor='end'>${fmtY(v)}</text>`;}
   return s;
 }
 function xlabels(W,H,L,R,qs,fq){
   const n=qs.length,X=i=>L+20+(W-L-R-40)*(n===1?0.5:i/(n-1));
   let s='';qs.forEach((p,i)=>{const last=i===n-1;
-    if(last||n<=14||i%2===n%2)s+=`<text x='${X(i).toFixed(1)}' y='${H-10}' font-size='${last?9.5:8.5}' font-weight='${last?700:400}' fill='${last?'#c6cede':'#67718a'}' text-anchor='middle'>${fq(p)}</text>`;});
+    if(last||n<=14||i%2===n%2)s+=`<text x='${X(i).toFixed(1)}' y='${H-10}' font-size='${last?9.5:8.5}' font-weight='${last?700:400}' fill='${last?'#33414f':'#75818e'}' text-anchor='middle'>${fq(p)}</text>`;});
   return s;
 }
 // ── VS 엑셀 출력 (FS-Q 수식 모델 + 비용 RAW + 그래프 요약)
@@ -339,7 +339,7 @@ async function load(nm){
   const mxR=Math.max(...revS)*1.15;
   let s1=`<svg id='v1' viewBox='0 0 ${W} ${H}' style='width:100%'>`;
   s1+=axes(W,H,L,B,T,R,mxR,0,v=>fmt(v));
-  revS.forEach((v,i)=>{s1+=`<rect x='${(X(i)-bw/2).toFixed(1)}' y='${(T+(H-T-B)*(1-v/mxR)).toFixed(1)}' width='${bw.toFixed(1)}' height='${((H-T-B)*v/mxR).toFixed(1)}' fill='#31405e'/>`;});
+  revS.forEach((v,i)=>{s1+=`<rect x='${(X(i)-bw/2).toFixed(1)}' y='${(T+(H-T-B)*(1-v/mxR)).toFixed(1)}' width='${bw.toFixed(1)}' height='${((H-T-B)*v/mxR).toFixed(1)}' fill='#5E86C2' opacity='.75'/>`;});
   const pmx=Math.max(...[...opmS,...gpmS,...cgrS].filter(v=>v!=null),10)*1.1;
   const pmn=Math.min(...opmS.filter(v=>v!=null),0);
   const Y2=v=>T+(H-T-B)*(1-(v-pmn)/(pmx-pmn));
