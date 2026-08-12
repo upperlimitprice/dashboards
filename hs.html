@@ -182,7 +182,7 @@ function show(k){
     if(i%6===n%6)s+=`<text x='${X(i).toFixed(1)}' y='${H-10}' font-size='8' fill='#8a94a0' text-anchor='middle'>${m.slice(2,7)}</text>`;});
   s+='</svg>';
   document.getElementById('chart').innerHTML=s
-    +"<p style='font-size:.74rem;color:#889;margin:5px 0 0'>막대 색: 전년 동월 대비 증가=빨강 · 감소=파랑 · 회색=비교불가 · 마우스 올리면 월별 수치</p>";
+    +"<p style='font-size:.74rem;color:#889;margin:5px 0 0'>막대 색: 전년 동월 대비 증가=빨강 · 감소=파랑 · 회색=비교불가</p>";
   const svg=document.getElementById('hssvg');
   svg.addEventListener('mousemove',ev=>{
     const rc=svg.getBoundingClientRect();
