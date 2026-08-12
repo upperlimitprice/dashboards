@@ -146,7 +146,7 @@ Promise.all([fetch('osc/index.json?v='+Date.now()).then(r=>r.json()), fetch('osc
   if(d.updated){$('upd').textContent=`최종 업데이트 ${d.updated}`;document.title=`수급 오실레이터 · ${d.updated} 업데이트`;}
   renderRecent();
   renderInsight();
-  $('q').value='삼성전자'; show();
+  $('q').value=(localStorage.getItem('oscLast')||'삼성전자'); show();
 });
 async function renderInsight(){
   try{
@@ -198,7 +198,7 @@ async function show(){
   const hit=find($('q').value); if(!hit) return;
   const [tk,name,sh]=hit;
   if(!cacheShard[sh]) cacheShard[sh]=await fetch(`osc/s${sh}.json`).then(r=>r.json());
-  cur={tk,name,rec:cacheShard[sh][tk]}; pushRecent(tk,name); hpush({t:'main',tk}); 
+  cur={tk,name,rec:cacheShard[sh][tk]}; pushRecent(tk,name); hpush({t:'main',tk}); try{localStorage.setItem('oscLast',name);}catch(_){} 
   $('chips').innerHTML=(hit[3]||[]).map(c=>{const x=SEC.find(y=>y.c===c);return x?`<span class='chip'>${x.n}</span>`:'';}).join('');
   draw();
 }
