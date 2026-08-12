@@ -1,32 +1,32 @@
 <!doctype html><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'>
 <title>HS 수출 모니터 · 2026-08-12</title>
 <style>
-body{font-family:'Apple SD Gothic Neo',sans-serif;background:#f4f6f8;color:#1c2530;margin:0}
+body{font-family:'Apple SD Gothic Neo',sans-serif;background:#eceff3;color:#232b34;margin:0}
 .wrap{max-width:1080px;margin:0 auto;padding:18px}
 h1{font-size:1.3rem;margin:6px 0 2px}
 .sub{color:#667;font-size:.8rem;margin:0 0 12px}
-.box{background:#fff;border:1px solid #ccd5dd;border-radius:12px;padding:14px 16px;margin:10px 0}
-input#q{width:100%;box-sizing:border-box;font-size:1rem;padding:10px 12px;border:1.5px solid #9fb2c2;border-radius:10px}
+.box{background:#f9fafc;border:1px solid #c9d2dc;border-radius:12px;padding:14px 16px;margin:10px 0}
+input#q{width:100%;box-sizing:border-box;font-size:1rem;padding:10px 12px;border:1.5px solid #a9b8c8;border-radius:10px}
 #qwrap{position:relative}
-#sug{margin:0;padding:0;list-style:none;position:absolute;top:100%;left:0;right:0;background:#fff;border:1.5px solid #9fb2c2;border-top:0;border-radius:0 0 10px 10px;max-height:300px;overflow-y:auto;z-index:60;box-shadow:0 8px 18px rgba(20,30,45,.12);display:none}
+#sug{margin:0;padding:0;list-style:none;position:absolute;top:100%;left:0;right:0;background:#f9fafc;border:1.5px solid #a9b8c8;border-top:0;border-radius:0 0 10px 10px;max-height:300px;overflow-y:auto;z-index:60;box-shadow:0 8px 18px rgba(20,30,45,.12);display:none}
 #sug.open{display:block}
 #sug li{display:flex;justify-content:space-between;gap:10px;padding:9px 14px;font-size:.88rem;cursor:pointer;border-bottom:1px solid #f0f3f6}
 #sug li:last-child{border-bottom:0}
-#sug li:hover,#sug li.sel{background:#eef5fe}
+#sug li:hover,#sug li.sel{background:#e6edf6}
 #sug li small{color:#8a97a5}
 table{border-collapse:collapse;width:100%;font-size:.82rem}
-th{background:#243a52;color:#fff;padding:7px 13px;font-weight:600;text-align:right;white-space:nowrap;position:sticky;top:0}
+th{background:#3d5a80;color:#fff;padding:7px 13px;font-weight:600;text-align:right;white-space:nowrap;position:sticky;top:0}
 th:first-child,td:first-child{text-align:left}
-td{padding:7px 13px;border-bottom:1px solid #e4e9ee;text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+td{padding:7px 13px;border-bottom:1px solid #dee4ea;text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
 th:last-child,td:last-child{padding-right:30px}
-tr.rowc{cursor:pointer} tr.rowc:hover{background:#f0f5fa}
-.up{color:#d63c2f}.dn{color:#2660c4}
+tr.rowc{cursor:pointer} tr.rowc:hover{background:#e9eef5}
+.up{color:#cf4f45}.dn{color:#3f6bab}
 h2{font-size:1rem;margin:4px 0 8px}
 small.gray{color:#778}
-button.tab{background:#eef2f6;border:1px solid #b9c7d4;border-radius:8px;padding:6px 13px;font-size:.84rem;cursor:pointer;margin:0 6px 8px 0}
-button.tab.on{background:#243a52;color:#fff;border-color:#243a52}
-#tabc{max-height:430px;overflow-y:auto;border-top:1px solid #e4e9ee}
-#hstip{position:absolute;display:none;background:#1c2530;color:#fff;font-size:.74rem;line-height:1.5;padding:6px 9px;border-radius:8px;pointer-events:none;z-index:99}
+button.tab{background:#edf0f4;border:1px solid #b4c1cf;border-radius:8px;padding:6px 13px;font-size:.84rem;cursor:pointer;margin:0 6px 8px 0}
+button.tab.on{background:#3d5a80;color:#fff;border-color:#3d5a80}
+#tabc{max-height:430px;overflow-y:auto;border-top:1px solid #dee4ea}
+#hstip{position:absolute;display:none;background:#232b34;color:#fff;font-size:.74rem;line-height:1.5;padding:6px 9px;border-radius:8px;pointer-events:none;z-index:99}
 #cstats{font-size:.83rem;color:#455;margin:4px 0 8px}
 </style>
 <div class='wrap'>
@@ -148,7 +148,7 @@ function toggleView(){VMODE=VMODE==='chart'?'table':'chart';
 function tableView(k){
   const e=HS[k],ms=Object.keys(e.series).sort().slice(-24);
   let h="<div style='overflow-x:auto'><table><tr><th>구분</th>"+ms.map(m=>`<th>${m.slice(2)}</th>`).join('')+"</tr>";
-  h+=`<tr style='font-weight:700;background:#f7f9fb'><td>수출액</td>`+ms.map(m=>`<td>${fmt(e.series[m])}</td>`).join('')+'</tr>';
+  h+=`<tr style='font-weight:700;background:#f4f6f9'><td>수출액</td>`+ms.map(m=>`<td>${fmt(e.series[m])}</td>`).join('')+'</tr>';
   h+=`<tr><td>YoY</td>`+ms.map(m=>{const py=e.series[(+m.slice(0,4)-1)+m.slice(4)];
     return `<td>${py?pc((e.series[m]-py)/py*100):'-'}</td>`;}).join('')+'</tr>';
   return h+'</table></div>';
@@ -165,20 +165,20 @@ function show(k){
     return;}
   document.getElementById('cname').textContent=e.label+' — 월별 수출액';
   document.getElementById('cstats').innerHTML=
-    `최근 ${r.last} <b>${fmt(r.lv)}</b>${r.hi?' 🏆<b style="color:#d63c2f">월 수출 사상 최대</b>':''} · YoY ${r.yoy!=null?pc(r.yoy):'-'} · 최근 3개월 YoY ${r.yoy3!=null?pc(r.yoy3):'-'} · ${n}개월`
+    `최근 ${r.last} <b>${fmt(r.lv)}</b>${r.hi?' 🏆<b style="color:#cf4f45">월 수출 사상 최대</b>':''} · YoY ${r.yoy!=null?pc(r.yoy):'-'} · 최근 3개월 YoY ${r.yoy3!=null?pc(r.yoy3):'-'} · ${n}개월`
     +(e.hs?` · <small class='gray'>HS ${e.hs}${e.region?' · '+e.region:''}</small>`:'');
   const W=980,H=230,L=56,B=26,T=12,R=8;
   const vals=ms.map(m=>e.series[m]),mx=Math.max(...vals)*1.1;
   const X=i=>L+(W-L-R)*(n===1?0.5:i/(n-1)),bw=Math.max(2,Math.min(16,(W-L-R)/n*0.7));
-  let s=`<svg id='hssvg' viewBox='0 0 ${W} ${H}' style='width:100%;background:#fbfcfe;border:1px solid #e3e9ef;border-radius:8px'>`;
+  let s=`<svg id='hssvg' viewBox='0 0 ${W} ${H}' style='width:100%;background:#f6f8fb;border:1px solid #d9e0e8;border-radius:8px'>`;
   for(let g=1;g<=3;g++){const y=T+(H-T-B)*g/3;
-    s+=`<line x1='${L}' y1='${y}' x2='${W-R}' y2='${y}' stroke='#eef1f5'/>`;
+    s+=`<line x1='${L}' y1='${y}' x2='${W-R}' y2='${y}' stroke='#e2e7ed'/>`;
     s+=`<text x='${L-4}' y='${T+(H-T-B)*(1-g/3)+4}' font-size='9' fill='#8a94a0' text-anchor='end'>${fmt(mx*g/3)}</text>`;}
   ms.forEach((m,i)=>{
     const v=vals[i],py=e.series[(+m.slice(0,4)-1)+m.slice(4)];
     const up=py!=null?v>=py:null;
     const y=T+(H-T-B)*(1-v/mx);
-    s+=`<rect x='${(X(i)-bw/2).toFixed(1)}' y='${y.toFixed(1)}' width='${bw.toFixed(1)}' height='${(H-B-y).toFixed(1)}' fill='${up===null?'#8a97a5':up?'#c0392b':'#2660c4'}' opacity='0.85'/>`;
+    s+=`<rect x='${(X(i)-bw/2).toFixed(1)}' y='${y.toFixed(1)}' width='${bw.toFixed(1)}' height='${(H-B-y).toFixed(1)}' fill='${up===null?'#8a97a5':up?'#c0392b':'#3f6bab'}' opacity='0.85'/>`;
     if(i%6===n%6)s+=`<text x='${X(i).toFixed(1)}' y='${H-10}' font-size='8' fill='#8a94a0' text-anchor='middle'>${m.slice(2,7)}</text>`;});
   s+='</svg>';
   document.getElementById('chart').innerHTML=s
