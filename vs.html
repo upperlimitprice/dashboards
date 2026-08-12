@@ -249,4 +249,5 @@ async function load(nm){
 }
 drawRecent();
 try{const H0=decodeURIComponent(location.hash.slice(1));if(H0&&IDX[H0])load(H0);}catch(_){}
+window.addEventListener('hashchange',()=>{try{const h=decodeURIComponent(location.hash.slice(1));if(h&&h!==CUR&&IDX[h])load(h);}catch(_){}});
 </script>
