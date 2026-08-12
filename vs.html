@@ -320,13 +320,16 @@ async function load(nm){
   const bw=Math.max(5,Math.min(34,(W-L-R-40)/qs.length*0.58));
   // KPI
   const lq=qs[qs.length-1],lr=rev(lq)||0,lo=g(e.is,lq,'영업이익'),lgp=g(e.is,lq,'매출총이익');
-  const pq=qs[qs.length-5];
-  const opm=lr?lo/lr*100:null,opmP=pq&&rev(pq)?(g(e.is,pq,'영업이익')/rev(pq)*100):null;
+  const q1=qs[qs.length-2],r1=q1?rev(q1):null,o1=q1?g(e.is,q1,'영업이익'):null,gp1=q1?g(e.is,q1,'매출총이익'):null;
+  const opm=lr?lo/lr*100:null,opm1=r1&&o1!=null?o1/r1*100:null;
+  const gpm=lr&&lgp!=null?lgp/lr*100:null,gpm1=r1&&gp1!=null?gp1/r1*100:null;
+  const dAmt=(a,b)=>a!=null&&b!=null?`<span class='${a-b>=0?"up":"dn"}' style='font-size:.74rem'>${a-b>=0?"+":"−"}${fmtU(Math.abs(a-b))}</span>`:'';
+  const dPp=(a,b)=>a!=null&&b!=null?`<span class='${a-b>=0?"up":"dn"}' style='font-size:.74rem'>${a-b>=0?"+":""}${(a-b).toFixed(1)}%p</span>`:'';
   let html=`<div class='rephead'><b style='font-size:1.12rem'>${nm}</b><button id='dlvsb' class='dlb'>⬇ VS 엑셀 (.xlsx)</button></div><div class='kpis'>
-   <div class='kpi'><small>${qd(lq)} 매출</small><b>${fmtU(lr)}</b></div>
-   <div class='kpi'><small>영업이익</small><b>${fmtU(lo)}</b></div>
-   <div class='kpi'><small>OPM</small><b>${opm!=null?opm.toFixed(1)+'%':'-'} ${opm!=null&&opmP!=null?pc(opm-opmP).replace('%','%p'):''}</b></div>
-   <div class='kpi'><small>GPM</small><b>${lr&&lgp!=null?(lgp/lr*100).toFixed(1)+'%':'-'}</b></div>
+   <div class='kpi'><small>${qd(lq)} 매출 (QoQ)</small><b>${fmtU(lr)}</b> ${dAmt(lr,r1)}</div>
+   <div class='kpi'><small>영업이익 (QoQ)</small><b>${fmtU(lo)}</b> ${dAmt(lo,o1)}</div>
+   <div class='kpi'><small>OPM (QoQ)</small><b>${opm!=null?opm.toFixed(1)+'%':'-'}</b> ${dPp(opm,opm1)}</div>
+   <div class='kpi'><small>GPM (QoQ)</small><b>${gpm!=null?gpm.toFixed(1)+'%':'-'}</b> ${dPp(gpm,gpm1)}</div>
   </div>`;
   // ① 손익: 매출 막대 + 원가율/GPM/OPM 라인
   const opmS=qs.map(q=>{const r=rev(q),v=g(e.is,q,'영업이익');return r&&v!=null?v/r*100:null;});
