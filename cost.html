@@ -117,19 +117,46 @@ function ctipShow(html,ev){
 const ctipHide=()=>{if(CTIP)CTIP.style.display='none';};
 const SEGC=['#2660c4','#f28e2b','#2e9e5b','#8e5cc8','#c0392b','#0f6b66','#b8860b','#7f8c8d','#5d8aa8'];
 function chartView(e){
-  const qs=perSlice(Object.keys(e.is||{}).sort());
+  const LATESTQ='2026Q2';
+  const nextQ=q=>{let y=+q.slice(0,4),n=+q[5];n++;if(n>4){n=1;y++;}return y+'Q'+n;};
+  let qs=perSlice(Object.keys(e.is||{}).sort());
   if(!qs.length)return '<p class="sub">손익 데이터 없음</p>';
+  while(qs[qs.length-1]<LATESTQ)qs=qs.concat(nextQ(qs[qs.length-1]));  // 축을 최신 분기까지 확장
   const rev=q=>e.is[q]?e.is[q]['매출액']:null;
-  const W=980,H=270,L=56,B=30,T=14,R=8,n=qs.length;
-  const X=i=>L+(W-L-R)*(n===1?0.5:i/(n-1)),bw=Math.max(4,Math.min(40,(W-L-R)/Math.max(1,n)*0.62));
-  // ① 비용 구성 누적 막대 — 성격별 top6+기타 (없으면 원가/판관비)
-  let items,dataAt;
+  const W=980,H=270,L=72,B=30,T=14,R=50,PAD=26,n=qs.length;
+  const X=i=>L+PAD+(W-L-R-2*PAD)*(n===1?0.5:i/(n-1));
+  const bw=Math.max(4,Math.min(40,(W-L-R-2*PAD)/Math.max(1,n)*0.62));
+  const xlab=(s)=>{let o='';qs.forEach((q,i)=>{const lastL=i===n-1;
+    if(lastL||n<=16||i%2===n%2)o+=`<text x='${X(i).toFixed(1)}' y='${H-12}' font-size='${lastL?9.5:8.5}' font-weight='${lastL?700:400}' fill='${lastL?'#33414f':'#8a94a0'}' text-anchor='middle'>${qd(q)}</text>`;});return o;};
+  function stackChart(id,items,dataAt,title){
+    const tots=qs.map(q=>items.reduce((s,it)=>s+dataAt(q,it),0));
+    const mx=Math.max(...tots,1)*1.12;
+    let s=`<svg id='${id}' viewBox='0 0 ${W} ${H}' style='width:100%;background:#fbfcfe;border:1px solid #e3e9ef;border-radius:8px'>`;
+    for(let g=1;g<=4;g++){const y=T+(H-T-B)*g/4;
+      s+=`<line x1='${L}' y1='${y}' x2='${W-R}' y2='${y}' stroke='#eef1f5'/>`;
+      s+=`<text x='${L-6}' y='${T+(H-T-B)*(1-g/4)+4}' font-size='9' fill='#8a94a0' text-anchor='end'>${fmt(mx*g/4)}</text>`;}
+    qs.forEach((q,i)=>{let y0=H-B;const x=(X(i)-bw/2).toFixed(1);
+      items.forEach((it,si)=>{const v=dataAt(q,it);if(!v)return;
+        const hp=(H-T-B)*v/mx;y0-=hp;
+        s+=`<rect x='${x}' y='${y0.toFixed(1)}' width='${bw.toFixed(1)}' height='${hp.toFixed(1)}' fill='${SEGC[si%9]}' opacity='0.88'/>`;});});
+    s+=xlab()+'</svg>';
+    const leg="<p style='font-size:.74rem;color:#889;margin:4px 0 10px'>"+items.map((it,si)=>`<span style='color:${SEGC[si%9]}'>■</span> ${it}`).join(' · ')+"</p>";
+    return {svg:s,leg};
+  }
+  // ⓪ 매출 구성 누적막대: 원가+판관비+영업이익(+기타차액) = 매출
+  const rvItems=['매출원가','판매비와관리비','영업이익','기타(차액)'];
+  const rvAt=(q,it)=>{const d=e.is[q]||{};
+    if(it==='기타(차액)'){const r=d['매출액'],s=(d['매출원가']||0)+(d['판매비와관리비']||0)+(d['영업이익']||0);
+      return r!=null?Math.max(0,r-s):0;}
+    return Math.max(0,d[it]||0);};
+  const c0=stackChart('cch0',rvItems,rvAt,'매출 구성');
+  // ① 비용 성격별 스택
   const cq=e.q||{};
-  const cqs=qs.filter(q=>{const[y,qn]=q.split('Q');return cq[q]!==undefined||true;});
   const hasCost=qs.some(q=>cq[q]);
+  let items,dataAt;
   if(hasCost){
-    const labs=labOrderD(cq,qs).filter(l=>{const v=(cq[qs[qs.length-1]]||{})[l];return true;});
-    const lastQ=qs[qs.length-1];
+    const labs=labOrderD(cq,qs);
+    const lastQ=qs.filter(q=>cq[q]).slice(-1)[0];
     labs.sort((a,b)=>Math.abs((cq[lastQ]||{})[b]||0)-Math.abs((cq[lastQ]||{})[a]||0));
     const top=labs.slice(0,6),rest=labs.slice(6);
     items=top.concat(rest.length?['기타(합)']:[]);
@@ -140,19 +167,7 @@ function chartView(e){
     items=['매출원가','판매비와관리비'];
     dataAt=(q,it)=>Math.max(0,(e.is[q]||{})[it]||0);
   }
-  const tots=qs.map(q=>items.reduce((s,it)=>s+dataAt(q,it),0));
-  const mx=Math.max(...tots,1)*1.12;
-  let s1=`<svg id='cch1' viewBox='0 0 ${W} ${H}' style='width:100%;background:#fbfcfe;border:1px solid #e3e9ef;border-radius:8px'>`;
-  for(let g=1;g<=4;g++){const y=T+(H-T-B)*g/4;
-    s1+=`<line x1='${L}' y1='${y}' x2='${W-R}' y2='${y}' stroke='#eef1f5'/>`;
-    s1+=`<text x='${L-5}' y='${T+(H-T-B)*(1-g/4)+4}' font-size='9' fill='#8a94a0' text-anchor='end'>${fmt(mx*g/4)}</text>`;}
-  qs.forEach((q,i)=>{let y0=H-B;const x=(X(i)-bw/2).toFixed(1);
-    items.forEach((it,si)=>{const v=dataAt(q,it);if(!v)return;
-      const hp=(H-T-B)*v/mx;y0-=hp;
-      s1+=`<rect x='${x}' y='${y0.toFixed(1)}' width='${bw.toFixed(1)}' height='${hp.toFixed(1)}' fill='${SEGC[si%9]}' opacity='0.88'/>`;});
-    if(n<=16||i%2===n%2)s1+=`<text x='${X(i).toFixed(1)}' y='${H-12}' font-size='8.5' fill='#8a94a0' text-anchor='middle'>${qd(q)}</text>`;});
-  s1+='</svg>';
-  const leg1="<p style='font-size:.74rem;color:#889;margin:4px 0 10px'>"+items.map((it,si)=>`<span style='color:${SEGC[si%9]}'>■</span> ${it}`).join(' · ')+"</p>";
+  const c1=stackChart('cch1',items,dataAt,'비용 구성');
   // ② 마진율 선그래프
   const LN=[['매출총이익률','매출총이익','#2e9e5b'],['영업이익률','영업이익','#2660c4'],['순이익률','당기순이익','#c0392b']];
   const pts=LN.map(([nm,k])=>qs.map(q=>{const r=rev(q),v=(e.is[q]||{})[k];return r&&v!=null?v/r*100:null;}));
@@ -162,30 +177,35 @@ function chartView(e){
   let s2=`<svg id='cch2' viewBox='0 0 ${W} ${H2}' style='width:100%;background:#fbfcfe;border:1px solid #e3e9ef;border-radius:8px'>`;
   for(let g=0;g<=4;g++){const vv=mn2+(mx2-mn2)*g/4,y=Y2(vv);
     s2+=`<line x1='${L}' y1='${y.toFixed(1)}' x2='${W-R}' y2='${y.toFixed(1)}' stroke='#eef1f5'/>`;
-    s2+=`<text x='${L-5}' y='${(y+3).toFixed(1)}' font-size='9' fill='#8a94a0' text-anchor='end'>${vv.toFixed(0)}%</text>`;}
+    s2+=`<text x='${L-6}' y='${(y+3).toFixed(1)}' font-size='9' fill='#8a94a0' text-anchor='end'>${vv.toFixed(0)}%</text>`;}
   if(mn2<0)s2+=`<line x1='${L}' y1='${Y2(0).toFixed(1)}' x2='${W-R}' y2='${Y2(0).toFixed(1)}' stroke='#c9d3dc' stroke-width='1.2'/>`;
   LN.forEach(([nm,k,col],li)=>{
     const p=pts[li].map((v,i)=>v==null?null:`${X(i).toFixed(1)},${Y2(v).toFixed(1)}`).filter(Boolean);
     if(p.length<2)return;
     s2+=`<polyline points='${p.join(' ')}' fill='none' stroke='${col}' stroke-width='2'/>`;
     pts[li].forEach((v,i)=>{if(v!=null)s2+=`<circle cx='${X(i).toFixed(1)}' cy='${Y2(v).toFixed(1)}' r='2.4' fill='${col}'/>`;});});
-  qs.forEach((q,i)=>{if(n<=16||i%2===n%2)s2+=`<text x='${X(i).toFixed(1)}' y='${H2-12}' font-size='8.5' fill='#8a94a0' text-anchor='middle'>${qd(q)}</text>`;});
-  s2+='</svg>';
+  let xl2='';qs.forEach((q,i)=>{const lastL=i===n-1;
+    if(lastL||n<=16||i%2===n%2)xl2+=`<text x='${X(i).toFixed(1)}' y='${H2-12}' font-size='${lastL?9.5:8.5}' font-weight='${lastL?700:400}' fill='${lastL?'#33414f':'#8a94a0'}' text-anchor='middle'>${qd(q)}</text>`;});
+  s2+=xl2+'</svg>';
   const leg2="<p style='font-size:.74rem;color:#889;margin:4px 0'>"+LN.map(([nm,,col])=>`<span style='color:${col}'>■</span> ${nm}`).join(' · ')+" (% of Sales)</p>";
-  window.__CCH={qs,items,dataAt,pts,LN,rev,X,W,L,R,n};
-  return "<h2 style='margin:6px 0'>비용 구성 누적 막대 <small class='gray'>(억원)</small></h2>"+s1+leg1
+  window.__CCH={qs,rvItems,rvAt,items,dataAt,pts,LN,rev,X,W,L,R,n};
+  return "<h2 style='margin:6px 0'>매출 구성 누적 막대 <small class='gray'>(원가+판관비+영업이익 = 매출, 억원)</small></h2>"+c0.svg+c0.leg
+       +"<h2 style='margin:6px 0'>비용 구성 누적 막대 <small class='gray'>(억원)</small></h2>"+c1.svg+c1.leg
        +"<h2 style='margin:6px 0'>수익성 지표 추이 <small class='gray'>(선그래프)</small></h2>"+s2+leg2;
 }
 function attachChartTips(){
   const C=window.__CCH;if(!C)return;
-  [['cch1',1],['cch2',2]].forEach(([id,mode])=>{
+  [['cch0',0],['cch1',1],['cch2',2]].forEach(([id,mode])=>{
     const svg=document.getElementById(id);if(!svg)return;
     svg.addEventListener('mousemove',ev=>{
       const rc=svg.getBoundingClientRect();
       const vx=(ev.clientX-rc.left)*C.W/rc.width;
       const i=Math.max(0,Math.min(C.n-1,Math.round(C.n===1?0:(vx-C.L)/((C.W-C.L-C.R)/(C.n-1)))));
       const q=C.qs[i];let h=`<b>${qd(q)}</b>`;
-      if(mode===1){let tot=0;
+      if(mode===0){let tot=0;
+        C.rvItems.forEach((it,si)=>{const v=C.rvAt(q,it);if(v){tot+=v;h+=`<br><span style='color:${SEGC[si%9]}'>■</span> ${it}: ${fmt(v)}`;}});
+        h+=`<br>매출액 <b>${fmt(C.rev(q)||0)}</b>`;
+      }else if(mode===1){let tot=0;
         C.items.forEach((it,si)=>{const v=C.dataAt(q,it);if(v){tot+=v;h+=`<br><span style='color:${SEGC[si%9]}'>■</span> ${it}: ${fmt(v)}`;}});
         h+=`<br>합계 <b>${fmt(tot)}</b> · 매출액 ${fmt(C.rev(q)||0)}`;
       }else{
