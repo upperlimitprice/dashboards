@@ -30,7 +30,7 @@ button.tab{background:#edf0f4;border:1px solid #b4c1cf;border-radius:8px;padding
 <div class='kpis' id='kpis'></div>
 <div class='box'>
 <div style='display:flex;justify-content:space-between;align-items:center'><h2 style='font-size:1rem;margin:0'>가격 추이 ($/GPU-hr)</h2>
-<div><button class='tab' id='cpbtn' onclick='copyChart(event)' style='margin:0 6px 0 0'>📷 이미지 복사</button><button class='tab' onclick='dlChart()' style='margin:0 6px 0 0'>⬇ PNG</button><button class='tab' id='vbtn' onclick='toggleView()' style='margin:0'>📉 장기 선 차트</button></div></div>
+<div><button class='tab' id='wmbtn' onclick='toggleWM()' style='margin:0 6px 0 0'>📈 선으로</button><button class='tab' id='cpbtn' onclick='copyChart(event)' style='margin:0 6px 0 0'>📷 이미지 복사</button><button class='tab' onclick='dlChart()' style='margin:0 6px 0 0'>⬇ PNG</button><button class='tab' id='vbtn' onclick='toggleView()' style='margin:0'>📉 장기 선 차트</button></div></div>
 <div id='chart'></div>
 </div>
 </div>
@@ -78,6 +78,10 @@ function weekly(){
   return rows;
 }
 const BARC={H100:'#3d5a80',A100:'#6BAE78',H200:'#C0455C',B200:'#C99239'};
+let WMODE='bar';
+function toggleWM(){WMODE=WMODE==='bar'?'line':'bar';
+  document.getElementById('wmbtn').textContent=WMODE==='bar'?'📈 선으로':'📊 막대로';
+  if(VMODE==='bars')draw();}
 function drawBars(){
   const rows=weekly();
   const W=980,H=380,L=52,B=46,T=16,R=16;
@@ -90,12 +94,21 @@ function drawBars(){
     s+=`<line x1='${L}' y1='${y}' x2='${W-R}' y2='${y}' stroke='#e2e7ed'/>`;
     s+=`<text x='${L-6}' y='${y+3}' font-size='9' fill='#8a94a0' text-anchor='end'>$${g}</text>`;}
   const keys=['H100','A100','H200','B200'];
+  if(WMODE==='line'){
+    keys.forEach((k,j)=>{
+      const pts=rows.map((r,i)=>r[j+1]!=null?[(L+gw*i+gw/2),Y(r[j+1])]:null).filter(Boolean);
+      if(pts.length>1)s+=`<polyline points='${pts.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' ')}' fill='none' stroke='${BARC[k]}' stroke-width='2.2'/>`;
+      pts.forEach(p=>{s+=`<circle cx='${p[0].toFixed(1)}' cy='${p[1].toFixed(1)}' r='2.4' fill='${BARC[k]}'/>`;});});
+    rows.forEach((r,i)=>{if(i%2===0){const d=new Date(r[0]);
+      s+=`<text x='${(L+gw*i+gw/2).toFixed(1)}' y='${H-30}' font-size='8' fill='#8a94a0' text-anchor='middle' transform='rotate(-40 ${(L+gw*i+gw/2).toFixed(1)} ${H-30})'>${(d.getMonth()+1)}/${d.getDate()}</text>`;}});
+  }else{
   rows.forEach((r,i)=>{
     const x0=L+gw*i+gw/2-(bw*4+3)/2;
     [1,2,3,4].forEach((ci,j)=>{const v=r[ci];if(v==null)return;
       s+=`<rect x='${(x0+j*(bw+1)).toFixed(1)}' y='${Y(v).toFixed(1)}' width='${bw}' height='${(H-B-Y(v)).toFixed(1)}' fill='${BARC[keys[j]]}' rx='1'/>`;});
     if(i%2===0){const d=new Date(r[0]);
       s+=`<text x='${(L+gw*i+gw/2).toFixed(1)}' y='${H-30}' font-size='8' fill='#8a94a0' text-anchor='middle' transform='rotate(-40 ${(L+gw*i+gw/2).toFixed(1)} ${H-30})'>${(d.getMonth()+1)}/${d.getDate()}</text>`;}});
+  }
   s+='</svg>';
   let lg="<p class='lg'>"+keys.map(k=>`<span style='color:${BARC[k]}'>●</span> ${k}`).join('  ')
     +" · 주간 중앙값 $/GPU-hr · ~8/3 = Silicon Data Neocloud 지수(공개 차트 복원 근사) · 이후 = 자체 수집(SD지수·vast 중앙값)</p>";
