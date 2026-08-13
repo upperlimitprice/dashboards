@@ -30,6 +30,7 @@ ITEMS = [
     ("parts-trend.html", "📦 전자부품 리드타임 트렌드", "Future Electronics 월간 — 카테고리별 리드타임·가격 방향", True),
     ("fx-flow.html", "💱 환율×외국인 수급 공식", "원화 1% 절하당 외국인 순매도 효과", True),
     ("fx-flow-5y.html", "💱 환율×수급 5개년 백테스트", "연도별·환율구간별 민감도 매트릭스", True),
+    ("gunny-score.html", "🏅 기업분석 채점 리스트", "gunny_bot 종합의견 10점 기준 — 전수조사+질의 채점 (국내)", False),
     ("kci.html", "📈 고려신용정보 급등 분석", "장중 +10% 이상 25회 전후 수익률 히트맵", False),
     ("lpddr.html", "🧠 LPDDR 백서 (Micron×Meta)", "AI 서버 LPDDR 채택 기술 분석", False),
     ("hbm4-mix.html", "🧠 HBM4 단수 믹스 × SKH 단가 검증", "가설 검증 보고서 — Rubin 12단 확정·타결가 예상 상회·Rubin Ultra 다운스펙 리스크 (2026-08-13)", False),
