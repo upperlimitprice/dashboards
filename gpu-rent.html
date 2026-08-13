@@ -1,0 +1,155 @@
+<!doctype html><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'>
+<title>AI 가속기 렌탈 시세 · 2026-08-13</title>
+<style>
+body{font-family:'Apple SD Gothic Neo',sans-serif;background:#eceff3;color:#232b34;margin:0}
+.wrap{max-width:1080px;margin:0 auto;padding:18px}
+h1{font-size:1.3rem;margin:6px 0 2px}
+.sub{color:#75818e;font-size:.8rem;margin:0 0 12px}
+.box{background:#f9fafc;border:1px solid #c9d2dc;border-radius:12px;padding:14px 16px;margin:10px 0}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:0 0 12px}
+.kpi{background:#f2f5f8;border:1px solid #c9d2dc;border-radius:11px;padding:10px 13px}
+.kpi small{color:#75818e;font-size:.68rem;display:block}
+.kpi b{font-size:1.05rem;font-variant-numeric:tabular-nums}
+.kpi span.n{color:#8a95a3;font-size:.68rem}
+table{border-collapse:collapse;width:100%;font-size:.82rem}
+th{background:#3d5a80;color:#fff;padding:7px 13px;font-weight:600;text-align:right;white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+td{padding:7px 13px;border-bottom:1px solid #dee4ea;text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+th:last-child,td:last-child{padding-right:28px}
+button.tab{background:#edf0f4;border:1px solid #b4c1cf;border-radius:8px;padding:6px 13px;font-size:.84rem;cursor:pointer;margin:0 6px 8px 0}
+#grtip{position:absolute;display:none;background:#232b34;color:#fff;font-size:.74rem;line-height:1.55;padding:7px 10px;border-radius:8px;pointer-events:none;z-index:99}
+.lg{font-size:.75rem;color:#75818e;margin:6px 0 0;line-height:1.9}
+.tblwrap{overflow-x:auto}
+.tblwrap th:first-child,.tblwrap td:first-child{position:sticky;left:0;background:#f9fafc}
+.tblwrap th:first-child{background:#3d5a80}
+</style>
+<div class='wrap'>
+<h1>🖥 AI 가속기 렌탈 시세 트래커</h1>
+<p class='sub'>기준 2026-08-13 · vast.ai 스팟 시장(무인증 공개 API) GPU별 중앙값/최저가 일일 스냅샷 + Silicon Data·fabryka H100 공식 지수 병기 · $/GPU-hr · 매일 밤 자동 갱신<br>
+※ vast.ai는 스팟·커뮤니티 시장이라 하이퍼스케일러 계약가보다 낮은 '시장 바닥가' 성격 — 수급 방향성 지표로 해석 · 과거 이정표(◆)는 공개 출처 참고점</p>
+<div class='kpis' id='kpis'></div>
+<div class='box'>
+<div style='display:flex;justify-content:space-between;align-items:center'><h2 style='font-size:1rem;margin:0'>가격 추이 ($/GPU-hr)</h2>
+<div><button class='tab' id='cpbtn' onclick='copyChart(event)' style='margin:0 6px 0 0'>📷 이미지 복사</button><button class='tab' onclick='dlChart()' style='margin:0 6px 0 0'>⬇ PNG</button><button class='tab' id='vbtn' onclick='toggleView()' style='margin:0'>🔢 표로 보기</button></div></div>
+<div id='chart'></div>
+</div>
+</div>
+<script id='grd' type='application/json'>{"2026-08-13": {"vast": {"H100 SXM": {"lo": 1.603, "p25": 1.606, "med": 2.27, "n": 7}, "H200": {"lo": 3.621, "p25": 3.936, "med": 4.008, "n": 4}, "B200": {"lo": 4.127, "p25": 4.127, "med": 5.878, "n": 3}, "A100 SXM4": {"lo": 0.201, "p25": 0.682, "med": 0.889, "n": 26}, "RTX 4090": {"lo": 0.136, "p25": 0.296, "med": 0.349, "n": 64}, "RTX 5090": {"lo": 0.322, "p25": 0.351, "med": 0.416, "n": 64}}, "sd": 2.53, "fab": 2.41}}</script>
+<script id='grm' type='application/json'>[{"d": "2024-03", "v": 7.0, "s": "aimultiple: 2024 초 코호트 중앙값 $7+"}, {"d": "2025-10", "v": 1.7, "s": "SemiAnalysis: 1년 계약 저점 $1.70"}, {"d": "2026-03", "v": 2.35, "s": "SemiAnalysis: 1년 계약 $2.35 (+38%)"}]</script>
+<script>
+const D=JSON.parse(document.getElementById('grd').textContent);
+const MILE=JSON.parse(document.getElementById('grm').textContent);
+const GPUS=["H100 SXM","H200","B200","A100 SXM4","RTX 4090","RTX 5090"];
+const COLS={"H100 SXM":"#3d5a80","H200":"#DE8B4B","B200":"#D26F82","A100 SXM4":"#6BAE78","RTX 4090":"#9F7EC4","RTX 5090":"#4FA3B2"};
+const days=Object.keys(D).sort();
+const last=D[days[days.length-1]];
+// KPI
+let kh='';
+GPUS.forEach(g=>{const v=(last.vast||{})[g];if(!v)return;
+  kh+=`<div class='kpi'><small>${g} (vast 중앙값)</small><b>$${v.med}</b> <span class='n'>최저 $${v.lo} · ${v.n}건</span></div>`;});
+if(last.sd)kh+=`<div class='kpi'><small>Silicon Data H100 지수</small><b>$${last.sd}</b></div>`;
+if(last.fab)kh+=`<div class='kpi'><small>fabryka 정규화 지수</small><b>$${last.fab}</b></div>`;
+document.getElementById('kpis').innerHTML=kh;
+// 차트
+let VMODE='chart',TIP=null;
+function tShow(h,ev){if(!TIP){TIP=document.createElement('div');TIP.id='grtip';document.body.appendChild(TIP);}
+ TIP.innerHTML=h;TIP.style.display='block';
+ TIP.style.left=Math.min(window.innerWidth-230,ev.clientX+14)+'px';
+ TIP.style.top=(ev.clientY+window.scrollY+10)+'px';}
+const tHide=()=>{if(TIP)TIP.style.display='none';};
+function draw(){
+  if(VMODE==='table'){tableView();return;}
+  const W=980,H=340,L=56,B=30,T=14,R=30,PADX=24;
+  // x축: 이정표 월 + 수집일 통합 타임라인
+  const xs=MILE.map(m=>m.d+'-15').concat(days);
+  const xset=[...new Set(xs)].sort();
+  const t0=new Date(xset[0]).getTime(), t1=new Date(xset[xset.length-1]).getTime()||t0+1;
+  const X=d=>{const t=new Date(d.length===7?d+'-15':d).getTime();
+    return L+PADX+(W-L-R-2*PADX)*(t1===t0?0.5:(t-t0)/(t1-t0));};
+  let mx=0;
+  GPUS.forEach(g=>days.forEach(d=>{const v=(D[d].vast||{})[g];if(v&&v.med>mx)mx=v.med;}));
+  MILE.forEach(m=>{if(m.v>mx)mx=m.v;});
+  mx*=1.12;
+  const Y=v=>T+(H-T-B)*(1-v/mx);
+  let s=`<svg id='grsvg' viewBox='0 0 ${W} ${H}' style='width:100%;background:#f6f8fb;border:1px solid #d9e0e8;border-radius:8px'>`;
+  for(let g=1;g<=4;g++){const y=T+(H-T-B)*g/4;
+    s+=`<line x1='${L}' y1='${y}' x2='${W-R}' y2='${y}' stroke='#e2e7ed'/>`;
+    s+=`<text x='${L-6}' y='${T+(H-T-B)*(1-g/4)+4}' font-size='9' fill='#8a94a0' text-anchor='end'>$${(mx*g/4).toFixed(1)}</text>`;}
+  // GPU 선
+  GPUS.forEach(g=>{
+    const pts=days.map(d=>{const v=(D[d].vast||{})[g];return v?[X(d),Y(v.med)]:null;}).filter(Boolean);
+    if(!pts.length)return;
+    if(pts.length>1)s+=`<polyline points='${pts.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' ')}' fill='none' stroke='${COLS[g]}' stroke-width='2'/>`;
+    pts.forEach(p=>{s+=`<circle cx='${p[0].toFixed(1)}' cy='${p[1].toFixed(1)}' r='3' fill='${COLS[g]}'/>`;});});
+  // 지수 (H100) 점선
+  [['sd','#232b34','Silicon Data'],['fab','#8a95a3','fabryka']].forEach(([k,c])=>{
+    const pts=days.map(d=>D[d][k]?[X(d),Y(D[d][k])]:null).filter(Boolean);
+    if(pts.length>1)s+=`<polyline points='${pts.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' ')}' fill='none' stroke='${c}' stroke-width='1.6' stroke-dasharray='5,4'/>`;
+    pts.forEach(p=>{s+=`<rect x='${(p[0]-2.6).toFixed(1)}' y='${(p[1]-2.6).toFixed(1)}' width='5.2' height='5.2' fill='${c}'/>`;});});
+  // 이정표 ◆
+  MILE.forEach(m=>{const x=X(m.d),y=Y(m.v);
+    s+=`<path d='M${x} ${y-5} L${x+5} ${y} L${x} ${y+5} L${x-5} ${y} Z' fill='#b8860b' opacity='.85'/>`;});
+  // x 라벨
+  const seen=new Set();
+  xset.forEach(d=>{const ym=d.slice(0,7);if(seen.has(ym))return;seen.add(ym);
+    s+=`<text x='${X(d).toFixed(1)}' y='${H-10}' font-size='8.5' fill='#8a94a0' text-anchor='middle'>${ym.slice(2).replace('-','.')}</text>`;});
+  s+='</svg>';
+  let lg="<p class='lg'>";
+  lg+=GPUS.map(g=>`<span style='color:${COLS[g]}'>●</span> ${g}`).join(' · ');
+  lg+=" · <span style='color:#232b34'>■--</span> Silicon Data H100 지수 · <span style='color:#8a95a3'>■--</span> fabryka 정규화 · <span style='color:#b8860b'>◆</span> 공개 이정표(1yr 계약 등)</p>";
+  document.getElementById('chart').innerHTML=s+lg;
+  const svg=document.getElementById('grsvg');
+  svg.addEventListener('mousemove',ev=>{
+    const rc=svg.getBoundingClientRect();
+    const vx=(ev.clientX-rc.left)*W/rc.width;
+    // 가장 가까운 수집일
+    let bi=-1,bd=1e18;
+    days.forEach((d,i)=>{const dx=Math.abs(X(d)-vx);if(dx<bd){bd=dx;bi=i;}});
+    let bm=-1,bmd=1e18;
+    MILE.forEach((m,i)=>{const dx=Math.abs(X(m.d)-vx);if(dx<bmd){bmd=dx;bm=i;}});
+    if(bm>=0&&bmd<bd){const m=MILE[bm];tShow(`<b>${m.d}</b> ◆ $${m.v}<br>${m.s}`,ev);return;}
+    if(bi<0)return;
+    const d=days[bi],sn=D[d];
+    let h=`<b>${d}</b>`;
+    GPUS.forEach(g=>{const v=(sn.vast||{})[g];if(v)h+=`<br><span style='color:${COLS[g]}'>●</span> ${g}: $${v.med} <small>(최저 $${v.lo}, ${v.n}건)</small>`;});
+    if(sn.sd)h+=`<br>■ SD 지수: $${sn.sd}`;
+    if(sn.fab)h+=`<br>■ fabryka: $${sn.fab}`;
+    tShow(h,ev);});
+  svg.addEventListener('mouseleave',tHide);
+}
+function tableView(){
+  let h="<div class='tblwrap'><table><tr><th>날짜</th>"+GPUS.map(g=>`<th>${g}</th>`).join('')+"<th>SD 지수</th><th>fabryka</th></tr>";
+  [...days].reverse().forEach(d=>{const sn=D[d];
+    h+=`<tr><td>${d}</td>`+GPUS.map(g=>{const v=(sn.vast||{})[g];
+      return `<td>${v?'$'+v.med+' <small style=\'color:#8a95a3\'>/'+v.lo+'</small>':'-'}</td>`;}).join('')
+      +`<td>${sn.sd?'$'+sn.sd:'-'}</td><td>${sn.fab?'$'+sn.fab:'-'}</td></tr>`;});
+  h+="</table><p class='lg'>셀 = 중앙값/최저가 ($/GPU-hr)</p></div>";
+  document.getElementById('chart').innerHTML=h;
+}
+function toggleView(){VMODE=VMODE==='chart'?'table':'chart';
+  document.getElementById('vbtn').textContent=VMODE==='chart'?'🔢 표로 보기':'📈 차트로 보기';draw();}
+async function chartPng(){
+  const svg=document.getElementById('grsvg');if(!svg)return null;
+  const xml=new XMLSerializer().serializeToString(svg);
+  const img=new Image();
+  await new Promise((res,rej)=>{img.onload=res;img.onerror=rej;
+    img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(xml);});
+  const S=2,W=980,Hh=340,TH=36;
+  const cv=document.createElement('canvas');cv.width=W*S;cv.height=(Hh+TH)*S;
+  const cx=cv.getContext('2d');cx.scale(S,S);
+  cx.fillStyle='#ffffff';cx.fillRect(0,0,W,Hh+TH);
+  cx.fillStyle='#232b34';cx.font="700 15px 'Apple SD Gothic Neo',sans-serif";
+  cx.fillText('AI 가속기 렌탈 시세 ($/GPU-hr) — '+days[days.length-1],14,23);
+  cx.drawImage(img,0,TH,W,Hh);
+  return new Promise(r=>cv.toBlob(r,'image/png'));
+}
+async function copyChart(ev){
+  const b=await chartPng();if(!b)return;const btn=ev.target;
+  try{await navigator.clipboard.write([new ClipboardItem({'image/png':b})]);btn.textContent='✓ 복사됨';}
+  catch(e){const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='gpu_rent.png';a.click();btn.textContent='⬇ 저장됨';}
+  setTimeout(()=>btn.textContent='📷 이미지 복사',1800);
+}
+async function dlChart(){const b=await chartPng();if(!b)return;
+  const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='gpu_rent.png';a.click();}
+draw();
+</script>
