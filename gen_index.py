@@ -26,6 +26,7 @@ ITEMS = [
     ("cost.html", "🧮 비용구조 모델", "비용의 성격별 분류 전수 파싱 — 기업 검색 · 분기 flow·연간 매트릭스 · 엑셀 다운로드", True),
     ("vs.html", "📊 VS 재무·비용 리포트", "기업 검색 → 손익·비용 세부(%of Sales)·판관비·세그먼트 섹션 리포트 · VS 엑셀 출력", True),
     ("flows", "💰 수급 주체별 시총대비 Top20", "", True),
+    ("gpu-rent.html", "🖥 AI 가속기 렌탈 시세", "vast.ai 스팟 + Silicon Data H100 지수 — H100·H200·B200·A100 $/hr 일일 추적", True),
     ("parts-trend.html", "📦 전자부품 리드타임 트렌드", "Future Electronics 월간 — 카테고리별 리드타임·가격 방향", True),
     ("fx-flow.html", "💱 환율×외국인 수급 공식", "원화 1% 절하당 외국인 순매도 효과", True),
     ("fx-flow-5y.html", "💱 환율×수급 5개년 백테스트", "연도별·환율구간별 민감도 매트릭스", True),
@@ -102,7 +103,7 @@ const REG=__REG__;
 const JOB={"signals.html":"signals","kr-breadth.html":"breadth","funds.html":"breadth","valuation.html":"breadth",
 "kospi-ff.html":"kospiff","cds.html":"cds","tanker.html":"tanker","us-liq.html":"usliq","tval.html":"tval",
 "etf.html":"tval","osc.html":"osc","leaders.html":"leaders","taiwan-revenue.html":"taiwan","flows":"flows",
-"orders.html":"orders","cost.html":"cost","util.html":"util","hs.html":"hs","vs.html":"vsr"};
+"orders.html":"orders","cost.html":"cost","util.html":"util","hs.html":"hs","vs.html":"vsr","gpu-rent.html":"gpurent"};
 let EP=null;
 async function ep(){if(EP!==null)return EP;try{EP=(await fetch('endpoint.json?'+Date.now()).then(r=>r.json())).url;}catch(e){EP='';}return EP;}
 async function refresh(e,k){
