@@ -36,7 +36,7 @@ button.tab.on{background:#3d5a80;color:#fff;border-color:#3d5a80}
 <div class='box'>
 <div id='qwrap'><input id='q' placeholder='기업명 검색 (예: 한화오션, HD한국조선해양, LIG…)' autocomplete='off'>
 <ul id='sug'></ul></div>
-<div style='display:flex;justify-content:space-between;align-items:center;margin-top:10px'><h2 id='cname' style='margin:0'>수주잔고 추이</h2><button class='tab' id='vbtn' onclick='toggleView()' style='margin:0'>🔢 표로 보기</button></div>
+<div style='display:flex;justify-content:space-between;align-items:center;margin-top:10px'><h2 id='cname' style='margin:0'>수주잔고 추이</h2><div style='display:flex;gap:6px'><button class='tab' id='cpbtn' onclick='copyChart(event)' style='margin:0'>📷 이미지 복사</button><button class='tab' onclick='dlChart()' style='margin:0'>⬇ PNG</button><button class='tab' id='vbtn' onclick='toggleView()' style='margin:0'>🔢 표로 보기</button></div></div>
 <div id='cstats'>기업을 검색하거나 아래 랭킹에서 클릭하면 차트가 표시됩니다</div>
 <div id='chart'></div>
 </div>
@@ -190,6 +190,37 @@ function emptyChart(){
 }
 emptyChart();
 let VMODE='chart',CURKEY=null;
+async function chartPng(){
+  const svg=document.getElementById('obsvg');if(!svg)return null;
+  const xml=new XMLSerializer().serializeToString(svg);
+  const img=new Image();
+  await new Promise((res,rej)=>{img.onload=res;img.onerror=rej;
+    img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(xml);});
+  const S=2,W=980,Hh=260,TH=36,LH=26;
+  const lg=document.querySelector('#chart p');
+  const cv=document.createElement('canvas');cv.width=W*S;cv.height=(Hh+TH+(lg?LH:0))*S;
+  const cx=cv.getContext('2d');cx.scale(S,S);
+  cx.fillStyle='#ffffff';cx.fillRect(0,0,W,Hh+TH+(lg?LH:0));
+  cx.fillStyle='#232b34';cx.font="700 15px 'Apple SD Gothic Neo',sans-serif";
+  cx.fillText(document.getElementById('cname').textContent,14,23);
+  cx.drawImage(img,0,TH,W,Hh);
+  if(lg){cx.fillStyle='#75818e';cx.font="11px 'Apple SD Gothic Neo',sans-serif";
+    cx.fillText(lg.textContent.slice(0,150),14,TH+Hh+16);}
+  return new Promise(r=>cv.toBlob(r,'image/png'));
+}
+function pngName(){return (CURKEY&&OB[CURKEY]?OB[CURKEY].name:'수주잔고')+'_수주잔고.png';}
+async function copyChart(ev){
+  const b=await chartPng();if(!b)return;
+  const btn=ev.target;
+  try{await navigator.clipboard.write([new ClipboardItem({'image/png':b})]);btn.textContent='✓ 복사됨';}
+  catch(e){const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=pngName();a.click();btn.textContent='⬇ 저장됨';}
+  setTimeout(()=>btn.textContent='📷 이미지 복사',1800);
+}
+async function dlChart(){
+  const b=await chartPng();if(!b)return;
+  const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=pngName();a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href),3000);
+}
 function toggleView(){VMODE=VMODE==='chart'?'table':'chart';
   document.getElementById('vbtn').textContent=VMODE==='chart'?'🔢 표로 보기':'📊 차트로 보기';
   if(CURKEY)show(CURKEY);}
