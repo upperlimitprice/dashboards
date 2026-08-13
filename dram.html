@@ -66,22 +66,33 @@ function draw(){
   const ds=days.filter(d=>ks.some(k=>val(d,k)!=null));
   if(!ds.length){document.getElementById('chart').innerHTML='<p class=lg>데이터 없음</p>';return;}
   const t0=new Date(ds[0]).getTime(), t1=new Date(ds[ds.length-1]).getTime()||t0+1;
-  const X=d=>L+18+(W-L-R-36)*((new Date(d).getTime()-t0)/(t1-t0||1));
+  const X=d=>L+14+(W-L-RL-28)*((new Date(d).getTime()-t0)/(t1-t0||1));
   let mx=0;ds.forEach(d=>ks.forEach(k=>{const v=val(d,k);if(v&&v>mx)mx=v;}));
   mx*=1.08;
   const Y=v=>T+(H-T-B)*(1-v/mx);
   let s=`<svg id='drsvg' viewBox='0 0 ${W} ${H}' style='width:100%;background:#f6f8fb;border:1px solid #d9e0e8;border-radius:8px'>`;
   for(let g=1;g<=4;g++){const y=T+(H-T-B)*g/4;
-    s+=`<line x1='${L}' y1='${y}' x2='${W-R}' y2='${y}' stroke='#e2e7ed'/>`;
+    s+=`<line x1='${L}' y1='${y}' x2='${W-RL}' y2='${y}' stroke='#e2e7ed'/>`;
     s+=`<text x='${L-6}' y='${T+(H-T-B)*(1-g/4)+4}' font-size='9' fill='#8a94a0' text-anchor='end'>$${(mx*g/4).toFixed(1)}</text>`;}
+  const ends=[];
   ks.forEach(k=>{
-    const pts=ds.map(d=>{const v=val(d,k);return v!=null?[X(d),Y(v)]:null;}).filter(Boolean);
-    if(pts.length>1)s+=`<polyline points='${pts.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' ')}' fill='none' stroke='${LC[k]}' stroke-width='1.8'/>`;});
+    const pts=ds.map(d=>{const v=val(d,k);return v!=null?[X(d),Y(v),v]:null;}).filter(Boolean);
+    if(!pts.length)return;
+    if(pts.length>1)s+=`<polyline points='${pts.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' ')}' fill='none' stroke='${LC[k]}' stroke-width='2'/>`;
+    const e=pts[pts.length-1];
+    s+=`<circle cx='${e[0].toFixed(1)}' cy='${e[1].toFixed(1)}' r='3.2' fill='${LC[k]}'/>`;
+    ends.push([e[1],k,e[2]]);});
+  ends.sort((a,b)=>a[0]-b[0]);
+  for(let i=1;i<ends.length;i++)if(ends[i][0]-ends[i-1][0]<14)ends[i][0]=ends[i-1][0]+14;
+  ends.forEach(([y,k,v])=>{
+    s+=`<text x='${W-RL+10}' y='${(y+4).toFixed(1)}' font-size='11' fill='${LC[k]}' font-weight='700'>${k.replace(' TLC','')} $${v}</text>`;});
   const seen=new Set();
+  let lastLX=-99;
   ds.forEach(d=>{const ym=d.slice(0,7);if(seen.has(ym))return;seen.add(ym);
-    const mo=+ym.slice(5);
-    if(ds.length>400&&mo%2===0)return;
-    s+=`<text x='${X(d).toFixed(1)}' y='${H-12}' font-size='8.5' fill='#8a94a0' text-anchor='middle'>${ym.slice(2).replace('-','.')}</text>`;});
+    const x=X(d);
+    if(x-lastLX<46)return;
+    lastLX=x;
+    s+=`<text x='${x.toFixed(1)}' y='${H-12}' font-size='8.5' fill='#8a94a0' text-anchor='middle'>${ym.slice(2).replace('-','.')}</text>`;});
   s+='</svg>';
   document.getElementById('chart').innerHTML=s+"<p class='lg'>현물 세션 평균가 ($/칩) · DRAMeXchange + Wayback 백필</p>";
   const svg=document.getElementById('drsvg');
