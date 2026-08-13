@@ -41,7 +41,7 @@ button.tab.on{background:#3d5a80;color:#fff;border-color:#3d5a80}
 const D=JSON.parse(document.getElementById('drd').textContent);
 const GRP={dram:["DDR5 16Gb","DDR5 16Gb eTT","DDR4 16Gb","DDR4 8Gb","DDR4 8Gb eTT"],
            nand:["NAND 512Gb TLC","NAND 256Gb TLC","NAND 128Gb TLC"]};
-const LC={"DDR5 16Gb":"#3d5a80","DDR5 16Gb eTT":"#8fb4e3","DDR4 16Gb":"#C0455C","DDR4 8Gb":"#DE8B4B","DDR4 8Gb eTT":"#C99239","NAND 512Gb TLC":"#2e6b4f","NAND 256Gb TLC":"#6BAE78","NAND 128Gb TLC":"#9F7EC4"};
+const LC={"DDR5 16Gb":"#990f3d","DDR5 16Gb eTT":"#c9748f","DDR4 16Gb":"#0f5499","DDR4 8Gb":"#5b8db8","DDR4 8Gb eTT":"#9dbdd4","NAND 512Gb TLC":"#008b6f","NAND 256Gb TLC":"#4aa88f","NAND 128Gb TLC":"#8cc6b3"};
 const days=Object.keys(D).sort();
 let GK='dram',VMODE='line',TIP=null;
 const val=(d,k)=>(D[d]||{})[k];
@@ -59,7 +59,7 @@ function tShow(h,ev){if(!TIP){TIP=document.createElement('div');TIP.id='drtip';d
  TIP.style.left=Math.min(window.innerWidth-230,ev.clientX+14)+'px';
  TIP.style.top=(ev.clientY+window.scrollY+10)+'px';}
 const tHide=()=>{if(TIP)TIP.style.display='none';};
-const W=980,H=360,L=52,B=34,T=14,R=20;
+const W=980,H=360,L=52,B=34,T=14,R=20,RL=168;
 function draw(){
   if(VMODE==='table'){tableView();return;}
   const ks=GRP[GK];
@@ -83,8 +83,7 @@ function draw(){
     if(ds.length>400&&mo%2===0)return;
     s+=`<text x='${X(d).toFixed(1)}' y='${H-12}' font-size='8.5' fill='#8a94a0' text-anchor='middle'>${ym.slice(2).replace('-','.')}</text>`;});
   s+='</svg>';
-  const lg="<p class='lg'>"+ks.map(k=>`<span style='color:${LC[k]}'>●</span> ${k}`).join(' · ')+" · 현물 세션 평균가</p>";
-  document.getElementById('chart').innerHTML=s+lg;
+  document.getElementById('chart').innerHTML=s+"<p class='lg'>현물 세션 평균가 ($/칩) · DRAMeXchange + Wayback 백필</p>";
   const svg=document.getElementById('drsvg');
   svg.addEventListener('mousemove',ev=>{
     const rc=svg.getBoundingClientRect();
