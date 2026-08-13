@@ -86,9 +86,15 @@ function draw(){
     const pts=days.map(d=>D[d][k]?[X(d),Y(D[d][k])]:null).filter(Boolean);
     if(pts.length>1)s+=`<polyline points='${pts.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' ')}' fill='none' stroke='${c}' stroke-width='1.6' stroke-dasharray='5,4'/>`;
     pts.forEach(p=>{s+=`<rect x='${(p[0]-2.6).toFixed(1)}' y='${(p[1]-2.6).toFixed(1)}' width='5.2' height='5.2' fill='${c}'/>`;});});
+  // H100 참고 연결선: 공개 이정표 → 일일 지수/스팟을 시간순으로 이어 하나의 선으로
+  const ref=[];
+  MILE.forEach(m=>ref.push([m.d+'-15', m.v]));
+  days.forEach(d=>{const v=D[d].sd||((D[d].vast||{})['H100 SXM']||{}).med;if(v)ref.push([d,v]);});
+  ref.sort((a,b)=>a[0]<b[0]?-1:1);
+  if(ref.length>1)s+=`<polyline points='${ref.map(p=>X(p[0]).toFixed(1)+','+Y(p[1]).toFixed(1)).join(' ')}' fill='none' stroke='#b8860b' stroke-width='2' stroke-dasharray='7,4' opacity='.8'/>`;
   // 이정표 ◆
   MILE.forEach(m=>{const x=X(m.d),y=Y(m.v);
-    s+=`<path d='M${x} ${y-5} L${x+5} ${y} L${x} ${y+5} L${x-5} ${y} Z' fill='#b8860b' opacity='.85'/>`;});
+    s+=`<path d='M${x} ${y-5} L${x+5} ${y} L${x} ${y+5} L${x-5} ${y} Z' fill='#b8860b' opacity='.9'/>`;});
   // x 라벨
   const seen=new Set();
   xset.forEach(d=>{const ym=d.slice(0,7);if(seen.has(ym))return;seen.add(ym);
@@ -96,7 +102,7 @@ function draw(){
   s+='</svg>';
   let lg="<p class='lg'>";
   lg+=GPUS.map(g=>`<span style='color:${COLS[g]}'>●</span> ${g}`).join(' · ');
-  lg+=" · <span style='color:#232b34'>■--</span> Silicon Data H100 지수 · <span style='color:#8a95a3'>■--</span> fabryka 정규화 · <span style='color:#b8860b'>◆</span> 공개 이정표(1yr 계약 등)</p>";
+  lg+=" · <span style='color:#232b34'>■--</span> Silicon Data H100 지수 · <span style='color:#8a95a3'>■--</span> fabryka 정규화 · <span style='color:#b8860b'>◆--</span> H100 참고 연결선(공개 이정표→일일 지수, 출처 혼합 주의)</p>";
   document.getElementById('chart').innerHTML=s+lg;
   const svg=document.getElementById('grsvg');
   svg.addEventListener('mousemove',ev=>{
