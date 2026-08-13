@@ -30,15 +30,17 @@ button.tab{background:#edf0f4;border:1px solid #b4c1cf;border-radius:8px;padding
 <div class='kpis' id='kpis'></div>
 <div class='box'>
 <div style='display:flex;justify-content:space-between;align-items:center'><h2 style='font-size:1rem;margin:0'>가격 추이 ($/GPU-hr)</h2>
-<div><button class='tab' id='cpbtn' onclick='copyChart(event)' style='margin:0 6px 0 0'>📷 이미지 복사</button><button class='tab' onclick='dlChart()' style='margin:0 6px 0 0'>⬇ PNG</button><button class='tab' id='vbtn' onclick='toggleView()' style='margin:0'>🔢 표로 보기</button></div></div>
+<div><button class='tab' id='cpbtn' onclick='copyChart(event)' style='margin:0 6px 0 0'>📷 이미지 복사</button><button class='tab' onclick='dlChart()' style='margin:0 6px 0 0'>⬇ PNG</button><button class='tab' id='vbtn' onclick='toggleView()' style='margin:0'>📉 장기 선 차트</button></div></div>
 <div id='chart'></div>
 </div>
 </div>
 <script id='grd' type='application/json'>{"2026-08-13": {"vast": {"H100 SXM": {"lo": 1.603, "p25": 1.606, "med": 2.27, "n": 7}, "H200": {"lo": 3.621, "p25": 3.936, "med": 4.008, "n": 4}, "B200": {"lo": 4.127, "p25": 4.127, "med": 5.878, "n": 3}, "A100 SXM4": {"lo": 0.201, "p25": 0.682, "med": 0.889, "n": 26}, "RTX 4090": {"lo": 0.136, "p25": 0.296, "med": 0.349, "n": 64}, "RTX 5090": {"lo": 0.322, "p25": 0.351, "med": 0.416, "n": 64}}, "sd": 2.53, "fab": 2.41}}</script>
 <script id='grm' type='application/json'>[{"d": "2024-03", "v": 7.0, "s": "aimultiple: 2024 초 코호트 중앙값 $7+"}, {"d": "2025-10", "v": 1.7, "s": "SemiAnalysis: 1년 계약 저점 $1.70"}, {"d": "2026-03", "v": 2.35, "s": "SemiAnalysis: 1년 계약 $2.35 (+38%)"}]</script>
+<script id='grw' type='application/json'>[["2026-01-05", 2.15, 1.25, null, 4.4], ["2026-01-12", 2.15, 1.25, null, 4.4], ["2026-01-19", 2.2, 1.25, null, 4.45], ["2026-01-26", 2.25, 1.25, null, 4.45], ["2026-02-02", 2.25, 1.25, null, 4.45], ["2026-02-09", 2.28, 1.25, null, 4.42], ["2026-02-16", 2.3, 1.27, null, 4.48], ["2026-02-23", 2.32, 1.27, null, 4.7], ["2026-03-02", 2.35, 1.28, null, 4.42], ["2026-03-09", 2.35, 1.28, null, 4.6], ["2026-03-16", 2.36, 1.3, null, 4.85], ["2026-03-23", 2.38, 1.3, null, 5.0], ["2026-03-30", 2.5, 1.38, null, 6.05], ["2026-04-06", 2.52, 1.3, null, 5.35], ["2026-04-13", 2.38, 1.32, null, 5.15], ["2026-04-20", 2.4, 1.33, null, 5.1], ["2026-04-27", 2.4, 1.35, null, 5.15], ["2026-05-04", 2.42, 1.4, null, 5.15], ["2026-05-11", 2.45, 1.42, 2.6, 5.18], ["2026-05-18", 2.48, 1.43, 2.62, 4.95], ["2026-05-25", 2.5, 1.48, 2.7, 5.2], ["2026-06-01", 2.5, 1.52, 2.75, 5.35], ["2026-06-08", 2.65, 1.55, 2.85, 5.4], ["2026-06-15", 2.62, 1.55, 2.7, 5.25], ["2026-06-22", 2.55, 1.55, 2.75, 5.3], ["2026-06-29", 2.55, 1.55, 2.8, 5.32], ["2026-07-06", 2.58, 1.55, 2.85, 5.6], ["2026-07-13", 2.55, 1.55, 2.88, 5.82], ["2026-07-20", 2.55, 1.55, 3.02, 5.62], ["2026-07-27", 2.58, 1.55, 3.02, 5.6], ["2026-08-03", 2.62, 1.55, 3.05, 5.62]]</script>
 <script>
 const D=JSON.parse(document.getElementById('grd').textContent);
 const MILE=JSON.parse(document.getElementById('grm').textContent);
+const WK=JSON.parse(document.getElementById('grw').textContent);  // [주, H100, A100, H200, B200]
 const GPUS=["H100 SXM","H200","B200","A100 SXM4","RTX 4090","RTX 5090"];
 const COLS={"H100 SXM":"#3d5a80","H200":"#DE8B4B","B200":"#D26F82","A100 SXM4":"#6BAE78","RTX 4090":"#9F7EC4","RTX 5090":"#4FA3B2"};
 const days=Object.keys(D).sort();
@@ -51,14 +53,67 @@ if(last.sd)kh+=`<div class='kpi'><small>Silicon Data H100 지수</small><b>$${la
 if(last.fab)kh+=`<div class='kpi'><small>fabryka 정규화 지수</small><b>$${last.fab}</b></div>`;
 document.getElementById('kpis').innerHTML=kh;
 // 차트
-let VMODE='chart',TIP=null;
+let VMODE='bars',TIP=null;
 function tShow(h,ev){if(!TIP){TIP=document.createElement('div');TIP.id='grtip';document.body.appendChild(TIP);}
  TIP.innerHTML=h;TIP.style.display='block';
  TIP.style.left=Math.min(window.innerWidth-230,ev.clientX+14)+'px';
  TIP.style.top=(ev.clientY+window.scrollY+10)+'px';}
 const tHide=()=>{if(TIP)TIP.style.display='none';};
+function weekly(){
+  // 백필 + 이후 수집분을 주 단위(월요일)로 이어붙임
+  const rows=WK.map(r=>r.slice());
+  const lastW=rows[rows.length-1][0];
+  const wk={};
+  days.forEach(d=>{if(d<=lastW)return;
+    const dt=new Date(d);const mon=new Date(dt);mon.setDate(dt.getDate()-((dt.getDay()+6)%7));
+    const k=mon.toISOString().slice(0,10);
+    (wk[k]=wk[k]||[]).push(d);});
+  Object.keys(wk).sort().forEach(k=>{
+    const ds=wk[k];const pick=f=>{const vs=ds.map(f).filter(v=>v!=null);return vs.length?vs.sort((a,b)=>a-b)[vs.length>>1]:null;};
+    rows.push([k,
+      pick(d=>D[d].sd||((D[d].vast||{})['H100 SXM']||{}).med),
+      pick(d=>((D[d].vast||{})['A100 SXM4']||{}).med),
+      pick(d=>((D[d].vast||{})['H200']||{}).med),
+      pick(d=>((D[d].vast||{})['B200']||{}).med)]);});
+  return rows;
+}
+const BARC={H100:'#3d5a80',A100:'#6BAE78',H200:'#C0455C',B200:'#C99239'};
+function drawBars(){
+  const rows=weekly();
+  const W=980,H=380,L=52,B=46,T=16,R=16;
+  let mx=0;rows.forEach(r=>[1,2,3,4].forEach(i=>{if(r[i]&&r[i]>mx)mx=r[i];}));
+  mx=Math.ceil(mx*1.1);
+  const n=rows.length,gw=(W-L-R)/n,bw=Math.max(2,Math.min(7,gw/5.4));
+  const Y=v=>T+(H-T-B)*(1-v/mx);
+  let s=`<svg id='grsvg' viewBox='0 0 ${W} ${H}' style='width:100%;background:#f6f8fb;border:1px solid #d9e0e8;border-radius:8px'>`;
+  for(let g=0;g<=mx;g++){const y=Y(g);
+    s+=`<line x1='${L}' y1='${y}' x2='${W-R}' y2='${y}' stroke='#e2e7ed'/>`;
+    s+=`<text x='${L-6}' y='${y+3}' font-size='9' fill='#8a94a0' text-anchor='end'>$${g}</text>`;}
+  const keys=['H100','A100','H200','B200'];
+  rows.forEach((r,i)=>{
+    const x0=L+gw*i+gw/2-(bw*4+3)/2;
+    [1,2,3,4].forEach((ci,j)=>{const v=r[ci];if(v==null)return;
+      s+=`<rect x='${(x0+j*(bw+1)).toFixed(1)}' y='${Y(v).toFixed(1)}' width='${bw}' height='${(H-B-Y(v)).toFixed(1)}' fill='${BARC[keys[j]]}' rx='1'/>`;});
+    if(i%2===0){const d=new Date(r[0]);
+      s+=`<text x='${(L+gw*i+gw/2).toFixed(1)}' y='${H-30}' font-size='8' fill='#8a94a0' text-anchor='middle' transform='rotate(-40 ${(L+gw*i+gw/2).toFixed(1)} ${H-30})'>${(d.getMonth()+1)}/${d.getDate()}</text>`;}});
+  s+='</svg>';
+  let lg="<p class='lg'>"+keys.map(k=>`<span style='color:${BARC[k]}'>●</span> ${k}`).join('  ')
+    +" · 주간 중앙값 $/GPU-hr · ~8/3 = Silicon Data Neocloud 지수(공개 차트 복원 근사) · 이후 = 자체 수집(SD지수·vast 중앙값)</p>";
+  document.getElementById('chart').innerHTML=s+lg;
+  const svg=document.getElementById('grsvg');
+  svg.addEventListener('mousemove',ev=>{
+    const rc=svg.getBoundingClientRect();
+    const vx=(ev.clientX-rc.left)*W/rc.width;
+    const i=Math.max(0,Math.min(rows.length-1,Math.floor((vx-L)/gw)));
+    const r=rows[i];
+    let h=`<b>${r[0]} 주</b>`;
+    keys.forEach((k,j)=>{if(r[j+1]!=null)h+=`<br><span style='color:${BARC[k]}'>●</span> ${k}: $${r[j+1]}`;});
+    tShow(h,ev);});
+  svg.addEventListener('mouseleave',tHide);
+}
 function draw(){
   if(VMODE==='table'){tableView();return;}
+  if(VMODE==='bars'){drawBars();return;}
   const W=980,H=340,L=56,B=30,T=14,R=30,PADX=24;
   // x축: 이정표 월 + 수집일 통합 타임라인
   const xs=MILE.map(m=>m.d+'-15').concat(days);
@@ -132,8 +187,8 @@ function tableView(){
   h+="</table><p class='lg'>셀 = 중앙값/최저가 ($/GPU-hr)</p></div>";
   document.getElementById('chart').innerHTML=h;
 }
-function toggleView(){VMODE=VMODE==='chart'?'table':'chart';
-  document.getElementById('vbtn').textContent=VMODE==='chart'?'🔢 표로 보기':'📈 차트로 보기';draw();}
+function toggleView(){VMODE=VMODE==='bars'?'chart':VMODE==='chart'?'table':'bars';
+  document.getElementById('vbtn').textContent=VMODE==='bars'?'📉 장기 선 차트':VMODE==='chart'?'🔢 표로 보기':'📊 주간 막대';draw();}
 async function chartPng(){
   const svg=document.getElementById('grsvg');if(!svg)return null;
   const xml=new XMLSerializer().serializeToString(svg);
