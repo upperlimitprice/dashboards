@@ -31,6 +31,7 @@ ITEMS = [
     ("fx-flow-5y.html", "💱 환율×수급 5개년 백테스트", "연도별·환율구간별 민감도 매트릭스", True),
     ("kci.html", "📈 고려신용정보 급등 분석", "장중 +10% 이상 25회 전후 수익률 히트맵", False),
     ("lpddr.html", "🧠 LPDDR 백서 (Micron×Meta)", "AI 서버 LPDDR 채택 기술 분석", False),
+    ("hbm4-mix.html", "🧠 HBM4 단수 믹스 × SKH 단가 검증", "가설 검증 보고서 — Rubin 12단 확정·타결가 예상 상회·Rubin Ultra 다운스펙 리스크 (2026-08-13)", False),
     ("calls", "📞 어닝콜 분기 변화분석", "", False),
 ]
 
