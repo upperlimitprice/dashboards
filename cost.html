@@ -105,7 +105,8 @@ async function show(nm){
   if(!cache[sec])cache[sec]=await fetch('cost/'+sec+'.json').then(r=>r.json());
   const e=cache[sec][tk];CUR={nm,tk,e};
   document.getElementById('result').style.display='block';
-  const _fbOnly=Object.keys(e.q||{}).length&&Object.values(e.q).every(d=>Object.keys(d).every(k=>k.includes('세부 미공시')));
+  const _rq=Object.keys(e.q||{}).sort().slice(-4);
+  const _fbOnly=_rq.length&&_rq.every(q=>Object.keys(e.q[q]).every(k=>k.includes('세부 미공시')));
   document.getElementById('cname').innerHTML=`${nm} (${tk})`+(_fbOnly?" <span style='font-size:.72rem;color:#b06a1e;background:#f6ecdc;border-radius:6px;padding:2px 8px;vertical-align:middle'>⚠ 성격별 분류 미공시 — 원가·판관비 총액 표시</span>":"");
   const qs=Object.keys(e.q).sort(),ys=Object.keys(e.a).sort();
   const iqs=Object.keys(e.is||{}).sort();
