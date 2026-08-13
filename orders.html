@@ -296,8 +296,7 @@ function show(tk){
   });
   s+='</svg>';
   let lg="<p style='font-size:.75rem;color:#889;margin:6px 0 0'>";
-  if(segs.length)lg+="누적 막대 = 제품군/내수·수출 블록(외화는 분기 평균환율 환산): "
-    +segs.map((sg,si)=>`<span style='color:${SEGC[si%12]}'>■</span> ${sg}`).join(' · ');
+  if(segs.length)lg+=segs.map((sg,si)=>`<span style='color:${SEGC[si%12]}'>■</span> ${sg}`).join(' · ');
   else lg+="막대 = 분기말 수주잔고 · <span style='color:#a3195b'>■</span> 최신 분기";
   lg+="</p>";
   document.getElementById('chart').innerHTML=s+lg;
