@@ -30,7 +30,7 @@ button.tab{background:#edf0f4;border:1px solid #b4c1cf;border-radius:8px;padding
 <div class='kpis' id='kpis'></div>
 <div class='box'>
 <div style='display:flex;justify-content:space-between;align-items:center'><h2 style='font-size:1rem;margin:0'>가격 추이 ($/GPU-hr)</h2>
-<div><button class='tab' id='wmbtn' onclick='toggleWM()' style='margin:0 6px 0 0'>📈 선으로</button><button class='tab' id='cpbtn' onclick='copyChart(event)' style='margin:0 6px 0 0'>📷 이미지 복사</button><button class='tab' onclick='dlChart()' style='margin:0 6px 0 0'>⬇ PNG</button><button class='tab' id='vbtn' onclick='toggleView()' style='margin:0'>📉 장기 선 차트</button></div></div>
+<div><button class='tab' id='wmbtn' onclick='toggleWM()' style='margin:0 6px 0 0'>📈 선으로</button><button class='tab' id='cpbtn' onclick='copyChart(event)' style='margin:0 6px 0 0'>📷 이미지 복사</button><button class='tab' onclick='dlChart()' style='margin:0 6px 0 0'>⬇ PNG</button><button class='tab' id='vbtn' onclick='toggleView()' style='margin:0'>🔢 표로 보기</button></div></div>
 <div id='chart'></div>
 </div>
 </div>
@@ -126,68 +126,7 @@ function drawBars(){
 }
 function draw(){
   if(VMODE==='table'){tableView();return;}
-  if(VMODE==='bars'){drawBars();return;}
-  // 장기 선 차트: 이정표(2024~) + 주간 지수(2026 YTD) + 일일 수집분 통합
-  const SER={'H100 SXM':[],'A100 SXM4':[],'H200':[],'B200':[]};
-  MILE.forEach(m=>SER['H100 SXM'].push([m.d+'-15',m.v]));
-  WK.forEach(r=>{if(r[1])SER['H100 SXM'].push([r[0],r[1]]);
-    if(r[2])SER['A100 SXM4'].push([r[0],r[2]]);
-    if(r[3])SER['H200'].push([r[0],r[3]]);
-    if(r[4])SER['B200'].push([r[0],r[4]]);});
-  const lastW=WK[WK.length-1][0];
-  days.forEach(d=>{if(d<=lastW)return;
-    const h=D[d].sd||((D[d].vast||{})['H100 SXM']||{}).med;
-    if(h)SER['H100 SXM'].push([d,h]);
-    [['A100 SXM4'],['H200'],['B200']].forEach(([g])=>{
-      const v=((D[d].vast||{})[g]||{}).med;if(v)SER[g].push([d,v]);});});
-  ['RTX 4090','RTX 5090'].forEach(g=>{
-    SER[g]=days.map(d=>{const v=((D[d].vast||{})[g]||{}).med;return v?[d,v]:null;}).filter(Boolean);});
-  const LC={'H100 SXM':'#3d5a80','A100 SXM4':'#6BAE78','H200':'#C0455C','B200':'#C99239','RTX 4090':'#9F7EC4','RTX 5090':'#4FA3B2'};
-  const W=980,H=340,L=56,B=30,T=14,R=30,PADX=24;
-  const allx=[...new Set(Object.values(SER).flat().map(p=>p[0]))].sort();
-  const t0=new Date(allx[0]).getTime(), t1=new Date(allx[allx.length-1]).getTime()||t0+1;
-  const X=d=>L+PADX+(W-L-R-2*PADX)*((new Date(d).getTime()-t0)/(t1-t0||1));
-  let mx=0;Object.values(SER).forEach(a=>a.forEach(p=>{if(p[1]>mx)mx=p[1];}));
-  mx*=1.1;
-  const Y=v=>T+(H-T-B)*(1-v/mx);
-  let s=`<svg id='grsvg' viewBox='0 0 ${W} ${H}' style='width:100%;background:#f6f8fb;border:1px solid #d9e0e8;border-radius:8px'>`;
-  for(let g=1;g<=4;g++){const y=T+(H-T-B)*g/4;
-    s+=`<line x1='${L}' y1='${y}' x2='${W-R}' y2='${y}' stroke='#e2e7ed'/>`;
-    s+=`<text x='${L-6}' y='${T+(H-T-B)*(1-g/4)+4}' font-size='9' fill='#8a94a0' text-anchor='end'>$${(mx*g/4).toFixed(1)}</text>`;}
-  Object.entries(SER).forEach(([g,arr])=>{
-    if(!arr.length)return;
-    arr.sort((a,b)=>a[0]<b[0]?-1:1);
-    const pts=arr.map(p=>[X(p[0]),Y(p[1])]);
-    if(pts.length>1)s+=`<polyline points='${pts.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' ')}' fill='none' stroke='${LC[g]}' stroke-width='2'/>`;
-    pts.forEach(p=>{s+=`<circle cx='${p[0].toFixed(1)}' cy='${p[1].toFixed(1)}' r='1.8' fill='${LC[g]}'/>`;});});
-  MILE.forEach(m=>{const x=X(m.d+'-15'),y=Y(m.v);
-    s+=`<path d='M${x} ${y-5} L${x+5} ${y} L${x} ${y+5} L${x-5} ${y} Z' fill='#b8860b' opacity='.9'/>`;});
-  const seen=new Set();
-  allx.forEach(d=>{const ym=d.slice(0,7);if(seen.has(ym))return;
-    const mo=+ym.slice(5);
-    if(allx.length>20&&mo%2===0)return;  // 격월 라벨
-    seen.add(ym);
-    s+=`<text x='${X(d).toFixed(1)}' y='${H-10}' font-size='8.5' fill='#8a94a0' text-anchor='middle'>${ym.slice(2).replace('-','.')}</text>`;});
-  s+='</svg>';
-  let lg="<p class='lg'>";
-  lg+=Object.keys(SER).map(g=>`<span style='color:${LC[g]}'>●</span> ${g}`).join(' · ');
-  lg+=" · <span style='color:#b8860b'>◆</span> H100 공개 이정표(1yr 계약) · ~26.8=Silicon Data 주간(복원 근사)·이후=자체 수집</p>";
-  document.getElementById('chart').innerHTML=s+lg;
-  const svg=document.getElementById('grsvg');
-  svg.addEventListener('mousemove',ev=>{
-    const rc=svg.getBoundingClientRect();
-    const vx=(ev.clientX-rc.left)*W/rc.width;
-    let bd=1e18,bx=null;
-    allx.forEach(d=>{const dx=Math.abs(X(d)-vx);if(dx<bd){bd=dx;bx=d;}});
-    if(!bx)return;
-    let h=`<b>${bx}</b>`;
-    Object.entries(SER).forEach(([g,arr])=>{
-      const p=arr.find(p=>p[0]===bx);
-      if(p)h+=`<br><span style='color:${LC[g]}'>●</span> ${g}: $${p[1]}`;});
-    const mm=MILE.find(m=>m.d+'-15'===bx);
-    if(mm)h+=`<br>◆ ${mm.s}`;
-    tShow(h,ev);});
-  svg.addEventListener('mouseleave',tHide);
+  drawBars();
 }
 function tableView(){
   let h="<div class='tblwrap'><table><tr><th>날짜</th>"+GPUS.map(g=>`<th>${g}</th>`).join('')+"<th>SD 지수</th><th>fabryka</th></tr>";
@@ -198,8 +137,8 @@ function tableView(){
   h+="</table><p class='lg'>셀 = 중앙값/최저가 ($/GPU-hr)</p></div>";
   document.getElementById('chart').innerHTML=h;
 }
-function toggleView(){VMODE=VMODE==='bars'?'chart':VMODE==='chart'?'table':'bars';
-  document.getElementById('vbtn').textContent=VMODE==='bars'?'📉 장기 선 차트':VMODE==='chart'?'🔢 표로 보기':'📊 주간 막대';draw();}
+function toggleView(){VMODE=VMODE==='bars'?'table':'bars';
+  document.getElementById('vbtn').textContent=VMODE==='bars'?'🔢 표로 보기':'📊 차트로 보기';draw();}
 async function chartPng(){
   const svg=document.getElementById('grsvg');if(!svg)return null;
   const xml=new XMLSerializer().serializeToString(svg);
