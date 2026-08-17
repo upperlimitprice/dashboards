@@ -173,6 +173,13 @@ q.addEventListener('blur',()=>setTimeout(()=>{SUGL=[];renderSug();},150));
 // 차트 (공란 기본 → 검색/클릭 시 데이터)
 const SEGC=['#5E86C2','#DE8B4B','#6BAE78','#9F7EC4','#D26F82','#4FA3B2','#BFA84A','#B37BA4','#6E7BA8','#8A9B6E','#C0885E','#98A2AE'];
 const W=980,H=260,L=64,B=34,T=14,R=46,PADX=28;
+function niceTop(raw){  // raw 이상, 4등분 눈금이 50/100 등 딱 떨어지는 최소 상단값
+  if(!raw||raw<=0)return 4;
+  const bases=[10,20,25,50,100,150,200,250,300,400,500,750,1000,1500,2000,2500,3000,4000,5000,7500,
+    10000,15000,20000,25000,30000,40000,50000,75000,100000,150000,200000,250000,300000,500000,1000000];
+  for(const st of bases){if(st*4>=raw)return st*4;}
+  let st=1000000;while(st*4<raw)st*=2;return st*4;
+}
 function frame(mx,n,ps){
   let s=`<svg id='obsvg' viewBox='0 0 ${W} ${H}' style='width:100%;background:#f6f8fb;border:1px solid #d9e0e8;border-radius:8px'>`;
   for(let g=1;g<=4;g++){const y=T+(H-T-B)*g/4;
@@ -274,25 +281,32 @@ function show(tk){
     (e.ind?`<b>${e.ind}</b>${e.prod?' · '+e.prod:''} · `:'')
     +`최신 ${qlab(r.lastP)} <b>${fmt(r.last)}</b>${r.hi?' 🏆<b style="color:#cf4f45">역대 최고</b>':''} · QoQ ${r.qoq!=null?pc(r.qoq):'-'} · YoY ${r.yoy!=null?pc(r.yoy):'-'} · 연속증가 ${r.streak}분기${r.cov!=null?` · 잔고/매출(TTM) <b>${r.cov.toFixed(2)}x</b>`:''} · ${r.np}개 분기`
     +` · <small style='color:${r.src==='u'?'#1f8a4c':'#889'}'>${r.src==='u'?'✔ 수기 검증본(참고)':'사업보고서 자동 파싱'}</small>`;
-  const n=ps.length,vals=ps.map(p=>e.series[p]??null),mx=Math.max(...vals.filter(v=>v!=null))*1.12;
+  const n=ps.length,vals=ps.map(p=>e.series[p]??null),mx=niceTop(Math.max(...vals.filter(v=>v!=null)));
   const X=i=>L+PADX+(W-L-R-2*PADX)*(n===1?0.5:i/(n-1)),bw=Math.max(3,Math.min(34,(W-L-R-2*PADX)/Math.max(1,n)*0.66));
   const P=e.parts||{};
   const segs=[];ps.forEach(p=>Object.keys(P[p]||{}).forEach(sg=>{if(!segs.includes(sg))segs.push(sg);}));
   const lp=ps[ps.length-1];
   segs.sort((a,b)=>((P[lp]||{})[b]||0)-((P[lp]||{})[a]||0));
   let s=frame(mx,n,ps);
+  const lastIdx=(()=>{for(let j=n-1;j>=0;j--)if(vals[j]!=null)return j;return -1;})();
   ps.forEach((p,i)=>{
     const v=vals[i];if(v==null)return;
     const x=(X(i)-bw/2).toFixed(1),prt=P[p];
+    let topY=H-B;
     if(prt&&segs.length){
       let y0=H-B;
       segs.forEach((sg,si)=>{const sv=prt[sg];if(!sv)return;
         const hp=(H-T-B)*sv/mx;y0-=hp;
         s+=`<rect x='${x}' y='${y0.toFixed(1)}' width='${bw.toFixed(1)}' height='${hp.toFixed(1)}' fill='${SEGC[si%12]}' opacity='0.88'/>`;});
+      topY=y0;
     }else{
-      const lastIdx=(()=>{for(let j=n-1;j>=0;j--)if(vals[j]!=null)return j;return -1;})();
       const Y=T+(H-T-B)*(1-v/mx);
-      s+=`<rect x='${x}' y='${Y.toFixed(1)}' width='${bw.toFixed(1)}' height='${(H-B-Y).toFixed(1)}' fill='${i===lastIdx?'#a3195b':'#7d838c'}' opacity='0.92'/>`;}
+      s+=`<rect x='${x}' y='${Y.toFixed(1)}' width='${bw.toFixed(1)}' height='${(H-B-Y).toFixed(1)}' fill='${i===lastIdx?'#a3195b':'#7d838c'}' opacity='0.92'/>`;
+      topY=Y;
+    }
+    if(i===lastIdx){  // 최신 분기 막대 위 값 명시 (복사·PNG에도 포함)
+      s+=`<text x='${X(i).toFixed(1)}' y='${(topY-4).toFixed(1)}' font-size='10.5' font-weight='700' fill='#a3195b' text-anchor='middle'>${fmt(v)}</text>`;
+    }
   });
   s+='</svg>';
   let lg="<p style='font-size:.75rem;color:#889;margin:6px 0 0'>";
