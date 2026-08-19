@@ -106,8 +106,8 @@ function setKind(kind){
   MKIND=kind;
   document.getElementById('tb-ob').classList.toggle('on',kind==='ob');
   document.getElementById('tb-ut').classList.toggle('on',kind==='ut');
-  const url=(kind==='ob'?'orders.html?emb=1#':'util.html?emb=1#')+MTK;
-  document.getElementById('mext').href=url.replace('?emb=1','');
+  const url=(kind==='ob'?'orders.html?emb=1&v=2#':'util.html?emb=1&v=2#')+MTK;
+  document.getElementById('mext').href=url.replace(/\?emb=1&v=2/,'');
   // iframe 재생성 (해시만 바꾸면 트래커가 반응 안 하므로)
   const old=document.getElementById('mif');
   const f=document.createElement('iframe');
