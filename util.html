@@ -278,6 +278,7 @@ if(location.search.includes('emb')){
   const keep=['chart','cname','cstats'].map(i=>document.getElementById(i));
   document.querySelectorAll('.wrap>*').forEach(el=>{
     if(!keep.some(k=>k&&(el===k||el.contains(k))))el.style.display='none';});
+  const q=document.getElementById('qwrap'); if(q)q.style.display='none';
   const w=document.querySelector('.wrap'); if(w){w.style.padding='4px 14px';w.style.maxWidth='100%';}
 }
 </script>
