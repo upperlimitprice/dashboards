@@ -25,7 +25,8 @@ th:last-child,td:last-child{padding-right:28px}
 ※ OpenRouter는 전체 LLM 시장의 일부(라우팅 게이트웨이)지만 오픈모델·API 수요의 방향성 프록시 · 진행 중인 주는 집계 미완성으로 낮게 보일 수 있음</p>
 <div class='kpis' id='kpis'></div>
 <div class='box'>
-<h2 style='font-size:1rem;margin:0'>주간 총 토큰 (좌) · Token Expenditure Index (우)</h2>
+<h2 style='font-size:1rem;margin:0'>Token Usage (openrouter) vs LLM Token Expenditure Index</h2>
+<p style='text-align:center;font-size:.8rem;margin:8px 0 0'><span style='color:#4a9d5f;font-weight:700'>―</span> LLM Token Expenditure Index&nbsp;&nbsp;<span style='color:#9aa2ab;font-weight:700'>―</span> Total Token</p>
 <div id='chart'></div>
 </div>
 <div class='box'>
@@ -59,30 +60,32 @@ function tShow(h,ev){if(!TIP){TIP=document.createElement('div');TIP.id='grtip';d
  TIP.style.left=Math.min(window.innerWidth-230,ev.clientX+14)+'px';
  TIP.style.top=(ev.clientY+window.scrollY+10)+'px';}
 const tHide=()=>{if(TIP)TIP.style.display='none';};
-const W=980,H=360,L=56,B=34,T=14,R=56;
-const t0=new Date(tot[0][0]).getTime(),t1=new Date(tot[tot.length-1][0]).getTime()||t0+1;
-const X=d=>L+16+(W-L-R-32)*((new Date(d).getTime()-t0)/(t1-t0||1));
-const mx=Math.max(...tot.map(t=>t[1]))*1.08;
-const Y=v=>T+(H-T-B)*(1-v/mx);
-let s=`<svg id='grsvg' viewBox='0 0 ${W} ${H}' style='width:100%;background:#f6f8fb;border:1px solid #d9e0e8;border-radius:8px'>`;
-for(let g=1;g<=4;g++){const y=T+(H-T-B)*g/4;
-  s+=`<line x1='${L}' y1='${y}' x2='${W-R}' y2='${y}' stroke='#e2e7ed'/>`;
-  s+=`<text x='${L-6}' y='${T+(H-T-B)*(1-g/4)+4}' font-size='9' fill='#8a94a0' text-anchor='end'>${fmtT(mx*g/4)}</text>`;}
-s+=`<polyline points='${tot.map(t=>X(t[0]).toFixed(1)+','+Y(t[1]).toFixed(1)).join(' ')}' fill='none' stroke='#3d5a80' stroke-width='2'/>`;
-// TEI 우축
+// 참고 구성: 두 시리즈 모두 0~100 정규화 · 우축 눈금 · 흰 배경 · 회색 토큰선/초록 지수선
+const W=980,H=380,L=18,B=34,T=16,R=44;
+const allD=[...new Set([...tot.map(t=>t[0]),...teiD])].sort();
+const t0=new Date(allD[0]).getTime(),t1=new Date(allD[allD.length-1]).getTime()||t0+1;
+const X=d=>L+10+(W-L-R-20)*((new Date(d).getTime()-t0)/(t1-t0||1));
+const tmax=Math.max(...tot.map(t=>t[1]));
+const NT=v=>v/tmax*100;
+let ivals=teiD.map(d=>TEI[d]);
+const imx=ivals.length?Math.max(...ivals):1, imn=ivals.length?Math.min(...ivals):0;
+const NI=v=>ivals.length>1?((v-imn)/(imx-imn||1))*50+50:75;
+const Y=n=>T+(H-T-B)*(1-n/100);
+let s=`<svg id='grsvg' viewBox='0 0 ${W} ${H}' style='width:100%;background:#fff;border:1px solid #d9e0e8;border-radius:8px'>`;
+[0,25,50,75,100].forEach(g=>{const y=Y(g);
+  s+=`<line x1='${L}' y1='${y}' x2='${W-R}' y2='${y}' stroke='${g===0?'#c9d2dc':'#eef1f4'}'/>`;
+  s+=`<text x='${W-R+8}' y='${y+4}' font-size='9.5' fill='#8a94a0'>${g}</text>`;});
+s+=`<polyline points='${tot.map(t=>X(t[0]).toFixed(1)+','+Y(NT(t[1])).toFixed(1)).join(' ')}' fill='none' stroke='#9aa2ab' stroke-width='2'/>`;
 if(teiD.length){
-  const tmx=Math.max(...teiD.map(d=>TEI[d]))*1.15,tmn=Math.min(...teiD.map(d=>TEI[d]))*.85;
-  const TY=v=>T+(H-T-B)*(1-(v-tmn)/(tmx-tmn||1));
-  const pts=teiD.map(d=>[X(d),TY(TEI[d])]);
-  if(pts.length>1)s+=`<polyline points='${pts.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' ')}' fill='none' stroke='#6BAE78' stroke-width='1.8'/>`;
-  else pts.forEach(p=>{s+=`<circle cx='${p[0].toFixed(1)}' cy='${p[1].toFixed(1)}' r='3.5' fill='#6BAE78'/>`;});
-  s+=`<text x='${W-R+6}' y='${TY(tmx/1.15).toFixed(1)}' font-size='9' fill='#6BAE78'>${(tmx/1.15).toFixed(2)}</text>`;
+  const pts=teiD.map(d=>[X(d),Y(NI(TEI[d]))]);
+  if(pts.length>1)s+=`<polyline points='${pts.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' ')}' fill='none' stroke='#4a9d5f' stroke-width='2.2'/>`;
+  else pts.forEach(p=>{s+=`<circle cx='${p[0].toFixed(1)}' cy='${p[1].toFixed(1)}' r='4' fill='#4a9d5f'/>`;});
 }
 const seen=new Set();
-tot.forEach(t=>{const ym=t[0].slice(0,7);if(seen.has(ym))return;seen.add(ym);
-  s+=`<text x='${X(t[0]).toFixed(1)}' y='${H-12}' font-size='8.5' fill='#8a94a0' text-anchor='middle'>${ym.slice(2).replace('-','.')}</text>`;});
+allD.forEach(d=>{const ym=d.slice(0,7);if(seen.has(ym))return;seen.add(ym);
+  s+=`<text x='${X(d).toFixed(1)}' y='${H-12}' font-size='8.5' fill='#8a94a0' text-anchor='middle'>${ym.slice(2).replace('-','.')}</text>`;});
 s+='</svg>';
-s+="<p class='lg'><span style='color:#3d5a80'>●</span> OpenRouter 주간 총 토큰 · <span style='color:#6BAE78'>●</span> Silicon Data LLM Token Expenditure Index (우축) · 마지막 주는 집계 진행 중</p>";
+s+="<p class='lg'>토큰선: 주간 총 토큰을 최대치=100으로 정규화 · 지수선: Silicon Data LLM Token Expenditure Index (일일, 2026-08-20~ 적재분 정규화) · 마지막 주는 집계 진행 중</p>";
 document.getElementById('chart').innerHTML=s;
 const svg=document.getElementById('grsvg');
 svg.addEventListener('mousemove',ev=>{
@@ -91,7 +94,7 @@ svg.addEventListener('mousemove',ev=>{
   let bd=1e18,bi=0;
   tot.forEach((t,i)=>{const dx=Math.abs(X(t[0])-vx);if(dx<bd){bd=dx;bi=i;}});
   const [d,v]=tot[bi];
-  let h=`<b>${d} 주</b><br>총 토큰: ${fmtT(v)}`;
+  let h=`<b>${d} 주</b><br>총 토큰: ${fmtT(v)} (${NT(v).toFixed(0)})`;
   const ys=P[bi].ys;
   Object.entries(ys).filter(([k])=>k!=='Others').sort((a,b)=>b[1]-a[1]).slice(0,3)
     .forEach(([m,t])=>{h+=`<br>${m.split('/')[1]||m}: ${fmtT(t)}`;});
