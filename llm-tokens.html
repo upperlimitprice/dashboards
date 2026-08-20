@@ -92,6 +92,7 @@ function mkDrag(svg,wrap,nearFn,applyFn){
   sel.style.cssText='position:absolute;display:none;background:rgba(61,90,128,.13);border:1px solid #3d5a80;pointer-events:none;top:0';
   wrap.appendChild(sel);
   svg.addEventListener('mousedown',ev=>{
+    window.__md=(window.__md||{});window.__md[svg.id]=(window.__md[svg.id]||0)+1;
     ev.preventDefault();tHide();
     const r=svg.getBoundingClientRect();
     const winMove=e=>{                            // window 레벨 추적 → 차트 밖으로 나가도 선택 유지
