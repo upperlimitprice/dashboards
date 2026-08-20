@@ -29,6 +29,7 @@ ITEMS = [
     ("flows", "💰 수급 주체별 시총대비 Top20", "", True),
     ("dram.html", "💾 DRAM·NAND 현물가", "DRAMeXchange 현물 세션 평균 — DDR5/DDR4/NAND 일일 추적 (2022~)", True),
     ("gpu-rent.html", "🖥 AI 가속기 렌탈 시세", "vast.ai 스팟 + Silicon Data H100 지수 — H100·H200·B200·A100 $/hr 일일 추적", True),
+    ("llm-tokens.html", "🤖 LLM 토큰 사용량", "OpenRouter 주간 모델별 토큰 + Silicon Data Token Expenditure Index — AI 수요 프록시", True),
     ("parts-trend.html", "📦 전자부품 리드타임 트렌드", "Future Electronics 월간 — 카테고리별 리드타임·가격 방향", True),
     ("fx-flow.html", "💱 환율×외국인 수급 공식", "원화 1% 절하당 외국인 순매도 효과", True),
     ("fx-flow-5y.html", "💱 환율×수급 5개년 백테스트", "연도별·환율구간별 민감도 매트릭스", True),
