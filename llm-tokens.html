@@ -19,159 +19,216 @@ td{padding:7px 13px;border-bottom:1px solid #dee4ea;text-align:right;white-space
 th:last-child,td:last-child{padding-right:28px}
 #grtip{position:absolute;display:none;background:#232b34;color:#fff;font-size:.74rem;line-height:1.55;padding:7px 10px;border-radius:8px;pointer-events:none;z-index:99}
 .lg{font-size:.75rem;color:#75818e;margin:6px 0 0;line-height:1.9}
+.note{background:#f2f5f8;border:1px solid #d5dde5;border-left:3px solid #3aa76d;border-radius:8px;padding:10px 13px;margin:10px 0 0;font-size:.78rem;line-height:1.85;color:#3f4a55}
+.note b{color:#232b34}
 .up{color:#c0392b;font-weight:700}.dn{color:#2660c4;font-weight:700}
 </style>
 <div class='wrap'>
-<h1>🤖 LLM 토큰 사용량 트래커</h1>
-<p class='sub'>기준 2026-08-20 · 토큰: OpenRouter rankings 주간 모델별 (누적 막대) · 지수: Silicon Data LLM Token Expenditure Index — 실측(2026-08-18~ 일일) + 모델믹스×단가 역산 앵커 (우축 $/MTok) · 매일 자동 갱신 (사이트 갱신 주기 추종)</p>
+<h1>🤖 LLM 토큰 지수·사용량 트래커</h1>
+<p class='sub'>기준 2026-08-20 · 지수: Silicon Data LLM Token Expenditure Index 3종 (전체·Open·Proprietary, 일일 $/MTok) · 사용량: OpenRouter rankings 주간 모델별 누적 · 매일 자동 갱신 (사이트 갱신 주기 추종)</p>
 <div class='kpis' id='kpis'></div>
+
 <div class='box'>
-<h2 style='font-size:1rem;margin:0'>Token Usage (openrouter) vs LLM Token Expenditure Index</h2>
-<p style='text-align:center;font-size:.8rem;margin:8px 0 0'><span style='color:#4a9d5f;font-weight:700'>―</span> LLM Token Expenditure Index (우축, 시작=100 지수화)&nbsp;&nbsp;<span style='color:#9aa2ab;font-weight:700'>▮</span> 주간 토큰 (좌축, 모델별 누적)</p>
+<h2 style='font-size:1rem;margin:0 0 2px'>① LLM Token Expenditure Index — 가격 지수 종합 ($/MTok)</h2>
+<p class='sub' style='margin:0 0 4px'>Silicon Data 일일 벤치마크 (Bloomberg: SDLLMTK) · <span style='color:#3aa76d;font-weight:700'>━ 전체(LLM Token)</span> · <span style='color:#c0392b;font-weight:700'>━ Proprietary(클로즈드)</span> · <span style='color:#2660c4;font-weight:700'>━ Open(오픈웨이트)</span></p>
+<div id='zoomi' style='display:flex;gap:6px;margin:8px 0 4px'></div>
+<div id='idxchart' style='position:relative'></div>
+<div class='note'>
+<b>📌 가격 지수 읽는 법</b> (참고: 이그전 블로그)<br>
+· 세 지수는 모두 <b>가중평균 토큰 가격</b>이다. <b>전체(LLM Token) = Open가격 × 오픈모델 비중 + Proprietary가격 × 클로즈드모델 비중</b>.<br>
+· 따라서 Open·Proprietary 가격이 <u>둘 다 내렸는데 전체 지수가 오르면</u> → 상대적으로 비싼 <b>클로즈드(Proprietary) 모델의 사용 비중이 커졌음</b>을 시사 (점유율 반등 신호).<br>
+· 반대로 전체 지수가 개별 지수보다 더 떨어지면 값싼 오픈모델로 수요가 이동한 것.<br>
+· <span style='color:#8a8f96'>주의: 지수의 등락이 곧 AI 반도체 주가를 대변하진 않는다. 국채금리·실적 등과 함께 AI 사이클을 보는 하나의 참고 지표.</span>
+</div>
+</div>
+
+<div class='box'>
+<h2 style='font-size:1rem;margin:0'>② Token Usage — 주간 처리 토큰 (openrouter, 모델별 누적)</h2>
 <div id='zoomr' style='display:flex;gap:6px;margin:8px 0 4px'></div>
 <div id='chart' style='position:relative'></div>
 <p class='lg' style='margin:2px 0 0'>좌→우 드래그 = 구간 확대 · 우→좌 드래그 = 축소 · 버튼 = 기간 선택</p>
 </div>
+
 <div class='box'>
-<h2 style='font-size:1rem;margin:0 0 8px'>LLM 리더보드 — 주간 토큰 상위 (openrouter.ai/rankings)</h2>
+<h2 style='font-size:1rem;margin:0 0 8px'>③ LLM 리더보드 — 주간 토큰 상위 (openrouter.ai/rankings)</h2>
 <div id='tbl'></div>
 </div>
 </div>
 <script id='ord' type='application/json'>[{"x": "2025-08-25", "ys": {"anthropic/claude-4-sonnet-20250522": 559788815064, "x-ai/grok-code-fast-1": 396372897685, "google/gemini-2.5-flash": 341988310734, "google/gemini-2.0-flash-001": 202382502812, "google/gemini-2.5-pro": 182735377555, "deepseek/deepseek-chat-v3-0324": 154823268587, "deepseek/deepseek-chat-v3.1": 149160255892, "qwen/qwen3-coder-480b-a35b-07-25": 106425696360, "qwen/qwen3-30b-a3b-04-28": 97845656166, "Others": 1533722951046}}, {"x": "2025-09-01", "ys": {"x-ai/grok-code-fast-1": 1097553506710, "anthropic/claude-4-sonnet-20250522": 544918185830, "google/gemini-2.5-flash": 443280842306, "google/gemini-2.0-flash-001": 182703306865, "deepseek/deepseek-chat-v3-0324": 167612442208, "openai/gpt-4.1-mini-2025-04-14": 161300137470, "google/gemini-2.5-pro": 146046626103, "deepseek/deepseek-chat-v3.1:free": 135943815398, "qwen/qwen3-30b-a3b-04-28": 116910240691, "Others": 1603457160861}}, {"x": "2025-09-08", "ys": {"x-ai/grok-code-fast-1": 1165211710023, "anthropic/claude-4-sonnet-20250522": 568397773427, "google/gemini-2.5-flash": 321734484987, "google/gemini-2.0-flash-001": 184361509252, "openrouter/sonoma-sky-alpha": 172010402931, "openai/gpt-4.1-mini-2025-04-14": 167463658682, "deepseek/deepseek-chat-v3.1:free": 156458256622, "deepseek/deepseek-chat-v3-0324": 150822605202, "google/gemini-2.5-pro": 144687744676, "Others": 1866325532983}}, {"x": "2025-09-15", "ys": {"x-ai/grok-code-fast-1": 1145693711634, "anthropic/claude-4-sonnet-20250522": 585759928388, "google/gemini-2.5-flash": 325169169721, "openrouter/sonoma-sky-alpha": 226964872884, "google/gemini-2.0-flash-001": 187109553248, "deepseek/deepseek-chat-v3.1:free": 180089920732, "x-ai/grok-4-fast:free": 157577136092, "openai/gpt-4.1-mini-2025-04-14": 157033780170, "deepseek/deepseek-chat-v3-0324": 142205511422, "Others": 1809769189670}}, {"x": "2025-09-22", "ys": {"x-ai/grok-code-fast-1": 1067241937351, "x-ai/grok-4-fast:free": 913435460684, "anthropic/claude-4-sonnet-20250522": 578811648885, "google/gemini-2.5-flash": 345752869087, "deepseek/deepseek-chat-v3.1:free": 209106532150, "google/gemini-2.0-flash-001": 161448192197, "deepseek/deepseek-chat-v3-0324": 141105692691, "openai/gpt-5-2025-08-07": 138592013043, "google/gemini-2.5-pro": 135769934796, "Others": 1566715789928}}, {"x": "2025-09-29", "ys": {"x-ai/grok-code-fast-1": 1053354939944, "x-ai/grok-4-fast:free": 644467337495, "google/gemini-2.5-flash": 364545990815, "anthropic/claude-4-sonnet-20250522": 315616427419, "anthropic/claude-4.5-sonnet-20250929": 298083667919, "deepseek/deepseek-chat-v3.1:free": 223316287738, "openai/gpt-4.1-mini-2025-04-14": 172344206304, "google/gemini-2.0-flash-001": 141389135392, "google/gemini-2.5-flash-lite": 140810495744, "Others": 2026395170520}}, {"x": "2025-10-06", "ys": {"x-ai/grok-code-fast-1": 1184145939908, "anthropic/claude-4.5-sonnet-20250929": 481823347564, "google/gemini-2.5-flash": 336454181427, "anthropic/claude-4-sonnet-20250522": 250450006175, "x-ai/grok-4-fast": 198829548928, "openai/gpt-oss-20b": 145704767415, "google/gemini-2.5-pro": 145223222880, "google/gemini-2.0-flash-001": 136620266374, "qwen/qwen3-coder-30b-a3b-instruct": 131942664810, "Others": 2008517326763}}, {"x": "2025-10-13", "ys": {"x-ai/grok-code-fast-1": 1173691048865, "anthropic/claude-4.5-sonnet-20250929": 507568022561, "google/gemini-2.5-flash": 314536964672, "anthropic/claude-4-sonnet-20250522": 164332482523, "x-ai/grok-4-fast": 160461024827, "google/gemini-2.5-pro": 154163564504, "google/gemini-2.0-flash-001": 147329325885, "deepseek/deepseek-chat-v3-0324": 114480954283, "tngtech/deepseek-r1t2-chimera:free": 79039878033, "Others": 1828894132033}}, {"x": "2025-10-20", "ys": {"x-ai/grok-code-fast-1": 1269863180383, "anthropic/claude-4.5-sonnet-20250929": 523625493331, "google/gemini-2.5-flash": 291420258676, "google/gemini-2.5-pro": 173406076510, "x-ai/grok-4-fast": 156196047559, "anthropic/claude-4-sonnet-20250522": 154890504849, "google/gemini-2.0-flash-001": 145820284204, "deepseek/deepseek-chat-v3-0324": 110948549313, "google/gemini-2.5-flash-lite": 105069429007, "Others": 1955072370525}}, {"x": "2025-10-27", "ys": {"x-ai/grok-code-fast-1": 1465574805684, "anthropic/claude-4.5-sonnet-20250929": 653674107181, "google/gemini-2.5-flash": 318701012078, "minimax/minimax-m2:free": 241892814799, "google/gemini-2.5-pro": 203556853438, "x-ai/grok-4-fast": 152263600638, "google/gemini-2.0-flash-001": 149671845769, "anthropic/claude-4-sonnet-20250522": 141237783344, "google/gemini-2.5-flash-lite": 124167880370, "Others": 2060418302887}}, {"x": "2025-11-03", "ys": {"x-ai/grok-code-fast-1": 1363139013136, "anthropic/claude-4.5-sonnet-20250929": 670493182017, "google/gemini-2.5-flash": 377479159403, "minimax/minimax-m2:free": 337514431030, "x-ai/grok-4-fast": 202893389453, "google/gemini-2.5-pro": 187964172337, "google/gemini-2.0-flash-001": 150860448168, "google/gemini-2.5-flash-lite": 136243531723, "anthropic/claude-4-sonnet-20250522": 135092206688, "Others": 2266527751542}}, {"x": "2025-11-10", "ys": {"x-ai/grok-code-fast-1": 1453950804266, "anthropic/claude-4.5-sonnet-20250929": 604026625556, "google/gemini-2.5-flash": 371226039396, "minimax/minimax-m2": 231658460278, "x-ai/grok-4-fast": 219424205307, "google/gemini-2.5-pro": 183796880820, "google/gemini-2.0-flash-001": 167907765355, "openrouter/polaris-alpha": 149977367605, "google/gemini-2.5-flash-lite": 141905135748, "Others": 2403841137283}}, {"x": "2025-11-17", "ys": {"x-ai/grok-code-fast-1": 1248210121244, "anthropic/claude-4.5-sonnet-20250929": 497244811773, "x-ai/grok-4.1-fast": 389775237316, "google/gemini-2.5-flash": 367058142757, "minimax/minimax-m2": 201220890639, "google/gemini-2.0-flash-001": 187434340816, "x-ai/grok-4-fast": 164001941616, "openrouter/sherlock-think-alpha": 162963573231, "google/gemini-2.5-pro": 156404237982, "Others": 2897518804294}}, {"x": "2025-11-24", "ys": {"x-ai/grok-4.1-fast:free": 1579566240397, "x-ai/grok-code-fast-1": 978467289633, "anthropic/claude-4.5-sonnet-20250929": 428078631214, "google/gemini-2.5-flash": 377447209398, "x-ai/grok-4.1-fast": 203047614149, "minimax/minimax-m2": 175044596604, "google/gemini-2.0-flash-001": 168291362347, "google/gemini-3-pro-preview-20251117": 154705440509, "google/gemini-2.5-flash-lite": 151423355216, "Others": 2968814169874}}, {"x": "2025-12-01", "ys": {"x-ai/grok-code-fast-1": 878555435971, "x-ai/grok-4.1-fast:free": 585015423470, "anthropic/claude-4.5-sonnet-20250929": 429159402329, "google/gemini-2.5-flash": 398751131821, "anthropic/claude-4.5-opus-20251124": 208814771437, "google/gemini-3-pro-preview-20251117": 170461362641, "google/gemini-2.0-flash-001": 165256172246, "google/gemini-2.5-pro": 162065233898, "x-ai/grok-4-fast": 161876440865, "Others": 3023733707868}}, {"x": "2025-12-08", "ys": {"x-ai/grok-code-fast-1": 618469718813, "google/gemini-2.5-flash": 453242014019, "anthropic/claude-4.5-sonnet-20250929": 430777771586, "openai/gpt-oss-120b": 323018614438, "anthropic/claude-4.5-opus-20251124": 211974303282, "google/gemini-2.0-flash-001": 189082856905, "google/gemini-2.5-flash-lite": 168402695203, "x-ai/grok-4-fast": 159985083087, "google/gemini-2.5-pro": 155321637073, "Others": 3062471941313}}, {"x": "2025-12-15", "ys": {"x-ai/grok-code-fast-1": 517261241082, "google/gemini-2.5-flash": 438708651368, "anthropic/claude-4.5-sonnet-20250929": 416299356874, "openai/gpt-oss-120b": 220245506891, "anthropic/claude-4.5-opus-20251124": 209253116284, "deepseek/deepseek-v3.2-20251201": 205450473114, "google/gemini-2.0-flash-001": 184561836303, "google/gemini-2.5-flash-lite": 182341260426, "xiaomi/mimo-v2-flash-20251210:free": 170776227913, "Others": 3295602940648}}, {"x": "2025-12-22", "ys": {"x-ai/grok-code-fast-1": 481948335409, "xiaomi/mimo-v2-flash-20251210:free": 378754384454, "google/gemini-2.5-flash": 377291061962, "anthropic/claude-4.5-sonnet-20250929": 360764900500, "deepseek/deepseek-v3.2-20251201": 327352087397, "google/gemini-3-flash-preview-20251217": 229832776027, "x-ai/grok-4.1-fast": 199151935829, "anthropic/claude-4.5-opus-20251124": 183314603079, "google/gemini-2.5-flash-lite": 157726837504, "Others": 2968812286339}}, {"x": "2025-12-29", "ys": {"x-ai/grok-code-fast-1": 409114561828, "google/gemini-2.5-flash": 352492796625, "deepseek/deepseek-v3.2-20251201": 352169109488, "anthropic/claude-4.5-sonnet-20250929": 351575566114, "xiaomi/mimo-v2-flash-20251210:free": 351029002678, "google/gemini-3-flash-preview-20251217": 291279272785, "x-ai/grok-4.1-fast": 196109774226, "anthropic/claude-4.5-opus-20251124": 177921941194, "google/gemini-2.5-flash-lite": 164978482852, "Others": 2919870880893}}, {"x": "2026-01-05", "ys": {"anthropic/claude-4.5-sonnet-20250929": 530610171817, "x-ai/grok-code-fast-1": 412784694715, "xiaomi/mimo-v2-flash-20251210:free": 397319307841, "google/gemini-3-flash-preview-20251217": 386510445663, "anthropic/claude-4.5-opus-20251124": 370078653644, "google/gemini-2.5-flash": 364169867941, "deepseek/deepseek-v3.2-20251201": 311288088430, "google/gemini-2.5-flash-lite": 253468096928, "x-ai/grok-4.1-fast": 241297445504, "Others": 3152156938599}}, {"x": "2026-01-12", "ys": {"anthropic/claude-4.5-opus-20251124": 622642470552, "anthropic/claude-4.5-sonnet-20250929": 615133712040, "xiaomi/mimo-v2-flash-20251210:free": 546049737672, "x-ai/grok-code-fast-1": 467821616715, "google/gemini-3-flash-preview-20251217": 447747464062, "google/gemini-2.5-pro": 388791936375, "google/gemini-2.5-flash": 376492238774, "deepseek/deepseek-v3.2-20251201": 354989002611, "x-ai/grok-4.1-fast": 283549381448, "Others": 3540054997443}}, {"x": "2026-01-19", "ys": {"anthropic/claude-4.5-sonnet-20250929": 713132098351, "xiaomi/mimo-v2-flash-20251210:free": 575094656309, "x-ai/grok-code-fast-1": 539747530096, "google/gemini-3-flash-preview-20251217": 537303435247, "deepseek/deepseek-v3.2-20251201": 395597880927, "google/gemini-2.5-flash": 364622244963, "anthropic/claude-4.5-opus-20251124": 363860628252, "x-ai/grok-4.1-fast": 282628544406, "google/gemini-2.5-flash-lite": 266962657002, "Others": 3454729917465}}, {"x": "2026-01-26", "ys": {"anthropic/claude-4.5-sonnet-20250929": 774547335543, "google/gemini-3-flash-preview-20251217": 688836171168, "deepseek/deepseek-v3.2-20251201": 507333780688, "x-ai/grok-code-fast-1": 421626971930, "google/gemini-2.5-flash": 405901304680, "anthropic/claude-4.5-opus-20251124": 377870999007, "moonshotai/kimi-k2.5-0127": 359303717844, "x-ai/grok-4.1-fast": 316457561436, "openai/gpt-oss-120b": 304442038445, "Others": 4093614471177}}, {"x": "2026-02-02", "ys": {"moonshotai/kimi-k2.5-0127": 1158732930908, "google/gemini-3-flash-preview-20251217": 763783933324, "anthropic/claude-4.5-sonnet-20250929": 705481897429, "deepseek/deepseek-v3.2-20251201": 664682565362, "minimax/minimax-m2.1": 441758871528, "google/gemini-2.5-flash": 429501787066, "anthropic/claude-4.5-opus-20251124": 369782947073, "x-ai/grok-4.1-fast": 344786863728, "google/gemini-2.5-flash-lite": 343595255951, "Others": 4582219877492}}, {"x": "2026-02-09", "ys": {"minimax/minimax-m2.5-20260211": 1438446017172, "moonshotai/kimi-k2.5-0127": 1295857489162, "google/gemini-3-flash-preview-20251217": 775913082169, "deepseek/deepseek-v3.2-20251201": 756298773017, "z-ai/glm-5-20260211": 628399174149, "anthropic/claude-4.5-sonnet-20250929": 626327358310, "x-ai/grok-4.1-fast": 556795772174, "anthropic/claude-4.6-opus-20260205": 523687912384, "google/gemini-2.5-flash": 450389022307, "Others": 5962515526377}}, {"x": "2026-02-16", "ys": {"minimax/minimax-m2.5-20260211": 2570426255378, "moonshotai/kimi-k2.5-0127": 1036388353348, "google/gemini-3-flash-preview-20251217": 858773075468, "z-ai/glm-5-20260211": 803177700976, "deepseek/deepseek-v3.2-20251201": 744867056791, "x-ai/grok-4.1-fast": 668806105669, "anthropic/claude-4.6-opus-20260205": 642879385684, "anthropic/claude-4.5-sonnet-20250929": 534086153166, "arcee-ai/trinity-large-preview:free": 449290564622, "Others": 5639033150390}}, {"x": "2026-02-23", "ys": {"minimax/minimax-m2.5-20260211": 1625442992101, "google/gemini-3-flash-preview-20251217": 1027301048775, "deepseek/deepseek-v3.2-20251201": 799864437550, "moonshotai/kimi-k2.5-0127": 691882843163, "anthropic/claude-4.6-sonnet-20260217": 635674078354, "anthropic/claude-4.6-opus-20260205": 633827272042, "x-ai/grok-4.1-fast": 594741811287, "arcee-ai/trinity-large-preview:free": 537106865199, "anthropic/claude-4.5-sonnet-20250929": 529049750120, "Others": 6540780090465}}, {"x": "2026-03-02", "ys": {"minimax/minimax-m2.5-20260211": 1863862322159, "google/gemini-3-flash-preview-20251217": 1042788149999, "deepseek/deepseek-v3.2-20251201": 831497917353, "anthropic/claude-4.6-opus-20260205": 770658476799, "stepfun/step-3.5-flash:free": 747289037389, "moonshotai/kimi-k2.5-0127": 743063515801, "anthropic/claude-4.6-sonnet-20260217": 679687926923, "x-ai/grok-4.1-fast": 614542866815, "arcee-ai/trinity-large-preview:free": 526366028712, "Others": 6969153913046}}, {"x": "2026-03-09", "ys": {"minimax/minimax-m2.5-20260211": 1747235642978, "stepfun/step-3.5-flash:free": 1340325199219, "deepseek/deepseek-v3.2-20251201": 1036108388599, "google/gemini-3-flash-preview-20251217": 1015611794315, "anthropic/claude-4.6-sonnet-20260217": 889263434264, "anthropic/claude-4.6-opus-20260205": 821171425089, "openrouter/hunter-alpha": 665677892611, "google/gemini-2.5-flash": 561461180291, "moonshotai/kimi-k2.5-0127": 559481288982, "Others": 8238138634271}}, {"x": "2026-03-16", "ys": {"xiaomi/mimo-v2-pro-20260318": 1490889230665, "stepfun/step-3.5-flash:free": 1478698121257, "minimax/minimax-m2.5-20260211": 1298293090489, "deepseek/deepseek-v3.2-20251201": 1133701193950, "anthropic/claude-4.6-sonnet-20260217": 1036832500557, "z-ai/glm-5-turbo-20260315": 1027523143002, "anthropic/claude-4.6-opus-20260205": 973536759725, "google/gemini-3-flash-preview-20251217": 936992864996, "openrouter/hunter-alpha": 915850383552, "Others": 10004477546338}}, {"x": "2026-03-23", "ys": {"xiaomi/mimo-v2-pro-20260318": 3946528663437, "stepfun/step-3.5-flash:free": 1484868226097, "minimax/minimax-m2.7-20260318": 1284321949429, "deepseek/deepseek-v3.2-20251201": 1237642391651, "anthropic/claude-4.6-sonnet-20260217": 1034472500959, "anthropic/claude-4.6-opus-20260205": 991680817696, "google/gemini-3-flash-preview-20251217": 968332980979, "z-ai/glm-5-turbo-20260315": 964789263192, "minimax/minimax-m2.5-20260211": 905847627573, "Others": 9821440020562}}, {"x": "2026-03-30", "ys": {"qwen/qwen3.6-plus-04-02:free": 4600778695301, "xiaomi/mimo-v2-pro-20260318": 3075697429178, "qwen/qwen3.6-plus-preview:free": 1640268925383, "stepfun/step-3.5-flash:free": 1256799449929, "minimax/minimax-m2.7-20260318": 1192741302894, "deepseek/deepseek-v3.2-20251201": 1187999574546, "anthropic/claude-4.6-sonnet-20260217": 1032269887695, "anthropic/claude-4.6-opus-20260205": 1016536598150, "google/gemini-3-flash-preview-20251217": 979555999040, "Others": 11022908538798}}, {"x": "2026-04-06", "ys": {"qwen/qwen3.6-plus-04-02:free": 1663454147264, "deepseek/deepseek-v3.2-20251201": 1266925587296, "anthropic/claude-4.6-opus-20260205": 1193340329942, "minimax/minimax-m2.7-20260318": 1187954408629, "anthropic/claude-4.6-sonnet-20260217": 1161420928974, "minimax/minimax-m2.5-20260211": 1100417113407, "google/gemini-3-flash-preview-20251217": 1062679747314, "nvidia/nemotron-3-super-120b-a12b-20230311:free": 658754619735, "xiaomi/mimo-v2-pro-20260318": 605710580136, "Others": 11090188353078}}, {"x": "2026-04-13", "ys": {"anthropic/claude-4.6-sonnet-20260217": 1380904443289, "deepseek/deepseek-v3.2-20251201": 1279545315597, "anthropic/claude-4.6-opus-20260205": 1218729940297, "xiaomi/mimo-v2-pro-20260318": 1148465936210, "google/gemini-3-flash-preview-20251217": 1142369944786, "minimax/minimax-m2.5-20260211": 1049049106930, "minimax/minimax-m2.7-20260318": 959756684781, "google/gemini-2.5-flash-lite": 593873833207, "x-ai/grok-4.1-fast": 572132828528, "Others": 11124445083576}}, {"x": "2026-04-20", "ys": {"moonshotai/kimi-k2.6-20260420": 1580692059875, "anthropic/claude-4.6-sonnet-20260217": 1355844165448, "deepseek/deepseek-v3.2-20251201": 1274992880096, "anthropic/claude-4.7-opus-20260416": 1149277337287, "google/gemini-3-flash-preview-20251217": 1038118400206, "minimax/minimax-m2.7-20260318": 788933709936, "x-ai/grok-4.1-fast": 745771584900, "stepfun/step-3.5-flash": 720118153198, "anthropic/claude-4.6-opus-20260205": 684507999574, "Others": 12545013359668}}, {"x": "2026-04-27", "ys": {"tencent/hy3-preview-20260421:free": 3031227447921, "moonshotai/kimi-k2.6-20260420": 1811791095354, "anthropic/claude-4.6-sonnet-20260217": 1344034901583, "google/gemini-3-flash-preview-20251217": 971001280950, "anthropic/claude-4.7-opus-20260416": 933450722221, "deepseek/deepseek-v3.2-20251201": 905974225998, "stepfun/step-3.5-flash": 750526540997, "minimax/minimax-m2.7-20260318": 727960465614, "deepseek/deepseek-v4-flash-20260423": 703323210254, "Others": 12618466922678}}, {"x": "2026-05-04", "ys": {"tencent/hy3-preview-20260421:free": 2676587886276, "moonshotai/kimi-k2.6-20260420": 1613682885848, "anthropic/claude-4.6-sonnet-20260217": 1451951786344, "anthropic/claude-4.7-opus-20260416": 1234510369345, "deepseek/deepseek-v4-flash-20260423": 1110849801720, "google/gemini-3-flash-preview-20251217": 1074465907650, "deepseek/deepseek-v3.2-20251201": 867229931231, "tencent/hy3-preview-20260421": 856331701786, "deepseek/deepseek-v4-pro-20260423": 815625270944, "Others": 14030553038434}}, {"x": "2026-05-11", "ys": {"tencent/hy3-preview-20260421": 2655590909703, "deepseek/deepseek-v4-flash-20260423": 2062273457044, "anthropic/claude-4.6-sonnet-20260217": 1545920378055, "anthropic/claude-4.7-opus-20260416": 1535373262384, "google/gemini-3-flash-preview-20251217": 1151021632335, "moonshotai/kimi-k2.6-20260420": 1054473801545, "deepseek/deepseek-v3.2-20251201": 1025365344299, "openrouter/owl-alpha": 894787042736, "deepseek/deepseek-v4-pro-20260423": 892757745368, "Others": 14088118799003}}, {"x": "2026-05-18", "ys": {"deepseek/deepseek-v4-flash-20260423": 3425801372074, "tencent/hy3-preview-20260421": 3070579522313, "anthropic/claude-4.7-opus-20260416": 1938029560451, "anthropic/claude-4.6-sonnet-20260217": 1884633047298, "openrouter/owl-alpha": 1151443392690, "google/gemini-3-flash-preview-20251217": 1101040408245, "deepseek/deepseek-v4-pro-20260423": 1075466495844, "deepseek/deepseek-v3.2-20251201": 979400603857, "stepfun/step-3.5-flash": 662463171168, "Others": 13631347336888}}, {"x": "2026-05-25", "ys": {"deepseek/deepseek-v4-flash-20260423": 3108137494077, "tencent/hy3-preview-20260421": 3026675656298, "anthropic/claude-4.7-opus-20260416": 2323905161870, "anthropic/claude-4.6-sonnet-20260217": 1923927592793, "openrouter/owl-alpha": 1663154558448, "xiaomi/mimo-v2.5-20260422": 1462547058328, "deepseek/deepseek-v4-pro-20260423": 1253518790688, "xiaomi/mimo-v2.5-pro-20260422": 1243780903758, "deepseek/deepseek-v3.2-20251201": 1040683134867, "Others": 14761417436395}}, {"x": "2026-06-01", "ys": {"deepseek/deepseek-v4-flash-20260423": 3684392865603, "tencent/hy3-preview-20260421": 2942430891368, "minimax/minimax-m3-20260531": 2498675822874, "xiaomi/mimo-v2.5-20260422": 2188272406586, "openrouter/owl-alpha": 1948290142797, "anthropic/claude-4.6-sonnet-20260217": 1756586892000, "deepseek/deepseek-v4-pro-20260423": 1697215087209, "anthropic/claude-4.7-opus-20260416": 1439419759263, "deepseek/deepseek-v3.2-20251201": 1167633883587, "Others": 16803187511620}}, {"x": "2026-06-08", "ys": {"deepseek/deepseek-v4-flash-20260423": 4412513967312, "minimax/minimax-m3-20260531": 4323092389266, "tencent/hy3-preview-20260421": 4136427003731, "xiaomi/mimo-v2.5-20260422": 3589670551250, "openrouter/owl-alpha": 2470965986095, "anthropic/claude-4.7-opus-20260416": 2338546427753, "anthropic/claude-4.6-sonnet-20260217": 2125470610419, "deepseek/deepseek-v4-pro-20260423": 1956845496757, "anthropic/claude-4.8-opus-20260528": 1245386230150, "Others": 18006893360137}}, {"x": "2026-06-15", "ys": {"deepseek/deepseek-v4-flash-20260423": 4934471373992, "xiaomi/mimo-v2.5-20260422": 3941404557942, "minimax/minimax-m3-20260531": 3771225109466, "tencent/hy3-preview-20260421": 3626628644428, "openrouter/owl-alpha": 2561996364122, "deepseek/deepseek-v4-pro-20260423": 2533764121444, "anthropic/claude-4.7-opus-20260416": 2524757915175, "anthropic/claude-4.8-opus-20260528": 1692328166904, "anthropic/claude-4.6-sonnet-20260217": 1536240333111, "Others": 19525088979631}}, {"x": "2026-06-22", "ys": {"deepseek/deepseek-v4-flash-20260423": 4658198982371, "xiaomi/mimo-v2.5-20260422": 4482079077718, "minimax/minimax-m3-20260531": 3744275964225, "openrouter/owl-alpha": 3474837878336, "tencent/hy3-preview-20260421": 3361303115530, "anthropic/claude-4.7-opus-20260416": 2336449491943, "z-ai/glm-5.2-20260616": 2107624510576, "deepseek/deepseek-v4-pro-20260423": 2041204735168, "anthropic/claude-4.8-opus-20260528": 1906133005964, "Others": 18608241430604}}, {"x": "2026-06-29", "ys": {"deepseek/deepseek-v4-flash-20260423": 5339678745733, "xiaomi/mimo-v2.5-20260422": 4381056827095, "minimax/minimax-m3-20260531": 4112339614972, "tencent/hy3-preview-20260421": 3127455657682, "z-ai/glm-5.2-20260616": 2578159576426, "deepseek/deepseek-v4-pro-20260423": 2360347086471, "anthropic/claude-4.7-opus-20260416": 2190998016200, "anthropic/claude-4.8-opus-20260528": 2091800208986, "stepfun/step-3.7-flash-20260528": 1554123864396, "Others": 18983778666077}}, {"x": "2026-07-06", "ys": {"tencent/hy3-20260706:free": 6133686335963, "xiaomi/mimo-v2.5-20260422": 5947323873332, "deepseek/deepseek-v4-flash-20260423": 5223444016292, "minimax/minimax-m3-20260531": 4259266710205, "z-ai/glm-5.2-20260616": 3191558656919, "deepseek/deepseek-v4-pro-20260423": 2825136023209, "anthropic/claude-4.7-opus-20260416": 2255204782563, "nvidia/nemotron-3-ultra-550b-a55b-20260604:free": 2040782485317, "anthropic/claude-4.8-opus-20260528": 2031431603600, "Others": 18711834211908}}, {"x": "2026-07-13", "ys": {"tencent/hy3-20260706:free": 11516528897206, "xiaomi/mimo-v2.5-20260422": 9319513129034, "deepseek/deepseek-v4-flash-20260423": 5384952769104, "minimax/minimax-m3-20260531": 3814204694267, "z-ai/glm-5.2-20260616": 3671677452839, "nvidia/nemotron-3-ultra-550b-a55b-20260604:free": 3145685021734, "deepseek/deepseek-v4-pro-20260423": 2710492738036, "anthropic/claude-4.7-opus-20260416": 2171127937003, "anthropic/claude-4.8-opus-20260528": 2070416265177, "Others": 18969345435218}}, {"x": "2026-07-20", "ys": {"xiaomi/mimo-v2.5-20260422": 10463362117544, "deepseek/deepseek-v4-flash-20260423": 6370682795644, "tencent/hy3-20260706": 3944653512792, "z-ai/glm-5.2-20260616": 3287642816286, "deepseek/deepseek-v4-pro-20260423": 3171917263266, "nvidia/nemotron-3-ultra-550b-a55b-20260604:free": 2339405617885, "minimax/minimax-m3-20260531": 2048490367495, "stepfun/step-3.7-flash-20260528": 1918581048619, "tencent/hy3-20260706:free": 1759474080557, "Others": 22737287795892}}, {"x": "2026-07-27", "ys": {"deepseek/deepseek-v4-flash-20260423": 7220350124001, "xiaomi/mimo-v2.5-20260422": 6304949281665, "tencent/hy3-20260706": 4824580734626, "deepseek/deepseek-v4-pro-20260423": 3278258267278, "z-ai/glm-5.2-20260616": 2890093349264, "nvidia/nemotron-3-ultra-550b-a55b-20260604:free": 2427355339353, "minimax/minimax-m3-20260531": 1957494046128, "openai/gpt-5.6-luna-20260709": 1945077160070, "stepfun/step-3.7-flash-20260528": 1655820310083, "Others": 24284610299453}}, {"x": "2026-08-03", "ys": {"deepseek/deepseek-v4-flash-20260731": 8826076422544, "tencent/hy3-20260706": 8050128586848, "deepseek/deepseek-v4-flash-20260423": 5880433122513, "xiaomi/mimo-v2.5-20260422": 5392889601768, "openai/gpt-5.6-luna-20260709": 4434794606781, "z-ai/glm-5.2-20260616": 3486952924752, "deepseek/deepseek-v4-pro-20260423": 2611842929533, "nvidia/nemotron-3-ultra-550b-a55b-20260604:free": 2406946248889, "google/gemini-3.6-flash-20260721": 2328788777091, "Others": 25627684627213}}, {"x": "2026-08-10", "ys": {"deepseek/deepseek-v4-flash-20260731": 11180297061770, "tencent/hy3-20260706": 9953312056288, "openai/gpt-5.6-luna-20260709": 5311298774780, "deepseek/deepseek-v4-flash-20260423": 4830210441044, "z-ai/glm-5.2-20260616": 4328860989331, "xiaomi/mimo-v2.5-20260422": 3791573036238, "deepseek/deepseek-v4-pro-20260423": 2735410078617, "anthropic/claude-opus-5-20260723": 2666233498928, "google/gemini-3.6-flash-20260721": 2284003301839, "Others": 28259381845996}}, {"x": "2026-08-17", "ys": {"deepseek/deepseek-v4-flash-20260731": 5488966950990, "tencent/hy3-20260706": 4783645804481, "xiaomi/mimo-v2.5-20260422": 4486785340187, "openai/gpt-5.6-luna-20260709": 3045561151873, "deepseek/deepseek-v4-flash-20260423": 2445065091937, "nvidia/nemotron-3-ultra-550b-a55b-20260604:free": 1913572072705, "z-ai/glm-5.2-20260616": 1853453475587, "minimax/minimax-m3-20260531": 954242485266, "deepseek/deepseek-v4-pro-20260423": 946096712559, "Others": 14945507841139}}]</script>
-<script id='teid' type='application/json'>{"2025-08-25": 1.3123, "2025-09-01": 1.2419, "2025-09-08": 1.2357, "2025-09-15": 1.0432, "2025-09-22": 1.0394, "2025-09-29": 0.8507, "2025-10-06": 0.953, "2025-10-13": 1.0486, "2025-10-20": 1.2774, "2025-10-27": 1.3554, "2025-11-03": 1.2571, "2025-11-10": 1.2066, "2025-11-17": 1.22, "2025-11-24": 1.0551, "2025-12-01": 1.1693, "2025-12-08": 1.0194, "2025-12-15": 0.9807, "2025-12-22": 0.7396, "2025-12-29": 0.729, "2026-01-05": 0.8276, "2026-01-12": 1.0785, "2026-01-19": 1.0913, "2026-01-26": 1.0984, "2026-02-02": 0.8654, "2026-02-09": 0.8883, "2026-02-16": 0.9049, "2026-02-23": 0.8987, "2026-03-02": 0.8308, "2026-03-09": 0.76, "2026-03-16": 0.8485, "2026-03-23": 0.9554, "2026-03-30": 0.9732, "2026-04-06": 0.8609, "2026-04-13": 0.7737, "2026-04-20": 0.9648, "2026-04-27": 1.0416, "2026-05-04": 1.1921, "2026-05-11": 1.1343, "2026-05-18": 1.0826, "2026-05-25": 0.9584, "2026-06-01": 0.8691, "2026-06-08": 0.8636, "2026-06-15": 0.8757, "2026-06-22": 0.9205, "2026-06-29": 0.9873, "2026-07-06": 1.0367, "2026-07-13": 1.0088, "2026-07-20": 0.99, "2026-07-27": 0.9772, "2026-08-03": 0.9608, "2026-08-10": 1.1547, "2026-08-17": 1.05, "2026-08-18": 1.06, "2026-08-12": 1.08, "2026-08-13": 1.05, "2026-08-14": 1.03, "2026-08-15": 1.02, "2026-08-16": 1.02}</script>
-<script id='teia' type='application/json'>{"2026-08-18": 1.06, "2026-08-12": 1.08, "2026-08-13": 1.05, "2026-08-14": 1.03, "2026-08-15": 1.02, "2026-08-16": 1.02, "2026-08-17": 1.05}</script>
+<script id='idxd' type='application/json'>{"llm_token_expenditure_index": {"2026-08-18": 1.06, "2026-08-12": 1.08, "2026-08-13": 1.05, "2026-08-14": 1.03, "2026-08-15": 1.02, "2026-08-16": 1.02, "2026-08-17": 1.05}, "open_llm_token_index": {"2026-08-12": 0.54, "2026-08-13": 0.52, "2026-08-14": 0.51, "2026-08-15": 0.5, "2026-08-16": 0.5, "2026-08-17": 0.5, "2026-08-18": 0.49}, "proprietary_llm_token_index": {"2026-08-12": 2.32, "2026-08-13": 2.24, "2026-08-14": 2.19, "2026-08-15": 2.14, "2026-08-16": 2.16, "2026-08-17": 2.24, "2026-08-18": 2.24}}</script>
 <script id='lbd' type='application/json'>[{"m": "deepseek/deepseek-v4-flash-20260731", "tok": 11233540062881, "chg": 0.07024086475637291, "name": "DeepSeek V4 Flash 0731", "vendor": "deepseek"}, {"m": "tencent/hy3-20260706", "tok": 9466459259906, "chg": -0.06250965244268487, "name": "Hy3 0706", "vendor": "tencent"}, {"m": "xiaomi/mimo-v2.5-20260422", "tok": 6161245479941, "chg": 0.32670095016110756, "name": "MiMo-V2.5 0422", "vendor": "xiaomi"}, {"m": "openai/gpt-5.6-luna-20260709", "tok": 5732810622864, "chg": 0.11850213577015137, "name": "GPT-5.6 Luna 0709", "vendor": "openai"}, {"m": "deepseek/deepseek-v4-flash-20260423", "tok": 4883320803172, "chg": -0.0779065321872593, "name": "DeepSeek V4 Flash 0423", "vendor": "deepseek"}, {"m": "z-ai/glm-5.2-20260616", "tok": 4373111719638, "chg": 0.1958409599148582, "name": "GLM 5.2 0616", "vendor": "z-ai"}, {"m": "nvidia/nemotron-3-ultra-550b-a55b-20260604", "tok": 3203081282895, "chg": -0.4351275413097871, "name": "Nemotron 3 Ultra 0604", "vendor": "nvidia"}, {"m": "anthropic/claude-opus-5-20260723", "tok": 2582897842101, "chg": 0.6451586032510899, "name": "Claude Opus 5 0723", "vendor": "anthropic"}, {"m": "google/gemini-3.6-flash-20260721", "tok": 2431260102330, "chg": 0.16566086550135042, "name": "Gemini 3.6 Flash 0721", "vendor": "google"}, {"m": "deepseek/deepseek-v4-pro-20260423", "tok": 2339074220840, "chg": -0.12193099923182352, "name": "DeepSeek V4 Pro 0423", "vendor": "deepseek"}, {"m": "poolside/laguna-s-2.1-20260720", "tok": 1763549283336, "chg": -0.09083667640074078, "name": "Laguna S 2.1 0720", "vendor": "poolside"}, {"m": "minimax/minimax-m3-20260531", "tok": 1752165241297, "chg": 0.08948777024197624, "name": "MiniMax M3 0531", "vendor": "minimax"}, {"m": "moonshotai/kimi-k3-20260715", "tok": 1310624417634, "chg": -0.0879025033376307, "name": "Kimi K3 0715", "vendor": "moonshotai"}, {"m": "google/gemini-3.7-flash-20260813", "tok": 1108781261574, "chg": null, "name": "Gemini 3.7 Flash 0813", "vendor": "google"}, {"m": "anthropic/claude-sonnet-5-20260630", "tok": 1085807954106, "chg": 0.03252457232540822, "name": "Claude Sonnet 5 0630", "vendor": "anthropic"}, {"m": "deepseek/deepseek-v4-pro-20260813", "tok": 1068272590968, "chg": 49.263059123985286, "name": "DeepSeek V4 Pro 0813", "vendor": "deepseek"}, {"m": "openai/gpt-5.6-sol-20260709", "tok": 940195700018, "chg": 0.3529421700193516, "name": "GPT-5.6 Sol 0709", "vendor": "openai"}, {"m": "nvidia/nemotron-3.5-lightning-20260807", "tok": 924585779906, "chg": 4.07470195069235, "name": "Nemotron 3.5 Lightning 0807", "vendor": "nvidia"}, {"m": "openai/gpt-5.6-terra-20260709", "tok": 911970136676, "chg": 0.06938491489413026, "name": "GPT-5.6 Terra 0709", "vendor": "openai"}, {"m": "google/gemini-3-flash-preview-20251217", "tok": 839244946045, "chg": -0.05299833513403081, "name": "Gemini 3 Flash Preview 1217", "vendor": "google"}]</script>
 <script id='mcd' type='application/json'>{"deepseek/deepseek-v4-flash-20260423": "#0088fe", "xiaomi/mimo-v2.5-20260422": "#00c49f", "deepseek/deepseek-v4-pro-20260423": "#ffbb28", "tencent/hy3-20260706": "#ff8042", "minimax/minimax-m3-20260531": "tomato", "z-ai/glm-5.2-20260616": "#4682b4", "tencent/hy3-preview-20260421": "#9acd32", "deepseek/deepseek-v4-flash-20260731": "orchid", "anthropic/claude-4.7-opus-20260416": "#40e0d0", "anthropic/claude-4.6-sonnet-20260217": "#ff69b4", "x-ai/grok-code-fast-1": "#daa520", "deepseek/deepseek-v3.2-20251201": "#7b68ee", "tencent/hy3-20260706:free": "#f08080", "google/gemini-3-flash-preview-20251217": "#6b8e23", "openai/gpt-5.6-luna-20260709": "#db7093", "nvidia/nemotron-3-ultra-550b-a55b-20260604:free": "#3cb371", "openrouter/owl-alpha": "#bdb76b", "minimax/minimax-m2.5-20260211": "purple", "anthropic/claude-4.5-sonnet-20250929": "#ff4500", "anthropic/claude-4.8-opus-20260528": "#2e8b57", "xiaomi/mimo-v2-pro-20260318": "#0088fe", "google/gemini-2.5-flash": "#00c49f", "anthropic/claude-4.6-opus-20260205": "#ffbb28", "stepfun/step-3.5-flash:free": "#ff8042", "qwen/qwen3.6-plus-04-02:free": "tomato", "x-ai/grok-4.1-fast": "#4682b4", "minimax/minimax-m2.7-20260318": "#9acd32", "moonshotai/kimi-k2.6-20260420": "orchid", "moonshotai/kimi-k2.5-0127": "#40e0d0", "tencent/hy3-preview-20260421:free": "#ff69b4", "stepfun/step-3.7-flash-20260528": "#daa520", "google/gemini-3.6-flash-20260721": "#7b68ee", "anthropic/claude-4-sonnet-20250522": "#f08080", "anthropic/claude-4.5-opus-20251124": "#6b8e23", "google/gemini-2.5-flash-lite": "#db7093", "google/gemini-2.0-flash-001": "#3cb371", "anthropic/claude-opus-5-20260723": "#bdb76b", "google/gemini-2.5-pro": "purple", "xiaomi/mimo-v2-flash-20251210:free": "#ff4500", "x-ai/grok-4.1-fast:free": "#2e8b57", "stepfun/step-3.5-flash": "#0088fe", "z-ai/glm-5-turbo-20260315": "#00c49f", "x-ai/grok-4-fast:free": "#ffbb28", "qwen/qwen3.6-plus-preview:free": "#ff8042", "openrouter/hunter-alpha": "tomato", "x-ai/grok-4-fast": "#4682b4", "arcee-ai/trinity-large-preview:free": "#9acd32", "z-ai/glm-5-20260211": "orchid", "xiaomi/mimo-v2.5-pro-20260422": "#40e0d0", "deepseek/deepseek-chat-v3-0324": "#ff69b4", "deepseek/deepseek-chat-v3.1:free": "#daa520", "openai/gpt-oss-120b": "#7b68ee", "nvidia/nemotron-3-super-120b-a12b-20230311:free": "#f08080", "openai/gpt-4.1-mini-2025-04-14": "#6b8e23", "minimax/minimax-m2": "#db7093", "minimax/minimax-m2:free": "#3cb371", "minimax/minimax-m2.1": "#bdb76b", "openrouter/sonoma-sky-alpha": "purple", "google/gemini-3-pro-preview-20251117": "#ff4500", "qwen/qwen3-30b-a3b-04-28": "#2e8b57", "openrouter/sherlock-think-alpha": "#0088fe", "openrouter/polaris-alpha": "#00c49f", "deepseek/deepseek-chat-v3.1": "#ffbb28", "openai/gpt-oss-20b": "#ff8042", "openai/gpt-5-2025-08-07": "tomato", "qwen/qwen3-coder-30b-a3b-instruct": "#4682b4", "qwen/qwen3-coder-480b-a35b-07-25": "#9acd32", "tngtech/deepseek-r1t2-chimera:free": "orchid"}</script>
 <script>
 const P=JSON.parse(document.getElementById('ord').textContent);
-const TEI=JSON.parse(document.getElementById('teid').textContent);
-const TEIA=JSON.parse(document.getElementById('teia').textContent);
+const IDX=JSON.parse(document.getElementById('idxd').textContent);
 const LB=JSON.parse(document.getElementById('lbd').textContent);
 const MC=JSON.parse(document.getElementById('mcd').textContent);
 const fmtT=v=>v>=1e12?(v/1e12).toFixed(2)+'T':v>=1e9?(v/1e9).toFixed(0)+'B':(v/1e6).toFixed(0)+'M';
 const short=m=>m.split('/')[1]||m;
-// 모델 색 — 해시 기반 고정 팔레트
-function mcol(m){if(m==='Others')return '#c3cad2';
-  return MC[m]||'#9aa2ab';}
-// ---- KPI ----
-const tot=P.map(p=>[p.x,Object.values(p.ys).reduce((a,b)=>a+b,0)]);
-const done=tot.slice(0,-1);
-const cur=done[done.length-1], prev4=done[Math.max(0,done.length-5)];
-let kh=`<div class='kpi'><small>최근 완결주 (${cur[0]})</small><b>${fmtT(cur[1])}</b> <span class='n'>tokens/주</span></div>`;
-kh+=`<div class='kpi'><small>4주 변화</small><b class='${cur[1]>=prev4[1]?'up':'dn'}'>${((cur[1]/prev4[1]-1)*100).toFixed(1)}%</b></div>`;
-if(LB.length)kh+=`<div class='kpi'><small>리더보드 1위 (주간)</small><b style='font-size:.85rem'>${short(LB[0].m)}</b> <span class='n'>${fmtT(LB[0].tok)}</span></div>`;
-const teiaD=Object.keys(TEIA).sort();
-if(teiaD.length){const d=teiaD[teiaD.length-1];
-  kh+=`<div class='kpi'><small>Token Expenditure Index (실측)</small><b>$${TEIA[d]}</b> <span class='n'>/MTok · ${d}</span></div>`;}
-document.getElementById('kpis').innerHTML=kh;
-// ---- 차트: 누적 막대(좌) + 지수 선(우) ----
+function mcol(m){if(m==='Others')return '#c3cad2';return MC[m]||'#9aa2ab';}
+const W=1000,H=400,L=58,R=52,T=16,B=30;
 let TIP=null;
 function tShow(h,ev){if(!TIP){TIP=document.createElement('div');TIP.id='grtip';document.body.appendChild(TIP);}
  TIP.innerHTML=h;TIP.style.display='block';
  TIP.style.left=Math.min(window.innerWidth-250,ev.clientX+14)+'px';
  TIP.style.top=(ev.clientY+window.scrollY+10)+'px';}
 const tHide=()=>{if(TIP)TIP.style.display='none';};
-const W=1000,H=400,L=58,R=52,T=16,B=30;
-const teiD=Object.keys(TEI).sort();
-const TBASE=teiD.length?TEI[teiD[0]]:1;           // 지수화 기준 (시작=100)
-const TIDX=d=>TEI[d]!=null?TEI[d]/TBASE*100:null;
-let Z=null; // [i0,i1] — P(주간) 인덱스 범위
+let DRAG=null,UPFN=null;
+window.addEventListener('mouseup',ev=>{if(UPFN)UPFN(ev);});
+// 공통 드래그: nearFn(px)=현재 뷰 인덱스, applyFn(i0,i1,zoomIn)
+function mkDrag(svg,wrap,nearFn,applyFn){
+  const sel=document.createElement('div');
+  sel.style.cssText='position:absolute;display:none;background:rgba(61,90,128,.13);border:1px solid #3d5a80;pointer-events:none;top:0';
+  wrap.appendChild(sel);
+  svg.addEventListener('mousedown',ev=>{DRAG={px:ev.clientX,i:nearFn(ev.clientX),svg};ev.preventDefault();tHide();});
+  svg.addEventListener('mousemove',ev=>{
+    if(!DRAG||DRAG.svg!==svg)return;
+    const r=svg.getBoundingClientRect();
+    const x0=Math.min(DRAG.px,ev.clientX)-r.left,x1=Math.max(DRAG.px,ev.clientX)-r.left;
+    sel.style.display='block';sel.style.left=x0+'px';sel.style.width=(x1-x0)+'px';sel.style.height=r.height+'px';});
+  const my=ev=>{
+    if(!DRAG||DRAG.svg!==svg)return;
+    const i0d=DRAG.i,i1d=nearFn(ev.clientX),px0=DRAG.px,px1=ev.clientX;
+    sel.style.display='none';DRAG=null;
+    if(Math.abs(px1-px0)<8)return;
+    applyFn(i0d,i1d,px1>px0);};
+  return my;
+}
+// 기간버튼 생성기
+function mkZoom(el,onPick){
+  [['전체',1e5],['1y',365],['6m',182],['3m',91],['1m',30]].forEach(([lbl,dd],bi)=>{
+    const b=document.createElement('button');b.textContent=lbl;
+    b.style.cssText='background:#edf0f4;border:1px solid #b4c1cf;border-radius:8px;padding:4px 12px;font-size:.78rem;cursor:pointer'+(bi===0?';background:#3d5a80;color:#fff;border-color:#3d5a80':'');
+    b.onclick=()=>{el.querySelectorAll('button').forEach(x=>{x.style.background='#edf0f4';x.style.color='';x.style.borderColor='#b4c1cf';});
+      b.style.background='#3d5a80';b.style.color='#fff';b.style.borderColor='#3d5a80';onPick(dd);};
+    el.appendChild(b);});
+}
+
+// ================= ① 가격 지수 종합 차트 =================
+const ISER=[["llm_token_expenditure_index","전체(LLM Token)","#3aa76d"],
+            ["proprietary_llm_token_index","Proprietary","#c0392b"],
+            ["open_llm_token_index","Open","#2660c4"]].filter(s=>IDX[s[0]]&&Object.keys(IDX[s[0]]).length);
+const idays=[...new Set(ISER.flatMap(s=>Object.keys(IDX[s[0]])))].sort();
+let Zi=null;
+function drawIdx(){
+  const wrap=document.getElementById('idxchart');
+  if(!idays.length){wrap.innerHTML="<p class='lg'>지수 데이터 적재 시작 전</p>";return;}
+  const dv=Zi?idays.slice(Zi[0],Zi[1]+1):idays;
+  const t0=new Date(dv[0]).getTime(),t1=new Date(dv[dv.length-1]).getTime()||t0+1;
+  const X=d=>L+14+(W-L-R-14)*((new Date(d).getTime()-t0)/(t1-t0||1));
+  let mn=1e18,mx=-1e18;
+  ISER.forEach(([k])=>dv.forEach(d=>{const v=IDX[k][d];if(v!=null){if(v<mn)mn=v;if(v>mx)mx=v;}}));
+  const pad=(mx-mn)*0.12||0.1; mn-=pad; mx+=pad;
+  const Y=v=>T+(H-T-B)*(1-(v-mn)/(mx-mn||1));
+  let s=`<svg id='idxsvg' viewBox='0 0 ${W} ${H}' style='width:100%;background:#fff;border:1px solid #d9e0e8;border-radius:8px;cursor:crosshair'>`;
+  for(let g=0;g<=4;g++){const v=mn+(mx-mn)*g/4,y=Y(v);
+    s+=`<line x1='${L}' y1='${y.toFixed(0)}' x2='${W-R}' y2='${y.toFixed(0)}' stroke='${g===0?'#c9d2dc':'#eef1f4'}'/>`;
+    s+=`<text x='${L-6}' y='${(y+4).toFixed(0)}' font-size='9.5' fill='#8a94a0' text-anchor='end'>$${v.toFixed(2)}</text>`;}
+  ISER.forEach(([k,,c])=>{
+    const pts=dv.map(d=>{const v=IDX[k][d];return v!=null?[X(d),Y(v)]:null;}).filter(Boolean);
+    if(pts.length>1)s+=`<polyline points='${pts.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' ')}' fill='none' stroke='${c}' stroke-width='2.4'/>`;
+    pts.forEach(p=>{s+=`<circle cx='${p[0].toFixed(1)}' cy='${p[1].toFixed(1)}' r='${pts.length<15?3:0}' fill='${c}'/>`;});});
+  // x 라벨 (일자)
+  const step=Math.max(1,Math.ceil(dv.length/9));
+  dv.forEach((d,i)=>{if(i%step&&i!==dv.length-1)return;
+    s+=`<text x='${X(d).toFixed(1)}' y='${H-12}' font-size='8.5' fill='#8a94a0' text-anchor='middle'>${d.slice(5)}</text>`;});
+  s+='</svg>';
+  wrap.innerHTML=s;
+  const svg=document.getElementById('idxsvg');
+  const near=px=>{const r=svg.getBoundingClientRect();const vx=(px-r.left)*W/r.width;
+    let bd=1e18,bi=0;dv.forEach((d,i)=>{const dx=Math.abs(X(d)-vx);if(dx<bd){bd=dx;bi=i;}});return bi;};
+  svg.addEventListener('mousemove',ev=>{
+    if(DRAG)return;
+    const d=dv[near(ev.clientX)];
+    const pv=dv[dv.indexOf(d)-1];
+    let h=`<b>${d}</b>`;
+    ISER.forEach(([k,n,c])=>{const v=IDX[k][d];if(v==null)return;
+      let ch='';if(pv!=null&&IDX[k][pv]!=null){const dd=v-IDX[k][pv];ch=` <span style='color:${dd>=0?'#ff8a80':'#8ab4ff'}'>${dd>=0?'▲':'▼'}${Math.abs(dd).toFixed(3)}</span>`;}
+      h+=`<br><span style='color:${c}'>●</span> ${n}: <b>$${v.toFixed(3)}</b>${ch}`;});
+    tShow(h,ev);});
+  svg.addEventListener('mouseleave',tHide);
+  UPFN=mkDrag(svg,wrap,near,(i0,i1,zin)=>{
+    const off=Zi?Zi[0]:0;
+    if(zin){const a=off+Math.min(i0,i1),b=off+Math.max(i0,i1);if(b-a>=1){Zi=[a,b];drawIdx();}}
+    else{if(!Zi)return;const span=Zi[1]-Zi[0],c=(Zi[0]+Zi[1])>>1,ns=Math.min(idays.length-1,span*2||6);
+      let a=Math.max(0,c-(ns>>1)),b=Math.min(idays.length-1,a+ns);
+      Zi=(a===0&&b===idays.length-1)?null:[a,b];drawIdx();}});
+}
+mkZoom(document.getElementById('zoomi'),dd=>{
+  const cut=new Date(new Date(idays[idays.length-1]).getTime()-dd*86400000).toISOString().slice(0,10);
+  const a=idays.findIndex(d=>d>=cut);Zi=(a<=0)?null:[a,idays.length-1];drawIdx();});
+
+// ================= KPI =================
+const tot=P.map(p=>[p.x,Object.values(p.ys).reduce((a,b)=>a+b,0)]);
+const done=tot.slice(0,-1);
+const cur=done[done.length-1], prev4=done[Math.max(0,done.length-5)];
+let kh='';
+ISER.forEach(([k,n,c])=>{
+  const ds=Object.keys(IDX[k]).sort();if(!ds.length)return;
+  const d=ds[ds.length-1],v=IDX[k][d],pv=ds.length>1?IDX[k][ds[ds.length-2]]:null;
+  const ch=pv!=null?(v-pv):null;
+  kh+=`<div class='kpi'><small style='color:${c}'>${n} 지수</small><b>$${v.toFixed(3)}</b> <span class='n'>/MTok`+
+      (ch!=null?` · <b class='${ch>=0?'up':'dn'}'>${ch>=0?'+':''}${ch.toFixed(3)}</b>`:'')+`</span></div>`;});
+kh+=`<div class='kpi'><small>최근 완결주 토큰</small><b>${fmtT(cur[1])}</b> <span class='n'>· 4주 <b class='${cur[1]>=prev4[1]?'up':'dn'}'>${((cur[1]/prev4[1]-1)*100).toFixed(1)}%</b></span></div>`;
+if(LB.length)kh+=`<div class='kpi'><small>리더보드 1위 (주간)</small><b style='font-size:.85rem'>${short(LB[0].m)}</b> <span class='n'>${fmtT(LB[0].tok)}</span></div>`;
+document.getElementById('kpis').innerHTML=kh;
+
+// ================= ② 사용량 누적막대 =================
+let Z=null;
 function draw(){
   const Pv=Z?P.slice(Z[0],Z[1]+1):P;
-  const wd0=Pv[0].x, wd1=Pv[Pv.length-1].x;
-  const teiDv=teiD.filter(d=>d>=wd0&&(Z?d<=wd1:true));
-  const allDv=[...new Set([...Pv.map(p=>p.x),...teiDv])].sort();
+  const allDv=Pv.map(p=>p.x);
   const t0=new Date(allDv[0]).getTime(),t1=new Date(allDv[allDv.length-1]).getTime()||t0+1;
-  const X=d=>L+14+(W-L-R-28)*((new Date(d).getTime()-t0)/(t1-t0||1));
-  const totv=Pv.map(p=>Object.values(p.ys).reduce((a,b)=>a+b,0));
-  const tmax=Math.max(...totv)*1.06;
+  const X=d=>L+14+(W-L-R-14)*((new Date(d).getTime()-t0)/(t1-t0||1));
+  const tmax=Math.max(...Pv.map(p=>Object.values(p.ys).reduce((a,b)=>a+b,0)))*1.06;
   const Yl=v=>T+(H-T-B)*(1-v/tmax);
-  const iv=teiDv.map(d=>TIDX(d));
-  const imn=iv.length?Math.min(...iv)*0.92:0, imx=iv.length?Math.max(...iv)*1.05:100;
-  const Yr=v=>T+(H-T-B)*(1-(v-imn)/(imx-imn||1));
   let s=`<svg id='grsvg' viewBox='0 0 ${W} ${H}' style='width:100%;background:#fff;border:1px solid #d9e0e8;border-radius:8px;cursor:crosshair'>`;
   for(let g=0;g<=4;g++){const v=tmax*g/4,y=Yl(v);
     s+=`<line x1='${L}' y1='${y.toFixed(0)}' x2='${W-R}' y2='${y.toFixed(0)}' stroke='${g===0?'#c9d2dc':'#eef1f4'}'/>`;
-    s+=`<text x='${L-6}' y='${(y+4).toFixed(0)}' font-size='9.5' fill='#8a94a0' text-anchor='end'>${fmtT(v)}</text>`;
-    const rv=imn+(imx-imn)*g/4;
-    s+=`<text x='${W-R+8}' y='${(Yr(rv)+4).toFixed(0)}' font-size='9.5' fill='#4a9d5f'>${rv.toFixed(0)}</text>`;}
-  const bw=Math.max(4,(W-L-R-28)/Pv.length*0.7);
+    s+=`<text x='${L-6}' y='${(y+4).toFixed(0)}' font-size='9.5' fill='#8a94a0' text-anchor='end'>${fmtT(v)}</text>`;}
+  const bw=Math.max(4,(W-L-R-14)/Pv.length*0.7);
   Pv.forEach(p=>{
-    const x=X(p.x)-bw/2;
-    let acc=0;
+    const x=X(p.x)-bw/2;let acc=0;
     const segs=Object.entries(p.ys).sort((a,b)=>(a[0]==='Others')-(b[0]==='Others')||b[1]-a[1]);
-    segs.forEach(([m,v])=>{
-      const y1=Yl(acc),y0=Yl(acc+v);
+    segs.forEach(([m,v])=>{const y1=Yl(acc),y0=Yl(acc+v);
       s+=`<rect x='${x.toFixed(1)}' y='${y0.toFixed(1)}' width='${bw.toFixed(1)}' height='${Math.max(0.5,y1-y0).toFixed(1)}' fill='${mcol(m)}'/>`;
       acc+=v;});});
-  if(teiDv.length){
-    const pts=teiDv.map(d=>[X(d),Yr(TIDX(d))]);
-    if(pts.length>1)s+=`<polyline points='${pts.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' ')}' fill='none' stroke='#4a9d5f' stroke-width='2.4'/>`;
-    else pts.forEach(p=>{s+=`<circle cx='${p[0].toFixed(1)}' cy='${p[1].toFixed(1)}' r='4' fill='#4a9d5f'/>`;});
-  }
   const seen=new Set();
   allDv.forEach(d=>{const ym=d.slice(0,7);if(seen.has(ym))return;seen.add(ym);
     s+=`<text x='${X(d).toFixed(1)}' y='${H-12}' font-size='8.5' fill='#8a94a0' text-anchor='middle'>${ym.slice(2).replace('-','.')}</text>`;});
   s+='</svg>';
   const topM=Object.entries(MC).slice(0,12);
   s+="<p class='lg' style='display:flex;flex-wrap:wrap;gap:4px 14px'>"+topM.map(([m,c])=>`<span><span style='color:${c}'>▮</span> ${short(m)}</span>`).join('')+"<span><span style='color:#c3cad2'>▮</span> Others</span></p>";
-  s+="<p class='lg'>막대: OpenRouter 주간 처리 토큰, 모델별 누적 (색 = openrouter.ai/rankings 팔레트) · 선: Token Expenditure Index — 시리즈 시작=100 지수화 (실측+역산 3주 이동평균, 우축) · 마지막 주는 집계 진행 중</p>";
+  s+="<p class='lg'>막대: OpenRouter 주간 처리 토큰, 모델별 누적 (색 = openrouter.ai/rankings 팔레트) · 마지막 주는 집계 진행 중</p>";
   const wrap=document.getElementById('chart');
   wrap.innerHTML=s;
   const svg=document.getElementById('grsvg');
+  const near=px=>{const r=svg.getBoundingClientRect();const vx=(px-r.left)*W/r.width;
+    let bd=1e18,bi=0;Pv.forEach((p,i)=>{const dx=Math.abs(X(p.x)-vx);if(dx<bd){bd=dx;bi=i;}});return bi;};
   svg.addEventListener('mousemove',ev=>{
     if(DRAG)return;
-    const rc=svg.getBoundingClientRect();
-    const vx=(ev.clientX-rc.left)*W/rc.width;
-    let bd=1e18,bi=0;
-    Pv.forEach((p,i)=>{const dx=Math.abs(X(p.x)-vx);if(dx<bd){bd=dx;bi=i;}});
-    const p=Pv[bi];
+    const p=Pv[near(ev.clientX)];
     const sum=Object.values(p.ys).reduce((a,b)=>a+b,0);
     let h=`<b>${p.x} 주</b> · 총 ${fmtT(sum)}`;
     Object.entries(p.ys).filter(([m])=>m!=='Others').sort((a,b)=>b[1]-a[1]).slice(0,5)
       .forEach(([m,v])=>{h+=`<br><span style='color:${mcol(m)}'>▮</span> ${short(m)}: ${fmtT(v)}`;});
     if(p.ys.Others)h+=`<br><span style='color:#c3cad2'>▮</span> Others: ${fmtT(p.ys.Others)}`;
-    if(TEI[p.x]!=null)h+=`<br><span style='color:#4a9d5f'>●</span> Index: <b>${TIDX(p.x).toFixed(1)}</b> ($${TEI[p.x]}/MTok)${TEIA[p.x]==null?' <i>(추정)</i>':''}`;
     tShow(h,ev);});
   svg.addEventListener('mouseleave',tHide);
-  // 드래그 확대 / 역드래그 축소
-  const sel=document.createElement('div');
-  sel.style.cssText='position:absolute;display:none;background:rgba(61,90,128,.13);border:1px solid #3d5a80;pointer-events:none;top:0';
-  wrap.appendChild(sel);
-  const near=px=>{const r=svg.getBoundingClientRect();const vx=(px-r.left)*W/r.width;
-    let bd=1e18,bi=0;Pv.forEach((p,i)=>{const dx=Math.abs(X(p.x)-vx);if(dx<bd){bd=dx;bi=i;}});return bi;};
-  svg.addEventListener('mousedown',ev=>{DRAG={px:ev.clientX,i:near(ev.clientX)};ev.preventDefault();tHide();});
-  svg.addEventListener('mousemove',ev=>{
-    if(!DRAG)return;
-    const r=svg.getBoundingClientRect();
-    const x0=Math.min(DRAG.px,ev.clientX)-r.left,x1=Math.max(DRAG.px,ev.clientX)-r.left;
-    sel.style.display='block';sel.style.left=x0+'px';sel.style.width=(x1-x0)+'px';sel.style.height=r.height+'px';});
-  UPFN=ev=>{
-    if(!DRAG)return;
-    const i0d=DRAG.i,i1d=near(ev.clientX),px0=DRAG.px,px1=ev.clientX;
-    sel.style.display='none';DRAG=null;
-    if(Math.abs(px1-px0)<8)return;
+  UPFN=mkDrag(svg,wrap,near,(i0,i1,zin)=>{
     const off=Z?Z[0]:0;
-    if(px1>px0){const a=off+Math.min(i0d,i1d),b=off+Math.max(i0d,i1d);if(b-a>=1){Z=[a,b];draw();}}
+    if(zin){const a=off+Math.min(i0,i1),b=off+Math.max(i0,i1);if(b-a>=1){Z=[a,b];draw();}}
     else{if(!Z)return;const span=Z[1]-Z[0],c=(Z[0]+Z[1])>>1,ns=Math.min(P.length-1,span*2||10);
       let a=Math.max(0,c-(ns>>1)),b=Math.min(P.length-1,a+ns);
-      Z=(a===0&&b===P.length-1)?null:[a,b];draw();}};
+      Z=(a===0&&b===P.length-1)?null:[a,b];draw();}});
 }
-let DRAG=null,UPFN=null;
-window.addEventListener('mouseup',ev=>{if(UPFN)UPFN(ev);});
-const zr=document.getElementById('zoomr');
-[['전체',1e5],['1y',365],['6m',182],['3m',91],['1m',30]].forEach(([lbl,dd],bi)=>{
-  const b=document.createElement('button');b.textContent=lbl;
-  b.style.cssText='background:#edf0f4;border:1px solid #b4c1cf;border-radius:8px;padding:4px 12px;font-size:.78rem;cursor:pointer'+(bi===0?';background:#3d5a80;color:#fff;border-color:#3d5a80':'');
-  b.onclick=()=>{
-    zr.querySelectorAll('button').forEach(x=>{x.style.background='#edf0f4';x.style.color='';x.style.borderColor='#b4c1cf';});
-    b.style.background='#3d5a80';b.style.color='#fff';b.style.borderColor='#3d5a80';
-    const cut=new Date(new Date(P[P.length-1].x).getTime()-dd*86400000).toISOString().slice(0,10);
-    const a=P.findIndex(p=>p.x>=cut);
-    Z=(a<=0)?null:[a,P.length-1];draw();};
-  zr.appendChild(b);});
+mkZoom(document.getElementById('zoomr'),dd=>{
+  const cut=new Date(new Date(P[P.length-1].x).getTime()-dd*86400000).toISOString().slice(0,10);
+  const a=P.findIndex(p=>p.x>=cut);Z=(a<=0)?null:[a,P.length-1];draw();});
+
+drawIdx();
 draw();
-// ---- 리더보드 테이블 ----
+// ================= ③ 리더보드 =================
 let th=`<table><tr><th>#</th><th>모델</th><th>주간 토큰</th><th>변화</th></tr>`;
 LB.forEach((r,i)=>{
   const chg=r.chg!=null?(r.chg*100):null;
