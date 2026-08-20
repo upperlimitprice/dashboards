@@ -239,9 +239,10 @@ document.getElementById('pinClear').addEventListener('click',function(){
 // 섹터 강조 드롭다운 — 선택 시 그 섹터 꼬리만 진하게 (기존 pin 메커니즘 재사용)
 (function(){var ss=document.getElementById('sectorSel');if(!ss)return;
  var DOT={Leading:'🟢',Weakening:'🟡',Lagging:'🔴',Improving:'🔵'};
+ var QORD={Leading:0,Improving:1,Weakening:2,Lagging:3};   // 초록→파랑→노랑→빨강
  D.items.map(function(it,i){var wi=+wkSlider.value,k=atWeek(it,wi);
     var q=(k>=0)?quad(it.r[k],it.m[k]):it.quad;return [it.label,i,q];})
-  .sort(function(a,b){return a[0].localeCompare(b[0],'ko');})
+  .sort(function(a,b){return (QORD[a[2]]-QORD[b[2]])||a[0].localeCompare(b[0],'ko');})
   .forEach(function(p){var o=document.createElement('option');o.value=p[1];
     o.textContent=(DOT[p[2]]||'⚪')+' '+p[0];ss.appendChild(o);});
  ss.addEventListener('change',function(){pinned={};if(this.value!=='')pinned[+this.value]=1;applyVis(-1);});})();
