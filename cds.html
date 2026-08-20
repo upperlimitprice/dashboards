@@ -109,7 +109,7 @@ function hook(){
     tip.style.top=Math.max(4,ev.clientY-r.top-10)+'px';});
   svg.addEventListener('mouseleave',()=>{tip.style.display='none';guide.setAttribute('visibility','hidden');});
   svg.addEventListener('mousedown',ev=>{drag={px:ev.clientX,day:nearestDay(ev.clientX)};ev.preventDefault();});
-  window.addEventListener('mouseup',ev=>{
+  box._upfn=ev=>{
     if(!drag)return;
     const d0=drag.day,d1=nearestDay(ev.clientX),px0=drag.px,px1=ev.clientX;
     sel.style.display='none';drag=null;
@@ -120,7 +120,8 @@ function hook(){
     }else{ // 우→좌: 축소 (현재 구간의 2배로)
       const span=i1-i0, c=(i0+i1)>>1, ns=Math.min(days.length-1,span*2||10);
       i0=Math.max(0,c-(ns>>1));i1=Math.min(days.length-1,i0+ns);draw();}
-  });
+  };
+  if(!box._updel){window.addEventListener('mouseup',ev=>{if(box._upfn)box._upfn(ev);});box._updel=1;}
 }
 const BT=[['전체',1e5],['3y',1095],['1y',365],['6m',182],['3m',91],['1m',30]];
 const bts=document.getElementById('cdsbtns');
