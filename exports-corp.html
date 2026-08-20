@@ -31,6 +31,15 @@ tr.grp td{background:var(--panel);color:var(--gold);font-weight:700;font-size:12
 .corp{font-weight:650}
 .badge{display:inline-block;font-size:9.5px;padding:1px 5px;border-radius:4px;margin-left:6px;vertical-align:1px}
 .gA{background:#20362a;color:#7ecb96}.gB{background:#37301d;color:#d9b96a}.gC{background:#332030;color:#c98bbf}.gD{background:#3a2323;color:#d98a8a}
+.gfilter{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.gbtn{background:#1a1f27;border:1px solid #2c333d;color:#c3ccd6;border-radius:8px;padding:5px 13px;font-size:12.5px;cursor:pointer;font-weight:600}
+.gbtn .gn{color:#7f8a98;font-size:11px;font-weight:400}
+.gbtn.on{border-width:1.5px}
+.gbtn.g-all.on{background:#2a3340;color:#fff;border-color:#5a6b7d}
+.gbtn.gA.on{background:#20362a;color:#7ecb96;border-color:#7ecb96}
+.gbtn.gB.on{background:#37301d;color:#d9b96a;border-color:#d9b96a}
+.gbtn.gC.on{background:#332030;color:#c98bbf;border-color:#c98bbf}
+.gbtn.gD.on{background:#3a2323;color:#d98a8a;border-color:#d98a8a}
 .region,.item{color:var(--tx2);font-size:11.5px}
 svg.spark{vertical-align:middle}
 #detail{position:fixed;inset:0;background:rgba(8,10,14,.82);display:none;z-index:10;
@@ -174,6 +183,7 @@ html.ht-semietf{--red:#ef4444;--blue:#5a9bd8;--mut:#9aa2ad;--acc:#4d7df5;
 <div class="wrap">
   <h1>기업별 <span class="gold">수출 추적</span> <span style="font-weight:400;font-size:14px">— 관세청 시군구×HS 확정통계</span></h1>
   <div class="sub" id="subline"></div>
+  <div class="gfilter" id="gfilter"></div>
   <table id="tbl"></table>
   <div class="foot">
     · 단위: 백만달러(m$). 확정통계(수리일 기준)는 매월 15일경 전월분이 공표됩니다. 행 클릭 → 상세 차트.<br>
@@ -239,6 +249,15 @@ function spark(seq){
   return s+"</svg>";
 }
 
+let curFilter='전체';
+function buildFilter(){
+  const cnt={A:0,B:0,C:0,'D+':0};
+  DATA.rows.forEach(r=>{ if(r.grade>='D')cnt['D+']++; else if(cnt[r.grade]!=null)cnt[r.grade]++; });
+  const defs=[['전체','전체',DATA.rows.length],['A','A 검증',cnt.A],['B','B 근사',cnt.B],['C','C 추정',cnt.C],['D+','D이하 절사',cnt['D+']]];
+  const el=document.getElementById('gfilter');
+  el.innerHTML=defs.map(([v,lbl,n])=>`<button class="gbtn${v==='전체'?' g-all':' g'+v.replace('+','')}${v===curFilter?' on':''}" data-v="${v}">${lbl} <span class="gn">${n}</span></button>`).join('');
+  el.querySelectorAll('.gbtn').forEach(b=>b.onclick=()=>{curFilter=b.getAttribute('data-v');buildFilter();render();});
+}
 function render(){
   const latest = Object.values(DATA.data).flatMap(d=>Object.keys(d)).sort().pop();
   document.getElementById("subline").textContent =
@@ -247,6 +266,10 @@ function render(){
     <th>MoM</th><th>YoY</th><th>P($/kg)*</th><th>P YoY</th><th></th></tr>`;
   let curGrp = null;
   DATA.rows.forEach((row, i)=>{
+    if (curFilter!=='전체'){
+      if (curFilter==='D+'){ if (row.grade < 'D') return; }
+      else if (row.grade !== curFilter) return;
+    }
     if (row.grp !== curGrp){
       curGrp = row.grp;
       html += `<tr class="grp"><td colspan="10">${curGrp}</td></tr>`;
@@ -342,6 +365,7 @@ function closeDetail(){ document.getElementById("detail").classList.remove("on")
 document.getElementById("detail").addEventListener("click", e=>{
   if(e.target.id==="detail") closeDetail();
 });
+buildFilter();
 render();
 </script>
 </body>
