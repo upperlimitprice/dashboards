@@ -17,6 +17,7 @@ ITEMS = [
     ("tval.html", "💹 거래대금", "전체·회전율 Top30 · 섹터별 Top10 (상품 제외)", True),
     ("etf.html", "🧺 ETF", "거래대금 순위 · 자금 순증/순유출 Top10 · 인사이트", True),
     ("osc.html", "📊 수급 오실레이터", "종목·섹터 검색 — 시총 vs 수급 MACD · 주체별 상위 · 바닥 근접", True),
+    ("rrg.html", "🔄 RRG 업종 로테이션", "코스피 업종 상대강도 회전(JdK RS-Ratio/Momentum) — 4사분면 주도·둔화·부진·개선, KRX 주간 지수", True),
     ("leaders.html", "🎯 주도 섹터·주도주 포착", "RS(가중)·자금·신고가·눌림·수급·펀더 스코어 — 추세추종 아카이브 기준 계량화 · 일정 캘린더", True),
     ("taiwan-revenue.html", "🇹🇼 대만 AI 밸류체인 월매출", "MOPS 의무공시 — 26그룹 128종목 · 월별 매출·MoM·YoY (매일 갱신)", True),
     ("sector-toppick.html", "🏆 섹터 탑픽 보고서 (2026-08-10)", "30개 섹터 모멘텀 랭킹 · 탑픽 TOP15 · 종목별 3줄 요약", True),
