@@ -25,6 +25,8 @@ border:1px solid var(--line);border-radius:8px;padding:4px 8px;cursor:pointer}
 .controls button.on{background:#e8edf7;border-color:#b9c8e8}
 .controls input[type=range]{width:180px;accent-color:#2563eb}
 #chartbox{position:relative}
+.secsel{position:absolute;top:6px;right:8px;z-index:6;background:#fff;border:1px solid #c9d2dc;border-radius:8px;padding:5px 10px;font-size:12.5px;color:#20262e;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.1);font-weight:600}
+.secsel:focus{outline:1px solid #3d5a80}
 #tip{position:absolute;pointer-events:none;background:#101826;color:#f4f6f9;
 padding:7px 10px;border-radius:8px;font-size:12px;line-height:1.55;display:none;
 max-width:250px;z-index:5;box-shadow:0 4px 14px rgba(0,0,0,.25)}
@@ -61,7 +63,7 @@ svg text{font-family:inherit}
       <input type="range" id="week" min="0" max="0" value="0">
       <span id="weekLbl"></span>
     </div>
-    <div id="chartbox"><div class="svgwrap"><svg id="rrg"></svg></div><div id="tip"></div></div>
+    <div id="chartbox"><select id="sectorSel" class="secsel" title="섹터 꼬리 강조"><option value="">▼ 섹터 강조</option></select><div class="svgwrap"><svg id="rrg"></svg></div><div id="tip"></div></div>
   </div>
   <div class="card">
     <table id="tbl"><thead><tr>
@@ -229,11 +231,17 @@ svg.addEventListener('mousemove',function(ev){
 svg.addEventListener('mouseleave',function(){tip.style.display='none';applyVis(-1);});
 svg.addEventListener('click',function(ev){
  var t=ev.target,i=t.getAttribute&&t.getAttribute('data-i');
- if(i===null||i===undefined){if(pinnedCount()){pinned={};applyVis(-1);}return;}
+ if(i===null||i===undefined){if(pinnedCount()){pinned={};applyVis(-1);var ss0=document.getElementById('sectorSel');if(ss0)ss0.value='';}return;}
  togglePin(+i);
 });
 document.getElementById('pinClear').addEventListener('click',function(){
- pinned={};applyVis(-1);});
+ pinned={};applyVis(-1);var ss1=document.getElementById('sectorSel');if(ss1)ss1.value='';});
+// 섹터 강조 드롭다운 — 선택 시 그 섹터 꼬리만 진하게 (기존 pin 메커니즘 재사용)
+(function(){var ss=document.getElementById('sectorSel');if(!ss)return;
+ D.items.map(function(it,i){return [it.label,i];})
+  .sort(function(a,b){return a[0].localeCompare(b[0],'ko');})
+  .forEach(function(p){var o=document.createElement('option');o.value=p[1];o.textContent=p[0];ss.appendChild(o);});
+ ss.addEventListener('change',function(){pinned={};if(this.value!=='')pinned[+this.value]=1;applyVis(-1);});})();
 tailSel.addEventListener('change',render);
 wkSlider.addEventListener('input',render);
 document.getElementById('lblBtn').addEventListener('click',function(){
