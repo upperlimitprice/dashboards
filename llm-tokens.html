@@ -75,31 +75,31 @@ function tShow(h,ev){if(!TIP){TIP=document.createElement('div');TIP.id='grtip';d
  TIP.style.left=Math.min(window.innerWidth-250,ev.clientX+14)+'px';
  TIP.style.top=(ev.clientY+window.scrollY+10)+'px';}
 const tHide=()=>{if(TIP)TIP.style.display='none';};
-let DRAG=null,UPFN=null;
-window.addEventListener('mouseup',ev=>{if(UPFN)UPFN(ev);});
+let DRAG=null;
+// 전역 mouseup 1회: 진행 중인 드래그(DRAG에 저장된 핸들러)로 분기 — 두 차트 공존 가능
+window.addEventListener('mouseup',ev=>{
+  if(!DRAG)return;
+  const d=DRAG; DRAG=null;
+  if(d.winMove)window.removeEventListener('mousemove',d.winMove);
+  d.sel.style.display='none';
+  const px1=ev.clientX;
+  if(Math.abs(px1-d.px)<8)return;
+  d.applyFn(d.i,d.nearFn(px1),px1>d.px);});
 // 공통 드래그: nearFn(px)=현재 뷰 인덱스(차트 밖 좌표는 양끝으로 클램프), applyFn(i0,i1,zoomIn)
+// 매 redraw마다 새 svg에 mousedown만 연결. 전역 mouseup이 DRAG에 저장된 nearFn/applyFn으로 분기.
 function mkDrag(svg,wrap,nearFn,applyFn){
   const sel=document.createElement('div');
   sel.style.cssText='position:absolute;display:none;background:rgba(61,90,128,.13);border:1px solid #3d5a80;pointer-events:none;top:0';
   wrap.appendChild(sel);
-  let winMove=null;
   svg.addEventListener('mousedown',ev=>{
-    DRAG={px:ev.clientX,i:nearFn(ev.clientX),svg};ev.preventDefault();tHide();
+    ev.preventDefault();tHide();
     const r=svg.getBoundingClientRect();
-    winMove=e=>{                                  // window 레벨 추적 → 차트 밖으로 나가도 선택 유지
-      if(!DRAG||DRAG.svg!==svg)return;
-      const x0=Math.max(0,Math.min(DRAG.px,e.clientX)-r.left);
-      const x1=Math.min(r.width,Math.max(DRAG.px,e.clientX)-r.left);
+    const winMove=e=>{                            // window 레벨 추적 → 차트 밖으로 나가도 선택 유지
+      const x0=Math.max(0,Math.min(ev.clientX,e.clientX)-r.left);
+      const x1=Math.min(r.width,Math.max(ev.clientX,e.clientX)-r.left);
       sel.style.display='block';sel.style.left=x0+'px';sel.style.width=Math.max(0,x1-x0)+'px';sel.style.height=r.height+'px';};
-    window.addEventListener('mousemove',winMove);});
-  const my=ev=>{
-    if(!DRAG||DRAG.svg!==svg)return;
-    if(winMove){window.removeEventListener('mousemove',winMove);winMove=null;}
-    const i0d=DRAG.i,i1d=nearFn(ev.clientX),px0=DRAG.px,px1=ev.clientX;
-    sel.style.display='none';DRAG=null;
-    if(Math.abs(px1-px0)<8)return;
-    applyFn(i0d,i1d,px1>px0);};
-  return my;
+    window.addEventListener('mousemove',winMove);
+    DRAG={px:ev.clientX,i:nearFn(ev.clientX),nearFn,applyFn,sel,winMove};});
 }
 // 기간버튼 생성기
 function mkZoom(el,onPick){
@@ -160,7 +160,7 @@ function drawIdx(){
       h+=`<br><span style='color:${c}'>●</span> ${n}: <b>$${v.toFixed(3)}</b>${ch}`;});
     tShow(h,ev);});
   svg.addEventListener('mouseleave',tHide);
-  UPFN=mkDrag(svg,wrap,near,(i0,i1,zin)=>{
+  mkDrag(svg,wrap,near,(i0,i1,zin)=>{
     const off=Zi?Zi[0]:0;
     if(zin){const a=off+Math.min(i0,i1),b=off+Math.max(i0,i1);if(b-a>=1){Zi=[a,b];drawIdx();}}
     else{if(!Zi)return;const span=Zi[1]-Zi[0],c=(Zi[0]+Zi[1])>>1,ns=Math.min(idays.length-1,span*2||6);
@@ -228,7 +228,7 @@ function draw(){
     if(p.ys.Others)h+=`<br><span style='color:#c3cad2'>▮</span> Others: ${fmtT(p.ys.Others)}`;
     tShow(h,ev);});
   svg.addEventListener('mouseleave',tHide);
-  UPFN=mkDrag(svg,wrap,near,(i0,i1,zin)=>{
+  mkDrag(svg,wrap,near,(i0,i1,zin)=>{
     const off=Z?Z[0]:0;
     if(zin){const a=off+Math.min(i0,i1),b=off+Math.max(i0,i1);if(b-a>=1){Z=[a,b];draw();}}
     else{if(!Z)return;const span=Z[1]-Z[0],c=(Z[0]+Z[1])>>1,ns=Math.min(P.length-1,span*2||10);
