@@ -26,7 +26,7 @@ border:1px solid var(--line);border-radius:8px;padding:4px 8px;cursor:pointer}
 .controls input[type=range]{width:180px;accent-color:#2563eb}
 #chartbox{position:relative}
 .qgroup{margin-left:auto;display:inline-flex;gap:6px}
-.secsel{font-weight:600;max-width:170px}
+.secsel{font-weight:600;max-width:170px;text-align:center;text-align-last:center}
 .controls .qbtn{font-weight:700;border-width:1.5px;padding:4px 12px}
 .qbtn.q-Improving{background:#dbeafe;border-color:#2563eb;color:#1e40af}
 .qbtn.q-Leading{background:#dcfce7;border-color:#15803d;color:#14532d}
@@ -74,7 +74,7 @@ svg text{font-family:inherit}
         <button class="qbtn q-Weakening" data-q="Weakening" title="둔화 사분면만 강조">둔화</button>
         <button class="qbtn q-Lagging" data-q="Lagging" title="부진 사분면만 강조">부진</button>
       </span>
-      <select id="sectorSel" class="secsel" title="섹터 꼬리 강조"><option value="">▼ 섹터 강조</option></select>
+      <select id="sectorSel" class="secsel" title="섹터 꼬리 강조"><option value="">▼ 섹터 선택</option></select>
     </div>
     <div id="chartbox"><div class="svgwrap"><svg id="rrg"></svg></div><div id="tip"></div></div>
   </div>
