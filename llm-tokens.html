@@ -271,8 +271,8 @@ async function copyChart(svgId,title,btn){
   setTimeout(()=>btn.textContent=t,1600);
 }
 // 각 차트 줌 영역에 복사 버튼 추가
-[['zoomi','idxsvg','LLM Token Expenditure Index — 가격 지수 종합 ($/MTok) · '+TODAY],
- ['zoomr','grsvg','Token Usage — 주간 처리 토큰 (openrouter) · '+TODAY]].forEach(([zid,sid,title])=>{
+[['zoomi','idxsvg','LLM Token Expenditure Index — 가격 지수 종합 ($/MTok) · 2026-08-21'],
+ ['zoomr','grsvg','Token Usage — 주간 처리 토큰 (openrouter) · 2026-08-21']].forEach(([zid,sid,title])=>{
   const z=document.getElementById(zid);if(!z)return;
   const b=document.createElement('button');b.textContent='📷 복사';b.title='차트 이미지 클립보드 복사';
   b.style.cssText='margin-left:auto;background:#edf0f4;border:1px solid #b4c1cf;border-radius:8px;padding:4px 12px;font-size:.78rem;cursor:pointer';
