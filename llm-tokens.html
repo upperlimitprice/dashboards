@@ -27,8 +27,10 @@ th:last-child,td:last-child{padding-right:28px}
 <div class='kpis' id='kpis'></div>
 <div class='box'>
 <h2 style='font-size:1rem;margin:0'>Token Usage (openrouter) vs LLM Token Expenditure Index</h2>
-<p style='text-align:center;font-size:.8rem;margin:8px 0 0'><span style='color:#4a9d5f;font-weight:700'>―</span> LLM Token Expenditure Index (우축, $/MTok)&nbsp;&nbsp;<span style='color:#9aa2ab;font-weight:700'>▮</span> 주간 토큰 (좌축, 모델별 누적)</p>
+<p style='text-align:center;font-size:.8rem;margin:8px 0 0'><span style='color:#4a9d5f;font-weight:700'>―</span> LLM Token Expenditure Index (우축, 시작=100 지수화)&nbsp;&nbsp;<span style='color:#9aa2ab;font-weight:700'>▮</span> 주간 토큰 (좌축, 모델별 누적)</p>
+<div id='zoomr' style='display:flex;gap:6px;margin:8px 0 4px'></div>
 <div id='chart' style='position:relative'></div>
+<p class='lg' style='margin:2px 0 0'>좌→우 드래그 = 구간 확대 · 우→좌 드래그 = 축소 · 버튼 = 기간 선택</p>
 </div>
 <div class='box'>
 <h2 style='font-size:1rem;margin:0 0 8px'>LLM 리더보드 — 주간 토큰 상위 (openrouter.ai/rankings)</h2>
@@ -69,62 +71,105 @@ function tShow(h,ev){if(!TIP){TIP=document.createElement('div');TIP.id='grtip';d
  TIP.style.left=Math.min(window.innerWidth-250,ev.clientX+14)+'px';
  TIP.style.top=(ev.clientY+window.scrollY+10)+'px';}
 const tHide=()=>{if(TIP)TIP.style.display='none';};
-const W=1000,H=400,L=58,R=56,T=16,B=30;
+const W=1000,H=400,L=58,R=52,T=16,B=30;
 const teiD=Object.keys(TEI).sort();
-const allD=[...new Set([...P.map(p=>p.x),...teiD])].sort();
-const t0=new Date(allD[0]).getTime(),t1=new Date(allD[allD.length-1]).getTime()||t0+1;
-const X=d=>L+14+(W-L-R-28)*((new Date(d).getTime()-t0)/(t1-t0||1));
-const tmax=Math.max(...tot.map(t=>t[1]))*1.06;
-const Yl=v=>T+(H-T-B)*(1-v/tmax);
-const tv=teiD.map(d=>TEI[d]);
-const imn=Math.min(...tv)*0.9, imx=Math.max(...tv)*1.06;
-const Yr=v=>T+(H-T-B)*(1-(v-imn)/(imx-imn||1));
-let s=`<svg id='grsvg' viewBox='0 0 ${W} ${H}' style='width:100%;background:#fff;border:1px solid #d9e0e8;border-radius:8px'>`;
-for(let g=0;g<=4;g++){const v=tmax*g/4,y=Yl(v);
-  s+=`<line x1='${L}' y1='${y.toFixed(0)}' x2='${W-R}' y2='${y.toFixed(0)}' stroke='${g===0?'#c9d2dc':'#eef1f4'}'/>`;
-  s+=`<text x='${L-6}' y='${(y+4).toFixed(0)}' font-size='9.5' fill='#8a94a0' text-anchor='end'>${fmtT(v)}</text>`;
-  const rv=imn+(imx-imn)*g/4;
-  s+=`<text x='${W-R+8}' y='${(Yr(rv)+4).toFixed(0)}' font-size='9.5' fill='#4a9d5f'>$${rv.toFixed(2)}</text>`;}
-// 누적 막대
-const bw=Math.max(4,(W-L-R-28)/P.length*0.7);
-P.forEach(p=>{
-  const x=X(p.x)-bw/2;
-  let acc=0;
-  const segs=Object.entries(p.ys).sort((a,b)=>(a[0]==='Others')-(b[0]==='Others')||b[1]-a[1]);
-  segs.forEach(([m,v])=>{
-    const y1=Yl(acc),y0=Yl(acc+v);
-    s+=`<rect x='${x.toFixed(1)}' y='${y0.toFixed(1)}' width='${bw.toFixed(1)}' height='${Math.max(0.5,y1-y0).toFixed(1)}' fill='${mcol(m)}'/>`;
-    acc+=v;});});
-// 지수 선 (우축)
-if(teiD.length){
-  const pts=teiD.map(d=>[X(d),Yr(TEI[d])]);
-  if(pts.length>1)s+=`<polyline points='${pts.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' ')}' fill='none' stroke='#4a9d5f' stroke-width='2.4'/>`;
-  else pts.forEach(p=>{s+=`<circle cx='${p[0].toFixed(1)}' cy='${p[1].toFixed(1)}' r='4' fill='#4a9d5f'/>`;});
+const TBASE=teiD.length?TEI[teiD[0]]:1;           // 지수화 기준 (시작=100)
+const TIDX=d=>TEI[d]!=null?TEI[d]/TBASE*100:null;
+let Z=null; // [i0,i1] — P(주간) 인덱스 범위
+function draw(){
+  const Pv=Z?P.slice(Z[0],Z[1]+1):P;
+  const wd0=Pv[0].x, wd1=Pv[Pv.length-1].x;
+  const teiDv=teiD.filter(d=>d>=wd0&&(Z?d<=wd1:true));
+  const allDv=[...new Set([...Pv.map(p=>p.x),...teiDv])].sort();
+  const t0=new Date(allDv[0]).getTime(),t1=new Date(allDv[allDv.length-1]).getTime()||t0+1;
+  const X=d=>L+14+(W-L-R-28)*((new Date(d).getTime()-t0)/(t1-t0||1));
+  const totv=Pv.map(p=>Object.values(p.ys).reduce((a,b)=>a+b,0));
+  const tmax=Math.max(...totv)*1.06;
+  const Yl=v=>T+(H-T-B)*(1-v/tmax);
+  const iv=teiDv.map(d=>TIDX(d));
+  const imn=iv.length?Math.min(...iv)*0.92:0, imx=iv.length?Math.max(...iv)*1.05:100;
+  const Yr=v=>T+(H-T-B)*(1-(v-imn)/(imx-imn||1));
+  let s=`<svg id='grsvg' viewBox='0 0 ${W} ${H}' style='width:100%;background:#fff;border:1px solid #d9e0e8;border-radius:8px;cursor:crosshair'>`;
+  for(let g=0;g<=4;g++){const v=tmax*g/4,y=Yl(v);
+    s+=`<line x1='${L}' y1='${y.toFixed(0)}' x2='${W-R}' y2='${y.toFixed(0)}' stroke='${g===0?'#c9d2dc':'#eef1f4'}'/>`;
+    s+=`<text x='${L-6}' y='${(y+4).toFixed(0)}' font-size='9.5' fill='#8a94a0' text-anchor='end'>${fmtT(v)}</text>`;
+    const rv=imn+(imx-imn)*g/4;
+    s+=`<text x='${W-R+8}' y='${(Yr(rv)+4).toFixed(0)}' font-size='9.5' fill='#4a9d5f'>${rv.toFixed(0)}</text>`;}
+  const bw=Math.max(4,(W-L-R-28)/Pv.length*0.7);
+  Pv.forEach(p=>{
+    const x=X(p.x)-bw/2;
+    let acc=0;
+    const segs=Object.entries(p.ys).sort((a,b)=>(a[0]==='Others')-(b[0]==='Others')||b[1]-a[1]);
+    segs.forEach(([m,v])=>{
+      const y1=Yl(acc),y0=Yl(acc+v);
+      s+=`<rect x='${x.toFixed(1)}' y='${y0.toFixed(1)}' width='${bw.toFixed(1)}' height='${Math.max(0.5,y1-y0).toFixed(1)}' fill='${mcol(m)}'/>`;
+      acc+=v;});});
+  if(teiDv.length){
+    const pts=teiDv.map(d=>[X(d),Yr(TIDX(d))]);
+    if(pts.length>1)s+=`<polyline points='${pts.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' ')}' fill='none' stroke='#4a9d5f' stroke-width='2.4'/>`;
+    else pts.forEach(p=>{s+=`<circle cx='${p[0].toFixed(1)}' cy='${p[1].toFixed(1)}' r='4' fill='#4a9d5f'/>`;});
+  }
+  const seen=new Set();
+  allDv.forEach(d=>{const ym=d.slice(0,7);if(seen.has(ym))return;seen.add(ym);
+    s+=`<text x='${X(d).toFixed(1)}' y='${H-12}' font-size='8.5' fill='#8a94a0' text-anchor='middle'>${ym.slice(2).replace('-','.')}</text>`;});
+  s+='</svg>';
+  const topM=Object.entries(MC).slice(0,12);
+  s+="<p class='lg' style='display:flex;flex-wrap:wrap;gap:4px 14px'>"+topM.map(([m,c])=>`<span><span style='color:${c}'>▮</span> ${short(m)}</span>`).join('')+"<span><span style='color:#c3cad2'>▮</span> Others</span></p>";
+  s+="<p class='lg'>막대: OpenRouter 주간 처리 토큰, 모델별 누적 (색 = openrouter.ai/rankings 팔레트) · 선: Token Expenditure Index — 시리즈 시작=100 지수화 (실측+역산 3주 이동평균, 우축) · 마지막 주는 집계 진행 중</p>";
+  const wrap=document.getElementById('chart');
+  wrap.innerHTML=s;
+  const svg=document.getElementById('grsvg');
+  svg.addEventListener('mousemove',ev=>{
+    if(DRAG)return;
+    const rc=svg.getBoundingClientRect();
+    const vx=(ev.clientX-rc.left)*W/rc.width;
+    let bd=1e18,bi=0;
+    Pv.forEach((p,i)=>{const dx=Math.abs(X(p.x)-vx);if(dx<bd){bd=dx;bi=i;}});
+    const p=Pv[bi];
+    const sum=Object.values(p.ys).reduce((a,b)=>a+b,0);
+    let h=`<b>${p.x} 주</b> · 총 ${fmtT(sum)}`;
+    Object.entries(p.ys).filter(([m])=>m!=='Others').sort((a,b)=>b[1]-a[1]).slice(0,5)
+      .forEach(([m,v])=>{h+=`<br><span style='color:${mcol(m)}'>▮</span> ${short(m)}: ${fmtT(v)}`;});
+    if(p.ys.Others)h+=`<br><span style='color:#c3cad2'>▮</span> Others: ${fmtT(p.ys.Others)}`;
+    if(TEI[p.x]!=null)h+=`<br><span style='color:#4a9d5f'>●</span> Index: <b>${TIDX(p.x).toFixed(1)}</b> ($${TEI[p.x]}/MTok)${TEIA[p.x]==null?' <i>(추정)</i>':''}`;
+    tShow(h,ev);});
+  svg.addEventListener('mouseleave',tHide);
+  // 드래그 확대 / 역드래그 축소
+  const sel=document.createElement('div');
+  sel.style.cssText='position:absolute;display:none;background:rgba(61,90,128,.13);border:1px solid #3d5a80;pointer-events:none;top:0';
+  wrap.appendChild(sel);
+  const near=px=>{const r=svg.getBoundingClientRect();const vx=(px-r.left)*W/r.width;
+    let bd=1e18,bi=0;Pv.forEach((p,i)=>{const dx=Math.abs(X(p.x)-vx);if(dx<bd){bd=dx;bi=i;}});return bi;};
+  svg.addEventListener('mousedown',ev=>{DRAG={px:ev.clientX,i:near(ev.clientX)};ev.preventDefault();tHide();});
+  svg.addEventListener('mousemove',ev=>{
+    if(!DRAG)return;
+    const r=svg.getBoundingClientRect();
+    const x0=Math.min(DRAG.px,ev.clientX)-r.left,x1=Math.max(DRAG.px,ev.clientX)-r.left;
+    sel.style.display='block';sel.style.left=x0+'px';sel.style.width=(x1-x0)+'px';sel.style.height=r.height+'px';});
+  window.addEventListener('mouseup',ev=>{
+    if(!DRAG)return;
+    const i0d=DRAG.i,i1d=near(ev.clientX),px0=DRAG.px,px1=ev.clientX;
+    sel.style.display='none';DRAG=null;
+    if(Math.abs(px1-px0)<8)return;
+    const off=Z?Z[0]:0;
+    if(px1>px0){const a=off+Math.min(i0d,i1d),b=off+Math.max(i0d,i1d);if(b-a>=2){Z=[a,b];draw();}}
+    else{if(!Z)return;const span=Z[1]-Z[0],c=(Z[0]+Z[1])>>1,ns=Math.min(P.length-1,span*2||10);
+      let a=Math.max(0,c-(ns>>1)),b=Math.min(P.length-1,a+ns);
+      Z=(a===0&&b===P.length-1)?null:[a,b];draw();}},{once:false});
 }
-const seen=new Set();
-allD.forEach(d=>{const ym=d.slice(0,7);if(seen.has(ym))return;seen.add(ym);
-  s+=`<text x='${X(d).toFixed(1)}' y='${H-12}' font-size='8.5' fill='#8a94a0' text-anchor='middle'>${ym.slice(2).replace('-','.')}</text>`;});
-s+='</svg>';
-// 하단 범례: 전체 기간 토큰 상위 12개 모델 + Others
-const topM=Object.entries(MC).slice(0,12);
-s+="<p class='lg' style='display:flex;flex-wrap:wrap;gap:4px 14px'>"+topM.map(([m,c])=>`<span><span style='color:${c}'>▮</span> ${short(m)}</span>`).join('')+"<span><span style='color:#c3cad2'>▮</span> Others</span></p>";
-s+="<p class='lg'>막대: OpenRouter 주간 처리 토큰, 모델별 누적 (색 = openrouter.ai/rankings 팔레트, 전체 기간 토큰 상위 순 할당) · 선: Token Expenditure Index — 실측(Silicon Data)+역산 추정(3주 이동평균) 병합, 우축 $/MTok · 마지막 주는 집계 진행 중</p>";
-document.getElementById('chart').innerHTML=s;
-const svg=document.getElementById('grsvg');
-svg.addEventListener('mousemove',ev=>{
-  const rc=svg.getBoundingClientRect();
-  const vx=(ev.clientX-rc.left)*W/rc.width;
-  let bd=1e18,bi=0;
-  P.forEach((p,i)=>{const dx=Math.abs(X(p.x)-vx);if(dx<bd){bd=dx;bi=i;}});
-  const p=P[bi];
-  const sum=Object.values(p.ys).reduce((a,b)=>a+b,0);
-  let h=`<b>${p.x} 주</b> · 총 ${fmtT(sum)}`;
-  Object.entries(p.ys).filter(([m])=>m!=='Others').sort((a,b)=>b[1]-a[1]).slice(0,5)
-    .forEach(([m,v])=>{h+=`<br><span style='color:${mcol(m)}'>▮</span> ${short(m)}: ${fmtT(v)}`;});
-  if(p.ys.Others)h+=`<br><span style='color:#c3cad2'>▮</span> Others: ${fmtT(p.ys.Others)}`;
-  if(TEI[p.x]!=null)h+=`<br><span style='color:#4a9d5f'>●</span> Index: $${TEI[p.x]}/MTok${TEIA[p.x]==null?' <i>(추정)</i>':''}`;
-  tShow(h,ev);});
-svg.addEventListener('mouseleave',tHide);
+let DRAG=null;
+const zr=document.getElementById('zoomr');
+[['전체',1e5],['1y',365],['6m',182],['3m',91],['1m',30]].forEach(([lbl,dd],bi)=>{
+  const b=document.createElement('button');b.textContent=lbl;
+  b.style.cssText='background:#edf0f4;border:1px solid #b4c1cf;border-radius:8px;padding:4px 12px;font-size:.78rem;cursor:pointer'+(bi===0?';background:#3d5a80;color:#fff;border-color:#3d5a80':'');
+  b.onclick=()=>{
+    zr.querySelectorAll('button').forEach(x=>{x.style.background='#edf0f4';x.style.color='';x.style.borderColor='#b4c1cf';});
+    b.style.background='#3d5a80';b.style.color='#fff';b.style.borderColor='#3d5a80';
+    const cut=new Date(new Date(P[P.length-1].x).getTime()-dd*86400000).toISOString().slice(0,10);
+    const a=P.findIndex(p=>p.x>=cut);
+    Z=(a<=0)?null:[a,P.length-1];draw();};
+  zr.appendChild(b);});
+draw();
 // ---- 리더보드 테이블 ----
 let th=`<table><tr><th>#</th><th>모델</th><th>주간 토큰</th><th>변화</th></tr>`;
 LB.forEach((r,i)=>{
