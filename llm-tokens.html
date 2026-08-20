@@ -146,18 +146,19 @@ function draw(){
     const r=svg.getBoundingClientRect();
     const x0=Math.min(DRAG.px,ev.clientX)-r.left,x1=Math.max(DRAG.px,ev.clientX)-r.left;
     sel.style.display='block';sel.style.left=x0+'px';sel.style.width=(x1-x0)+'px';sel.style.height=r.height+'px';});
-  window.addEventListener('mouseup',ev=>{
+  UPFN=ev=>{
     if(!DRAG)return;
     const i0d=DRAG.i,i1d=near(ev.clientX),px0=DRAG.px,px1=ev.clientX;
     sel.style.display='none';DRAG=null;
     if(Math.abs(px1-px0)<8)return;
     const off=Z?Z[0]:0;
-    if(px1>px0){const a=off+Math.min(i0d,i1d),b=off+Math.max(i0d,i1d);if(b-a>=2){Z=[a,b];draw();}}
+    if(px1>px0){const a=off+Math.min(i0d,i1d),b=off+Math.max(i0d,i1d);if(b-a>=1){Z=[a,b];draw();}}
     else{if(!Z)return;const span=Z[1]-Z[0],c=(Z[0]+Z[1])>>1,ns=Math.min(P.length-1,span*2||10);
       let a=Math.max(0,c-(ns>>1)),b=Math.min(P.length-1,a+ns);
-      Z=(a===0&&b===P.length-1)?null:[a,b];draw();}},{once:false});
+      Z=(a===0&&b===P.length-1)?null:[a,b];draw();}};
 }
-let DRAG=null;
+let DRAG=null,UPFN=null;
+window.addEventListener('mouseup',ev=>{if(UPFN)UPFN(ev);});
 const zr=document.getElementById('zoomr');
 [['전체',1e5],['1y',365],['6m',182],['3m',91],['1m',30]].forEach(([lbl,dd],bi)=>{
   const b=document.createElement('button');b.textContent=lbl;
