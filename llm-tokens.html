@@ -77,19 +77,24 @@ function tShow(h,ev){if(!TIP){TIP=document.createElement('div');TIP.id='grtip';d
 const tHide=()=>{if(TIP)TIP.style.display='none';};
 let DRAG=null,UPFN=null;
 window.addEventListener('mouseup',ev=>{if(UPFN)UPFN(ev);});
-// 공통 드래그: nearFn(px)=현재 뷰 인덱스, applyFn(i0,i1,zoomIn)
+// 공통 드래그: nearFn(px)=현재 뷰 인덱스(차트 밖 좌표는 양끝으로 클램프), applyFn(i0,i1,zoomIn)
 function mkDrag(svg,wrap,nearFn,applyFn){
   const sel=document.createElement('div');
   sel.style.cssText='position:absolute;display:none;background:rgba(61,90,128,.13);border:1px solid #3d5a80;pointer-events:none;top:0';
   wrap.appendChild(sel);
-  svg.addEventListener('mousedown',ev=>{DRAG={px:ev.clientX,i:nearFn(ev.clientX),svg};ev.preventDefault();tHide();});
-  svg.addEventListener('mousemove',ev=>{
-    if(!DRAG||DRAG.svg!==svg)return;
+  let winMove=null;
+  svg.addEventListener('mousedown',ev=>{
+    DRAG={px:ev.clientX,i:nearFn(ev.clientX),svg};ev.preventDefault();tHide();
     const r=svg.getBoundingClientRect();
-    const x0=Math.min(DRAG.px,ev.clientX)-r.left,x1=Math.max(DRAG.px,ev.clientX)-r.left;
-    sel.style.display='block';sel.style.left=x0+'px';sel.style.width=(x1-x0)+'px';sel.style.height=r.height+'px';});
+    winMove=e=>{                                  // window 레벨 추적 → 차트 밖으로 나가도 선택 유지
+      if(!DRAG||DRAG.svg!==svg)return;
+      const x0=Math.max(0,Math.min(DRAG.px,e.clientX)-r.left);
+      const x1=Math.min(r.width,Math.max(DRAG.px,e.clientX)-r.left);
+      sel.style.display='block';sel.style.left=x0+'px';sel.style.width=Math.max(0,x1-x0)+'px';sel.style.height=r.height+'px';};
+    window.addEventListener('mousemove',winMove);});
   const my=ev=>{
     if(!DRAG||DRAG.svg!==svg)return;
+    if(winMove){window.removeEventListener('mousemove',winMove);winMove=null;}
     const i0d=DRAG.i,i1d=nearFn(ev.clientX),px0=DRAG.px,px1=ev.clientX;
     sel.style.display='none';DRAG=null;
     if(Math.abs(px1-px0)<8)return;
@@ -129,10 +134,7 @@ function drawIdx(){
   ISER.forEach(([k,,c])=>{
     const pts=dv.map(d=>{const v=IDX[k][d];return v!=null?[X(d),Y(v)]:null;}).filter(Boolean);
     if(pts.length>1)s+=`<polyline points='${pts.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' ')}' fill='none' stroke='${c}' stroke-width='2.2'/>`;
-    // 실측 구간(IDXR 존재)은 굵은 마커로 강조
-    dv.forEach(d=>{const v=IDX[k][d];if(v==null)return;
-      const real=(IDXR[k]||{})[d]!=null;
-      if(real||pts.length<15)s+=`<circle cx='${X(d).toFixed(1)}' cy='${Y(v).toFixed(1)}' r='${real?3:2.5}' fill='${c}'/>`;});});
+    else pts.forEach(p=>{s+=`<circle cx='${p[0].toFixed(1)}' cy='${p[1].toFixed(1)}' r='3' fill='${c}'/>`;});});
   // x 라벨 (기간 길면 월, 짧으면 일자)
   const longspan=dv.length>40;
   const seen=new Set();
@@ -143,7 +145,7 @@ function drawIdx(){
     else{if(i%step&&i!==dv.length-1)return;
       s+=`<text x='${X(d).toFixed(1)}' y='${H-12}' font-size='8.5' fill='#8a94a0' text-anchor='middle'>${d.slice(5)}</text>`;}});
   s+='</svg>';
-  s+="<p class='lg'>선: OpenRouter 주간 모델믹스 × 단가로 역산한 토큰 비용 지수(2025-08~) · 굵은 점: Silicon Data 실측 일일(2026-08-12~) · 세 지수 모두 실측 최신값에 앵커링 · $/MTok</p>";
+  s+="<p class='lg'>과거(2025-08~)는 OpenRouter 주간 모델믹스×단가로 역산한 추정, 최근(2026-08-12~)은 Silicon Data 실측 일일 — 하나의 연속선으로 병합, 세 지수 모두 실측 최신값에 앵커링 · $/MTok</p>";
   wrap.innerHTML=s;
   const svg=document.getElementById('idxsvg');
   const near=px=>{const r=svg.getBoundingClientRect();const vx=(px-r.left)*W/r.width;
