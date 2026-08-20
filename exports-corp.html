@@ -31,6 +31,8 @@ tr.grp td{background:var(--panel);color:var(--gold);font-weight:700;font-size:12
 .corp{font-weight:650}
 .badge{display:inline-block;font-size:9.5px;padding:1px 5px;border-radius:4px;margin-left:6px;vertical-align:1px}
 .gA{background:#20362a;color:#7ecb96}.gB{background:#37301d;color:#d9b96a}.gC{background:#332030;color:#c98bbf}.gD{background:#3a2323;color:#d98a8a}
+.sortbtn{cursor:pointer;font-size:.9em;color:inherit;user-select:none;padding:0 1px;opacity:.55}
+.sortbtn.on{opacity:1;font-weight:700}
 .rel{font-size:10px;color:#7f8a98;margin-top:2px;font-weight:400}
 .gAtxt{color:#7ecb96}.gBtxt{color:#d9b96a}.gCtxt{color:#c98bbf}.gDtxt{color:#d98a8a}
 .gfilter{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
@@ -254,6 +256,14 @@ function spark(seq){
 let curFilter='전체';
 // 등급별 신뢰도 지수 (A 검증 ≤3%오차 / B 근사 ≤5% / C 추정 미검증 / D 절사) — 전체 뷰에 표기
 const REL={A:97,B:95,C:85,D:70};
+// MoM/YoY 정렬 (1클릭 내림차순 → 2클릭 오름차순 → 3클릭 원상태)
+let sortKey=null, sortDir='desc';
+function cycleSort(k){
+  if(sortKey!==k){sortKey=k;sortDir='desc';}
+  else if(sortDir==='desc'){sortDir='asc';}
+  else {sortKey=null;}
+  render();
+}
 function buildFilter(){
   const cnt={A:0,B:0,C:0,'D+':0};
   DATA.rows.forEach(r=>{ if(r.grade>='D')cnt['D+']++; else if(cnt[r.grade]!=null)cnt[r.grade]++; });
@@ -266,15 +276,31 @@ function render(){
   const latest = Object.values(DATA.data).flatMap(d=>Object.keys(d)).sort().pop();
   document.getElementById("subline").textContent =
     `갱신 ${DATA.updated} · 확정통계 최신월 ${latest} · 출처: 관세청 수출입무역통계 지역별(시군구)×HS · 단위 m$`;
+  const arw = k => sortKey===k ? (sortDir==='desc'?'▾':'▴') : '↕';
   let html = `<tr><th>기업</th><th>지역</th><th>품목</th><th>수출액</th><th>24M</th>
-    <th>MoM</th><th>YoY</th><th>P($/kg)*</th><th>P YoY</th><th></th></tr>`;
-  let curGrp = null;
+    <th>MoM <span class="sortbtn${sortKey==='mom'?' on':''}" onclick="cycleSort('mom')">${arw('mom')}</span></th>
+    <th>YoY <span class="sortbtn${sortKey==='yoy'?' on':''}" onclick="cycleSort('yoy')">${arw('yoy')}</span></th>
+    <th>P($/kg)*</th><th>P YoY</th><th></th></tr>`;
+  // 필터 → 리스트 → (정렬화살표) 값 정렬
+  let list = [];
   DATA.rows.forEach((row, i)=>{
     if (curFilter!=='전체'){
       if (curFilter==='D+'){ if (row.grade < 'D') return; }
       else if (row.grade !== curFilter) return;
     }
-    if (row.grp !== curGrp){
+    list.push([row, i]);
+  });
+  if (sortKey){
+    list.sort((a,b)=>{
+      const va=rowStats(a[0].no)[sortKey], vb=rowStats(b[0].no)[sortKey];
+      const na=(va==null||isNaN(va)), nb=(vb==null||isNaN(vb));
+      if (na&&nb) return 0; if (na) return 1; if (nb) return -1;
+      return sortDir==='desc' ? vb-va : va-vb;
+    });
+  }
+  let curGrp = null;
+  list.forEach(([row, i])=>{
+    if (!sortKey && row.grp !== curGrp){
       curGrp = row.grp;
       html += `<tr class="grp"><td colspan="10">${curGrp}</td></tr>`;
     }
