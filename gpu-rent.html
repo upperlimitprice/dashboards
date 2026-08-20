@@ -97,13 +97,13 @@ function addDrag(svg, wrap, ds, X, W, apply){
     const r=svg.getBoundingClientRect();
     const x0=Math.min(drag.px,ev.clientX)-r.left, x1=Math.max(drag.px,ev.clientX)-r.left;
     sel.style.display='block';sel.style.left=x0+'px';sel.style.width=(x1-x0)+'px';sel.style.height=r.height+'px';});
-  const up=ev=>{
+  wrap._upfn=ev=>{
     if(!drag)return;
     const d0=drag.day,d1=near(ev.clientX),px0=drag.px,px1=ev.clientX;
     sel.style.display='none';drag=null;
     if(d0==null||d1==null||Math.abs(px1-px0)<8)return;
     apply(d0,d1,px1>px0);};
-  window.addEventListener('mouseup',up);
+  if(!wrap._updel){window.addEventListener('mouseup',ev=>{if(wrap._upfn)wrap._upfn(ev);});wrap._updel=1;}
 }
 function drawLine(){
   const dsAll=days.filter(d=>D[d].v5);
