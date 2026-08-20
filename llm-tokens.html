@@ -120,7 +120,7 @@ function drawIdx(){
   const X=d=>L+14+(W-L-R-14)*((new Date(d).getTime()-t0)/(t1-t0||1));
   let mn=1e18,mx=-1e18;
   ISER.forEach(([k])=>dv.forEach(d=>{const v=IDX[k][d];if(v!=null){if(v<mn)mn=v;if(v>mx)mx=v;}}));
-  const pad=(mx-mn)*0.12||0.1; mn-=pad; mx+=pad;
+  const pad=(mx-mn)*0.12||0.1; mn=Math.max(0,mn-pad); mx+=pad;
   const Y=v=>T+(H-T-B)*(1-(v-mn)/(mx-mn||1));
   let s=`<svg id='idxsvg' viewBox='0 0 ${W} ${H}' style='width:100%;background:#fff;border:1px solid #d9e0e8;border-radius:8px;cursor:crosshair'>`;
   for(let g=0;g<=4;g++){const v=mn+(mx-mn)*g/4,y=Y(v);
