@@ -31,6 +31,8 @@ tr.grp td{background:var(--panel);color:var(--gold);font-weight:700;font-size:12
 .corp{font-weight:650}
 .badge{display:inline-block;font-size:9.5px;padding:1px 5px;border-radius:4px;margin-left:6px;vertical-align:1px}
 .gA{background:#20362a;color:#7ecb96}.gB{background:#37301d;color:#d9b96a}.gC{background:#332030;color:#c98bbf}.gD{background:#3a2323;color:#d98a8a}
+.rel{font-size:10px;color:#7f8a98;margin-top:2px;font-weight:400}
+.gAtxt{color:#7ecb96}.gBtxt{color:#d9b96a}.gCtxt{color:#c98bbf}.gDtxt{color:#d98a8a}
 .gfilter{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
 .gbtn{background:#1a1f27;border:1px solid #2c333d;color:#c3ccd6;border-radius:8px;padding:5px 13px;font-size:12.5px;cursor:pointer;font-weight:600}
 .gbtn .gn{color:#7f8a98;font-size:11px;font-weight:400}
@@ -250,6 +252,8 @@ function spark(seq){
 }
 
 let curFilter='전체';
+// 등급별 신뢰도 지수 (A 검증 ≤3%오차 / B 근사 ≤5% / C 추정 미검증 / D 절사) — 전체 뷰에 표기
+const REL={A:97,B:95,C:85,D:70};
 function buildFilter(){
   const cnt={A:0,B:0,C:0,'D+':0};
   DATA.rows.forEach(r=>{ if(r.grade>='D')cnt['D+']++; else if(cnt[r.grade]!=null)cnt[r.grade]++; });
@@ -276,7 +280,7 @@ function render(){
     }
     const st = rowStats(row.no);
     html += `<tr onclick="openDetail(${i})">
-      <td class="corp">${row.corp}<span class="badge g${row.grade}">${row.grade}</span></td>
+      <td class="corp">${row.corp}<span class="badge g${row.grade}">${row.grade}</span>${curFilter==='전체'?`<div class="rel g${row.grade}txt">신뢰도 ${REL[row.grade]}%</div>`:''}</td>
       <td class="region">${row.region}</td>
       <td class="item">${row.item}</td>
       <td><b>${fmt(m$(st.v))}</b></td>
