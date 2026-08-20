@@ -25,7 +25,14 @@ border:1px solid var(--line);border-radius:8px;padding:4px 8px;cursor:pointer}
 .controls button.on{background:#e8edf7;border-color:#b9c8e8}
 .controls input[type=range]{width:180px;accent-color:#2563eb}
 #chartbox{position:relative}
-.secsel{margin-left:auto;font-weight:600;max-width:170px}
+.qgroup{margin-left:auto;display:inline-flex;gap:6px}
+.secsel{font-weight:600;max-width:170px}
+.controls .qbtn{font-weight:700;border-width:1.5px;padding:4px 12px}
+.qbtn.q-Improving{background:#dbeafe;border-color:#2563eb;color:#1e40af}
+.qbtn.q-Leading{background:#dcfce7;border-color:#15803d;color:#14532d}
+.qbtn.q-Weakening{background:#fef9c3;border-color:#ca8a04;color:#854d0e}
+.qbtn.q-Lagging{background:#ffe4e6;border-color:#be123c;color:#9f1239}
+.qbtn.on{box-shadow:0 0 0 2px currentColor inset;filter:saturate(1.3)}
 #tip{position:absolute;pointer-events:none;background:#101826;color:#f4f6f9;
 padding:7px 10px;border-radius:8px;font-size:12px;line-height:1.55;display:none;
 max-width:250px;z-index:5;box-shadow:0 4px 14px rgba(0,0,0,.25)}
@@ -61,6 +68,12 @@ svg text{font-family:inherit}
       <button id="pinClear" style="display:none">고정 해제</button>
       <input type="range" id="week" min="0" max="0" value="0">
       <span id="weekLbl"></span>
+      <span class="qgroup">
+        <button class="qbtn q-Improving" data-q="Improving" title="개선 사분면만 강조">개선</button>
+        <button class="qbtn q-Leading" data-q="Leading" title="주도 사분면만 강조">주도</button>
+        <button class="qbtn q-Weakening" data-q="Weakening" title="둔화 사분면만 강조">둔화</button>
+        <button class="qbtn q-Lagging" data-q="Lagging" title="부진 사분면만 강조">부진</button>
+      </span>
       <select id="sectorSel" class="secsel" title="섹터 꼬리 강조"><option value="">▼ 섹터 강조</option></select>
     </div>
     <div id="chartbox"><div class="svgwrap"><svg id="rrg"></svg></div><div id="tip"></div></div>
@@ -231,11 +244,11 @@ svg.addEventListener('mousemove',function(ev){
 svg.addEventListener('mouseleave',function(){tip.style.display='none';applyVis(-1);});
 svg.addEventListener('click',function(ev){
  var t=ev.target,i=t.getAttribute&&t.getAttribute('data-i');
- if(i===null||i===undefined){if(pinnedCount()){pinned={};applyVis(-1);var ss0=document.getElementById('sectorSel');if(ss0)ss0.value='';}return;}
+ if(i===null||i===undefined){if(pinnedCount()){pinned={};applyVis(-1);var ss0=document.getElementById('sectorSel');if(ss0)ss0.value='';if(typeof resetQ==='function')resetQ();}return;}
  togglePin(+i);
 });
 document.getElementById('pinClear').addEventListener('click',function(){
- pinned={};applyVis(-1);var ss1=document.getElementById('sectorSel');if(ss1)ss1.value='';});
+ pinned={};applyVis(-1);var ss1=document.getElementById('sectorSel');if(ss1)ss1.value='';if(typeof resetQ==='function')resetQ();});
 // 섹터 강조 드롭다운 — 선택 시 그 섹터 꼬리만 진하게 (기존 pin 메커니즘 재사용)
 (function(){var ss=document.getElementById('sectorSel');if(!ss)return;
  var DOT={Leading:'🟢',Weakening:'🟡',Lagging:'🔴',Improving:'🔵'};
@@ -245,7 +258,18 @@ document.getElementById('pinClear').addEventListener('click',function(){
   .sort(function(a,b){return (QORD[a[2]]-QORD[b[2]])||a[0].localeCompare(b[0],'ko');})
   .forEach(function(p){var o=document.createElement('option');o.value=p[1];
     o.textContent=(DOT[p[2]]||'⚪')+' '+p[0];ss.appendChild(o);});
- ss.addEventListener('change',function(){pinned={};if(this.value!=='')pinned[+this.value]=1;applyVis(-1);});})();
+ ss.addEventListener('change',function(){pinned={};resetQ();if(this.value!=='')pinned[+this.value]=1;applyVis(-1);});})();
+// 사분면 필터 버튼 — 클릭 시 그 사분면 섹터만 강조 (현재 주차 기준, 토글)
+var activeQ=null;
+function resetQ(){activeQ=null;Array.prototype.forEach.call(document.querySelectorAll('.qbtn'),function(b){b.classList.remove('on');});}
+Array.prototype.forEach.call(document.querySelectorAll('.qbtn'),function(btn){
+ btn.addEventListener('click',function(){
+  var q=btn.getAttribute('data-q'),ss=document.getElementById('sectorSel');if(ss)ss.value='';
+  if(activeQ===q){pinned={};resetQ();applyVis(-1);return;}
+  activeQ=q;pinned={};var wi=+wkSlider.value;
+  D.items.forEach(function(it,i){var k=atWeek(it,wi);var iq=(k>=0)?quad(it.r[k],it.m[k]):it.quad;if(iq===q)pinned[i]=1;});
+  Array.prototype.forEach.call(document.querySelectorAll('.qbtn'),function(b){b.classList.toggle('on',b.getAttribute('data-q')===q);});
+  applyVis(-1);});});
 tailSel.addEventListener('change',render);
 wkSlider.addEventListener('input',render);
 document.getElementById('lblBtn').addEventListener('click',function(){
