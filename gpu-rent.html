@@ -36,7 +36,7 @@ button.tab{background:#edf0f4;border:1px solid #b4c1cf;border-radius:8px;padding
 <p class='lg' style='margin:4px 0 0'>좌→우 드래그 = 구간 확대 · 우→좌 드래그 = 축소 · 버튼 = 기간 선택 (데일리 선 뷰에서 동작)</p>
 </div>
 <div class='box'>
-<h2 style='font-size:1rem;margin:0'>Silicon Data 렌탈 지수 ($/hr)</h2>
+<h2 style='font-size:1rem;margin:0'>Silicon Data 렌탈 지수 (시작=100 인덱스)</h2>
 <div id='zoom2' style='display:flex;gap:6px;margin:6px 0'></div>
 <div id='sdxchart' style='position:relative'></div>
 </div>
@@ -238,42 +238,55 @@ async function copyChart(ev){
 async function dlChart(){const b=await chartPng();if(!b)return;
   const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='gpu_rent.png';a.click();}
 draw();
-// --- Silicon Data 렌탈 지수 차트 — 실측(실선, 2026-08-20~) + vast.ai 역산 추정(점선, 2024-07~) ---
+// --- Silicon Data 렌탈 지수 (인덱스화: 각 시리즈 시작=100) ---
+// 실측(2026-08-20~ 일일 + Wayback 앵커)과 vast.ai 역산 추정을 병합한 단일 연속선
 const SDX=JSON.parse(document.getElementById('sdxd').textContent);
 const SDR=JSON.parse(document.getElementById('sdrd').textContent);
 const SSER=[["h100_hyperscaler","H100 (HPS)","#3d5a80"],["h100_neo-cloud","H100 (Neo)","#7da3cc"],
  ["a100_hyperscaler","A100 (HPS)","#C0455C"],["a100_neo-cloud","A100 (Neo)","#d98a99"],
- ["h200_hyperscaler","H200","#C99239"],["b200_hyperscaler","B200","#6BAE78"],["mi300x_hyperscaler","MI300X","#8a5fbf"]]
+ ["h200_hyperscaler","H200","#C99239"],["b200_hyperscaler","B200","#6BAE78"]]
  .filter(s=>(SDX[s[0]]&&Object.keys(SDX[s[0]]).length)||(SDR[s[0]]&&Object.keys(SDR[s[0]]).length));
 (function(){
   if(!SSER.length){document.getElementById('sdxchart').innerHTML="<p class='lg'>데이터 적재 시작 전</p>";return;}
-  const allDays=[...new Set(SSER.flatMap(s=>[...Object.keys(SDX[s[0]]||{}),...Object.keys(SDR[s[0]]||{})]))].sort();
+  // 병합(실측 우선) + 시작점=100 인덱스화
+  const MG={},BASE={};
+  SSER.forEach(([k])=>{
+    MG[k]={...(SDR[k]||{}),...(SDX[k]||{})};
+    const ds=Object.keys(MG[k]).sort();
+    BASE[k]=MG[k][ds[0]];});
+  const IDX=(k,d)=>MG[k][d]!=null?MG[k][d]/BASE[k]*100:null;
+  const allDays=[...new Set(SSER.flatMap(s=>Object.keys(MG[s[0]])))].sort();
   let Z2=null;
   function draw2(){
     const sdays=Z2?allDays.slice(Z2[0],Z2[1]+1):allDays;
     const t0=new Date(sdays[0]).getTime(),t1=new Date(sdays[sdays.length-1]).getTime()||t0+1;
     const X=d=>L+18+(W-L-R-36)*((new Date(d).getTime()-t0)/(t1-t0||1));
-    let mx=0;SSER.forEach(s=>sdays.forEach(d=>{
-      const a=(SDX[s[0]]||{})[d],r=(SDR[s[0]]||{})[d];const v=a!=null?a:r;if(v&&v>mx)mx=v;}));
-    mx*=1.08;
-    const Y=v=>T+(H-T-B)*(1-v/mx);
+    let mn=1e18,mx=-1e18;
+    SSER.forEach(([k])=>sdays.forEach(d=>{const v=IDX(k,d);if(v!=null){if(v<mn)mn=v;if(v>mx)mx=v;}}));
+    mn*=0.97;mx*=1.03;
+    const Y=v=>T+(H-T-B)*(1-(v-mn)/(mx-mn||1));
     let s=`<svg id='sdxsvg' viewBox='0 0 ${W} ${H}' style='width:100%;background:#f6f8fb;border:1px solid #d9e0e8;border-radius:8px'>`;
-    for(let g=1;g<=4;g++){const y=T+(H-T-B)*g/4;
-      s+=`<line x1='${L}' y1='${y}' x2='${W-R}' y2='${y}' stroke='#e2e7ed'/>`;
-      s+=`<text x='${L-6}' y='${T+(H-T-B)*(1-g/4)+4}' font-size='9' fill='#8a94a0' text-anchor='end'>$${(mx*g/4).toFixed(1)}</text>`;}
-    SSER.forEach(([k,,c])=>{
-      const rp=sdays.map(d=>{const v=(SDR[k]||{})[d];return v!=null?[X(d),Y(v)]:null;}).filter(Boolean);
-      if(rp.length>1)s+=`<polyline points='${rp.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' ')}' fill='none' stroke='${c}' stroke-width='1.5' stroke-dasharray='5,4' opacity='.8'/>`;
-      const ap=sdays.map(d=>{const v=(SDX[k]||{})[d];return v!=null?[X(d),Y(v)]:null;}).filter(Boolean);
-      if(ap.length>1)s+=`<polyline points='${ap.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' ')}' fill='none' stroke='${c}' stroke-width='2'/>`;
-      else ap.forEach(p=>{s+=`<circle cx='${p[0].toFixed(1)}' cy='${p[1].toFixed(1)}' r='3' fill='${c}'/>`;});});
+    for(let g=0;g<=4;g++){const v=mn+(mx-mn)*g/4,y=Y(v);
+      s+=`<line x1='${L}' y1='${y.toFixed(0)}' x2='${W-R}' y2='${y.toFixed(0)}' stroke='#e2e7ed'/>`;
+      s+=`<text x='${L-6}' y='${(y+4).toFixed(0)}' font-size='9' fill='#8a94a0' text-anchor='end'>${v.toFixed(0)}</text>`;}
+    const ends=[];
+    SSER.forEach(([k,n,c])=>{
+      const pts=sdays.map(d=>{const v=IDX(k,d);return v!=null?[X(d),Y(v),v]:null;}).filter(Boolean);
+      if(pts.length>1)s+=`<polyline points='${pts.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' ')}' fill='none' stroke='${c}' stroke-width='1.9'/>`;
+      else pts.forEach(p=>{s+=`<circle cx='${p[0].toFixed(1)}' cy='${p[1].toFixed(1)}' r='3' fill='${c}'/>`;});
+      if(pts.length)ends.push([n,c,pts[pts.length-1][1],pts[pts.length-1][2]]);});
+    ends.sort((a,b)=>a[2]-b[2]);
+    const ys=[];
+    ends.forEach(e=>{let y=Math.max(e[2],18);if(ys.length&&y<ys[ys.length-1]+13)y=ys[ys.length-1]+13;ys.push(y);});
+    if(ys.length&&ys[ys.length-1]>H-B-4){const off=ys[ys.length-1]-(H-B-4);for(let i=0;i<ys.length;i++)ys[i]-=off;}
+    ends.forEach((e,i)=>{s+=`<text x='${W-R+6}' y='${(ys[i]+4).toFixed(1)}' font-size='9.5' font-weight='700' fill='${e[1]}'>${e[0]} ${e[3].toFixed(0)}</text>`;});
     const seen=new Set();
     sdays.forEach(d=>{const ym=d.slice(0,7);if(seen.has(ym))return;seen.add(ym);
       if(sdays.length>500&&(+ym.slice(5))%2===0)return;
       s+=`<text x='${X(d).toFixed(1)}' y='${H-12}' font-size='8.5' fill='#8a94a0' text-anchor='middle'>${ym.slice(2).replace('-','.')}</text>`;});
     s+='</svg>';
     s+="<p class='lg'>"+SSER.map(([,n,c])=>`<span style='color:${c}'>●</span> ${n}`).join(' · ')
-      +"<br>실선 = Silicon Data 공식 지수 실측(2026-08-20~ 일일 + Wayback 복원 앵커) · 점선 = vast.ai 시세 추이에 실측 앵커를 보간한 <b>역산 추정치</b>(2024-07~) · HPS=하이퍼스케일러/Neo=네오클라우드</p>";
+      +"<br>각 시리즈 <b>시작 시점=100</b> 지수화 · 2026-08-19까지는 vast.ai 시세 역산(실측 앵커 보간) 추정, 2026-08-20부터 Silicon Data 공식 지수 실측 · HPS=하이퍼스케일러/Neo=네오클라우드</p>";
     const wrap=document.getElementById('sdxchart');
     wrap.innerHTML=s;
     const svg=document.getElementById('sdxsvg');
@@ -285,9 +298,9 @@ const SSER=[["h100_hyperscaler","H100 (HPS)","#3d5a80"],["h100_neo-cloud","H100 
       if(!bx)return;
       let h=`<b>${bx}</b>`;
       SSER.forEach(([k,n,c])=>{
-        const a=(SDX[k]||{})[bx],r=(SDR[k]||{})[bx];
-        if(a!=null)h+=`<br><span style='color:${c}'>●</span> ${n}: $${a}`;
-        else if(r!=null)h+=`<br><span style='color:${c}'>●</span> ${n}: $${r} <i>(추정)</i>`;});
+        const v=IDX(k,bx);if(v==null)return;
+        const est=(SDX[k]||{})[bx]==null?" <i>(추정)</i>":"";
+        h+=`<br><span style='color:${c}'>●</span> ${n}: <b>${v.toFixed(1)}</b> ($${MG[k][bx]})${est}`;});
       tShow(h,ev);});
     svg.addEventListener('mouseleave',tHide);
     addDrag(svg,wrap,sdays,X,W,(d0,d1,zin)=>{
