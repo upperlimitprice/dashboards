@@ -56,7 +56,7 @@ svg text{font-family:inherit}
 .ins-dist{display:flex;flex-wrap:wrap;gap:16px;margin-bottom:13px;font-size:13px;font-weight:600}
 .ins-dist span{display:inline-flex;align-items:center;gap:6px}
 .ins-rot{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
-.rot-chip{font-size:12px;font-weight:600;padding:4px 12px;border-radius:14px;border:1.5px solid;white-space:nowrap}
+.rot-chip{font-size:12px;font-weight:600;padding:4px 12px;border-radius:14px;border:1px solid var(--line);background:#fff;color:var(--ink);white-space:nowrap}
 .ins-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px 26px}
 .ins-blk{font-size:12.5px;line-height:1.85}
 .ins-blk .t{font-weight:700;display:block;margin-bottom:3px}
@@ -309,9 +309,10 @@ function renderInsight(){
   KO[q]+' <span style="color:'+COL[q]+'">'+(ins.dist[q]||0)+'</span></span>';}).join('');
  var rot;
  if(ins.rotations&&ins.rotations.length){
-  rot=ins.rotations.map(function(r){var c=COL[r.to];
-   return '<span class="rot-chip" style="color:'+c+';border-color:'+c+';background:'+c+'14">'+
-    esc(r.label)+' '+KO[r.from]+'→<b>'+KO[r.to]+'</b></span>';}).join('');
+  rot=ins.rotations.map(function(r){
+   return '<span class="rot-chip">'+esc(r.label)+' '+
+    '<span style="color:'+COL[r.from]+'">'+KO[r.from]+'</span>→'+
+    '<b style="color:'+COL[r.to]+'">'+KO[r.to]+'</b></span>';}).join('');
  }else{rot='<span style="font-size:12px;color:var(--mut)">금주 사분면 이동 없음 — 전 업종 사분면 유지</span>';}
  function line(arr,fmt){return arr&&arr.length?arr.map(fmt).join('  ·  '):'<span style="color:#9aa4b0">해당 없음</span>';}
  var lead=line(ins.leaders,function(x){return esc(x.label)+' <span class="v">('+x.r+'·'+x.streak+'주)</span>';});
