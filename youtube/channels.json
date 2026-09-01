@@ -1,0 +1,20 @@
+{
+  "infomkt": {
+    "name": "인포마켓 강용운",
+    "url": "https://www.youtube.com/@info_Kangyongwoon",
+    "channel_id": "UCprlud6NI4V5tolgLkTrwCQ",
+    "tabs": ["videos", "membership"],
+    "emoji": "📈",
+    "focus": "국내외 금융시장 · 파생 · 수급 · 매크로 관점 (17년차 파생트레이더)",
+    "lang": "ko"
+  },
+  "unrealtech": {
+    "name": "안될공학",
+    "url": "https://www.youtube.com/@unrealtech",
+    "channel_id": "",
+    "tabs": ["videos"],
+    "emoji": "🔬",
+    "focus": "IT·테크 신기술 — 반도체·AI·로봇 산업 기술 해설",
+    "lang": "ko"
+  }
+}

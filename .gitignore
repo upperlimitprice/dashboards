@@ -1,0 +1,6 @@
+# 유튜브 자막 원문 — 멤버십(유료) 콘텐츠 포함 가능, 공개 레포에 절대 커밋 금지
+youtube/transcripts/
+youtube/cookies*.txt
+youtube/.cache/
+__pycache__/
+*.pyc

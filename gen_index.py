@@ -45,6 +45,7 @@ ITEMS = [
     ("lpddr.html", "🧠 LPDDR 백서 (Micron×Meta)", "AI 서버 LPDDR 채택 기술 분석", False),
     ("hbm4-mix.html", "🧠 HBM4 단수 믹스 × SKH 단가 검증", "가설 검증 보고서 — Rubin 12단 확정·타결가 예상 상회·Rubin Ultra 다운스펙 리스크 (2026-08-13)", False),
     ("calls", "📞 어닝콜 분기 변화분석", "", False),
+    ("youtube", "📺 유튜브 영상 요약 리포트", "", True),
 ]
 
 
@@ -67,6 +68,18 @@ def main():
             href = f"calls/{calls[0].name}"
             desc = f"총 {len(calls)}건 · 최신: " + " · ".join(
                 f"<a href='calls/{p.name}'>{p.stem.split('-',1)[0]}</a>" for p in calls[:6])
+        elif key == "youtube":
+            yts = sorted(ROOT.glob("youtube/summaries/*/*.json"), key=lambda p: p.stem, reverse=True)
+            href = "youtube/index.html"
+            if yts:
+                import json as _j
+                latest = []
+                for p in yts[:4]:
+                    d = _j.loads(p.read_text(encoding="utf-8"))
+                    latest.append(f"<a href='youtube/{p.parent.name}/{p.stem}.html'>{d.get('title','')[:22]}</a>")
+                desc = f"인포마켓·안될공학 자막 요약 · 총 {len(yts)}건 · " + " · ".join(latest)
+            else:
+                desc = "구독 채널(멤버십 포함) 영상 자막 → 핵심·종목·수치·체크포인트 요약"
         elif not (ROOT / key).exists():
             continue
         registry.append({"k": key, "t": title, "d": desc, "h": href, "on": on})
