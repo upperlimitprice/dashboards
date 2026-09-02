@@ -43,6 +43,7 @@ tr:hover td{background:#1a212b}
 <div style='overflow:auto;max-height:44vh'><table id='rank'></table></div>
 </div>
 <div class='box' id='detail' style='display:none'>
+<button id='back' class='zb' style='margin:0 0 10px'>&#8592; 전체 개요</button>
 <h2 id='dtitle' style='font-size:1rem;margin:0 0 2px'></h2>
 <p class='sub' id='dmeta' style='margin:0 0 8px'></p>
 <div id='zoom' style='display:flex;gap:6px;margin:6px 0'></div>
@@ -110,7 +111,9 @@ window.addEventListener('mouseup',ev=>{if(!DRAG)return;const d=DRAG;DRAG=null;
 let CUR=null,Z=null;
 function sel(n){CUR=n;Z=null;
   document.querySelectorAll('.it').forEach(e=>e.classList.toggle('on',e.textContent.startsWith(n)));
+  document.getElementById('rankbox').style.display='none';
   document.getElementById('detail').style.display='';
+  scrollTo({top:0});
   document.getElementById('dtitle').textContent=n;
   document.getElementById('dmeta').innerHTML=`HS ${D[n].hs} · ${D[n].companies||''}`;
   drawZoom();draw();}
@@ -161,5 +164,10 @@ function drawZoom(){const z=document.getElementById('zoom');z.innerHTML='';
     b.onclick=()=>{z.querySelectorAll('.zb').forEach(x=>x.classList.remove('on'));b.classList.add('on');
       const P=D[CUR].monthly;Z=mm>=1e5?null:[Math.max(0,P.length-mm),P.length-1];draw();};
     z.appendChild(b);});}
+document.getElementById('back').onclick=()=>{
+  CUR=null;Z=null;
+  document.getElementById('detail').style.display='none';
+  document.getElementById('rankbox').style.display='';
+  document.querySelectorAll('.it').forEach(e=>e.classList.remove('on'));};
 rank();renderList('');
 </script>
