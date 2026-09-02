@@ -98,15 +98,15 @@ h2{font-size:.92rem;margin:0 0 10px;color:#6b7683}
 .add:hover{background:#e6edf6}
 .hint{font-size:.72rem;color:#9aa4ad;margin-top:10px}
 .empty{color:#9aa4ad;font-size:.82rem;padding:8px 0}
-body:not(.admin) .x,body:not(.admin) #side,body:not(.admin) h2 small{display:none}
-body:not(.admin) .layout{grid-template-columns:1fr}
-body:not(.admin) .card{cursor:pointer}
+.reset{width:100%;margin-top:10px;border:1.5px solid #c9d2dc;background:#f9fafc;color:#6b7683;border-radius:8px;padding:7px 0;font-size:.78rem;cursor:pointer;font-weight:600}
+.reset:hover{border-color:#3d5a80;color:#3d5a80}
 </style></head><body>
 <h1>📊 쩜상리서치 대시보드</h1>
 <div class='layout'>
 <div><h2>메인 <small style='font-weight:400'>(드래그로 순서 변경 · ✕로 보관함으로 이동)</small></h2><div id='main'></div></div>
 <div id='side'><h2>🗂 전체 위젯 보관함</h2><div id='sideList'></div>
-<div class='hint'>＋를 누르면 메인에 추가됩니다. 구성은 이 브라우저에 저장됩니다.</div></div>
+<button class='reset' id='resetBtn'>쩜상 기본 배치로 초기화</button>
+<div class='hint'>＋ 추가 · ✕ 제거 · 드래그로 순서 변경 — 내 구성은 이 브라우저에만 저장됩니다. 초기화하면 쩜상리서치 기본 배치로 돌아갑니다.</div></div>
 </div>
 <script>
 const REG=__REG__;
@@ -165,6 +165,7 @@ async function publish(){
 }
 let pubT=null;
 function save(){localStorage.setItem(KEY,JSON.stringify(state));
+  if(!ADMIN)localStorage.setItem('dashCustom','1');
   if(GH){clearTimeout(pubT);pubT=setTimeout(publish,2500);}}
 function item(k){return REG.find(x=>x.k===k);}
 function render(){
@@ -175,14 +176,14 @@ function render(){
   wireDrag();
 }
 function go(e,h){if(e.target.closest('a,.x,.rf'))return;location.href=h;}
-function rm(e,k){e.preventDefault();e.stopPropagation();state.main=state.main.filter(x=>x!==k);save();render();return false;}
-function addW(k){state.main.push(k);save();render();}
+function rm(e,k){e.preventDefault();e.stopPropagation();state.main=state.main.filter(x=>x!==k);
+  state.removed=(state.removed||[]).concat(k);save();render();return false;}
+function addW(k){state.main.push(k);state.removed=(state.removed||[]).filter(x=>x!==k);save();render();}
 function syncOrder(){
   state.main=[...document.querySelectorAll('#main .card[draggable]')].map(x=>x.dataset.k);
   save();  // 드래그 순간마다 즉시 저장 — 새로고침해도 마지막 배치 유지
 }
 function wireDrag(){
-  if(!ADMIN)return;
   const box=document.getElementById('main');let drag=null;
   box.addEventListener('dragover',e=>e.preventDefault());
   box.addEventListener('drop',e=>{e.preventDefault();syncOrder();});
@@ -200,14 +201,24 @@ window.addEventListener('pageshow',()=>{ /* 뒤로가기 복원 시에도 저장
   const s2=JSON.parse(localStorage.getItem(KEY)||'null');
   if(s2&&Array.isArray(s2.main)){state=s2;state.main=state.main.filter(k=>REG.some(x=>x.k===k));render();}
 });
+function pubMain(){
+  return (PUB&&Array.isArray(PUB.main))?PUB.main.filter(k=>REG.some(x=>x.k===k)):REG.filter(x=>x.on).map(x=>x.k);
+}
 function applyAdmin(){
   if(ADMIN){document.body.classList.add('admin');return;}
-  // 방문자: 관리자가 발행한 배치(layout.json) 적용, 없으면 기본 배치
-  const base=(PUB&&Array.isArray(PUB.main))?PUB.main.filter(k=>REG.some(x=>x.k===k)):REG.filter(x=>x.on).map(x=>x.k);
-  state={main:base};
   document.body.classList.remove('admin');
+  if(localStorage.getItem('dashCustom')!=='1'){
+    state={main:pubMain()};              // 미커스텀: 메인 계정 발행 배치 그대로
+  }else{
+    const rmv=state.removed||[];         // 커스텀: 유지 + 관리자가 새로 발행한 위젯만 뒤에 합류
+    pubMain().forEach(k=>{if(!state.main.includes(k)&&!rmv.includes(k))state.main.push(k);});
+  }
   render();
 }
+document.getElementById('resetBtn').onclick=()=>{
+  localStorage.removeItem(KEY);localStorage.removeItem('dashCustom');
+  state={main:pubMain()};render();toast('쩜상리서치 기본 배치로 초기화됐습니다');
+};
 render();
 fetch('layout.json?v='+Date.now()).then(r=>r.ok?r.json():null).then(j=>{PUB=j;
   // 발행 배치에 새로 추가된 카드는 관리자 로컬 배치에도 자동 합류
