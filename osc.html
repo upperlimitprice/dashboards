@@ -1,3 +1,4 @@
+<meta charset='utf-8'>
 <title>수급 오실레이터</title>
 <style>
 body{font-family:'Apple SD Gothic Neo','Noto Sans KR',sans-serif;background:#f4f6f8;margin:0;color:#1c2530}
@@ -110,6 +111,7 @@ async function manualRefresh(job,btn){
 <button class='ozb' data-d='0'>전체</button><button class='ozb' data-d='252'>1년</button>
 <button class='ozb' data-d='126'>6m</button><button class='ozb' data-d='63'>3m</button>
 <button class='ozb' data-d='21'>1m</button>
+<button class='ozb' id='ocopy' style='margin-left:10px'>📷 이미지 복사</button><button class='ozb' id='opng'>⬇ PNG</button>
 </div>
 </div>
 <div class='legend'><b class='mc'>━ 시가총액</b> &nbsp; <b class='os'>━ 수급오실레이터</b> (0선 점선)</div>
@@ -502,4 +504,46 @@ function drawCompare(sel){
   s2+='</svg>';
   $('chart').innerHTML=s2;
 }
+</script>
+
+<script>
+(function(){
+  async function oscPng(){
+    const svg=document.querySelector('#chart svg');if(!svg)return null;
+    let xml=new XMLSerializer().serializeToString(svg);
+    xml=xml.replace('<svg ', '<svg font-family="Apple SD Gothic Neo, Noto Sans KR, sans-serif" ');
+    const img=new Image();
+    await new Promise((res,rej)=>{img.onload=res;img.onerror=rej;
+      img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(xml);});
+    const vb=(svg.getAttribute('viewBox')||'0 0 1000 496').split(' ');
+    const W=+vb[2],Hc=+vb[3],S=2,TH=32,MH=22,LH=26;
+    const title=(document.getElementById('nm')||{}).textContent||'수급 오실레이터';
+    const meta=(document.getElementById('mt')||{}).textContent||'';
+    const cv=document.createElement('canvas');cv.width=W*S;cv.height=(TH+MH+Hc+LH)*S;
+    const cx=cv.getContext('2d');cx.scale(S,S);
+    cx.fillStyle='#fff';cx.fillRect(0,0,W,TH+MH+Hc+LH);
+    cx.fillStyle='#1c2530';cx.font="700 16px 'Apple SD Gothic Neo',sans-serif";
+    cx.fillText('📊 수급 오실레이터 — '+title,14,22);
+    cx.fillStyle='#5f6b7a';cx.font="11.5px 'Apple SD Gothic Neo',sans-serif";
+    cx.fillText(meta,14,TH+14);
+    cx.drawImage(img,0,TH+MH,W,Hc);
+    let x=14;const y=TH+MH+Hc+16;
+    cx.font="700 11.5px 'Apple SD Gothic Neo',sans-serif";
+    [['#111','━ 시가총액'],['#c0392b','━ 수급오실레이터 (0선 점선)']].forEach(([c,tx])=>{
+      cx.fillStyle=c;cx.fillText(tx,x,y);x+=cx.measureText(tx).width+22;});
+    return new Promise(r=>cv.toBlob(r,'image/png'));
+  }
+  const nmOf=()=>((document.getElementById('nm')||{}).textContent||'oscillator').replace(/[\/\\:*?"<>|\s]+/g,'_');
+  const cbtn=document.getElementById('ocopy');
+  if(cbtn)cbtn.addEventListener('click',async e=>{
+    const b=await oscPng();if(!b){alert('먼저 종목 차트를 표시하세요');return;}
+    const btn=e.target;
+    try{await navigator.clipboard.write([new ClipboardItem({'image/png':b})]);btn.textContent='✓ 복사됨';}
+    catch(_){const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=nmOf()+'_오실레이터.png';a.click();btn.textContent='⬇ 저장됨';}
+    setTimeout(()=>btn.textContent='📷 이미지 복사',1800);});
+  const pbtn=document.getElementById('opng');
+  if(pbtn)pbtn.addEventListener('click',async()=>{
+    const b=await oscPng();if(!b){alert('먼저 종목 차트를 표시하세요');return;}
+    const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=nmOf()+'_오실레이터.png';a.click();});
+})();
 </script>
