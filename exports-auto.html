@@ -22,6 +22,7 @@ tr:hover td{background:#1a212b}
 #tip{position:absolute;display:none;background:#000;border:1px solid #384252;color:#e6e9ee;font-size:.74rem;line-height:1.6;padding:7px 10px;border-radius:8px;pointer-events:none;z-index:9}
 .zb{background:#1d242e;border:1px solid #2b333f;color:#c3ccd6;border-radius:8px;padding:3px 11px;font-size:.76rem;cursor:pointer}
 .zb.on{background:#2f6fed;color:#fff;border-color:#2f6fed}
+.zb .ar{font-size:.68em}
 .lg{color:#8b95a2;font-size:.74rem;margin-top:6px}
 </style>
 <div class='wrap'>
@@ -30,6 +31,10 @@ tr:hover td{background:#1a212b}
 <div class='layout'>
 <div class='side'>
 <input id='q' placeholder='품목·기업 검색'>
+<div style='display:flex;gap:6px;margin-bottom:8px'>
+<button class='zb' data-ls='mom'>MoM<span class='ar'></span></button>
+<button class='zb' data-ls='yoy'>YoY<span class='ar'></span></button>
+</div>
 <div id='list'></div>
 </div>
 <div>
@@ -68,14 +73,30 @@ function rank(){
   document.querySelectorAll('#rank th[data-s]').forEach(t=>t.onclick=()=>{SORT=t.dataset.s;rank();});
 }
 // 사이드 리스트
+let LS={key:null,dir:0};
 function renderList(f){
   const q=(f||'').trim();
+  let ns=NAMES.filter(n=>!q||n.includes(q)||(D[n].companies||'').includes(q));
+  if(LS.dir!=0){
+    const kv=n=>{const l=last(D[n]);const v=l?l[LS.key]:null;return v==null?(LS.dir==1?-1e9:1e9):v;};
+    ns=ns.slice().sort((a,b)=>LS.dir==1?kv(b)-kv(a):kv(a)-kv(b));}
+  const mk=LS.dir!=0?LS.key:'yoy';
   let h='';
-  NAMES.filter(n=>!q||n.includes(q)||(D[n].companies||'').includes(q)).forEach(n=>{
+  ns.forEach(n=>{
     const l=last(D[n]);
-    h+=`<div class='it' onclick='sel(${JSON.stringify(n)})'><span>${n}</span><small>${l?pct(l.yoy):''}</small></div>`;});
+    h+=`<div class='it' onclick='sel(${JSON.stringify(n)})'><span>${n}</span><small>${l?pct(l[mk]):''}</small></div>`;});
   document.getElementById('list').innerHTML=h;
+  document.querySelectorAll('[data-ls]').forEach(b=>{
+    const on=b.dataset.ls==LS.key&&LS.dir!=0;
+    b.classList.toggle('on',on);
+    b.querySelector('.ar').textContent=on?(LS.dir==1?' ▼':' ▲'):'';});
 }
+document.querySelectorAll??0;
+document.addEventListener('click',e=>{
+  const b=e.target.closest('button[data-ls]');if(!b)return;
+  if(LS.key!=b.dataset.ls){LS.key=b.dataset.ls;LS.dir=1;}
+  else LS.dir=LS.dir==1?2:(LS.dir==2?0:1);
+  renderList(document.getElementById('q').value);});
 document.getElementById('q').addEventListener('input',e=>renderList(e.target.value));
 // 상세 차트
 let TIP=null;
