@@ -1,0 +1,251 @@
+<title>조건검색 종가베팅 전략 검증 리포트</title>
+<style>
+  :root{
+    --ink:#0e1116; --surface:#181f29; --surface2:#212a36; --line:#2c3644;
+    --up:#e5484d; --dn:#4c86e8; --gold:#d4a24e; --mut:#7c8797; --fg:#e8edf3;
+    --mono:"SF Mono",ui-monospace,"JetBrains Mono",Menlo,monospace;
+    --kr:"Apple SD Gothic Neo","Pretendard","Noto Sans KR",system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--ink);color:var(--fg);font-family:var(--kr);
+    line-height:1.6;-webkit-font-smoothing:antialiased;
+    background-image:radial-gradient(1200px 500px at 50% -8%,#1a2330 0%,var(--ink) 60%)}
+  .wrap{max-width:760px;margin:0 auto;padding:56px 22px 80px}
+  .tnum{font-variant-numeric:tabular-nums;font-feature-settings:"tnum"}
+  .up{color:var(--up)} .dn{color:var(--dn)} .gold{color:var(--gold)}
+
+  /* header */
+  .eyebrow{font-family:var(--mono);font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;
+    color:var(--gold);margin-bottom:14px}
+  h1{font-size:2.35rem;font-weight:800;letter-spacing:-.02em;text-wrap:balance;line-height:1.12}
+  .sub{color:var(--mut);font-size:.92rem;margin-top:12px;max-width:56ch}
+  .meta{display:flex;gap:18px;flex-wrap:wrap;margin-top:18px;font-family:var(--mono);
+    font-size:.72rem;color:var(--mut);letter-spacing:.03em}
+  .meta b{color:var(--fg);font-weight:600}
+
+  /* verdict band */
+  .verdict{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:34px 0 8px}
+  .vcard{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px 22px;
+    position:relative;overflow:hidden}
+  .vcard::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px}
+  .vcard.win::before{background:var(--up)} .vcard.fail::before{background:var(--dn)}
+  .vtag{font-family:var(--mono);font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--mut)}
+  .vhead{font-size:1.06rem;font-weight:700;margin:7px 0 4px}
+  .vsub{font-size:.83rem;color:var(--mut);line-height:1.5}
+  .vcard .verd{position:absolute;right:18px;top:18px;font-family:var(--mono);font-size:.7rem;
+    font-weight:700;letter-spacing:.1em;padding:3px 9px;border-radius:999px}
+  .win .verd{color:var(--up);background:rgba(229,72,77,.13)}
+  .fail .verd{color:var(--dn);background:rgba(76,134,232,.13)}
+
+  section{margin-top:46px}
+  .shead{display:flex;align-items:baseline;gap:12px;margin-bottom:6px}
+  .shead h2{font-size:1.28rem;font-weight:750;letter-spacing:-.01em}
+  .shead .n{font-family:var(--mono);color:var(--gold);font-size:.8rem;font-weight:700}
+  .sdesc{color:var(--mut);font-size:.85rem;margin-bottom:20px}
+
+  /* KPI row */
+  .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:22px}
+  .kpi{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 16px 14px;text-align:center}
+  .kpi .big{font-family:var(--mono);font-size:1.9rem;font-weight:750;letter-spacing:-.02em}
+  .kpi .lbl{font-size:.74rem;color:var(--mut);margin-top:3px}
+
+  /* trade table */
+  .tbl{width:100%;border-collapse:collapse;font-size:.87rem}
+  .tbl th{font-family:var(--mono);font-size:.68rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+    color:var(--mut);text-align:right;padding:0 12px 10px;border-bottom:1px solid var(--line)}
+  .tbl th:first-child,.tbl td:first-child{text-align:left}
+  .tbl td{padding:11px 12px;border-bottom:1px solid #232c38;text-align:right}
+  .tbl tr:last-child td{border-bottom:none}
+  .tbl .nm{font-weight:600}
+  .chip{font-family:var(--mono);font-size:.7rem;font-weight:700;padding:3px 8px;border-radius:6px;letter-spacing:.02em}
+  .chip.p{color:var(--up);background:rgba(229,72,77,.12)}
+  .chip.l{color:var(--dn);background:rgba(76,134,232,.12)}
+  .pnl{font-family:var(--mono);font-weight:700}
+
+  /* backtest variant bars */
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:640px){.grid2,.verdict{grid-template-columns:1fr}.kpis{grid-template-columns:1fr}}
+  .panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px}
+  .panel h3{font-size:.98rem;font-weight:700;margin-bottom:3px}
+  .panel .ph{font-size:.76rem;color:var(--mut);margin-bottom:16px;font-family:var(--mono)}
+  .vrow{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;padding:9px 0;border-top:1px solid #232c38}
+  .vrow:first-of-type{border-top:none}
+  .vrow .vn{font-size:.82rem}
+  .vrow .vn small{color:var(--mut);font-family:var(--mono);font-size:.7rem;display:block}
+  .bar{height:7px;border-radius:4px;background:#232c38;position:relative;overflow:hidden;min-width:60px}
+  .bar i{position:absolute;top:0;bottom:0;left:0;border-radius:4px}
+  .vval{font-family:var(--mono);font-weight:700;font-size:.9rem;min-width:56px;text-align:right}
+
+  .note{background:var(--surface2);border:1px solid var(--line);border-left:3px solid var(--gold);
+    border-radius:10px;padding:14px 18px;font-size:.86rem;color:#d3dae2;margin-top:16px;line-height:1.62}
+  .note b{color:var(--gold)}
+
+  .params{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+  .param{font-family:var(--mono);font-size:.76rem;background:var(--surface);border:1px solid var(--line);
+    border-radius:8px;padding:8px 13px;color:var(--mut)}
+  .param b{color:var(--fg)}
+
+  footer{margin-top:52px;padding-top:22px;border-top:1px solid var(--line);
+    font-size:.76rem;color:var(--mut);line-height:1.7}
+  footer .disc{font-family:var(--mono);font-size:.68rem;color:#5b6675;margin-top:8px}
+</style>
+
+<div class="wrap">
+
+  <div class="eyebrow">Quant Strategy Validation · 똥밭 종가베팅</div>
+  <h1>거래대금 폭발 종가베팅,<br>검증 리포트</h1>
+  <p class="sub">황금똥 연간방 공유 검색식(갭 3%↑ · 20봉 신고가 · 거래량 20봉최대&amp;전일 5배↑)을 12개월 전종목 백테스트로 검증하고, 실계좌 모의(페이퍼) 운용으로 재확인했다.</p>
+  <div class="meta">
+    <span>검증기간 <b>2025.09 – 2026.09</b></span>
+    <span>유니버스 <b>2,499종목</b></span>
+    <span>페이퍼 운용 <b>2026.09.04~</b></span>
+    <span>손절 <b>−4%</b> · 익절 <b>+6%</b></span>
+  </div>
+
+  <div class="verdict">
+    <div class="vcard win">
+      <span class="verd">검증됨</span>
+      <div class="vtag">Strategy A · 일봉 종가베팅</div>
+      <div class="vhead">통했다</div>
+      <div class="vsub">페이퍼 운용 5거래 중 4익절. 하루 종일 수급이 소화된 뒤 종가 진입하는 타이밍이 알파의 핵심.</div>
+    </div>
+    <div class="vcard fail">
+      <span class="verd">기각</span>
+      <div class="vtag">Strategy B · 3분봉 폭발 추격</div>
+      <div class="vhead">안 통했다</div>
+      <div class="vsub">폭발 직후 추격 진입은 로스컷(44%)이 익절(26%)보다 먼저 걸린다. 같은 재료·같은 손익라인인데 결과는 반대.</div>
+    </div>
+  </div>
+
+  <!-- ===== 페이퍼 트레이딩 ===== -->
+  <section>
+    <div class="shead"><span class="n">01</span><h2>실계좌 모의 운용</h2></div>
+    <p class="sdesc">전략 A(일봉 종가베팅 + 거래대금 300억 필터)를 종목당 100만원 · 최대 3종목으로 실시간 운용. 매매 없이 신호·가상체결만 기록.</p>
+
+    <div class="kpis">
+      <div class="kpi"><div class="big gold">+4.11<span style="font-size:1rem">%</span></div><div class="lbl">거래당 평균 수익률</div></div>
+      <div class="kpi"><div class="big up">80<span style="font-size:1rem">%</span></div><div class="lbl">승률 (4 / 5)</div></div>
+      <div class="kpi"><div class="big up">+205,700<span style="font-size:.9rem">원</span></div><div class="lbl">누적 손익</div></div>
+    </div>
+
+    <div style="overflow-x:auto">
+    <table class="tbl">
+      <thead><tr><th>종목</th><th>진입</th><th>청산</th><th>사유</th><th>수익률</th><th>손익</th></tr></thead>
+      <tbody>
+        <tr><td class="nm">로보티즈</td><td class="tnum">09.04</td><td class="tnum">09.07</td><td><span class="chip p">익절</span></td><td class="pnl up">+6.00%</td><td class="pnl up tnum">+60,000</td></tr>
+        <tr><td class="nm">한화투자증권</td><td class="tnum">09.04</td><td class="tnum">09.07</td><td><span class="chip l">종가청산</span></td><td class="pnl dn">−3.43%</td><td class="pnl dn tnum">−34,300</td></tr>
+        <tr><td class="nm">삼미금속</td><td class="tnum">09.07</td><td class="tnum">09.08</td><td><span class="chip p">익절</span></td><td class="pnl up">+6.00%</td><td class="pnl up tnum">+60,000</td></tr>
+        <tr><td class="nm">필옵틱스</td><td class="tnum">09.07</td><td class="tnum">09.08</td><td><span class="chip p">익절</span></td><td class="pnl up">+6.00%</td><td class="pnl up tnum">+60,000</td></tr>
+        <tr><td class="nm">빛과전자</td><td class="tnum">09.08</td><td class="tnum">09.09</td><td><span class="chip p">익절</span></td><td class="pnl up">+6.00%</td><td class="pnl up tnum">+60,000</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <div class="note"><b>로스컷은 아직 한 번도 발동하지 않았다.</b> 유일한 손실은 익절·손절 둘 다 안 걸린 초기 종가청산(한화투자증권) 한 건. 4연속 익절 중이며 백테스트 기대치(D+1 평균 +1~2%)를 상회하나, 표본 5건 · 하락장 미검증 단계다.</div>
+  </section>
+
+  <!-- ===== 백테스트 A ===== -->
+  <section>
+    <div class="shead"><span class="n">02</span><h2>일봉 종가베팅 백테스트</h2></div>
+    <p class="sdesc">필터를 더할수록 성과가 단조 개선된다 — 원작자의 재량 판단(재료·시황·수급)이 알파의 본체라는 방증. 아래는 D+1 시가 매도 기준 평균 수익률.</p>
+
+    <div class="grid2">
+      <div class="panel">
+        <h3>변형별 D+1 시가 성과</h3>
+        <div class="ph">신호 수 · 평균 수익률 · 승률</div>
+        <div class="vrow">
+          <div class="vn">A. 원조건<small>1,743 신호 · 승 52%</small></div>
+          <div class="bar"><i style="width:47%;background:var(--dn)"></i></div>
+          <div class="vval up">+1.68%</div>
+        </div>
+        <div class="vrow">
+          <div class="vn">B. +양봉<small>1,071 신호 · 승 56%</small></div>
+          <div class="bar"><i style="width:66%;background:var(--up)"></i></div>
+          <div class="vval up">+2.37%</div>
+        </div>
+        <div class="vrow">
+          <div class="vn">C. +거래대금 300억<small>482 신호 · 승 57%</small></div>
+          <div class="bar"><i style="width:58%;background:var(--gold)"></i></div>
+          <div class="vval gold">+2.07%</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>청산 방식이 전부</h3>
+        <div class="ph">변형 C · 매도 시점별</div>
+        <div class="vrow">
+          <div class="vn">D+1 고가 (지정가)<small>86%가 종가 위 터치</small></div>
+          <div class="bar"><i style="width:100%;background:var(--up)"></i></div>
+          <div class="vval up">+9.09%</div>
+        </div>
+        <div class="vrow">
+          <div class="vn">D+1 시가<small>익일 시초 청산</small></div>
+          <div class="bar"><i style="width:23%;background:var(--up)"></i></div>
+          <div class="vval up">+2.07%</div>
+        </div>
+        <div class="vrow">
+          <div class="vn">D+1 종가<small>홀드</small></div>
+          <div class="bar"><i style="width:15%;background:var(--up)"></i></div>
+          <div class="vval up">+1.31%</div>
+        </div>
+        <div class="vrow">
+          <div class="vn">D+10 홀드<small>중앙값</small></div>
+          <div class="bar"><i style="width:42%;right:0;background:var(--dn)"></i></div>
+          <div class="vval dn">−3.8%</div>
+        </div>
+      </div>
+    </div>
+    <div class="note">권장 운용형은 <b>C조건 종가 매수 → 익일 +5~6% 지정가 매도</b>(고가 중앙값 +6.75% 활용). 홀드할수록 급등 재료의 되돌림으로 악화된다.</div>
+  </section>
+
+  <!-- ===== 백테스트 B ===== -->
+  <section>
+    <div class="shead"><span class="n">03</span><h2>3분봉 거래대금 폭발 — 기각</h2></div>
+    <p class="sdesc">같은 +6% / −4% 손익라인. 폭발봉 종가 추격 진입, 6주간 117신호. 일봉 종가베팅과 정반대의 결과가 왜 나오는지가 핵심 교훈.</p>
+
+    <div class="grid2">
+      <div class="panel">
+        <h3>당일 청산 (117신호)</h3>
+        <div class="ph">평균 −0.33% · 승률 34%</div>
+        <div class="vrow">
+          <div class="vn">익절 도달<small>+6% 터치</small></div>
+          <div class="bar"><i style="width:26%;background:var(--up)"></i></div>
+          <div class="vval up">26%</div>
+        </div>
+        <div class="vrow">
+          <div class="vn">로스컷 도달<small>−4% 터치</small></div>
+          <div class="bar"><i style="width:44%;background:var(--dn)"></i></div>
+          <div class="vval dn">44%</div>
+        </div>
+      </div>
+      <div class="panel" style="display:flex;flex-direction:column;justify-content:center">
+        <h3 style="color:var(--dn)">왜 반대인가</h3>
+        <p style="font-size:.87rem;color:#c8d0da;line-height:1.62;margin-top:8px">
+          분봉 폭발을 확인하고 종가에 추격하는 순간이 이미 <b style="color:var(--fg)">단기 고점</b>이다. 되돌림 노이즈가 −4%를 먼저 건드려 로스컷이 익절을 앞선다.<br><br>
+          "거래대금 폭발"이라는 재료가 아니라 <b class="gold">폭발 당일을 끝까지 지켜본 뒤의 종가</b>라는 타이밍이 알파의 원천 — 두 백테스트의 공통 결론.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- params -->
+  <section>
+    <div class="shead"><span class="n">04</span><h2>운용 파라미터</h2></div>
+    <div class="params">
+      <span class="param">종목당 <b>100만원</b></span>
+      <span class="param">최대 <b>3종목</b></span>
+      <span class="param">손절 <b>−4%</b></span>
+      <span class="param">익절 <b>+6%</b></span>
+      <span class="param">거래대금 필터 <b>300억↑</b></span>
+      <span class="param">진입 <b>당일 종가</b></span>
+      <span class="param">스캔 <b>매일 15:05</b></span>
+      <span class="param">모드 <b>PAPER</b></span>
+    </div>
+  </section>
+
+  <footer>
+    똥밭·황금똥 검색식 기반 자체 백테스트 · 페이퍼 운용 (키움 수정주가 일봉·3분봉). 검증기간 2025.09–2026.09.
+    <div class="disc">본 자료는 전략 검증 기록이며 투자 권유가 아님. 표본이 작고 하락장 미검증 상태이므로 실전 전환 전 추가 관찰 필요.</div>
+  </footer>
+
+</div>
