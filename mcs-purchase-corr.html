@@ -129,10 +129,10 @@
 
   <section>
     <div class="shead"><h2>기준 A — 현황표 매입을 한 칸 밀면 매출 곡선이 된다</h2></div>
-    <p class="sdesc">주황 막대 = 원재료·상품 매입액을 <b style="color:var(--fg)">한 분기 뒤로 밀어</b> 표시 (t분기 매입을 t+1 위치에). 빨간 선 = 실제 분기 매출액. 마우스를 올리면 수치, 드래그하면 구간 확대(반대 방향 드래그 = 원상 복귀).</p>
+    <p class="sdesc">각 위치에서 주황 막대 = <b style="color:var(--fg)">T기 매입액</b>, 빨간 선 = <b style="color:var(--fg)">T+1기 매출액</b> — 매입이 다음 분기 매출을 얼마나 설명하는지 한눈에 보인다. 맨 끝 3Q26은 2Q26 매입(275억)이 가리키는 <b style="color:var(--fg)">추정 매출 ≈610억을 점선</b>으로 표시. 마우스 올리면 수치, 드래그하면 구간 확대(반대 방향 드래그 = 복귀).</p>
     <div class="panel">
       <div class="cwrap"><canvas id="ts" height="340"></canvas><div class="tip" id="tsTip"></div></div>
-      <div class="legend"><span><i style="background:var(--cu)"></i>매입액 (1분기 래깅, 좌축)</span><span><i style="background:var(--rev)"></i>매출액 (우축)</span><span><i style="background:#7c684f;height:8px;opacity:.5"></i>2026Q3 = 직전분기 매입이 가리키는 자리</span></div>
+      <div class="legend"><span><i style="background:var(--cu)"></i>매입액 (T기 → T+1 위치, 좌축)</span><span><i style="background:var(--rev)"></i>매출액 (T+1기, 우축)</span><span><i style="background:repeating-linear-gradient(90deg,var(--rev) 0 4px,transparent 4px 8px)"></i>3Q26 추정 매출 ≈610억 (점선)</span></div>
     </div>
   </section>
 
@@ -190,6 +190,7 @@
 const PUR={"2022Q3":7038,"2022Q4":6481,"2023Q1":7650,"2023Q2":8589,"2023Q3":8331,"2023Q4":4733,"2024Q1":6624,"2024Q2":6142,"2024Q3":9403,"2024Q4":11669,"2025Q1":11425,"2025Q2":11003,"2025Q3":14361,"2025Q4":12192,"2026Q1":12835,"2026Q2":27549};
 const REV={"2022Q3":16949,"2022Q4":14065,"2023Q1":14299,"2023Q2":16112,"2023Q3":19857,"2023Q4":14550,"2024Q1":14308,"2024Q2":15148,"2024Q3":18456,"2024Q4":21753,"2025Q1":25320,"2025Q2":22367,"2025Q3":25392,"2025Q4":27235,"2026Q1":27573,"2026Q2":41897};
 const ALPHA=1149, BETA=2.174;
+const EST3Q=ALPHA+BETA*27549;   // 3Q26 추정 매출(백만원) ≈ 61,051
 const NOTE={"2022Q3":5144,"2022Q4":3412,"2023Q1":5329,"2023Q2":5821,"2023Q3":5849,"2023Q4":3660,"2024Q1":5617,"2024Q2":4843,"2024Q3":7820,"2024Q4":8962,"2025Q1":9123,"2025Q2":8866,"2025Q3":11314,"2025Q4":9926,"2026Q1":10211,"2026Q2":14931};
 const Qs=Object.keys(PUR);           // 2022Q3..2026Q2
 const AX=[...Qs.slice(1),"2026Q3"];  // 래깅 표시축: t+1 위치
@@ -229,7 +230,9 @@ function drawTS(){
   const P={l:46,r:50,t:14,b:30}, iw=w-P.l-P.r, ih=h-P.t-P.b;
   const purV=view.map((q,i)=>b(PUR[Qs[s+i]]));            // t 매입을 t+1 위치에
   const revV=view.map(q=>REV[q]!=null?b(REV[q]):null);
-  const maxP=Math.max(...purV)*1.15, maxR=Math.max(...revV.filter(v=>v!=null))*1.15;
+  const hasEst=view.includes("2026Q3");
+  const maxP=Math.max(...purV)*1.15,
+        maxR=Math.max(...revV.filter(v=>v!=null),hasEst?b(EST3Q):0)*1.15;
   const x=i=>P.l+iw*(i+.5)/view.length;
   const yP=v=>P.t+ih*(1-v/maxP), yR=v=>P.t+ih*(1-v/maxR);
   ctx.clearRect(0,0,w,h);
@@ -254,6 +257,20 @@ function drawTS(){
   ctx.stroke();
   view.forEach((q,i)=>{if(revV[i]==null)return;
     ctx.fillStyle="#e5484d";ctx.beginPath();ctx.arc(x(i),yR(revV[i]),3,0,7);ctx.fill();});
+  // 3Q26 추정 매출: 마지막 실적점 → 점선 연결 + 속 빈 점
+  if(hasEst){
+    const ei=view.indexOf("2026Q3"), li=ei-1;
+    if(li>=0&&revV[li]!=null){
+      ctx.strokeStyle="#e5484d";ctx.lineWidth=2;ctx.setLineDash([5,5]);
+      ctx.beginPath();ctx.moveTo(x(li),yR(revV[li]));ctx.lineTo(x(ei),yR(b(EST3Q)));ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.beginPath();ctx.arc(x(ei),yR(b(EST3Q)),4.5,0,7);
+      ctx.fillStyle="#10131a";ctx.fill();ctx.strokeStyle="#e5484d";ctx.lineWidth=2;ctx.stroke();
+      ctx.fillStyle="#e5484d";ctx.textAlign="right";ctx.font="bold 11px "+getComputedStyle(document.body).getPropertyValue("--mono");
+      ctx.fillText("3Q26E "+nf(b(EST3Q))+"억",x(ei)-10,yR(b(EST3Q))-8);
+      ctx.font="10px "+getComputedStyle(document.body).getPropertyValue("--mono");
+    }
+  }
   // x라벨
   ctx.fillStyle="#8a93a1"; ctx.textAlign="center";
   const step=Math.ceil(view.length/9);
@@ -271,7 +288,7 @@ tsCv.addEventListener("mousemove",ev=>{
   tsTip.style.display="block";
   tsTip.style.left=Math.min(g.x(best)+12,tsCv.clientWidth-170)+"px"; tsTip.style.top="16px";
   tsTip.innerHTML=`<b>${q}</b><br><span style="color:var(--cu)">매입(${pq}) ${nf(g.purV[best])}억</span><br>`+
-    (g.revV[best]!=null?`<span style="color:var(--rev)">매출 ${nf(g.revV[best])}억</span>`:`<span style="color:#7c684f">매출 미발표</span>`);
+    (g.revV[best]!=null?`<span style="color:var(--rev)">매출 ${nf(g.revV[best])}억</span>`:`<span style="color:var(--rev)">매출 추정 ${nf(b(EST3Q))}억 (점선·회귀)</span>`);
 });
 tsCv.addEventListener("mouseleave",()=>tsTip.style.display="none");
 tsCv.addEventListener("mousedown",ev=>{const r=tsCv.getBoundingClientRect();drag=ev.clientX-r.left;});
