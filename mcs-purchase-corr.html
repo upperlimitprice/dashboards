@@ -18,6 +18,28 @@
   .meta{display:flex;gap:16px;flex-wrap:wrap;margin-top:16px;font-family:var(--mono);font-size:.7rem;color:var(--mut)}
   .meta b{color:var(--fg);font-weight:600}
 
+  .hero{background:linear-gradient(180deg,#232b38,#1a2029);border:1px solid #3a4656;border-radius:16px;
+    padding:26px 28px;margin-top:30px;position:relative;overflow:hidden}
+  .hero::after{content:"";position:absolute;right:-40px;top:-40px;width:180px;height:180px;border-radius:50%;
+    background:radial-gradient(circle,rgba(208,138,74,.14),transparent 70%)}
+  .hero .ht{font-family:var(--mono);font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;color:var(--cu)}
+  .hero .big3{font-size:2.9rem;font-weight:800;letter-spacing:-.03em;font-family:var(--mono);margin:6px 0 2px}
+  .hero .big3 small{font-size:1.2rem;color:var(--mut);font-weight:600}
+  .hero .hs{font-size:.86rem;color:#c8d0da;line-height:1.6;max-width:62ch}
+  .range{margin:18px 0 6px;position:relative;height:46px}
+  .range .bar{position:absolute;left:0;right:0;top:20px;height:8px;border-radius:4px;background:#2b3442}
+  .range .band{position:absolute;top:20px;height:8px;border-radius:4px;background:linear-gradient(90deg,rgba(208,138,74,.45),rgba(208,138,74,.9))}
+  .range .mark{position:absolute;top:12px;width:2px;height:24px;background:#fff;border-radius:1px}
+  .range .rl{position:absolute;top:36px;font-family:var(--mono);font-size:.68rem;color:var(--mut);transform:translateX(-50%)}
+  .range .rt{position:absolute;top:0;font-family:var(--mono);font-size:.68rem;color:var(--fg);transform:translateX(-50%);font-weight:700}
+  .methods{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+  .mchip{font-family:var(--mono);font-size:.72rem;background:#151b24;border:1px solid var(--line);border-radius:8px;
+    padding:7px 12px;color:var(--mut)}
+  .mchip b{color:var(--fg)}
+  .ctx{display:flex;gap:0;margin-top:16px;border-top:1px solid #2b3442;padding-top:14px}
+  .ctx div{flex:1;text-align:center}
+  .ctx .cv{font-family:var(--mono);font-weight:700;font-size:1.05rem}
+  .ctx .cl{font-size:.68rem;color:var(--mut);margin-top:2px}
   .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:32px 0 8px}
   @media(max-width:680px){.kpis{grid-template-columns:1fr 1fr}}
   .kpi{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 14px;text-align:center}
@@ -63,6 +85,31 @@
     <span>표본 <b>2022Q3 – 2026Q2</b> (분기 16개)</span>
     <span>매입액: 정기보고서 · 매출액: DART 연결</span>
     <span>단위 <b>억원</b></span>
+  </div>
+
+  <div class="hero">
+    <div class="ht">Core Insight · 2Q26 매입 → 3Q26 매출 추정</div>
+    <div class="big3" style="color:var(--cu)">≈ 610<small>억</small> <small style="color:#8a93a1">(범위 520 ~ 630억)</small></div>
+    <p class="hs">2Q26 원재료·상품 매입액 <b style="color:var(--fg)">275억</b>(역대 최대, 전분기 2.1배)에 과거 15개 분기의 '매입(T) → 다음 분기 매출(T+1)' 관계를 적용한 추정. 세 가지 방법이 모두 610~630억으로 수렴하며, 가장 보수적인 배율(1.90x)로도 <b style="color:var(--fg)">523억</b> — 역대 최고 분기 매출(419억)을 크게 넘는다.</p>
+    <div class="range">
+      <div class="bar"></div>
+      <div class="band" style="left:23%;right:12%"></div>
+      <div class="mark" style="left:23%"></div><div class="rl" style="left:23%">523 보수</div>
+      <div class="mark" style="left:68%"></div><div class="rt" style="left:68%">610 회귀</div>
+      <div class="mark" style="left:81%"></div><div class="rl" style="left:81%">629 배율</div>
+      <div class="rl" style="left:2%">419<br>(역대최고)</div>
+    </div>
+    <div class="methods">
+      <span class="mchip">회귀식 11억+2.17×매입 → <b>610억</b></span>
+      <span class="mchip">배율 중앙값 2.26x → <b>623억</b></span>
+      <span class="mchip">최근 8분기 중앙값 2.28x → <b>629억</b></span>
+      <span class="mchip">보수: 최소 유의배율 1.90x → <b>523억</b></span>
+    </div>
+    <div class="ctx">
+      <div><div class="cv">254억</div><div class="cl">3Q25 실제</div></div>
+      <div><div class="cv">419억</div><div class="cl">2Q26 실제 (역대최고)</div></div>
+      <div><div class="cv" style="color:var(--cu)">≈610억</div><div class="cl">3Q26 추정 → YoY +140% · QoQ +46%</div></div>
+    </div>
   </div>
 
   <div class="kpis">
