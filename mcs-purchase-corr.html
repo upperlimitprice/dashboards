@@ -40,6 +40,14 @@
   .ctx div{flex:1;text-align:center}
   .ctx .cv{font-family:var(--mono);font-weight:700;font-size:1.05rem}
   .ctx .cl{font-size:.68rem;color:var(--mut);margin-top:2px}
+  .duo{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+  @media(max-width:640px){.duo{grid-template-columns:1fr}}
+  .dcard{background:#151b24;border:1px solid var(--line);border-radius:12px;padding:16px 18px}
+  .dcard .dt{font-family:var(--mono);font-size:.68rem;letter-spacing:.08em;color:var(--mut);text-transform:uppercase}
+  .dcard .big3{font-size:2.2rem;margin:4px 0 2px}
+  .dcard .dr{font-size:.78rem;color:#c8d0da}
+  .dcard .dr b{font-family:var(--mono)}
+  .dcard .dm{font-family:var(--mono);font-size:.7rem;color:var(--mut);margin-top:6px}
   .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:32px 0 8px}
   @media(max-width:680px){.kpis{grid-template-columns:1fr 1fr}}
   .kpi{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 14px;text-align:center}
@@ -88,27 +96,27 @@
   </div>
 
   <div class="hero">
-    <div class="ht">Core Insight · 2Q26 매입 → 3Q26 매출 추정</div>
-    <div class="big3" style="color:var(--cu)">≈ 610<small>억</small> <small style="color:#8a93a1">(범위 520 ~ 630억)</small></div>
-    <p class="hs">2Q26 원재료·상품 매입액 <b style="color:var(--fg)">275억</b>(역대 최대, 전분기 2.1배)에 과거 15개 분기의 '매입(T) → 다음 분기 매출(T+1)' 관계를 적용한 추정. 세 가지 방법이 모두 610~630억으로 수렴하며, 가장 보수적인 배율(1.90x)로도 <b style="color:var(--fg)">523억</b> — 역대 최고 분기 매출(419억)을 크게 넘는다.</p>
-    <div class="range">
-      <div class="bar"></div>
-      <div class="band" style="left:23%;right:12%"></div>
-      <div class="mark" style="left:23%"></div><div class="rl" style="left:23%">523 보수</div>
-      <div class="mark" style="left:68%"></div><div class="rt" style="left:68%">610 회귀</div>
-      <div class="mark" style="left:81%"></div><div class="rl" style="left:81%">629 배율</div>
-      <div class="rl" style="left:2%">419<br>(역대최고)</div>
+    <div class="ht">Core Insight · 2Q26 매입(T) → 3Q26 매출(T+1) 추정 — 두 계정 기준 병렬 검증</div>
+    <div class="duo">
+      <div class="dcard">
+        <div class="dt">기준 A · 주요 원재료 현황 표</div>
+        <div class="big3" style="color:var(--cu)">≈ 610<small>억</small></div>
+        <div class="dr">범위 520 ~ 630억 · 2Q26 매입 <b>275억</b> × 회귀/배율</div>
+        <div class="dm">래깅 r 0.82 · 배율 중앙값 2.26x</div>
+      </div>
+      <div class="dcard">
+        <div class="dt">기준 B · 비용의 성격별 분류 (연결 주석)</div>
+        <div class="big3" style="color:#e0b34c">≈ 420<small>억</small></div>
+        <div class="dr">범위 360 ~ 430억 · 2Q26 매입 <b>149억</b> × 회귀/배율</div>
+        <div class="dm">래깅 r 0.84 · 배율 중앙값 2.86x</div>
+      </div>
     </div>
-    <div class="methods">
-      <span class="mchip">회귀식 11억+2.17×매입 → <b>610억</b></span>
-      <span class="mchip">배율 중앙값 2.26x → <b>623억</b></span>
-      <span class="mchip">최근 8분기 중앙값 2.28x → <b>629억</b></span>
-      <span class="mchip">보수: 최소 유의배율 1.90x → <b>523억</b></span>
-    </div>
+    <p class="hs" style="margin-top:16px">같은 "원재료·상품 매입"이라도 <b style="color:var(--fg)">사업의 내용 '주요 원재료 현황' 표(275억)</b>와 <b style="color:var(--fg)">재무제표 주석 '비용의 성격별 분류'(149억)</b>가 크게 다르다 (내부거래 제거 전 조달 기준 vs 연결 손익 인식 기준으로 추정). 두 기준의 공통 결론: <b style="color:var(--fg)">3Q26 매출은 최소 역대최고 수준(419억) 유지</b>. 성장 폭이 갈릴 뿐 — 보수적 주석 기준으로도 359~430억, 공격적 현황표 기준이면 520~630억.</p>
     <div class="ctx">
       <div><div class="cv">254억</div><div class="cl">3Q25 실제</div></div>
       <div><div class="cv">419억</div><div class="cl">2Q26 실제 (역대최고)</div></div>
-      <div><div class="cv" style="color:var(--cu)">≈610억</div><div class="cl">3Q26 추정 → YoY +140% · QoQ +46%</div></div>
+      <div><div class="cv" style="color:#e0b34c">420억~</div><div class="cl">3Q26 주석 기준 (YoY +65%)</div></div>
+      <div><div class="cv" style="color:var(--cu)">~610억</div><div class="cl">3Q26 현황표 기준 (YoY +140%)</div></div>
     </div>
   </div>
 
@@ -120,7 +128,7 @@
   </div>
 
   <section>
-    <div class="shead"><h2>매입액을 한 칸 밀면 매출 곡선이 된다</h2></div>
+    <div class="shead"><h2>기준 A — 현황표 매입을 한 칸 밀면 매출 곡선이 된다</h2></div>
     <p class="sdesc">주황 막대 = 원재료·상품 매입액을 <b style="color:var(--fg)">한 분기 뒤로 밀어</b> 표시 (t분기 매입을 t+1 위치에). 빨간 선 = 실제 분기 매출액. 마우스를 올리면 수치, 드래그하면 구간 확대(반대 방향 드래그 = 원상 복귀).</p>
     <div class="panel">
       <div class="cwrap"><canvas id="ts" height="340"></canvas><div class="tip" id="tsTip"></div></div>
@@ -129,7 +137,7 @@
   </section>
 
   <section>
-    <div class="shead"><h2>산점도 — 매입(t) vs 매출(t+1)</h2></div>
+    <div class="shead"><h2>기준 A 산점도 — 현황표 매입(t) vs 매출(t+1)</h2></div>
     <p class="sdesc">15개 래깅 쌍의 회귀선: <span style="font-family:var(--mono);color:var(--fg)">매출(t+1) ≈ 11억 + 2.17 × 매입(t)</span>. 즉 원재료에 1을 쓰면 다음 분기에 약 2.2의 매출이 됐다.</p>
     <div class="panel">
       <div class="cwrap"><canvas id="sc" height="360"></canvas><div class="tip" id="scTip"></div></div>
@@ -141,10 +149,30 @@
   </section>
 
   <section>
+    <div class="shead"><h2>기준 B — 비용의 성격별 분류 (연결 주석 27)</h2></div>
+    <p class="sdesc">재무제표 주석의 '원재료및상품매입액'은 분기(3개월) 컬럼이 직접 공시된다 (Q4는 연간−9M 차감). 표본 17쌍으로 더 길고, 래깅 상관도 <b style="color:var(--fg)">r = 0.84</b>로 현황표 기준(0.82)보다 오히려 높다.</p>
+    <div class="panel" style="overflow-x:auto">
+      <table class="tbl">
+        <thead><tr><th>기준 B 통계</th><th>값</th><th></th><th>3Q26 추정</th></tr></thead>
+        <tbody>
+          <tr><td>래깅 상관 r (t → t+1)</td><td>0.838</td><td>회귀식 44억 + 2.40×매입</td><td style="color:#e0b34c;font-weight:700">403억</td></tr>
+          <tr><td>동행 상관 r</td><td>0.949</td><td>배율 중앙값 2.86x</td><td style="color:#e0b34c;font-weight:700">428억</td></tr>
+          <tr><td>2Q26 매입액 (주석)</td><td>149.3억</td><td>최근 8분기 중앙값 2.80x</td><td style="color:#e0b34c;font-weight:700">419억</td></tr>
+          <tr><td>QoQ / YoY</td><td>+46% / +68%</td><td>보수 (최근 2년 최소 2.41x)</td><td>359억</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="impl" style="border-left-color:#e0b34c">
+      <b style="color:#e0b34c">두 계정이 왜 다른가</b> — 2Q26 현황표 275억 vs 주석 149억 (1.8배 차이, 과거엔 1.2~1.3배). 현황표는 사업부문 조달 기준(내부거래 제거 전, 자회사 ㈜엠에스엘 포함 단순합산 추정)이고 주석은 연결 조정 후 손익 인식 기준이다. 격차가 역대급으로 벌어진 것 자체가 <b>그룹 전체가 원자재를 공격적으로 쌓고 있다</b>는 신호로 읽을 수 있으나, 정확한 조정 내역은 공시로 확인 불가.
+      <span class="warn">주석 기준 2Q26 재고자산의변동 −55.8억(재고 급증)도 같은 방향 — 매입분의 상당량이 아직 매출원가로 소진되지 않고 3Q 생산을 위해 대기 중.</span>
+    </div>
+  </section>
+
+  <section>
     <div class="shead"><h2>분기 데이터</h2></div>
     <div class="panel" style="overflow-x:auto">
       <table class="tbl">
-        <thead><tr><th>분기</th><th>매입액(억)</th><th>매입 QoQ</th><th>매출액(억)</th><th>다음분기 매출(억)</th></tr></thead>
+        <thead><tr><th>분기</th><th>현황표 매입(억)</th><th>주석 매입(억)</th><th>매입 QoQ</th><th>매출액(억)</th><th>다음분기 매출(억)</th></tr></thead>
         <tbody id="tbody"></tbody>
       </table>
     </div>
@@ -162,6 +190,7 @@
 const PUR={"2022Q3":7038,"2022Q4":6481,"2023Q1":7650,"2023Q2":8589,"2023Q3":8331,"2023Q4":4733,"2024Q1":6624,"2024Q2":6142,"2024Q3":9403,"2024Q4":11669,"2025Q1":11425,"2025Q2":11003,"2025Q3":14361,"2025Q4":12192,"2026Q1":12835,"2026Q2":27549};
 const REV={"2022Q3":16949,"2022Q4":14065,"2023Q1":14299,"2023Q2":16112,"2023Q3":19857,"2023Q4":14550,"2024Q1":14308,"2024Q2":15148,"2024Q3":18456,"2024Q4":21753,"2025Q1":25320,"2025Q2":22367,"2025Q3":25392,"2025Q4":27235,"2026Q1":27573,"2026Q2":41897};
 const ALPHA=1149, BETA=2.174;
+const NOTE={"2022Q3":5144,"2022Q4":3412,"2023Q1":5329,"2023Q2":5821,"2023Q3":5849,"2023Q4":3660,"2024Q1":5617,"2024Q2":4843,"2024Q3":7820,"2024Q4":8962,"2025Q1":9123,"2025Q2":8866,"2025Q3":11314,"2025Q4":9926,"2026Q1":10211,"2026Q2":14931};
 const Qs=Object.keys(PUR);           // 2022Q3..2026Q2
 const AX=[...Qs.slice(1),"2026Q3"];  // 래깅 표시축: t+1 위치
 const b=v=>(v/100);                  // 백만원→억
@@ -175,7 +204,7 @@ const nf=v=>v.toLocaleString("ko-KR",{maximumFractionDigits:0});
     const qoq=prev?((PUR[q]/prev-1)*100):null;
     const tr=document.createElement("tr");
     if(q==="2026Q2") tr.className="hl";
-    tr.innerHTML=`<td>${q}</td><td>${nf(b(PUR[q]))}</td>`+
+    tr.innerHTML=`<td>${q}</td><td>${nf(b(PUR[q]))}</td><td>${NOTE[q]?nf(b(NOTE[q])):"–"}</td>`+
       `<td style="color:${qoq==null?'inherit':qoq>=0?'var(--rev)':'var(--dn)'}">${qoq==null?"–":(qoq>=0?"+":"")+qoq.toFixed(0)+"%"}</td>`+
       `<td>${nf(b(REV[q]))}</td>`+
       `<td>${REV[nq]?nf(b(REV[nq])):'<span style="color:var(--cu)">회귀 시사 '+nf(b(ALPHA+BETA*PUR[q]))+'</span>'}</td>`;
