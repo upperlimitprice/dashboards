@@ -198,6 +198,22 @@
   </section>
 
   <section>
+    <div class="shead"><h2>기준 D — 재고자산 래깅 vs 매출</h2></div>
+    <p class="sdesc">분기말 재고자산 잔액(연결 재무상태표)을 한 분기 래깅시켜 다음 분기 매출과 비교. <b style="color:var(--fg)">래깅 상관 r = 0.85 — 이 페이지의 네 지표 중 가장 강한 선행성</b>이다 (동행 0.95, 표본 17쌍). 이번 분기에 쌓인 재고가 다음 분기에 팔린다는 제조업의 기본 사이클이 그대로 데이터에 찍힌다.</p>
+    <div class="panel">
+      <div class="cwrap"><canvas id="tsD" height="340"></canvas><div class="tip" id="tsDTip"></div></div>
+      <div class="legend"><span><i style="background:#e07a9e"></i>재고자산 (T기 말 → T+1 위치, 좌축)</span><span><i style="background:var(--rev)"></i>매출액 (T+1기, 우축)</span><span><i style="background:repeating-linear-gradient(90deg,var(--rev) 0 4px,transparent 4px 8px)"></i>3Q26 추정 매출 ≈548억 (점선·회귀)</span></div>
+    </div>
+    <div class="panel" style="margin-top:14px">
+      <div class="cwrap"><canvas id="scD" height="360"></canvas><div class="tip" id="scDTip"></div></div>
+    </div>
+    <div class="impl" style="border-left-color:#e07a9e">
+      <b style="color:#e07a9e">2026Q2 말 재고 178.9억 — QoQ +50%, 역대 최대</b>. 과거 관계를 적용하면 3Q26 매출은 회귀식(−119억 + 3.73×재고) 기준 <b>≈548억</b>, 배율 방식(중앙값 2.36x·최근8 2.49x)으로는 <b>422~446억</b>을 가리킨다. 재고 기준 추정(422~548억)은 매입 기준 A(520~630억)와 B(360~430억) 사이에 위치하며, 네 지표가 모두 <b>"3Q26 최소 역대최고(419억) 수준, 상단 500~600억대"</b>로 수렴한다.
+      <span class="warn">⚠ 직전 사례처럼 2026Q1 재고 119억 → Q2 매출 419억(3.51배)은 역대 최고 배율이었다 — 재고가 덜 쌓이고도 매출이 튄 분기. 반대로 재고 급증이 판매 부진의 결과일 수도 있으나, 매입·수출 지표가 동반 급증한 현 국면에서는 3Q 출하 대비 축적으로 읽는 것이 정합적이다.</span>
+    </div>
+  </section>
+
+  <section>
     <div class="shead"><h2>분기 데이터</h2></div>
     <div class="panel" style="overflow-x:auto">
       <table class="tbl">
@@ -210,7 +226,7 @@
   <footer>
     매입액 = 각 정기보고서 '주요 원재료 등의 현황' 매입액 합계(누적 공시를 분기 단독으로 환산, 연결·백만원 공시).
     매출액 = DART 연결 손익계산서 분기 단독. 2022Q2 이전은 분기 매입액 산출 불가로 제외.
-    천안 수출 = 관세청 수출입무역통계 시군구별 품목별(HS 853669, 천안시, 수출은 제조장소 기준)을 분기 평균 USD/KRW로 원화 환산. 세미콘 부문 매출 = 연결 주석 부문정보(2024.06 공시 개시, 연결조정 전). 수출 매출 = 연결 주석 지역별 매출(누적→분기 환산). 상관계수는 Pearson r. 회귀·예측치는 참고용 통계이며 실적 전망이 아님.
+    천안 수출 = 관세청 수출입무역통계 시군구별 품목별(HS 853669, 천안시, 수출은 제조장소 기준)을 분기 평균 USD/KRW로 원화 환산. 세미콘 부문 매출 = 연결 주석 부문정보(2024.06 공시 개시, 연결조정 전). 재고자산 = 연결 재무상태표 분기말 잔액(DART). 수출 매출 = 연결 주석 지역별 매출(누적→분기 환산). 상관계수는 Pearson r. 회귀·예측치는 참고용 통계이며 실적 전망이 아님.
     <div class="disc">Generated 2026-09-10 · 쩜상리서치</div>
   </footer>
 </div>
@@ -560,4 +576,111 @@ tsCCv.addEventListener("mousemove",ev=>{
     (g.sv[best]!=null?`<br><span style="color:#a78bfa">세미콘 매출 ${nf(g.sv[best])}억</span>`:"");
 });
 tsCCv.addEventListener("mouseleave",()=>tsCTip.style.display="none");
+
+/* ---------- 기준 D: 재고자산 래깅 ---------- */
+const INVD={"2022Q1":6360,"2022Q2":7170,"2022Q3":7120,"2022Q4":6910,"2023Q1":8270,"2023Q2":9380,"2023Q3":9550,"2023Q4":6480,"2024Q1":8140,"2024Q2":7840,"2024Q3":8740,"2024Q4":9750,"2025Q1":9480,"2025Q2":9350,"2025Q3":10980,"2025Q4":11040,"2026Q1":11920,"2026Q2":17890};  // 백만원
+const ALPHA_D=-11900, BETA_D=3.729, EST_D=ALPHA_D+BETA_D*17890;   // ≈54,800백만
+const DQ=Object.keys(INVD), DAX=[...DQ.slice(1),"2026Q3"];
+const tsDCv=document.getElementById("tsD"), tsDTip=document.getElementById("tsDTip");
+function drawTSD(){
+  const {ctx,w,h}=setup(tsDCv);
+  const view=DAX;
+  const P={l:46,r:50,t:14,b:30}, iw=w-P.l-P.r, ih=h-P.t-P.b;
+  const invV=view.map((q,i)=>b(INVD[DQ[i]]));
+  const revV=view.map(q=>REV[q]!=null?b(REV[q]):null);
+  const maxP=Math.max(...invV)*1.15,
+        maxR=Math.max(...revV.filter(v=>v!=null),b(EST_D))*1.15;
+  const x=i=>P.l+iw*(i+.5)/view.length;
+  const yP=v=>P.t+ih*(1-v/maxP), yR=v=>P.t+ih*(1-v/maxR);
+  ctx.clearRect(0,0,w,h);
+  ctx.font="10px "+getComputedStyle(document.body).getPropertyValue("--mono");
+  ctx.strokeStyle="#242d39"; ctx.fillStyle="#8a93a1"; ctx.textAlign="right";
+  for(let g=0;g<=4;g++){const yy=P.t+ih*g/4;
+    ctx.beginPath();ctx.moveTo(P.l,yy);ctx.lineTo(w-P.r,yy);ctx.stroke();
+    ctx.fillText(nf(maxP*(1-g/4)),P.l-6,yy+3);
+    ctx.textAlign="left"; ctx.fillText(nf(maxR*(1-g/4)),w-P.r+6,yy+3); ctx.textAlign="right";}
+  const bw=Math.min(26,iw/view.length*.5);
+  view.forEach((q,i)=>{
+    ctx.fillStyle=q==="2026Q3"?"#8a5a72":"rgba(224,122,158,.85)";
+    ctx.fillRect(x(i)-bw/2,yP(invV[i]),bw,ih+P.t-yP(invV[i]));
+  });
+  ctx.strokeStyle="#e5484d"; ctx.lineWidth=2; ctx.beginPath();
+  let st=false;
+  view.forEach((q,i)=>{if(revV[i]==null)return;
+    st?ctx.lineTo(x(i),yR(revV[i])):ctx.moveTo(x(i),yR(revV[i])); st=true;});
+  ctx.stroke();
+  view.forEach((q,i)=>{if(revV[i]==null)return;
+    ctx.fillStyle="#e5484d";ctx.beginPath();ctx.arc(x(i),yR(revV[i]),3,0,7);ctx.fill();});
+  const ei=view.indexOf("2026Q3"), li=ei-1;
+  if(ei>=0&&revV[li]!=null){
+    ctx.strokeStyle="#e5484d";ctx.lineWidth=2;ctx.setLineDash([5,5]);
+    ctx.beginPath();ctx.moveTo(x(li),yR(revV[li]));ctx.lineTo(x(ei),yR(b(EST_D)));ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.beginPath();ctx.arc(x(ei),yR(b(EST_D)),4.5,0,7);
+    ctx.fillStyle="#10131a";ctx.fill();ctx.strokeStyle="#e5484d";ctx.lineWidth=2;ctx.stroke();
+    ctx.fillStyle="#e5484d";ctx.textAlign="right";ctx.font="bold 11px "+getComputedStyle(document.body).getPropertyValue("--mono");
+    ctx.fillText("3Q26E "+nf(b(EST_D))+"억",x(ei)-10,yR(b(EST_D))-8);
+    ctx.font="10px "+getComputedStyle(document.body).getPropertyValue("--mono");
+  }
+  ctx.fillStyle="#8a93a1"; ctx.textAlign="center";
+  const stp=Math.ceil(view.length/9);
+  view.forEach((q,i)=>{if(i%stp===0||q==="2026Q3")ctx.fillText(q.replace("20",""),x(i),h-10);});
+  tsDCv._geo={view,x,invV,revV};
+}
+drawTSD(); addEventListener("resize",drawTSD);
+tsDCv.addEventListener("mousemove",ev=>{
+  const g=tsDCv._geo; if(!g)return;
+  const r=tsDCv.getBoundingClientRect(), mx=ev.clientX-r.left;
+  let best=0,bd=1e9;
+  g.view.forEach((q,i)=>{const d=Math.abs(g.x(i)-mx); if(d<bd){bd=d;best=i}});
+  const q=g.view[best], pq=DQ[best];
+  tsDTip.style.display="block";
+  tsDTip.style.left=Math.min(g.x(best)+12,tsDCv.clientWidth-190)+"px"; tsDTip.style.top="16px";
+  tsDTip.innerHTML=`<b>${q}</b><br><span style="color:#e07a9e">재고(${pq}말) ${nf(g.invV[best])}억</span><br>`+
+    (g.revV[best]!=null?`<span style="color:var(--rev)">매출 ${nf(g.revV[best])}억</span>`:`<span style="color:var(--rev)">매출 추정 ${nf(b(EST_D))}억 (점선·회귀)</span>`);
+});
+tsDCv.addEventListener("mouseleave",()=>tsDTip.style.display="none");
+
+const scDCv=document.getElementById("scD"), scDTip=document.getElementById("scDTip");
+function drawSCD(){
+  const {ctx,w,h}=setup(scDCv);
+  const pairs=DQ.slice(0,-1).map((q,i)=>({q,nq:DQ[i+1],x:b(INVD[q]),y:b(REV[DQ[i+1]])}));
+  const cur={q:"2026Q2",nq:"2026Q3(시사)",x:b(INVD["2026Q2"]),y:b(EST_D)};
+  const P={l:52,r:20,t:16,b:36}, iw=w-P.l-P.r, ih=h-P.t-P.b;
+  const maxX=cur.x*1.1, maxY=cur.y*1.12;
+  const X=v=>P.l+iw*v/maxX, Y=v=>P.t+ih*(1-v/maxY);
+  ctx.clearRect(0,0,w,h);
+  ctx.font="10px "+getComputedStyle(document.body).getPropertyValue("--mono");
+  ctx.strokeStyle="#242d39"; ctx.fillStyle="#8a93a1";
+  for(let g=0;g<=4;g++){const yy=P.t+ih*g/4, xx=P.l+iw*g/4;
+    ctx.beginPath();ctx.moveTo(P.l,yy);ctx.lineTo(w-P.r,yy);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(xx,P.t);ctx.lineTo(xx,h-P.b);ctx.stroke();
+    ctx.textAlign="right";ctx.fillText(nf(maxY*(1-g/4)),P.l-6,yy+3);
+    ctx.textAlign="center";ctx.fillText(nf(maxX*g/4),xx,h-14);}
+  ctx.textAlign="center";ctx.fillText("재고자산(T기 말) 억원",P.l+iw/2,h-2);
+  ctx.save();ctx.translate(11,P.t+ih/2);ctx.rotate(-Math.PI/2);ctx.fillText("매출액(T+1기) 억원",0,0);ctx.restore();
+  ctx.strokeStyle="rgba(224,122,158,.6)"; ctx.setLineDash([5,4]); ctx.lineWidth=1.5;
+  const y0=b(ALPHA_D), y1=b(ALPHA_D+BETA_D*maxX*100);
+  ctx.beginPath();ctx.moveTo(X(0),Y(Math.max(0,y0)));ctx.lineTo(X(maxX),Y(y1));ctx.stroke();
+  ctx.setLineDash([]);
+  const pts=[];
+  pairs.forEach(pp=>{ctx.fillStyle="rgba(229,72,77,.85)";
+    ctx.beginPath();ctx.arc(X(pp.x),Y(pp.y),4.5,0,7);ctx.fill();pts.push({...pp,px:X(pp.x),py:Y(pp.y),proj:false});});
+  ctx.fillStyle="#e07a9e";ctx.beginPath();ctx.arc(X(cur.x),Y(cur.y),6.5,0,7);ctx.fill();
+  ctx.strokeStyle="#e07a9e";ctx.lineWidth=1;ctx.beginPath();ctx.arc(X(cur.x),Y(cur.y),10.5,0,7);ctx.stroke();
+  ctx.fillStyle="#e07a9e";ctx.textAlign="right";
+  ctx.fillText("2026Q2 재고 → Q3 시사 "+nf(cur.y)+"억",X(cur.x)-14,Y(cur.y)+3);
+  pts.push({...cur,px:X(cur.x),py:Y(cur.y),proj:true});
+  scDCv._pts=pts;
+}
+drawSCD(); addEventListener("resize",drawSCD);
+scDCv.addEventListener("mousemove",ev=>{
+  const r=scDCv.getBoundingClientRect(),mx=ev.clientX-r.left,my=ev.clientY-r.top;
+  const pp=(scDCv._pts||[]).find(pp=>Math.hypot(pp.px-mx,pp.py-my)<10);
+  if(!pp){scDTip.style.display="none";return}
+  scDTip.style.display="block";
+  scDTip.style.left=Math.min(pp.px+12,scDCv.clientWidth-190)+"px"; scDTip.style.top=(pp.py-40)+"px";
+  scDTip.innerHTML=`<b>${pp.q} → ${pp.nq}</b><br>재고 ${nf(pp.x)}억 → 매출 ${nf(pp.y)}억${pp.proj?"<br><span style='color:#e07a9e'>회귀 외삽(참고)</span>":""}`;
+});
+scDCv.addEventListener("mouseleave",()=>scDTip.style.display="none");
 </script>
