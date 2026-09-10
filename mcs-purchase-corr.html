@@ -180,7 +180,7 @@
     <p class="sdesc">관세청 시군구별 수출 통계(수출 = <b style="color:var(--fg)">제조장소 기준</b> 집계)에서 천안시 HS 853669 월별 수출을 분기 합산하고, <b style="color:var(--fg)">분기 평균 USD/KRW 환율로 원화 환산</b>해 매출과 단위를 통일했다(억원). 마이크로컨텍솔 번인소켓 공장이 천안(성거읍)에 있어 직접 프록시가 된다.</p>
     <div class="panel">
       <div class="cwrap"><canvas id="tsC" height="340"></canvas><div class="tip" id="tsCTip"></div></div>
-      <div class="legend"><span><i style="background:#4cc9b0"></i>천안 853669 수출 (억원 환산)</span><span><i style="background:var(--rev)"></i>전체 매출 (억원)</span><span><i style="background:#e0b34c"></i>수출 매출 (억원)</span><span><i style="background:#a78bfa"></i>세미콘(소켓) 부문 매출 (억원, 24.3Q~ 공시)</span><span><i style="background:rgba(76,201,176,.35)"></i>2026Q3 = 7월 단월만</span></div>
+      <div class="legend"><span><i style="background:#4cc9b0"></i>천안 853669 수출 (억원 환산)</span><span><i style="background:var(--rev)"></i>전체 매출 (억원)</span><span><i style="background:#e0b34c"></i>수출 매출 (억원)</span><span><i style="background:#a78bfa"></i>세미콘(소켓) 부문 매출 (억원, 24.3Q~ 공시)</span><span><i style="background:rgba(76,201,176,.35)"></i>2026Q3 = 7~8월 누적 (8월 잠정치)</span></div>
     </div>
     <div class="panel" style="margin-top:14px;overflow-x:auto">
       <table class="tbl">
@@ -192,8 +192,8 @@
       </table>
     </div>
     <div class="impl" style="border-left-color:#4cc9b0">
-      <b style="color:#a78bfa">세미콘(소켓) 부문 매출과는 r = 0.96 — 거의 1:1로 움직인다</b>. 부문정보가 공시된 2024Q3 이후 8개 분기에서 천안 통관 수출(원화)과 소켓 사업부 매출이 사실상 같은 곡선이다. 2026Q2에도 천안 수출 <b>98.6억(역대 최대, QoQ +52%)</b> ↔ 세미콘 부문 매출 <b>400억(QoQ +85%)</b>이 동반 폭증했다. 래깅 상관은 약해 선행지표는 아니지만, <b>월 단위로 먼저 공개</b>되는 게 가치다: <b>7월 단월 35.1억 = 분기 환산 105억 페이스로 2Q(98.6억)를 또 넘는 사상 최고</b> — 3Q26 소켓 매출 모멘텀이 통관 데이터로 실시간 확인되고 있다. 2Q26 천안 수출은 MCS 수출매출(146.5억)의 67% 커버.
-      <span class="warn">⚠ 원화 환산은 분기 평균 USD/KRW(2026Q2 1,501원, 2026Q3은 7월 평균 1,488원) 적용. HS 6단위(853669)라 기타 커넥터·천안 타사 물량 혼입 가능. 내수(삼성·하이닉스向)는 통관에 안 잡히므로 전체 매출 상관(0.72)이 수출매출(0.82)·세미콘(0.96)보다 낮은 것은 자연스럽다.</span>
+      <b style="color:#a78bfa">세미콘(소켓) 부문 매출과는 r = 0.96 — 거의 1:1로 움직인다</b>. 부문정보가 공시된 2024Q3 이후 8개 분기에서 천안 통관 수출(원화)과 소켓 사업부 매출이 사실상 같은 곡선이다. 2026Q2에도 천안 수출 <b>98.6억(역대 최대, QoQ +52%)</b> ↔ 세미콘 부문 매출 <b>400억(QoQ +85%)</b>이 동반 폭증했다. 래깅 상관은 약해 선행지표는 아니지만, <b>월 단위로 먼저 공개</b>되는 게 가치다: 7월 35.1억 + 8월 26.1억(잠정) = <b>3Q 누적 61.2억, 분기 환산 92억 페이스</b>. 역대 최대였던 2Q(98.6억) 대비 -7%로 소폭 둔화지만, 2Q를 제외한 역대 어느 분기(최고 78억)보다도 높은 <b>역대 2위권 페이스</b> — 3Q26 소켓 매출이 2Q 부근 수준을 유지 중임을 시사한다. 2Q26 천안 수출은 MCS 수출매출(146.5억)의 67% 커버.
+      <span class="warn">⚠ 원화 환산은 분기 평균 USD/KRW(2026Q2 1,501원, 7월 1,488원·8월 1,403원 월별 적용). 8월 수출($1.86M)은 잠정치로 확정 시 수정될 수 있음. HS 6단위(853669)라 기타 커넥터·천안 타사 물량 혼입 가능. 내수(삼성·하이닉스向)는 통관에 안 잡히므로 전체 매출 상관(0.72)이 수출매출(0.82)·세미콘(0.96)보다 낮은 것은 자연스럽다.</span>
     </div>
   </section>
 
@@ -499,7 +499,7 @@ scBCv.addEventListener("mousemove",ev=>{
 scBCv.addEventListener("mouseleave",()=>scBTip.style.display="none");
 
 /* ---------- 기준 C: 천안 853669 수출 ---------- */
-const CH={"2021Q1":46.1,"2021Q2":44.8,"2021Q3":65.1,"2021Q4":51.5,"2022Q1":57.3,"2022Q2":67.2,"2022Q3":50.6,"2022Q4":48.4,"2023Q1":35.2,"2023Q2":54.0,"2023Q3":47.4,"2023Q4":40.6,"2024Q1":69.8,"2024Q2":78.1,"2024Q3":62.7,"2024Q4":66.3,"2025Q1":63.3,"2025Q2":57.2,"2025Q3":66.6,"2025Q4":70.5,"2026Q1":64.8,"2026Q2":98.6,"2026Q3":35.1};   // 억원 (분기평균환율 환산)
+const CH={"2021Q1":46.1,"2021Q2":44.8,"2021Q3":65.1,"2021Q4":51.5,"2022Q1":57.3,"2022Q2":67.2,"2022Q3":50.6,"2022Q4":48.4,"2023Q1":35.2,"2023Q2":54.0,"2023Q3":47.4,"2023Q4":40.6,"2024Q1":69.8,"2024Q2":78.1,"2024Q3":62.7,"2024Q4":66.3,"2025Q1":63.3,"2025Q2":57.2,"2025Q3":66.6,"2025Q4":70.5,"2026Q1":64.8,"2026Q2":98.6,"2026Q3":61.2};   // 억원 (분기평균환율 환산, Q3=7~8월·8월 잠정)
 const SEMI={"2024Q3":14070,"2024Q4":16920,"2025Q1":19972,"2025Q2":16125,"2025Q3":19347,"2025Q4":22071,"2026Q1":21647,"2026Q2":40027};   // 백만원
 const EXPREV={"2022Q3":3211,"2022Q4":2700,"2023Q1":2747,"2023Q2":1831,"2023Q3":2091,"2023Q4":2616,"2024Q1":5805,"2024Q2":4015,"2024Q3":6399,"2024Q4":5362,"2025Q1":6743,"2025Q2":3717,"2025Q3":5430,"2025Q4":7034,"2026Q1":9593,"2026Q2":14651};
 const CQ=Object.keys(CH);
@@ -538,7 +538,7 @@ function drawTSC(){
   line(rv,"#e5484d"); line(ev,"#e0b34c"); line(sv,"#a78bfa");
   ctx.fillStyle="#4cc9b0";ctx.textAlign="center";ctx.font="bold 10px "+getComputedStyle(document.body).getPropertyValue("--mono");
   const i3=view.indexOf("2026Q3");
-  if(i3>=0) ctx.fillText("7월만",x(i3),Y(CH["2026Q3"])-6);
+  if(i3>=0) ctx.fillText("7~8월",x(i3),Y(CH["2026Q3"])-6);
   ctx.font="10px "+getComputedStyle(document.body).getPropertyValue("--mono");
   ctx.fillStyle="#8a93a1";
   const stp=Math.ceil(view.length/10);
@@ -554,7 +554,7 @@ tsCCv.addEventListener("mousemove",ev=>{
   const q=g.view[best];
   tsCTip.style.display="block";
   tsCTip.style.left=Math.min(g.x(best)+12,tsCCv.clientWidth-200)+"px"; tsCTip.style.top="16px";
-  tsCTip.innerHTML=`<b>${q}${q==="2026Q3"?" (7월 단월)":""}</b><br><span style="color:#4cc9b0">천안 수출 ${g.chV[best].toFixed(0)}억</span>`+
+  tsCTip.innerHTML=`<b>${q}${q==="2026Q3"?" (7~8월·8월 잠정)":""}</b><br><span style="color:#4cc9b0">천안 수출 ${g.chV[best].toFixed(0)}억</span>`+
     (g.rv[best]!=null?`<br><span style="color:var(--rev)">전체 매출 ${nf(g.rv[best])}억</span>`:"")+
     (g.ev[best]!=null?`<br><span style="color:#e0b34c">수출 매출 ${nf(g.ev[best])}억</span>`:"")+
     (g.sv[best]!=null?`<br><span style="color:#a78bfa">세미콘 매출 ${nf(g.sv[best])}억</span>`:"");
