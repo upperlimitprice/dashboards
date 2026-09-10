@@ -106,6 +106,7 @@ h2{font-size:.92rem;margin:0 0 10px;color:#6b7683}
 <div class='layout'>
 <div><h2>메인 <small style='font-weight:400'>(드래그로 순서 변경 · ✕로 보관함으로 이동)</small></h2><div id='main'></div></div>
 <div id='side'><h2>🗂 전체 위젯 보관함</h2><div id='sideList'></div>
+<button class='reset' id='pubBtn' style='border-color:#3d5a80;color:#3d5a80;font-weight:700'>📤 현재 배치를 공개 배치로 발행</button>
 <button class='reset' id='resetBtn'>쩜상 기본 배치로 초기화</button>
 <div class='hint'>＋ 추가 · ✕ 제거 · 드래그로 순서 변경 — 내 구성은 이 브라우저에만 저장됩니다. 초기화하면 쩜상리서치 기본 배치로 돌아갑니다.</div></div>
 </div>
@@ -206,7 +207,8 @@ function pubMain(){
   return (PUB&&Array.isArray(PUB.main))?PUB.main.filter(k=>REG.some(x=>x.k===k)):REG.filter(x=>x.on).map(x=>x.k);
 }
 function applyAdmin(){
-  if(ADMIN){document.body.classList.add('admin');return;}
+  if(ADMIN){document.body.classList.add('admin');pubBtn.style.display='';return;}
+  pubBtn.style.display='none';
   document.body.classList.remove('admin');
   if(localStorage.getItem('dashCustom')!=='1'){
     state={main:pubMain()};              // 미커스텀: 메인 계정 발행 배치 그대로
@@ -216,6 +218,21 @@ function applyAdmin(){
   }
   render();
 }
+const pubBtn=document.getElementById('pubBtn');
+pubBtn.style.display='none';   // 관리자에게만 노출
+pubBtn.onclick=async()=>{
+  const url=await ep();
+  if(!url){toast('갱신 서버가 꺼져 있습니다 — 맥미니 refresh_server 확인');return;}
+  pubBtn.textContent='발행 중...';pubBtn.disabled=true;
+  try{
+    const r=await fetch(url+'/publish-layout',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({main:state.main})}).then(x=>x.json());
+    if(r.status==='published'){PUB={main:state.main.slice()};
+      toast(`공개 배치 발행 완료 (${r.n}개) — 외부 접속자에게 이 구성이 보입니다`);}
+    else toast('발행 실패: '+(r.error||'알 수 없음'));
+  }catch(e){toast('발행 실패: 서버 연결 불가');}
+  pubBtn.textContent='📤 현재 배치를 공개 배치로 발행';pubBtn.disabled=false;
+};
 document.getElementById('resetBtn').onclick=()=>{
   localStorage.removeItem(KEY);localStorage.removeItem('dashCustom');
   state={main:pubMain()};render();toast('쩜상리서치 기본 배치로 초기화됐습니다');
@@ -227,7 +244,7 @@ fetch('layout.json?v='+Date.now()).then(r=>r.ok?r.json():null).then(j=>{PUB=j;
   applyAdmin();}).catch(()=>applyAdmin());
 if(!ADMIN){
   fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(d=>{
-    if(ADMIN_IPS.includes(d.ip)){ADMIN=true;localStorage.setItem('dashAdmin','1');
+    if(ADMIN_IPS.includes(d.ip)){ADMIN=true;localStorage.setItem('dashAdmin','1');pubBtn.style.display='';
       state=JSON.parse(localStorage.getItem(KEY)||'null')||{main:REG.filter(x=>x.on).map(x=>x.k)};
       state.main=(state.main||[]).filter(k=>REG.some(x=>x.k===k));
       document.body.classList.add('admin');render();}

@@ -62,6 +62,22 @@
   .chip.l{color:var(--dn);background:rgba(76,134,232,.12)}
   .pnl{font-family:var(--mono);font-weight:700}
 
+  /* logic box */
+  .logic{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px 24px;margin-top:22px}
+  .logic h3{font-size:1rem;font-weight:700;margin-bottom:4px}
+  .logic .lh{font-size:.78rem;color:var(--mut);font-family:var(--mono);margin-bottom:18px}
+  .steps{display:grid;gap:12px}
+  .step{display:grid;grid-template-columns:34px 1fr;gap:14px;align-items:start}
+  .snum{font-family:var(--mono);font-size:.82rem;font-weight:700;color:var(--gold);
+    width:34px;height:34px;border-radius:9px;background:rgba(212,162,78,.1);
+    border:1px solid rgba(212,162,78,.28);display:grid;place-items:center}
+  .stxt b{font-size:.92rem;font-weight:650}
+  .stxt .cond{font-family:var(--mono);font-size:.74rem;color:var(--gold);margin-left:6px}
+  .stxt p{font-size:.82rem;color:var(--mut);margin-top:2px;line-height:1.5}
+  .logic .concl{margin-top:18px;padding-top:16px;border-top:1px solid var(--line);
+    font-size:.86rem;color:#d3dae2;line-height:1.6}
+  .logic .concl b{color:var(--gold)}
+
   /* backtest variant bars */
   .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
   @media(max-width:640px){.grid2,.verdict{grid-template-columns:1fr}.kpis{grid-template-columns:1fr}}
@@ -117,9 +133,38 @@
     </div>
   </div>
 
+  <!-- ===== 검색식 로직 ===== -->
+  <section>
+    <div class="shead"><span class="n">01</span><h2>조건검색식 로직</h2></div>
+    <p class="sdesc">"시가에 갭을 띄워 가격을 위로 보낸 상태에서 거래량을 폭발시킨 종목"을 장중에 포착해, 종가에 진입한다. 세 조건을 <b style="color:var(--fg)">모두</b> 충족해야 신호.</p>
+
+    <div class="logic">
+      <h3>매수 신호 — 3개 조건 AND</h3>
+      <div class="lh">// 키움증권 조건검색 기준</div>
+      <div class="steps">
+        <div class="step">
+          <div class="snum">01</div>
+          <div class="stxt"><b>시가 갭 상승</b><span class="cond">O ≥ 전일종가 × 1.03</span>
+            <p>당일 시가가 전일 종가 대비 <b style="color:var(--fg)">3% 이상</b> 위에서 출발 — 세력이 가격을 위로 보냈다는 1차 신호.</p></div>
+        </div>
+        <div class="step">
+          <div class="snum">02</div>
+          <div class="stxt"><b>20봉 내 신고가</b><span class="cond">H ≥ max(직전 20봉 고가)</span>
+            <p>당일 고가가 최근 20거래일 중 최고 — 단기 저항을 뚫고 신고가 영역에 진입.</p></div>
+        </div>
+        <div class="step">
+          <div class="snum">03</div>
+          <div class="stxt"><b>거래량 폭발</b><span class="cond">V ≥ max(20봉) &amp; V ≥ 전일 × 5</span>
+            <p>거래량이 20봉 중 최대이면서 <b style="color:var(--fg)">전일 대비 500% 이상</b> — 수급이 실제로 몰렸는지 확인.</p></div>
+        </div>
+      </div>
+      <div class="concl">위 조건 충족 후, 종가까지 낮은 분봉에서 이평선이 깨지지 않고 <b>양(+) 수급</b>이 유지되면 종가 매수. 원작자 주의사항: 단순 종목 포착이 아니라 <b>일정·재료·시황</b>을 함께 봐야 함 — 이 재량 판단이 백테스트에서 확인된 알파의 본체다.</div>
+    </div>
+  </section>
+
   <!-- ===== 페이퍼 트레이딩 ===== -->
   <section>
-    <div class="shead"><span class="n">01</span><h2>실계좌 모의 운용</h2></div>
+    <div class="shead"><span class="n">02</span><h2>실계좌 모의 운용</h2></div>
     <p class="sdesc">전략 A(일봉 종가베팅 + 거래대금 300억 필터)를 종목당 100만원 · 최대 3종목으로 실시간 운용. 매매 없이 신호·가상체결만 기록.</p>
 
     <div class="kpis">
@@ -146,7 +191,7 @@
 
   <!-- ===== 백테스트 A ===== -->
   <section>
-    <div class="shead"><span class="n">02</span><h2>일봉 종가베팅 백테스트</h2></div>
+    <div class="shead"><span class="n">03</span><h2>일봉 종가베팅 백테스트</h2></div>
     <p class="sdesc">필터를 더할수록 성과가 단조 개선된다 — 원작자의 재량 판단(재료·시황·수급)이 알파의 본체라는 방증. 아래는 D+1 시가 매도 기준 평균 수익률.</p>
 
     <div class="grid2">
@@ -200,7 +245,7 @@
 
   <!-- ===== 백테스트 B ===== -->
   <section>
-    <div class="shead"><span class="n">03</span><h2>3분봉 거래대금 폭발 — 기각</h2></div>
+    <div class="shead"><span class="n">04</span><h2>3분봉 거래대금 폭발 — 기각</h2></div>
     <p class="sdesc">같은 +6% / −4% 손익라인. 폭발봉 종가 추격 진입, 6주간 117신호. 일봉 종가베팅과 정반대의 결과가 왜 나오는지가 핵심 교훈.</p>
 
     <div class="grid2">
@@ -230,7 +275,7 @@
 
   <!-- params -->
   <section>
-    <div class="shead"><span class="n">04</span><h2>운용 파라미터</h2></div>
+    <div class="shead"><span class="n">05</span><h2>운용 파라미터</h2></div>
     <div class="params">
       <span class="param">종목당 <b>100만원</b></span>
       <span class="param">최대 <b>3종목</b></span>
