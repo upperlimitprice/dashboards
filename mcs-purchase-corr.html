@@ -18,8 +18,22 @@
   .meta{display:flex;gap:16px;flex-wrap:wrap;margin-top:16px;font-family:var(--mono);font-size:.7rem;color:var(--mut)}
   .meta b{color:var(--fg);font-weight:600}
 
-  .hero{background:linear-gradient(180deg,#232b38,#1a2029);border:1px solid #3a4656;border-radius:16px;
-    padding:26px 28px;margin-top:30px;position:relative;overflow:hidden}
+  .hero{background:linear-gradient(180deg,#212936,#1a2029);border:1px solid #343f4e;border-radius:16px;
+    padding:26px 30px 24px;margin-top:30px;position:relative;overflow:hidden}
+  .hero .hh{font-size:1.32rem;font-weight:700;letter-spacing:-.015em;margin-top:8px}
+  .hero .hh small{font-size:.82rem;font-weight:500;color:#8a93a1;margin-left:10px;letter-spacing:0}
+  .htab{width:100%;border-collapse:collapse;font-size:.8rem;margin-top:16px}
+  .htab th{font-family:var(--mono);font-size:.62rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
+    color:#77828f;text-align:right;padding:0 10px 8px;border-bottom:1px solid #303b4a}
+  .htab th:first-child{text-align:left}
+  .htab td{padding:9px 10px;border-bottom:1px solid #242d39;text-align:right;font-family:var(--mono);
+    font-size:.8rem;font-weight:500;color:#d6dce3}
+  .htab td:first-child{text-align:left;font-family:var(--kr);font-weight:600;font-size:.8rem}
+  .htab tr:last-child td{border-bottom:none}
+  .htab .bkey{display:inline-block;width:16px;height:16px;border-radius:5px;font-family:var(--mono);
+    font-size:.66rem;font-weight:700;text-align:center;line-height:16px;margin-right:7px;vertical-align:1px}
+  .htab .est{font-weight:700}
+  .htab .mut{color:#77828f;font-weight:400;font-size:.72rem}
   .hero::after{content:"";position:absolute;right:-40px;top:-40px;width:180px;height:180px;border-radius:50%;
     background:radial-gradient(circle,rgba(208,138,74,.14),transparent 70%)}
   .hero .ht{font-family:var(--mono);font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;color:var(--cu)}
@@ -96,34 +110,39 @@
   </div>
 
   <div class="hero">
-    <div class="ht">Core Insight · 3Q26 매출 추정 — 4개 지표 교차 검증 요약</div>
-    <div class="big3" style="color:var(--cu)">3Q26E 420 ~ 630<small>억</small> <small style="color:#8a93a1">(YoY +65~148% · 2Q26 실적 419억)</small></div>
-    <div style="overflow-x:auto;margin-top:14px">
-      <table class="tbl" style="font-size:.85rem">
-        <thead><tr><th style="text-align:left">기준</th><th>2Q26 값</th><th>래깅 r</th><th>동행 r</th><th>3Q26 추정</th><th>방식</th></tr></thead>
+    <div class="ht">Core Insight · 3Q26 매출 추정 — 4개 지표 교차 검증</div>
+    <div class="hh">3Q26E 420 ~ 630억<small>2Q26 실적 419억 · YoY +65~148%</small></div>
+    <div style="overflow-x:auto">
+      <table class="htab">
+        <thead><tr><th>기준</th><th>2Q26</th><th>래깅 r</th><th>동행 r</th><th>3Q26 추정</th></tr></thead>
         <tbody>
-          <tr><td><b style="color:var(--cu)">A</b> 원재료 현황표 매입</td><td>275억 <span style="color:var(--rev)">(역대최대)</span></td><td><b>0.82</b></td><td>0.96</td><td style="color:var(--cu);font-weight:700">≈610억 (520~630)</td><td style="color:var(--mut)">회귀·배율</td></tr>
-          <tr><td><b style="color:#e0b34c">B</b> 성격별 분류 매입(주석)</td><td>149억 <span style="color:var(--rev)">(역대최대)</span></td><td><b>0.84</b></td><td>0.95</td><td style="color:#e0b34c;font-weight:700">≈420억 (360~430)</td><td style="color:var(--mut)">회귀·배율</td></tr>
-          <tr><td><b style="color:#4cc9b0">C</b> 천안 소켓 수출(통관·원화)</td><td>98.6억 <span style="color:var(--rev)">(역대최대)</span></td><td>0.33</td><td><b>0.82</b> <span style="color:var(--mut)">(세미콘 0.96)</span></td><td style="color:#4cc9b0;font-weight:700">7~8월 분기페이스 92억 = 2Q -7%</td><td style="color:var(--mut)">월별 동행 추적</td></tr>
-          <tr><td><b style="color:#e07a9e">D</b> 재고자산(분기말 잔액)</td><td>178.9억 <span style="color:var(--rev)">(역대최대)</span></td><td><b>0.85</b></td><td>0.95</td><td style="color:#e07a9e;font-weight:700">≈548억 (422~548)</td><td style="color:var(--mut)">회귀·배율</td></tr>
+          <tr><td><span class="bkey" style="color:var(--cu);background:rgba(208,138,74,.14)">A</span>원재료 현황표 매입</td><td>275억</td><td>0.82</td><td>0.96</td><td class="est" style="color:var(--cu)">≈610억 <span class="mut">520~630</span></td></tr>
+          <tr><td><span class="bkey" style="color:#e0b34c;background:rgba(224,179,76,.13)">B</span>성격별 분류 매입 · 주석</td><td>149억</td><td>0.84</td><td>0.95</td><td class="est" style="color:#e0b34c">≈420억 <span class="mut">360~430</span></td></tr>
+          <tr><td><span class="bkey" style="color:#4cc9b0;background:rgba(76,201,176,.12)">C</span>천안 소켓 수출 · 통관</td><td>98.6억</td><td>0.33</td><td>0.82</td><td class="est" style="color:#4cc9b0">페이스 92억 <span class="mut">7~8월 · 2Q −7%</span></td></tr>
+          <tr><td><span class="bkey" style="color:#e07a9e;background:rgba(224,122,158,.13)">D</span>재고자산 · 분기말</td><td>178.9억</td><td>0.85</td><td>0.95</td><td class="est" style="color:#e07a9e">≈548억 <span class="mut">422~548</span></td></tr>
         </tbody>
       </table>
     </div>
-    <p class="hs" style="margin-top:14px">네 지표가 <b style="color:var(--fg)">전부 2Q26에 역대 최대</b>를 찍었고, 래깅 관계(A·B·D)는 3Q26 매출 <b style="color:var(--fg)">420~630억</b>을, 동행 지표(C)는 3Q 들어서도 <b style="color:var(--fg)">2Q 폭증 수준이 유지</b>되고 있음을 가리킨다. 공통 결론: <b style="color:var(--fg)">3Q26 매출 최소 역대최고(419억) 수준, 상단 500~600억대</b>. 추정 폭이 갈리는 이유는 계정 범위(내부거래 포함 여부)와 배율 정상화 가정 차이 — 상세는 각 기준 섹션 참고.</p>
+    <p class="hs" style="margin-top:14px;font-size:.82rem;color:#a7b0bc">네 지표 모두 2Q26에 역대 최대. 래깅 지표(A·B·D)는 3Q26 매출 420~630억을, 동행 지표(C)는 3Q 들어서도 2Q 수준 유지를 가리킨다 — 공통 결론은 <b style="color:#e9edf2">최소 역대최고(419억) 수준, 상단 500~600억대</b>. 추정 폭 차이는 계정 범위와 배율 가정에서 나온다 (각 섹션 참고).</p>
     <div class="ctx">
-      <div><div class="cv">254억</div><div class="cl">3Q25 실적</div></div>
-      <div><div class="cv">419억</div><div class="cl">2Q26 실적 (역대최고)</div></div>
-      <div><div class="cv" style="color:#e0b34c">하단 420억</div><div class="cl">B 보수 추정 (YoY +65%)</div></div>
-      <div><div class="cv" style="color:var(--cu)">상단 610~630억</div><div class="cl">A·D 추정 (YoY +140%대)</div></div>
+      <div><div class="cv" style="font-size:.95rem">254억</div><div class="cl">3Q25 실적</div></div>
+      <div><div class="cv" style="font-size:.95rem">419억</div><div class="cl">2Q26 실적 · 역대최고</div></div>
+      <div><div class="cv" style="font-size:.95rem;color:#e0b34c">420억</div><div class="cl">보수 (B) · YoY +65%</div></div>
+      <div><div class="cv" style="font-size:.95rem;color:var(--cu)">610~630억</div><div class="cl">상단 (A·D) · YoY +140%대</div></div>
     </div>
   </div>
 
-  <div class="kpis">
-    <div class="kpi"><div class="big" style="color:var(--cu)">0.82</div><div class="lbl">래깅 상관 r<br>매입(t) → 매출(t+1)</div></div>
-    <div class="kpi"><div class="big">0.96</div><div class="lbl">동행 상관 r<br>매입(t) ↔ 매출(t)</div></div>
-    <div class="kpi"><div class="big tnum" style="color:var(--rev)">275<span style="font-size:.95rem">억</span></div><div class="lbl">2026Q2 매입액<br>전분기 대비 <b style="color:var(--rev)">2.1배</b> 역대 최대</div></div>
-    <div class="kpi"><div class="big tnum">~66<span style="font-size:.95rem">%</span></div><div class="lbl">매입액/매출액 비율<br>(2026Q2, 통상 40~50%)</div></div>
-  </div>
+  
+  <section>
+    <div class="shead"><h2>분기 데이터 — 기준 A~D 원데이터</h2></div>
+    <p class="sdesc">단위 억원. A 현황표 매입 · B 주석 매입 · C 천안 수출(원화 환산) · D 분기말 재고자산. 2026Q3의 C는 7~8월 누적(8월 잠정).</p>
+    <div class="panel" style="overflow-x:auto">
+      <table class="tbl">
+        <thead><tr><th>분기</th><th>매출액</th><th>수출매출</th><th>세미콘 부문</th><th style="color:var(--cu)">A 매입</th><th style="color:#e0b34c">B 매입</th><th style="color:#4cc9b0">C 천안수출</th><th style="color:#e07a9e">D 재고</th></tr></thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+  </section>
 
   <section>
     <div class="shead"><h2>기준 A — 현황표 매입을 한 칸 밀면 매출 곡선이 된다</h2></div>
@@ -211,15 +230,6 @@
     </div>
   </section>
 
-  <section>
-    <div class="shead"><h2>분기 데이터</h2></div>
-    <div class="panel" style="overflow-x:auto">
-      <table class="tbl">
-        <thead><tr><th>분기</th><th>현황표 매입(억)</th><th>주석 매입(억)</th><th>매입 QoQ</th><th>매출액(억)</th><th>다음분기 매출(억)</th></tr></thead>
-        <tbody id="tbody"></tbody>
-      </table>
-    </div>
-  </section>
 
   <footer>
     매입액 = 각 정기보고서 '주요 원재료 등의 현황' 매입액 합계(누적 공시를 분기 단독으로 환산, 연결·백만원 공시).
@@ -231,7 +241,7 @@
 
 <script>
 const PUR={"2022Q3":7038,"2022Q4":6481,"2023Q1":7650,"2023Q2":8589,"2023Q3":8331,"2023Q4":4733,"2024Q1":6624,"2024Q2":6142,"2024Q3":9403,"2024Q4":11669,"2025Q1":11425,"2025Q2":11003,"2025Q3":14361,"2025Q4":12192,"2026Q1":12835,"2026Q2":27549};
-const REV={"2022Q3":16949,"2022Q4":14065,"2023Q1":14299,"2023Q2":16112,"2023Q3":19857,"2023Q4":14550,"2024Q1":14308,"2024Q2":15148,"2024Q3":18456,"2024Q4":21753,"2025Q1":25320,"2025Q2":22367,"2025Q3":25392,"2025Q4":27235,"2026Q1":27573,"2026Q2":41897};
+const REV={"2022Q1":14650,"2022Q2":15391,"2022Q3":16949,"2022Q4":14065,"2023Q1":14299,"2023Q2":16112,"2023Q3":19857,"2023Q4":14550,"2024Q1":14308,"2024Q2":15148,"2024Q3":18456,"2024Q4":21753,"2025Q1":25320,"2025Q2":22367,"2025Q3":25392,"2025Q4":27235,"2026Q1":27573,"2026Q2":41897};
 const ALPHA=1149, BETA=2.174;
 const EST3Q=ALPHA+BETA*27549;   // 3Q26 추정 매출(백만원) ≈ 61,051
 const NOTE={"2022Q3":5144,"2022Q4":3412,"2023Q1":5329,"2023Q2":5821,"2023Q3":5849,"2023Q4":3660,"2024Q1":5617,"2024Q2":4843,"2024Q3":7820,"2024Q4":8962,"2025Q1":9123,"2025Q2":8866,"2025Q3":11314,"2025Q4":9926,"2026Q1":10211,"2026Q2":14931};
@@ -239,22 +249,6 @@ const Qs=Object.keys(PUR);           // 2022Q3..2026Q2
 const AX=[...Qs.slice(1),"2026Q3"];  // 래깅 표시축: t+1 위치
 const b=v=>(v/100);                  // 백만원→억
 const nf=v=>v.toLocaleString("ko-KR",{maximumFractionDigits:0});
-
-/* ---------- 표 ---------- */
-{
-  const tb=document.getElementById("tbody");
-  Qs.forEach((q,i)=>{
-    const nq=AX[i], prev=i>0?PUR[Qs[i-1]]:null;
-    const qoq=prev?((PUR[q]/prev-1)*100):null;
-    const tr=document.createElement("tr");
-    if(q==="2026Q2") tr.className="hl";
-    tr.innerHTML=`<td>${q}</td><td>${nf(b(PUR[q]))}</td><td>${NOTE[q]?nf(b(NOTE[q])):"–"}</td>`+
-      `<td style="color:${qoq==null?'inherit':qoq>=0?'var(--rev)':'var(--dn)'}">${qoq==null?"–":(qoq>=0?"+":"")+qoq.toFixed(0)+"%"}</td>`+
-      `<td>${nf(b(REV[q]))}</td>`+
-      `<td>${REV[nq]?nf(b(REV[nq])):'<span style="color:var(--cu)">회귀 시사 '+nf(b(ALPHA+BETA*PUR[q]))+'</span>'}</td>`;
-    tb.appendChild(tr);
-  });
-}
 
 /* ---------- 공통 캔버스 셋업 ---------- */
 function setup(cv){
@@ -681,4 +675,31 @@ scDCv.addEventListener("mousemove",ev=>{
   scDTip.innerHTML=`<b>${pp.q} → ${pp.nq}</b><br>재고 ${nf(pp.x)}억 → 매출 ${nf(pp.y)}억${pp.proj?"<br><span style='color:#e07a9e'>회귀 외삽(참고)</span>":""}`;
 });
 scDCv.addEventListener("mouseleave",()=>scDTip.style.display="none");
+
+/* ---------- 종합 분기 데이터 표 ---------- */
+{
+  const tb=document.getElementById("tbody");
+  const QALL=[];
+  for(let y=2022;y<=2026;y++) for(let n=1;n<=4;n++){
+    const q=`${y}Q${n}`;
+    if(y===2026&&n>3) break;
+    QALL.push(q);
+  }
+  const cell=(v,dec=0)=>v==null?'<span style="color:#59636f">–</span>':v.toLocaleString("ko-KR",{maximumFractionDigits:dec,minimumFractionDigits:0});
+  QALL.forEach(q=>{
+    const tr=document.createElement("tr");
+    if(q==="2026Q2") tr.className="hl";
+    const rev=REV[q]!=null?b(REV[q]):null;
+    const ex=EXPREV[q]!=null?b(EXPREV[q]):null;
+    const sm=SEMI[q]!=null?b(SEMI[q]):null;
+    const pa=PUR[q]!=null?b(PUR[q]):null;
+    const pb=NOTE[q]!=null?b(NOTE[q]):null;
+    const ch=CH[q]!=null?CH[q]:null;
+    const iv=INVD[q]!=null?b(INVD[q]):null;
+    const tag=q==="2026Q3"?' <span style="color:#77828f;font-size:.68rem">7~8월</span>':'';
+    tr.innerHTML=`<td>${q}${tag}</td><td>${cell(rev)}</td><td>${cell(ex)}</td><td>${cell(sm)}</td>`+
+      `<td>${cell(pa)}</td><td>${cell(pb)}</td><td>${cell(ch,1)}</td><td>${cell(iv)}</td>`;
+    tb.appendChild(tr);
+  });
+}
 </script>
