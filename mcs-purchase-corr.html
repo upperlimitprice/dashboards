@@ -176,6 +176,28 @@
   </section>
 
   <section>
+    <div class="shead"><h2>기준 C — 천안시 커넥터·소켓(HS 853669) 수출 vs 매출</h2></div>
+    <p class="sdesc">관세청 시군구별 수출 통계(수출 = <b style="color:var(--fg)">제조장소 기준</b> 집계)에서 천안시 HS 853669 월별 수출을 분기 합산했다. 마이크로컨텍솔 번인소켓 공장이 천안(성거읍)에 있어 직접 프록시가 된다. 청록 막대 = 천안 수출(천USD, 좌축), 빨간 선 = 전체 매출, 노란 선 = 수출 매출(억원, 우축).</p>
+    <div class="panel">
+      <div class="cwrap"><canvas id="tsC" height="340"></canvas><div class="tip" id="tsCTip"></div></div>
+      <div class="legend"><span><i style="background:#4cc9b0"></i>천안 853669 수출 (천USD, 좌축)</span><span><i style="background:var(--rev)"></i>전체 매출 (억원, 우축)</span><span><i style="background:#e0b34c"></i>수출 매출 (억원, 우축)</span><span><i style="background:rgba(76,201,176,.35)"></i>2026Q3 = 7월 단월만 반영</span></div>
+    </div>
+    <div class="panel" style="margin-top:14px;overflow-x:auto">
+      <table class="tbl">
+        <thead><tr><th>상관 (2022Q3~2026Q2)</th><th>전체 매출</th><th>수출 매출</th></tr></thead>
+        <tbody>
+          <tr><td>동행 (t ↔ t)</td><td>0.62</td><td style="color:#4cc9b0;font-weight:700">0.74</td></tr>
+          <tr><td>1분기 래깅 (t → t+1)</td><td>0.29</td><td>0.33</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="impl" style="border-left-color:#4cc9b0">
+      <b style="color:#4cc9b0">통관 수출은 '동행' 지표다</b> — 래깅 상관(0.3 내외)은 약하고 동행 상관이 뚜렷하다(수출매출과 0.74). 수출 신고와 매출 인식이 같은 분기에 일어나기 때문. 대신 <b>월 단위로 먼저 공개</b>되는 게 가치다: 2026Q2 천안 수출 $6.56M로 역대 최대였고, <b>7월 단월 $2.36M(연환산 분기 $7.1M 페이스)도 사상 최고 수준</b> — 3Q26 수출 모멘텀이 이미 데이터로 확인되고 있다. 2Q26 천안 수출($6.56M ≈ 91억원)은 MCS 수출매출(146.5억)의 약 62%를 커버한다.
+      <span class="warn">⚠ HS 6단위(853669)라 테스트소켓 외 기타 커넥터 포함, 천안 소재 타사 물량 혼입 가능. 금액은 USD 기준이라 환율 효과 미조정. 내수(삼성·하이닉스向 국내 납품)는 통관에 안 잡히므로 전체 매출과의 상관(0.62)이 수출매출(0.74)보다 낮은 것은 자연스럽다.</span>
+    </div>
+  </section>
+
+  <section>
     <div class="shead"><h2>분기 데이터</h2></div>
     <div class="panel" style="overflow-x:auto">
       <table class="tbl">
@@ -188,7 +210,7 @@
   <footer>
     매입액 = 각 정기보고서 '주요 원재료 등의 현황' 매입액 합계(누적 공시를 분기 단독으로 환산, 연결·백만원 공시).
     매출액 = DART 연결 손익계산서 분기 단독. 2022Q2 이전은 분기 매입액 산출 불가로 제외.
-    상관계수는 Pearson r. 회귀·예측치는 참고용 통계이며 실적 전망이 아님.
+    천안 수출 = 관세청 수출입무역통계 시군구별 품목별(HS 853669, 천안시, 수출은 제조장소 기준, 천USD). 수출 매출 = 연결 주석 지역별 매출(누적→분기 환산). 상관계수는 Pearson r. 회귀·예측치는 참고용 통계이며 실적 전망이 아님.
     <div class="disc">Generated 2026-09-10 · 쩜상리서치</div>
   </footer>
 </div>
@@ -475,4 +497,66 @@ scBCv.addEventListener("mousemove",ev=>{
   scBTip.innerHTML=`<b>${pp.q} → ${pp.nq}</b><br>주석매입 ${nf(pp.x)}억 → 매출 ${nf(pp.y)}억${pp.proj?"<br><span style='color:#e0b34c'>회귀 외삽(참고)</span>":""}`;
 });
 scBCv.addEventListener("mouseleave",()=>scBTip.style.display="none");
+
+/* ---------- 기준 C: 천안 853669 수출 ---------- */
+const CH={"2021Q1":4140,"2021Q2":4000,"2021Q3":5610,"2021Q4":4351,"2022Q1":4751,"2022Q2":5330,"2022Q3":3775,"2022Q4":3567,"2023Q1":2763,"2023Q2":4116,"2023Q3":3612,"2023Q4":3084,"2024Q1":5258,"2024Q2":5708,"2024Q3":4637,"2024Q4":4748,"2025Q1":4371,"2025Q2":4096,"2025Q3":4803,"2025Q4":4869,"2026Q1":4423,"2026Q2":6564,"2026Q3":2360};
+const EXPREV={"2022Q3":3211,"2022Q4":2700,"2023Q1":2747,"2023Q2":1831,"2023Q3":2091,"2023Q4":2616,"2024Q1":5805,"2024Q2":4015,"2024Q3":6399,"2024Q4":5362,"2025Q1":6743,"2025Q2":3717,"2025Q3":5430,"2025Q4":7034,"2026Q1":9593,"2026Q2":14651};
+const CQ=Object.keys(CH);
+const tsCCv=document.getElementById("tsC"), tsCTip=document.getElementById("tsCTip");
+function drawTSC(){
+  const {ctx,w,h}=setup(tsCCv);
+  const view=CQ;
+  const P={l:50,r:50,t:14,b:30}, iw=w-P.l-P.r, ih=h-P.t-P.b;
+  const chV=view.map(q=>CH[q]);
+  const rv=view.map(q=>REV[q]!=null?b(REV[q]):null);
+  const ev=view.map(q=>EXPREV[q]!=null?b(EXPREV[q]):null);
+  const maxC=Math.max(...chV)*1.15;
+  const maxR=Math.max(...rv.filter(v=>v!=null))*1.15;
+  const x=i=>P.l+iw*(i+.5)/view.length;
+  const yC=v=>P.t+ih*(1-v/maxC), yR=v=>P.t+ih*(1-v/maxR);
+  ctx.clearRect(0,0,w,h);
+  ctx.font="10px "+getComputedStyle(document.body).getPropertyValue("--mono");
+  ctx.strokeStyle="#242d39"; ctx.fillStyle="#8a93a1"; ctx.textAlign="right";
+  for(let g=0;g<=4;g++){const yy=P.t+ih*g/4;
+    ctx.beginPath();ctx.moveTo(P.l,yy);ctx.lineTo(w-P.r,yy);ctx.stroke();
+    ctx.fillText(nf(maxC*(1-g/4)),P.l-6,yy+3);
+    ctx.textAlign="left"; ctx.fillText(nf(maxR*(1-g/4)),w-P.r+6,yy+3); ctx.textAlign="right";}
+  const bw=Math.min(24,iw/view.length*.55);
+  view.forEach((q,i)=>{
+    ctx.fillStyle=q==="2026Q3"?"rgba(76,201,176,.35)":"rgba(76,201,176,.85)";
+    ctx.fillRect(x(i)-bw/2,yC(chV[i]),bw,ih+P.t-yC(chV[i]));
+  });
+  function line(vals,color){
+    ctx.strokeStyle=color; ctx.lineWidth=2; ctx.beginPath();
+    let st=false;
+    view.forEach((q,i)=>{if(vals[i]==null)return;
+      st?ctx.lineTo(x(i),yR(vals[i])):ctx.moveTo(x(i),yR(vals[i])); st=true;});
+    ctx.stroke();
+    view.forEach((q,i)=>{if(vals[i]==null)return;
+      ctx.fillStyle=color;ctx.beginPath();ctx.arc(x(i),yR(vals[i]),2.6,0,7);ctx.fill();});
+  }
+  line(rv,"#e5484d"); line(ev,"#e0b34c");
+  ctx.fillStyle="#4cc9b0";ctx.textAlign="center";ctx.font="bold 10px "+getComputedStyle(document.body).getPropertyValue("--mono");
+  const i3=view.indexOf("2026Q3");
+  if(i3>=0) ctx.fillText("7월만",x(i3),yC(CH["2026Q3"])-6);
+  ctx.font="10px "+getComputedStyle(document.body).getPropertyValue("--mono");
+  ctx.fillStyle="#8a93a1";
+  const stp=Math.ceil(view.length/10);
+  view.forEach((q,i)=>{if(i%stp===0||q==="2026Q3")ctx.fillText(q.replace("20",""),x(i),h-10);});
+  tsCCv._geo={view,x,chV,rv,ev};
+}
+drawTSC(); addEventListener("resize",drawTSC);
+tsCCv.addEventListener("mousemove",ev=>{
+  const g=tsCCv._geo; if(!g)return;
+  const r=tsCCv.getBoundingClientRect(), mx=ev.clientX-r.left;
+  let best=0,bd=1e9;
+  g.view.forEach((q,i)=>{const d=Math.abs(g.x(i)-mx); if(d<bd){bd=d;best=i}});
+  const q=g.view[best];
+  tsCTip.style.display="block";
+  tsCTip.style.left=Math.min(g.x(best)+12,tsCCv.clientWidth-200)+"px"; tsCTip.style.top="16px";
+  tsCTip.innerHTML=`<b>${q}${q==="2026Q3"?" (7월 단월)":""}</b><br><span style="color:#4cc9b0">천안 수출 $${nf(g.chV[best])}K</span>`+
+    (g.rv[best]!=null?`<br><span style="color:var(--rev)">전체 매출 ${nf(g.rv[best])}억</span>`:"")+
+    (g.ev[best]!=null?`<br><span style="color:#e0b34c">수출 매출 ${nf(g.ev[best])}억</span>`:"");
+});
+tsCCv.addEventListener("mouseleave",()=>tsCTip.style.display="none");
 </script>
