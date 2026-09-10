@@ -150,7 +150,14 @@
 
   <section>
     <div class="shead"><h2>기준 B — 비용의 성격별 분류 (연결 주석 27)</h2></div>
-    <p class="sdesc">재무제표 주석의 '원재료및상품매입액'은 분기(3개월) 컬럼이 직접 공시된다 (Q4는 연간−9M 차감). 표본 17쌍으로 더 길고, 래깅 상관도 <b style="color:var(--fg)">r = 0.84</b>로 현황표 기준(0.82)보다 오히려 높다.</p>
+    <p class="sdesc">재무제표 주석의 '원재료및상품매입액'은 분기(3개월) 컬럼이 직접 공시된다 (Q4는 연간−9M 차감). 표본 17쌍으로 더 길고, 래깅 상관도 <b style="color:var(--fg)">r = 0.84</b>로 현황표 기준(0.82)보다 오히려 높다. 아래 차트 구조는 기준 A와 동일 — 각 위치에서 노란 막대 = T기 주석 매입, 빨간 선 = T+1기 매출, 3Q26은 점선 추정.</p>
+    <div class="panel">
+      <div class="cwrap"><canvas id="tsB" height="340"></canvas><div class="tip" id="tsBTip"></div></div>
+      <div class="legend"><span><i style="background:#e0b34c"></i>주석 매입액 (T기 → T+1 위치, 좌축)</span><span><i style="background:var(--rev)"></i>매출액 (T+1기, 우축)</span><span><i style="background:repeating-linear-gradient(90deg,var(--rev) 0 4px,transparent 4px 8px)"></i>3Q26 추정 매출 ≈403억 (점선·회귀)</span></div>
+    </div>
+    <div class="panel" style="margin-top:14px">
+      <div class="cwrap"><canvas id="scB" height="360"></canvas><div class="tip" id="scBTip"></div></div>
+    </div>
     <div class="panel" style="overflow-x:auto">
       <table class="tbl">
         <thead><tr><th>기준 B 통계</th><th>값</th><th></th><th>3Q26 추정</th></tr></thead>
@@ -348,4 +355,124 @@ scCv.addEventListener("mousemove",ev=>{
   scTip.innerHTML=`<b>${p.q} → ${p.nq}</b><br>매입 ${nf(p.x)}억 → 매출 ${nf(p.y)}억${p.proj?"<br><span style='color:var(--cu)'>회귀 외삽(참고)</span>":""}`;
 });
 scCv.addEventListener("mouseleave",()=>scTip.style.display="none");
+
+/* ---------- 기준 B: 성격별 분류 ---------- */
+const ALPHA_B=4436, BETA_B=2.404, EST_B=ALPHA_B+BETA_B*14931;  // ≈40,335백만 = 403억
+const tsBCv=document.getElementById("tsB"), tsBTip=document.getElementById("tsBTip");
+let tsBRange=[0,AX.length-1], dragB=null;
+function drawTSB(){
+  const {ctx,w,h}=setup(tsBCv);
+  const [s,e]=tsBRange, view=AX.slice(s,e+1);
+  const P={l:46,r:50,t:14,b:30}, iw=w-P.l-P.r, ih=h-P.t-P.b;
+  const purV=view.map((q,i)=>b(NOTE[Qs[s+i]]));
+  const revV=view.map(q=>REV[q]!=null?b(REV[q]):null);
+  const hasEst=view.includes("2026Q3");
+  const maxP=Math.max(...purV)*1.15,
+        maxR=Math.max(...revV.filter(v=>v!=null),hasEst?b(EST_B):0)*1.15;
+  const x=i=>P.l+iw*(i+.5)/view.length;
+  const yP=v=>P.t+ih*(1-v/maxP), yR=v=>P.t+ih*(1-v/maxR);
+  ctx.clearRect(0,0,w,h);
+  ctx.font="10px "+getComputedStyle(document.body).getPropertyValue("--mono");
+  ctx.strokeStyle="#242d39"; ctx.fillStyle="#8a93a1"; ctx.textAlign="right";
+  for(let g=0;g<=4;g++){const yy=P.t+ih*g/4;
+    ctx.beginPath();ctx.moveTo(P.l,yy);ctx.lineTo(w-P.r,yy);ctx.stroke();
+    ctx.fillText(nf(maxP*(1-g/4)),P.l-6,yy+3);
+    ctx.textAlign="left"; ctx.fillText(nf(maxR*(1-g/4)),w-P.r+6,yy+3); ctx.textAlign="right";}
+  const bw=Math.min(30,iw/view.length*.5);
+  view.forEach((q,i)=>{
+    ctx.fillStyle=q==="2026Q3"?"#8a7440":"rgba(224,179,76,.85)";
+    ctx.fillRect(x(i)-bw/2,yP(purV[i]),bw,ih+P.t-yP(purV[i]));
+  });
+  ctx.strokeStyle="#e5484d"; ctx.lineWidth=2; ctx.beginPath();
+  let st=false;
+  view.forEach((q,i)=>{if(revV[i]==null)return;
+    st?ctx.lineTo(x(i),yR(revV[i])):ctx.moveTo(x(i),yR(revV[i])); st=true;});
+  ctx.stroke();
+  view.forEach((q,i)=>{if(revV[i]==null)return;
+    ctx.fillStyle="#e5484d";ctx.beginPath();ctx.arc(x(i),yR(revV[i]),3,0,7);ctx.fill();});
+  if(hasEst){
+    const ei=view.indexOf("2026Q3"), li=ei-1;
+    if(li>=0&&revV[li]!=null){
+      ctx.strokeStyle="#e5484d";ctx.lineWidth=2;ctx.setLineDash([5,5]);
+      ctx.beginPath();ctx.moveTo(x(li),yR(revV[li]));ctx.lineTo(x(ei),yR(b(EST_B)));ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.beginPath();ctx.arc(x(ei),yR(b(EST_B)),4.5,0,7);
+      ctx.fillStyle="#10131a";ctx.fill();ctx.strokeStyle="#e5484d";ctx.lineWidth=2;ctx.stroke();
+      ctx.fillStyle="#e5484d";ctx.textAlign="right";ctx.font="bold 11px "+getComputedStyle(document.body).getPropertyValue("--mono");
+      ctx.fillText("3Q26E "+nf(b(EST_B))+"억",x(ei)-10,yR(b(EST_B))-8);
+      ctx.font="10px "+getComputedStyle(document.body).getPropertyValue("--mono");
+    }
+  }
+  ctx.fillStyle="#8a93a1"; ctx.textAlign="center";
+  const stp=Math.ceil(view.length/9);
+  view.forEach((q,i)=>{if(i%stp===0||q==="2026Q3")ctx.fillText(q.replace("20",""),x(i),h-10);});
+  tsBCv._geo={view,x,P,ih,purV,revV,s};
+}
+drawTSB(); addEventListener("resize",drawTSB);
+tsBCv.addEventListener("mousemove",ev=>{
+  const g=tsBCv._geo; if(!g)return;
+  const r=tsBCv.getBoundingClientRect(), mx=ev.clientX-r.left;
+  if(dragB!==null)return;
+  let best=0,bd=1e9;
+  g.view.forEach((q,i)=>{const d=Math.abs(g.x(i)-mx); if(d<bd){bd=d;best=i}});
+  const q=g.view[best], pq=Qs[g.s+best];
+  tsBTip.style.display="block";
+  tsBTip.style.left=Math.min(g.x(best)+12,tsBCv.clientWidth-190)+"px"; tsBTip.style.top="16px";
+  tsBTip.innerHTML=`<b>${q}</b><br><span style="color:#e0b34c">주석매입(${pq}) ${nf(g.purV[best])}억</span><br>`+
+    (g.revV[best]!=null?`<span style="color:var(--rev)">매출 ${nf(g.revV[best])}억</span>`:`<span style="color:var(--rev)">매출 추정 ${nf(b(EST_B))}억 (점선·회귀)</span>`);
+});
+tsBCv.addEventListener("mouseleave",()=>tsBTip.style.display="none");
+tsBCv.addEventListener("mousedown",ev=>{const r=tsBCv.getBoundingClientRect();dragB=ev.clientX-r.left;});
+addEventListener("mouseup",ev=>{
+  if(dragB===null)return;
+  const g=tsBCv._geo,r=tsBCv.getBoundingClientRect(),up=ev.clientX-r.left;
+  if(up<dragB-8){tsBRange=[0,AX.length-1];drawTSB();}
+  else if(up>dragB+8){
+    const idx=px=>{let best=0,bd=1e9;g.view.forEach((q,i)=>{const d=Math.abs(g.x(i)-px);if(d<bd){bd=d;best=i}});return g.s+best;};
+    let a=idx(dragB),bb=idx(up); if(bb-a>=2){tsBRange=[a,bb];drawTSB();}
+  }
+  dragB=null;
+});
+
+const scBCv=document.getElementById("scB"), scBTip=document.getElementById("scBTip");
+function drawSCB(){
+  const {ctx,w,h}=setup(scBCv);
+  const pairs=Qs.slice(0,-1).map((q,i)=>({q,nq:Qs[i+1],x:b(NOTE[q]),y:b(REV[Qs[i+1]])}));
+  const cur={q:"2026Q2",nq:"2026Q3(시사)",x:b(NOTE["2026Q2"]),y:b(EST_B)};
+  const P={l:52,r:20,t:16,b:36}, iw=w-P.l-P.r, ih=h-P.t-P.b;
+  const maxX=cur.x*1.12, maxY=cur.y*1.15;
+  const X=v=>P.l+iw*v/maxX, Y=v=>P.t+ih*(1-v/maxY);
+  ctx.clearRect(0,0,w,h);
+  ctx.font="10px "+getComputedStyle(document.body).getPropertyValue("--mono");
+  ctx.strokeStyle="#242d39"; ctx.fillStyle="#8a93a1";
+  for(let g=0;g<=4;g++){const yy=P.t+ih*g/4, xx=P.l+iw*g/4;
+    ctx.beginPath();ctx.moveTo(P.l,yy);ctx.lineTo(w-P.r,yy);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(xx,P.t);ctx.lineTo(xx,h-P.b);ctx.stroke();
+    ctx.textAlign="right";ctx.fillText(nf(maxY*(1-g/4)),P.l-6,yy+3);
+    ctx.textAlign="center";ctx.fillText(nf(maxX*g/4),xx,h-14);}
+  ctx.textAlign="center";ctx.fillText("주석 매입액(T기) 억원",P.l+iw/2,h-2);
+  ctx.save();ctx.translate(11,P.t+ih/2);ctx.rotate(-Math.PI/2);ctx.fillText("매출액(T+1기) 억원",0,0);ctx.restore();
+  ctx.strokeStyle="rgba(224,179,76,.6)"; ctx.setLineDash([5,4]); ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.moveTo(X(0),Y(b(ALPHA_B)));ctx.lineTo(X(maxX),Y(b(ALPHA_B+BETA_B*maxX*100)));ctx.stroke();
+  ctx.setLineDash([]);
+  const pts=[];
+  pairs.forEach(pp=>{ctx.fillStyle="rgba(229,72,77,.85)";
+    ctx.beginPath();ctx.arc(X(pp.x),Y(pp.y),4.5,0,7);ctx.fill();pts.push({...pp,px:X(pp.x),py:Y(pp.y),proj:false});});
+  ctx.fillStyle="#e0b34c";ctx.beginPath();ctx.arc(X(cur.x),Y(cur.y),6.5,0,7);ctx.fill();
+  ctx.strokeStyle="#e0b34c";ctx.lineWidth=1;ctx.beginPath();ctx.arc(X(cur.x),Y(cur.y),10.5,0,7);ctx.stroke();
+  ctx.fillStyle="#e0b34c";ctx.textAlign="right";
+  ctx.fillText("2026Q2 주석매입 → Q3 시사 "+nf(cur.y)+"억",X(cur.x)-14,Y(cur.y)+3);
+  pts.push({...cur,px:X(cur.x),py:Y(cur.y),proj:true});
+  scBCv._pts=pts;
+}
+drawSCB(); addEventListener("resize",drawSCB);
+scBCv.addEventListener("mousemove",ev=>{
+  const r=scBCv.getBoundingClientRect(),mx=ev.clientX-r.left,my=ev.clientY-r.top;
+  const pp=(scBCv._pts||[]).find(pp=>Math.hypot(pp.px-mx,pp.py-my)<10);
+  if(!pp){scBTip.style.display="none";return}
+  scBTip.style.display="block";
+  scBTip.style.left=Math.min(pp.px+12,scBCv.clientWidth-190)+"px"; scBTip.style.top=(pp.py-40)+"px";
+  scBTip.innerHTML=`<b>${pp.q} → ${pp.nq}</b><br>주석매입 ${nf(pp.x)}억 → 매출 ${nf(pp.y)}억${pp.proj?"<br><span style='color:#e0b34c'>회귀 외삽(참고)</span>":""}`;
+});
+scBCv.addEventListener("mouseleave",()=>scBTip.style.display="none");
 </script>
