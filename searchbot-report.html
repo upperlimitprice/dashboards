@@ -196,26 +196,26 @@
   <!-- ===== 백테스트 A ===== -->
   <section>
     <div class="shead"><span class="n">03</span><h2>일봉 종가베팅 백테스트</h2></div>
-    <p class="sdesc">필터를 더할수록 성과가 단조 개선된다 — 원작자의 재량 판단(재료·시황·수급)이 알파의 본체라는 방증. 아래는 D+1 시가 매도 기준 평균 수익률.</p>
+    <p class="sdesc"><b style="color:var(--gold)">종가가 상한가에 잠긴 신호(270건, 15%)는 매수 체결 불가로 제외</b> — 잠김 종목이 수익의 상당 부분을 차지해 제외 시 기대치가 절반 수준으로 낮아진다. 필터 단조 개선 구조는 유지. 아래는 D+1 시가 매도 기준.</p>
 
     <div class="grid2">
       <div class="panel">
         <h3>변형별 D+1 시가 성과</h3>
         <div class="ph">신호 수 · 평균 수익률 · 승률</div>
         <div class="vrow">
-          <div class="vn">A. 원조건<small>1,743 신호 · 승 52%</small></div>
-          <div class="bar"><i style="width:47%;background:var(--dn)"></i></div>
-          <div class="vval up">+1.68%</div>
+          <div class="vn">A. 원조건<small>1,473 신호 · 승 47%</small></div>
+          <div class="bar"><i style="width:32%;background:var(--dn)"></i></div>
+          <div class="vval up">+0.75%</div>
         </div>
         <div class="vrow">
-          <div class="vn">B. +양봉<small>1,071 신호 · 승 56%</small></div>
-          <div class="bar"><i style="width:66%;background:var(--up)"></i></div>
-          <div class="vval up">+2.37%</div>
+          <div class="vn">B. +양봉<small>801 신호 · 승 48%</small></div>
+          <div class="bar"><i style="width:38%;background:var(--up)"></i></div>
+          <div class="vval up">+0.88%</div>
         </div>
         <div class="vrow">
-          <div class="vn">C. +거래대금 300억<small>482 신호 · 승 57%</small></div>
-          <div class="bar"><i style="width:58%;background:var(--gold)"></i></div>
-          <div class="vval gold">+2.07%</div>
+          <div class="vn">C. +거래대금 300억<small>362 신호 · 승 51%</small></div>
+          <div class="bar"><i style="width:42%;background:var(--gold)"></i></div>
+          <div class="vval gold">+0.98%</div>
         </div>
       </div>
 
@@ -223,19 +223,19 @@
         <h3>청산 방식이 전부</h3>
         <div class="ph">변형 C · 매도 시점별</div>
         <div class="vrow">
-          <div class="vn">D+1 고가 (지정가)<small>86%가 종가 위 터치</small></div>
+          <div class="vn">D+1 고가 (지정가)<small>중앙값 +5.1%</small></div>
           <div class="bar"><i style="width:100%;background:var(--up)"></i></div>
-          <div class="vval up">+9.09%</div>
+          <div class="vval up">+6.99%</div>
         </div>
         <div class="vrow">
           <div class="vn">D+1 시가<small>익일 시초 청산</small></div>
           <div class="bar"><i style="width:23%;background:var(--up)"></i></div>
-          <div class="vval up">+2.07%</div>
+          <div class="vval up">+0.98%</div>
         </div>
         <div class="vrow">
           <div class="vn">D+1 종가<small>홀드</small></div>
-          <div class="bar"><i style="width:15%;background:var(--up)"></i></div>
-          <div class="vval up">+1.31%</div>
+          <div class="bar"><i style="width:6%;background:var(--up)"></i></div>
+          <div class="vval up">+0.44%</div>
         </div>
         <div class="vrow">
           <div class="vn">D+10 홀드<small>중앙값</small></div>
@@ -244,7 +244,7 @@
         </div>
       </div>
     </div>
-    <div class="note">권장 운용형은 <b>C조건 종가 매수 → 익일 +5~6% 지정가 매도</b>(고가 중앙값 +6.75% 활용). 홀드할수록 급등 재료의 되돌림으로 악화된다.</div>
+    <div class="note">권장 운용형은 <b>C조건 종가 매수 → 익일 +5~6% 지정가 매도</b>(고가 중앙값 +5.1% 활용, 상한가 잠김 제외 반영). 홀드할수록 급등 재료의 되돌림으로 악화된다. 실운용 봇에도 상한가 잠김 종목 자동 제외를 적용했다.</div>
   </section>
 
   <!-- ===== 백테스트 B ===== -->
