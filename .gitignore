@@ -4,3 +4,4 @@ youtube/cookies*.txt
 youtube/.cache/
 __pycache__/
 *.pyc
+youtube/telegram.json

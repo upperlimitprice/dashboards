@@ -9,6 +9,9 @@ youtube/
 ├─ fetch.py             [로컬] yt-dlp + 브라우저 쿠키 → transcripts/  (멤버십 영상 포함)
 ├─ summarize.py         transcripts/ → summaries/*.json  (Claude API, 구조화 스키마)
 ├─ build.py             summaries/*.json → <채널>/<날짜>_<id>.html + index.html
+├─ send.py              새 요약 → 텔레그램 요약봇 전송 (한 줄 요약·핵심·종목·체크포인트·링크)
+├─ run.sh               위 전부 한 방 (launchd/cron 용)
+├─ telegram.json        봇 토큰·chat_id  ← .gitignore
 ├─ transcripts/<ch>/    자막 원문 + 메타  ← .gitignore (커밋 금지: 유료 콘텐츠)
 ├─ summaries/<ch>/      요약 JSON        ← 커밋 (원본이 아니라 요약)
 ├─ <ch>/*.html          생성된 리포트     ← 커밋
@@ -21,6 +24,8 @@ youtube/
 pip install -U yt-dlp anthropic
 export ANTHROPIC_API_KEY=sk-ant-...      # 또는 ant auth login
 ```
+텔레그램 요약봇: `youtube/telegram.json` 에 `{"bot_token": "...", "chat_id": "..."}` (또는 환경변수 `TG_BOT_TOKEN`/`TG_CHAT_ID`).
+`python youtube/send.py --test` 로 연결 확인.
 - 구독 계정으로 YouTube에 로그인된 브라우저(Chrome 기본)가 있어야 함. `--browser edge|firefox|brave` 로 변경.
 - 브라우저 쿠키를 못 읽는 환경이면 확장프로그램으로 `cookies.txt` 를 내보내 `--cookies youtube/cookies.txt` (gitignore 되어 있음).
 
@@ -33,7 +38,9 @@ python youtube/summarize.py                                 # 아직 요약 없�
 python youtube/build.py                                     # HTML 생성
 python gen_index.py                                         # 메인 대시보드 카드 갱신
 git add youtube/summaries youtube/*/ youtube/index.html index.html && git commit -m "youtube 요약 $(date +%F)" && git push
+python youtube/send.py                                      # 새 요약만 텔레그램 전송 (보낸 건 .cache/sent.json 에 기록)
 ```
+또는 전부 한 번에: `bash youtube/run.sh` — launchd/cron 에 걸면 매일 자동. 미리보기: `python youtube/send.py --dry-run`.
 
 단일 영상: `python youtube/fetch.py https://www.youtube.com/watch?v=XXXX --channel infomkt`
 
