@@ -270,7 +270,7 @@ const nf=v=>v.toLocaleString("ko-KR",{maximumFractionDigits:0});
 
 /* ---------- 공통 캔버스 셋업 ---------- */
 function setup(cv){
-  const dpr=window.devicePixelRatio||1, w=cv.clientWidth, h=+cv.getAttribute("height");
+  const dpr=window.devicePixelRatio||1, w=cv.clientWidth, h=+(cv.dataset.h||(cv.dataset.h=cv.getAttribute("height")));
   cv.width=w*dpr; cv.height=h*dpr; cv.style.height=h+"px";
   const ctx=cv.getContext("2d"); ctx.scale(dpr,dpr);
   return {ctx,w,h};
