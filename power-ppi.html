@@ -37,7 +37,7 @@ footer{font-size:.72rem;color:var(--mut);margin-top:24px;line-height:1.7}
 <footer>출처: FRED / 미국 노동통계국(BLS) PPI — NAICS 335311(변압기)·335313(개폐장치)·335314(계전기)·335312(모터발전기)·WPU117(전기기기)·WPU10250105(구리전선). 월별, 계절미조정 지수. 미국 내 생산자 판가로 국내 업체 수출 단가와 방향성 참고용. 한국 PPI(한국은행)는 추후 추가 예정.</footer>
 </div>
 <script>
-const BOOK={};
+const BOOK={"PCU335311335311": {"ko": "변압기", "en": "Power/Distribution/Specialty Transformer Mfg", "color": "#e5484d", "series": {}}, "PCU335313335313": {"ko": "개폐장치·배전반", "en": "Switchgear & Switchboard Apparatus", "color": "#4da3ff", "series": {}}, "PCU335314335314": {"ko": "계전기·산업제어", "en": "Relay & Industrial Control Mfg", "color": "#3fbf7f", "series": {}}, "PCU335312335312": {"ko": "모터·발전기", "en": "Motor & Generator Mfg", "color": "#d4a24e", "series": {}}, "WPU117": {"ko": "전기기기 전체", "en": "PPI: Electrical Machinery & Equipment", "color": "#a78bfa", "series": {}}, "WPU10250105": {"ko": "구리 전선·케이블", "en": "Copper Wire & Cable", "color": "#e07a9e", "series": {}}};
 const charts=[];
 function pctFmt(v){return (v>=0?"+":"")+v.toFixed(1)+"%";}
 Object.entries(BOOK).forEach(([sid,info])=>{
