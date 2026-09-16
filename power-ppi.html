@@ -1,0 +1,136 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>전력기기 PPI — 변압기·차단기·변전설비</title>
+<style>
+:root{--ink:#0f1218;--surface:#191f29;--line:#2b3442;--mut:#8a93a1;--fg:#e9edf2;
+--mono:"SF Mono",ui-monospace,Menlo,monospace;--kr:"Apple SD Gothic Neo","Pretendard",system-ui,sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--ink);color:var(--fg);font-family:var(--kr);line-height:1.6;padding:34px 18px 60px}
+.wrap{max-width:960px;margin:0 auto}
+h1{font-size:1.5rem;font-weight:800;letter-spacing:-.01em}
+.sub{color:var(--mut);font-size:.82rem;margin:8px 0 20px}
+.controls{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;align-items:center}
+.pbtn{font-family:var(--mono);font-size:.74rem;padding:6px 14px;border-radius:8px;border:1px solid var(--line);
+background:var(--surface);color:var(--mut);cursor:pointer}
+.pbtn.on{background:#2b4a7a;color:#cfe3ff;border-color:#3f6aa8}
+.hint{font-size:.7rem;color:#5d6774;margin-left:auto}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:16px}
+.panel h3{font-size:.95rem;font-weight:700;margin-bottom:2px}
+.panel .en{font-family:var(--mono);font-size:.66rem;color:var(--mut);margin-bottom:10px}
+.cwrap{position:relative}
+canvas{width:100%;display:block;cursor:crosshair}
+.tip{position:absolute;pointer-events:none;background:#0d1117ee;border:1px solid var(--line);border-radius:8px;
+padding:7px 10px;font-size:.72rem;font-family:var(--mono);line-height:1.5;display:none;z-index:5;white-space:nowrap}
+.stat{display:flex;gap:14px;font-family:var(--mono);font-size:.7rem;color:var(--mut);margin-top:8px;flex-wrap:wrap}
+.stat b{color:var(--fg)}
+footer{font-size:.72rem;color:var(--mut);margin-top:24px;line-height:1.7}
+</style></head><body><div class="wrap">
+<h1>⚡ 전력기기 PPI — 변압기·차단기·변전설비</h1>
+<p class="sub">미국 BLS 생산자물가지수 · 국내 전력기기(HD현대일렉트릭·효성중공업·LS ELECTRIC·제룡전기 등) 수출 판가 참고 지표 · 기준 2026-09-16 · 매월 자동 갱신</p>
+<div class="controls">
+  <button class="pbtn" data-y="1">1Y</button><button class="pbtn" data-y="3">3Y</button>
+  <button class="pbtn" data-y="5">5Y</button><button class="pbtn on" data-y="10">10Y</button>
+  <button class="pbtn" data-y="0">전체</button>
+  <span class="hint">드래그 = 구간 확대 · 반대방향 드래그 = 축소(초기화)</span>
+</div>
+<div id="charts"></div>
+<footer>출처: FRED / 미국 노동통계국(BLS) PPI — NAICS 335311(변압기)·335313(개폐장치)·335314(계전기)·335312(모터발전기)·WPU117(전기기기)·WPU10250105(구리전선). 월별, 계절미조정 지수. 미국 내 생산자 판가로 국내 업체 수출 단가와 방향성 참고용. 한국 PPI(한국은행)는 추후 추가 예정.</footer>
+</div>
+<script>
+const BOOK={};
+const charts=[];
+function pctFmt(v){return (v>=0?"+":"")+v.toFixed(1)+"%";}
+Object.entries(BOOK).forEach(([sid,info])=>{
+  const wrap=document.createElement("div");wrap.className="panel";
+  const dates=Object.keys(info.series).sort();
+  const last=dates[dates.length-1];
+  const lastV=info.series[last];
+  const yago=info.series[dates[Math.max(0,dates.length-13)]];
+  const yoy=yago?(lastV/yago-1)*100:null;
+  wrap.innerHTML=`<h3 style="color:${info.color}">${info.ko}</h3><div class="en">${info.en} · ${sid}</div>
+    <div class="cwrap"><canvas height="230"></canvas><div class="tip"></div></div>
+    <div class="stat"><span>최신 <b>${lastV}</b> (${last})</span><span>YoY <b style="color:${(yoy||0)>=0?'#e5484d':'#4c86e8'}">${yoy!=null?pctFmt(yoy):'–'}</b></span><span>10Y 변화 <b>${pctFmt((lastV/info.series[dates[0]]-1)*100)}</b></span></div>`;
+  document.getElementById("charts").appendChild(wrap);
+  charts.push({cv:wrap.querySelector("canvas"),tip:wrap.querySelector(".tip"),info,dates,range:null});
+});
+let periodYears=10;
+function viewDates(c){
+  let ds=c.dates;
+  if(c.range) return ds.slice(c.range[0],c.range[1]+1);
+  if(periodYears>0){
+    const cut=new Date();cut.setFullYear(cut.getFullYear()-periodYears);
+    const key=cut.toISOString().slice(0,7);
+    ds=ds.filter(d=>d>=key);
+  }
+  return ds;
+}
+function draw(c){
+  const cv=c.cv,dpr=devicePixelRatio||1,w=cv.clientWidth,h=+cv.getAttribute("height");
+  cv.width=w*dpr;cv.height=h*dpr;cv.style.height=h+"px";
+  const x2=cv.getContext("2d");x2.scale(dpr,dpr);
+  const ds=viewDates(c),vals=ds.map(d=>c.info.series[d]);
+  if(!ds.length)return;
+  const P={l:46,r:14,t:12,b:24},iw=w-P.l-P.r,ih=h-P.t-P.b;
+  const mn=Math.min(...vals),mx=Math.max(...vals),pad=(mx-mn)*0.06||1;
+  const X=i=>P.l+iw*(ds.length===1?.5:i/(ds.length-1));
+  const Y=v=>P.t+ih*(1-(v-mn+pad)/(mx-mn+2*pad));
+  x2.clearRect(0,0,w,h);
+  x2.font="10px "+getComputedStyle(document.body).getPropertyValue("--mono");
+  x2.strokeStyle="#232c38";x2.fillStyle="#8a93a1";x2.textAlign="right";
+  for(let g=0;g<=3;g++){const v=mn-pad+(mx-mn+2*pad)*g/3,yy=Y(v);
+    x2.beginPath();x2.moveTo(P.l,yy);x2.lineTo(w-P.r,yy);x2.stroke();
+    x2.fillText(v.toFixed(0),P.l-6,yy+3);}
+  // 영역 채움
+  const grad=x2.createLinearGradient(0,P.t,0,h-P.b);
+  grad.addColorStop(0,c.info.color+"33");grad.addColorStop(1,c.info.color+"05");
+  x2.beginPath();x2.moveTo(X(0),Y(vals[0]));
+  vals.forEach((v,i)=>x2.lineTo(X(i),Y(v)));
+  x2.lineTo(X(ds.length-1),h-P.b);x2.lineTo(X(0),h-P.b);x2.closePath();
+  x2.fillStyle=grad;x2.fill();
+  x2.strokeStyle=c.info.color;x2.lineWidth=2;x2.beginPath();
+  vals.forEach((v,i)=>i?x2.lineTo(X(i),Y(v)):x2.moveTo(X(i),Y(v)));
+  x2.stroke();
+  // 끝점 강조
+  x2.fillStyle=c.info.color;x2.beginPath();x2.arc(X(ds.length-1),Y(vals[vals.length-1]),3.4,0,7);x2.fill();
+  x2.fillStyle="#8a93a1";x2.textAlign="center";
+  const step=Math.ceil(ds.length/8);
+  ds.forEach((d,i)=>{if(i%step===0)x2.fillText(d.replace("20","'").replace("-","."),X(i),h-8);});
+  c._g={ds,vals,X,Y,w};
+}
+function drawAll(){charts.forEach(draw);}
+drawAll();addEventListener("resize",drawAll);
+document.querySelectorAll(".pbtn").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll(".pbtn").forEach(x=>x.classList.remove("on"));
+  b.classList.add("on");periodYears=+b.dataset.y;
+  charts.forEach(c=>c.range=null);drawAll();
+});
+charts.forEach(c=>{
+  let dragX=null;
+  c.cv.addEventListener("mousemove",ev=>{
+    const g=c._g;if(!g)return;
+    const r=c.cv.getBoundingClientRect(),mx=ev.clientX-r.left;
+    let best=0,bd=1e9;
+    g.ds.forEach((d,i)=>{const dd=Math.abs(g.X(i)-mx);if(dd<bd){bd=dd;best=i;}});
+    c.tip.style.display="block";
+    c.tip.style.left=Math.min(g.X(best)+10,c.cv.clientWidth-130)+"px";c.tip.style.top="8px";
+    const prev=best>0?g.vals[best-1]:null;
+    c.tip.innerHTML=`<b>${g.ds[best]}</b><br>${g.vals[best]}`+(prev?` <span style="color:${g.vals[best]>=prev?'#e5484d':'#4c86e8'}">(${pctFmt((g.vals[best]/prev-1)*100)} MoM)</span>`:"");
+  });
+  c.cv.addEventListener("mouseleave",()=>c.tip.style.display="none");
+  c.cv.addEventListener("mousedown",ev=>{const r=c.cv.getBoundingClientRect();dragX=ev.clientX-r.left;});
+  c.cv.addEventListener("mouseup",ev=>{
+    if(dragX==null)return;
+    const g=c._g,r=c.cv.getBoundingClientRect(),up=ev.clientX-r.left;
+    const idx=px=>{let best=0,bd=1e9;g.ds.forEach((d,i)=>{const dd=Math.abs(g.X(i)-px);if(dd<bd){bd=dd;best=i;}});return best;};
+    if(up<dragX-8){c.range=null;draw(c);}              // 역드래그 = 축소(초기화)
+    else if(up>dragX+8){
+      const a=idx(dragX),b2=idx(up);
+      if(b2-a>=3){
+        const base=c.range?c.range[0]:c.dates.indexOf(g.ds[0]);
+        c.range=[base+a,base+b2];draw(c);
+      }
+    }
+    dragX=null;
+  });
+});
+</script></body></html>
