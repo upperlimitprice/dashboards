@@ -51,7 +51,8 @@
   .mod .note{font-size:.78rem;color:#b9c2cd;margin-top:10px;line-height:1.6}
   .mod .note b{color:var(--fg)}
 
-  .tbl{width:100%;border-collapse:collapse;font-size:.8rem}
+  .tblwrap{overflow-x:auto}
+  .tbl{width:100%;min-width:560px;border-collapse:collapse;font-size:.8rem}
   .tbl th{font-family:var(--mono);font-size:.64rem;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);
     text-align:left;padding:0 10px 9px;border-bottom:1px solid var(--line)}
   .tbl td{padding:8px 10px;border-bottom:1px solid #222b37;vertical-align:top}
@@ -165,8 +166,7 @@
       </div>
     </div>
 
-    <div class="panel" style="margin-top:16px;overflow-x:auto">
-      <table class="tbl">
+    <div class="panel" style="margin-top:16px;overflow-x:auto"><div class="tblwrap"><table class="tbl">
         <thead><tr><th>모듈</th><th>버퍼 대상</th><th>핵심 칩</th><th>속도(현행)</th><th>인터페이스 칩 가치</th><th>주 용도</th></tr></thead>
         <tbody>
           <tr><td>UDIMM</td><td>없음 (직결)</td><td>SPD</td><td style="font-family:var(--mono)">~6,400MT/s</td><td style="font-family:var(--mono)">~$0</td><td>PC</td></tr>
@@ -174,8 +174,7 @@
           <tr><td>LRDIMM</td><td>CA + DQ</td><td>RCD + DB</td><td style="font-family:var(--mono)">6,400</td><td style="font-family:var(--mono)">~$20</td><td>초대용량</td></tr>
           <tr><td style="color:#bfe0ff">MRDIMM</td><td>CA + DQ (랭크 결합)</td><td>MRCD + MDB×10</td><td style="font-family:var(--mono);color:#bfe0ff">8,800→12,800</td><td style="font-family:var(--mono);color:var(--gold)">$70~80</td><td>AI 호스트 CPU</td></tr>
         </tbody>
-      </table>
-    </div>
+      </table></div></div>
   </section>
 
   <section>
@@ -219,16 +218,14 @@
       </div>
       <div style="font-size:.76rem;color:var(--mut);margin-top:10px">성장 삼중주: 서버 CPU 3,060만→8,930만개 × CPU당 DIMM 9.5→13.6개 × DIMM당 칩 가치 $5.9→$16.3 → 2030년 시장 $200억 (MRCD·MDB가 73%)</div>
     </div>
-    <div class="panel" style="margin-top:14px;overflow-x:auto">
-      <table class="tbl">
+    <div class="panel" style="margin-top:14px;overflow-x:auto"><div class="tblwrap"><table class="tbl">
         <thead><tr><th>레이어</th><th>플레이어</th><th>포인트</th></tr></thead>
         <tbody>
           <tr><td>모듈 (3사 과점)</td><td>삼성전자 · SK하이닉스 · 마이크론</td><td>2Q26 DRAM 점유 39.4 / 24.9 / 23.3% — HBM 우선 배분이 RDIMM 공급을 잠식해 가격 강세. MRDIMM Gen1은 마이크론 선행</td></tr>
           <tr><td>인터페이스 칩 (3사 과점)</td><td>몬타지 · 르네사스 · 램버스</td><td>MRDIMM 전환의 최대 수혜 — 몬타지 2Q26 사상 최고 이익, 번스타인 Outperform(A주 TP 400위안)</td></tr>
           <tr><td>국내 기판·부품</td><td>티엘비 · 심텍 · 해성디에스</td><td>① 티엘비: SOCAMM2+고부가 RDIMM 전환, '28 매출 상단 9,000억 시나리오 ② 심텍: 2H26 가이던스가 컨센 +50% ③ 해성디에스: 저밸류 턴어라운드</td></tr>
         </tbody>
-      </table>
-    </div>
+      </table></div></div>
     <div class="impl" style="border-left-color:var(--gold)"><b style="color:var(--gold)">체크포인트</b> — ▲4Q26 서버 DRAM 계약가 상승률 ▲AMD Venice 서버의 MRDIMM 샘플→양산 배치 전환 증거 ▲티엘비 4Q26 매출 1,000억 돌파 ▲심텍 청주 증설 CAPA 반영 ▲해성디에스 4Q26 가동률 70% ▲CSP CapEx 내 메모리 비중(68% 전망) 현실화.</div>
   </section>
 
