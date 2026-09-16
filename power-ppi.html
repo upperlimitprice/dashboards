@@ -65,7 +65,7 @@ function viewDates(c){
   return ds;
 }
 function draw(c){
-  const cv=c.cv,dpr=devicePixelRatio||1,w=cv.clientWidth,h=+cv.getAttribute("height");
+  const cv=c.cv,dpr=devicePixelRatio||1,w=cv.clientWidth,h=+(cv.dataset.h||(cv.dataset.h=cv.getAttribute("height")));
   cv.width=w*dpr;cv.height=h*dpr;cv.style.height=h+"px";
   const x2=cv.getContext("2d");x2.scale(dpr,dpr);
   const ds=viewDates(c),vals=ds.map(d=>c.info.series[d]);
