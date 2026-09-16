@@ -13,6 +13,7 @@ ITEMS = [
     ("cds.html", "🏦 빅테크 5년 CDS 트래커", "MSFT·GOOGL·AMZN·META·NVDA·ORCL·CRWV 신용위험", True),
     ("tanker.html", "🛢 탱커 운임 마켓", "VLCC·수에즈막스 WS · LPG/LNG · BCTI · 선가 · 픽스처", True),
     ("shipping.html", "🚢 해상 운임 지수", "BDI(벌크) · SCFI·CCFI(컨테이너) · HRCI(용선) — 일일 수집·줌 차트", True),
+    ("power-ppi.html", "⚡ 전력기기 PPI", "미국 BLS 변압기·개폐장치·계전기·모터발전기 생산자물가 10년 — 월별 자동갱신", True),
     ("us-liq.html", "💵 미국 유동성 (US Liquidity)", "연준BS−TGA−RRP · 국채금리 3M/2Y/10Y/30Y · DXY · WTI/브렌트 · 재무부 경매일정", True),
     ("valuation.html", "🌡 밸류에이션 온도", "금리·물가·예탁금 조합 지표 vs KOSPI 밸류 (r=0.78) · 금리 12M 선행 경보", True),
     ("tval.html", "💹 거래대금", "전체·회전율 Top30 · 섹터별 Top10 (상품 제외)", True),
