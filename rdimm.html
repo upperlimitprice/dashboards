@@ -72,6 +72,10 @@
   .trow .tn{font-weight:750;font-size:.85rem}
   .trow .td{font-size:.76rem;color:var(--mut)}
   .trow .tv{font-family:var(--mono);font-size:.74rem;text-align:right;color:#c8d0da;white-space:nowrap}
+  @media(max-width:640px){
+    .trow{grid-template-columns:1fr}
+    .trow .tv{text-align:left;white-space:normal}
+  }
 
   .bars{display:grid;gap:9px;margin-top:6px}
   .brow{display:grid;grid-template-columns:64px 1fr 52px;gap:10px;align-items:center;font-family:var(--mono);font-size:.72rem}
