@@ -1,0 +1,201 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>AWS non-AI vs Datadog — 분기 매출 동행 분석</title>
+<style>
+  :root{
+    --ink:#0f1218; --surface:#191f28; --surface2:#212936; --line:#2c3542;
+    --aws:#ff9900; --ddog:#8f6bdb; --tot:#5f6e80; --up:#e5484d; --mut:#8a93a1; --fg:#e9edf2;
+    --mono:"SF Mono",ui-monospace,Menlo,monospace;
+    --kr:"Apple SD Gothic Neo","Pretendard",system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--ink);color:var(--fg);font-family:var(--kr);line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    background-image:radial-gradient(1100px 460px at 50% -6%,#1a212c 0%,var(--ink) 60%)}
+  .wrap{max-width:840px;margin:0 auto;padding:52px 22px 70px}
+  .eyebrow{font-family:var(--mono);font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--ddog);margin-bottom:12px}
+  h1{font-size:2rem;font-weight:800;letter-spacing:-.02em;line-height:1.18;text-wrap:balance}
+  .sub{color:var(--mut);font-size:.88rem;margin-top:12px;text-align:justify}
+  .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:30px 0 6px}
+  @media(max-width:640px){.kpis{grid-template-columns:1fr}}
+  .kpi{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 16px;text-align:center}
+  .kpi .big{font-family:var(--mono);font-size:1.9rem;font-weight:750}
+  .kpi .lbl{font-size:.73rem;color:var(--mut);margin-top:4px;line-height:1.5}
+  section{margin-top:42px}
+  .shead h2{font-size:1.22rem;font-weight:750;margin-bottom:5px}
+  .sdesc{color:var(--mut);font-size:.84rem;margin-bottom:16px}
+  .panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px}
+  .cwrap{position:relative}
+  canvas{width:100%;display:block}
+  .legend{display:flex;gap:16px;font-size:.75rem;color:var(--mut);margin:10px 4px 0;flex-wrap:wrap}
+  .legend i{display:inline-block;width:16px;height:3px;border-radius:2px;vertical-align:middle;margin-right:6px}
+  .tip{position:absolute;pointer-events:none;background:#0d1117ee;border:1px solid var(--line);
+    border-radius:8px;padding:8px 11px;font-size:.74rem;line-height:1.55;display:none;z-index:5;white-space:nowrap;font-family:var(--mono)}
+  .tbl{width:100%;border-collapse:collapse;font-size:.82rem}
+  .tbl th{font-family:var(--mono);font-size:.65rem;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);
+    text-align:right;padding:0 10px 9px;border-bottom:1px solid var(--line)}
+  .tbl th:first-child,.tbl td:first-child{text-align:left}
+  .tbl td{padding:8px 10px;border-bottom:1px solid #232b37;text-align:right;font-family:var(--mono)}
+  .tbl tr:last-child td{border-bottom:none}
+  .tbl .hl td{background:rgba(143,107,219,.08);font-weight:700}
+  .meth{background:var(--surface2);border:1px solid var(--line);border-left:3px solid var(--aws);
+    border-radius:10px;padding:15px 19px;font-size:.83rem;color:#cfd6de;line-height:1.66;margin-top:16px}
+  .meth b{color:var(--aws)}
+  footer{margin-top:48px;padding-top:20px;border-top:1px solid var(--line);font-size:.74rem;color:var(--mut);line-height:1.7}
+</style></head><body>
+
+<div class="wrap">
+  <div class="eyebrow">Cloud Consumption Proxy Study</div>
+  <h1>AWS non-AI 매출 vs Datadog<br>— 클라우드 소비의 두 그림자</h1>
+  <p class="sub">데이터독은 사용량 과금형 옵저버빌리티라 고객 클라우드 워크로드(대부분 non-AI 범용 컴퓨트)의 소비를 실시간으로 반영한다. AWS 세그먼트 매출에서 생성형 AI 기여 추정치를 차감한 <b style="color:var(--fg)">non-AI AWS 매출</b>과 데이터독 분기 매출을 나란히 놓으면, 두 곡선의 성장률이 같은 리듬으로 움직이는지 — 즉 데이터독이 "AI를 뺀 진짜 클라우드 경기"의 프록시인지 검증할 수 있다.</p>
+
+  <div class="kpis">
+    <div class="kpi"><div class="big" style="color:var(--ddog)">0.85</div><div class="lbl"><b>YoY 성장률 상관</b><br>non-AI AWS ↔ DDOG (14분기)</div></div>
+    <div class="kpi"><div class="big" style="color:var(--tot)">0.78</div><div class="lbl">AWS 전체 ↔ DDOG<br>(AI 포함 시 상관 하락)</div></div>
+    <div class="kpi"><div class="big">0.998</div><div class="lbl">절대 레벨 상관<br>(둘 다 우상향이라 참고용)</div></div>
+  </div>
+
+  <section>
+    <div class="shead"><h2>YoY 성장률 — 핵심 차트</h2></div>
+    <p class="sdesc">보라 = 데이터독, 주황 = non-AI AWS(추정), 회색 점선 = AWS 전체. 2023년 최적화 사이클의 동반 감속 → 2024년 횡보 → <b style="color:var(--fg)">2025년 하반기부터 동반 재가속</b>이 뚜렷하다. AI를 빼도 클라우드 소비가 다시 빨라지고 있다는 뜻.</p>
+    <div class="panel">
+      <div class="cwrap"><canvas id="yoy" height="330"></canvas><div class="tip" id="yoyTip"></div></div>
+      <div class="legend"><span><i style="background:var(--ddog)"></i>Datadog YoY</span><span><i style="background:var(--aws)"></i>non-AI AWS YoY (추정)</span><span><i style="background:repeating-linear-gradient(90deg,var(--tot) 0 4px,transparent 4px 8px)"></i>AWS 전체 YoY</span></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="shead"><h2>절대 매출 — 스케일 비교</h2></div>
+    <p class="sdesc">주황 막대 = non-AI AWS(좌축, $B), 보라 선 = 데이터독(우축, $B). 규모는 32배 차이지만 곡선의 형태가 닮아 있다.</p>
+    <div class="panel">
+      <div class="cwrap"><canvas id="lvl" height="320"></canvas><div class="tip" id="lvlTip"></div></div>
+      <div class="legend"><span><i style="background:var(--aws)"></i>non-AI AWS ($B, 좌축)</span><span><i style="background:var(--ddog)"></i>Datadog ($B, 우축)</span></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="shead"><h2>분기 데이터</h2></div>
+    <div class="panel" style="overflow-x:auto">
+      <table class="tbl">
+        <thead><tr><th>분기</th><th>AWS 전체($B)</th><th>AI 추정($B)</th><th>non-AI($B)</th><th>non-AI YoY</th><th>DDOG($B)</th><th>DDOG YoY</th></tr></thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+    <div class="meth">
+      <b>AWS AI 매출 추정 방법</b> — 아마존은 AI 매출을 분리 공시하지 않는다. 경영진 공개 발언("multi-billion run rate", "triple-digit YoY")을 앵커로 연환산 런레이트를 2023Q1 $1B → 2023Q4 $3B → 2024Q4 $8B → 2025Q4 $17B → 2026Q2 $25B로 설정하고 분기 사이는 기하 보간했다. non-AI = AWS 세그먼트 매출 − (런레이트÷4). AI 추정을 ±30% 움직여도 YoY 상관은 0.8 초반~0.87 범위로 결론은 유지된다. 절대 레벨 상관(0.998)은 두 시계열이 모두 우상향이라 자연히 높게 나오는 값으로, 의미 있는 지표는 성장률 상관이다.
+    </div>
+  </section>
+
+  <footer>
+    출처: AWS = Amazon 10-Q 세그먼트(FMP), Datadog = 분기 손익(FMP), 2022Q1~2026Q2. AI 추정치는 공개 발언 기반 모델링이며 실제와 다를 수 있음. 상관계수는 Pearson r. 참고용 통계이며 투자 권유 아님. · 쩜상리서치 2026-09-16
+  </footer>
+</div>
+
+<script>
+const D={
+ q:["22Q1","22Q2","22Q3","22Q4","23Q1","23Q2","23Q3","23Q4","24Q1","24Q2","24Q3","24Q4","25Q1","25Q2","25Q3","25Q4","26Q1","26Q2"],
+ aws:[18.44,19.74,20.54,21.38,21.35,22.14,23.06,24.20,25.04,26.28,27.45,28.79,29.27,30.87,33.01,35.58,37.59,42.23],
+ ai:[0.05,0.07,0.11,0.17,0.25,0.36,0.52,0.75,0.97,1.25,1.58,2.00,2.35,2.75,3.42,4.25,5.15,6.25],
+ ddog:[0.363,0.406,0.437,0.469,0.482,0.509,0.548,0.590,0.611,0.645,0.690,0.738,0.762,0.827,0.886,0.953,1.006,1.121]};
+D.non=D.aws.map((v,i)=>v-D.ai[i]);
+function yoy(a){return a.map((v,i)=>i>=4?(v/a[i-4]-1)*100:null);}
+D.ynon=yoy(D.non); D.yddog=yoy(D.ddog); D.yaws=yoy(D.aws);
+const nf=(v,d=1)=>v==null?"–":v.toLocaleString("en-US",{maximumFractionDigits:d,minimumFractionDigits:d});
+
+{ // 표
+  const tb=document.getElementById("tbody");
+  D.q.forEach((q,i)=>{
+    const tr=document.createElement("tr");
+    if(q==="26Q2") tr.className="hl";
+    tr.innerHTML=`<td>${q}</td><td>${nf(D.aws[i],2)}</td><td style="color:#9aa4ad">${nf(D.ai[i],2)}</td>`+
+      `<td style="color:var(--aws)">${nf(D.non[i],2)}</td><td>${D.ynon[i]==null?"–":"+"+nf(D.ynon[i])+"%"}</td>`+
+      `<td style="color:var(--ddog)">${nf(D.ddog[i],3)}</td><td>${D.yddog[i]==null?"–":"+"+nf(D.yddog[i])+"%"}</td>`;
+    tb.appendChild(tr);
+  });
+}
+
+function setup(cv){
+  const dpr=window.devicePixelRatio||1,w=cv.clientWidth,h=+(cv.dataset.h||(cv.dataset.h=cv.getAttribute("height")));
+  cv.width=w*dpr;cv.height=h*dpr;cv.style.height=h+"px";
+  const ctx=cv.getContext("2d");ctx.scale(dpr,dpr);return{ctx,w,h};
+}
+const MONO=getComputedStyle(document.body).getPropertyValue("--mono");
+
+/* YoY 차트 */
+const yc=document.getElementById("yoy"),yt=document.getElementById("yoyTip");
+function drawYoy(){
+  const {ctx,w,h}=setup(yc);
+  const P={l:44,r:14,t:14,b:28},iw=w-P.l-P.r,ih=h-P.t-P.b;
+  const idx=D.q.map((q,i)=>i).filter(i=>D.ynon[i]!=null);
+  const all=[...idx.map(i=>D.ynon[i]),...idx.map(i=>D.yddog[i]),...idx.map(i=>D.yaws[i])];
+  const mn=Math.min(...all)-3,mx=Math.max(...all)+3;
+  const X=i=>P.l+iw*(idx.indexOf(i)+.5)/idx.length;
+  const Y=v=>P.t+ih*(1-(v-mn)/(mx-mn));
+  ctx.clearRect(0,0,w,h);ctx.font="10px "+MONO;
+  ctx.strokeStyle="#242c38";ctx.fillStyle="#8a93a1";ctx.textAlign="right";
+  for(let g=0;g<=4;g++){const v=mn+(mx-mn)*g/4,yy=Y(v);
+    ctx.beginPath();ctx.moveTo(P.l,yy);ctx.lineTo(w-P.r,yy);ctx.stroke();
+    ctx.fillText(v.toFixed(0)+"%",P.l-6,yy+3);}
+  function line(vals,color,dash){
+    ctx.strokeStyle=color;ctx.lineWidth=2;ctx.setLineDash(dash||[]);
+    ctx.beginPath();let st=false;
+    idx.forEach(i=>{st?ctx.lineTo(X(i),Y(vals[i])):ctx.moveTo(X(i),Y(vals[i]));st=true;});
+    ctx.stroke();ctx.setLineDash([]);
+    if(!dash) idx.forEach(i=>{ctx.fillStyle=color;ctx.beginPath();ctx.arc(X(i),Y(vals[i]),2.8,0,7);ctx.fill();});
+  }
+  line(D.yaws,"#5f6e80",[4,4]); line(D.ynon,"#ff9900"); line(D.yddog,"#8f6bdb");
+  ctx.fillStyle="#8a93a1";ctx.textAlign="center";
+  idx.forEach((i,k)=>{if(k%2===0)ctx.fillText(D.q[i],X(i),h-9);});
+  yc._g={idx,X};
+}
+drawYoy();addEventListener("resize",drawYoy);
+yc.addEventListener("mousemove",ev=>{
+  const g=yc._g;if(!g)return;
+  const r=yc.getBoundingClientRect(),mx=ev.clientX-r.left;
+  let best=g.idx[0],bd=1e9;
+  g.idx.forEach(i=>{const d=Math.abs(g.X(i)-mx);if(d<bd){bd=d;best=i;}});
+  yt.style.display="block";
+  yt.style.left=Math.min(g.X(best)+12,yc.clientWidth-180)+"px";yt.style.top="14px";
+  yt.innerHTML=`<b>${D.q[best]}</b><br><span style="color:#8f6bdb">DDOG +${nf(D.yddog[best])}%</span><br>`+
+    `<span style="color:#ff9900">non-AI +${nf(D.ynon[best])}%</span><br><span style="color:#8a93a1">AWS전체 +${nf(D.yaws[best])}%</span>`;
+});
+yc.addEventListener("mouseleave",()=>yt.style.display="none");
+
+/* 레벨 차트 */
+const lc=document.getElementById("lvl"),lt=document.getElementById("lvlTip");
+function drawLvl(){
+  const {ctx,w,h}=setup(lc);
+  const P={l:44,r:46,t:14,b:28},iw=w-P.l-P.r,ih=h-P.t-P.b;
+  const maxA=Math.max(...D.non)*1.1,maxD=Math.max(...D.ddog)*1.1;
+  const X=i=>P.l+iw*(i+.5)/D.q.length;
+  const YA=v=>P.t+ih*(1-v/maxA),YD=v=>P.t+ih*(1-v/maxD);
+  ctx.clearRect(0,0,w,h);ctx.font="10px "+MONO;
+  ctx.strokeStyle="#242c38";ctx.fillStyle="#8a93a1";
+  for(let g=0;g<=4;g++){const yy=P.t+ih*g/4;
+    ctx.beginPath();ctx.moveTo(P.l,yy);ctx.lineTo(w-P.r,yy);ctx.stroke();
+    ctx.textAlign="right";ctx.fillText((maxA*(1-g/4)).toFixed(0),P.l-6,yy+3);
+    ctx.textAlign="left";ctx.fillText((maxD*(1-g/4)).toFixed(2),w-P.r+6,yy+3);}
+  const bw=Math.min(22,iw/D.q.length*.55);
+  D.q.forEach((q,i)=>{ctx.fillStyle="rgba(255,153,0,.8)";
+    ctx.fillRect(X(i)-bw/2,YA(D.non[i]),bw,ih+P.t-YA(D.non[i]));});
+  ctx.strokeStyle="#8f6bdb";ctx.lineWidth=2.2;ctx.beginPath();
+  D.q.forEach((q,i)=>{i?ctx.lineTo(X(i),YD(D.ddog[i])):ctx.moveTo(X(i),YD(D.ddog[i]));});
+  ctx.stroke();
+  D.q.forEach((q,i)=>{ctx.fillStyle="#8f6bdb";ctx.beginPath();ctx.arc(X(i),YD(D.ddog[i]),2.6,0,7);ctx.fill();});
+  ctx.fillStyle="#8a93a1";ctx.textAlign="center";
+  D.q.forEach((q,i)=>{if(i%3===0||i===D.q.length-1)ctx.fillText(q,X(i),h-9);});
+  lc._g={X};
+}
+drawLvl();addEventListener("resize",drawLvl);
+lc.addEventListener("mousemove",ev=>{
+  const g=lc._g;if(!g)return;
+  const r=lc.getBoundingClientRect(),mx=ev.clientX-r.left;
+  let best=0,bd=1e9;
+  D.q.forEach((q,i)=>{const d=Math.abs(g.X(i)-mx);if(d<bd){bd=d;best=i;}});
+  lt.style.display="block";
+  lt.style.left=Math.min(g.X(best)+12,lc.clientWidth-190)+"px";lt.style.top="14px";
+  lt.innerHTML=`<b>${D.q[best]}</b><br><span style="color:#ff9900">non-AI AWS $${nf(D.non[best],2)}B</span><br>`+
+    `<span style="color:#8f6bdb">DDOG $${nf(D.ddog[best],3)}B</span>`;
+});
+lc.addEventListener("mouseleave",()=>lt.style.display="none");
+</script>
+
+</body></html>

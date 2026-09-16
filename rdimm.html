@@ -1,0 +1,243 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>RDIMM 기술 심층 — 구조와 MRDIMM 전환</title>
+<style>
+  :root{
+    --ink:#0e1116; --surface:#181e27; --surface2:#202834; --line:#2b3442;
+    --acc:#4da3ff; --gold:#d4a24e; --grn:#3fbf7f; --up:#e5484d; --mut:#8a93a1; --fg:#e9edf2;
+    --pcb:#12351f; --pcbline:#1d5a34;
+    --mono:"SF Mono",ui-monospace,Menlo,monospace;
+    --kr:"Apple SD Gothic Neo","Pretendard",system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--ink);color:var(--fg);font-family:var(--kr);line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+    background-image:radial-gradient(1100px 460px at 50% -6%,#161d28 0%,var(--ink) 60%)}
+  .wrap{max-width:880px;margin:0 auto;padding:52px 22px 70px}
+  .eyebrow{font-family:var(--mono);font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--acc);margin-bottom:12px}
+  h1{font-size:2rem;font-weight:800;letter-spacing:-.02em;line-height:1.18}
+  .sub{color:var(--mut);font-size:.88rem;margin-top:12px;text-align:justify}
+  .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:28px 0 4px}
+  @media(max-width:680px){.kpis{grid-template-columns:1fr}}
+  .kpi{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;text-align:center}
+  .kpi .big{font-family:var(--mono);font-size:1.55rem;font-weight:750;color:var(--gold)}
+  .kpi .lbl{font-size:.72rem;color:var(--mut);margin-top:4px;line-height:1.5}
+  section{margin-top:44px}
+  .shead h2{font-size:1.24rem;font-weight:750;margin-bottom:5px}
+  .sdesc{color:var(--mut);font-size:.85rem;margin-bottom:16px;text-align:justify}
+  .panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px;overflow-x:auto}
+
+  /* ── DIMM 다이어그램 ── */
+  .mods{display:grid;gap:16px}
+  .mod{background:var(--surface);border:1px solid var(--line);border-radius:13px;padding:16px 18px}
+  .mod h3{font-size:.95rem;font-weight:750;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+  .mod h3 small{font-family:var(--mono);font-size:.68rem;color:var(--mut);font-weight:500}
+  .mod .use{margin-left:auto;font-size:.66rem;font-family:var(--mono);padding:2px 9px;border-radius:999px;
+    background:#233042;color:#9fc1e8}
+  .cpu{display:flex;align-items:center;gap:8px;margin:12px 0 4px;font-family:var(--mono);font-size:.66rem;color:var(--mut)}
+  .cpu .box{background:#2a3444;border:1px solid #3a4a60;border-radius:6px;padding:3px 10px;color:#c8d4e4;font-weight:700}
+  .lanes{flex:1;display:flex;flex-direction:column;gap:3px}
+  .lane{height:0;border-top:2px solid;position:relative;font-size:.6rem}
+  .lane span{position:absolute;right:4px;top:-14px;color:inherit}
+  .pcb{margin-top:6px;background:linear-gradient(180deg,#143a23,#0f2e1b);border:1px solid var(--pcbline);
+    border-radius:8px;padding:10px 12px 8px;display:flex;gap:5px;align-items:center;flex-wrap:wrap;min-height:64px;position:relative}
+  .pcb::after{content:"";position:absolute;left:8px;right:8px;bottom:3px;height:5px;
+    background:repeating-linear-gradient(90deg,#caa64c 0 7px,#0f2e1b 7px 11px);border-radius:2px;opacity:.85}
+  .chip{border-radius:4px;font-family:var(--mono);font-size:.6rem;font-weight:700;display:flex;
+    align-items:center;justify-content:center;color:#dfe7f0;padding:0 4px;letter-spacing:.02em}
+  .dram{background:#26303e;border:1px solid #3a4a60;width:34px;height:30px}
+  .rcd{background:#1d4d80;border:1px solid #4da3ff;width:44px;height:34px;color:#bfe0ff}
+  .db{background:#684a1f;border:1px solid #d4a24e;width:26px;height:24px;color:#ffe2ae}
+  .pmic{background:#5a2a3c;border:1px solid #d06a8a;width:38px;height:26px;color:#ffc9da}
+  .spd{background:#2d5240;border:1px solid #3fbf7f;width:36px;height:26px;color:#bff0d8}
+  .mod .note{font-size:.78rem;color:#b9c2cd;margin-top:10px;line-height:1.6}
+  .mod .note b{color:var(--fg)}
+
+  .tblwrap{overflow-x:auto}
+  .tbl{width:100%;min-width:560px;border-collapse:collapse;font-size:.8rem}
+  .tbl th{font-family:var(--mono);font-size:.64rem;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);
+    text-align:left;padding:0 10px 9px;border-bottom:1px solid var(--line)}
+  .tbl td{padding:8px 10px;border-bottom:1px solid #222b37;vertical-align:top}
+  .tbl tr:last-child td{border-bottom:none}
+  .tbl td:first-child{font-weight:700;white-space:nowrap}
+
+  /* MRDIMM 흐름도 */
+  .flow{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center;margin:8px 0}
+  .fbox{border-radius:10px;padding:10px 14px;text-align:center;font-size:.75rem;line-height:1.5}
+  .fbox b{display:block;font-family:var(--mono);font-size:.85rem}
+  .arrow{font-size:1.2rem;color:var(--mut)}
+
+  /* 계층 다이어그램 */
+  .tier{display:grid;gap:8px}
+  .trow{display:grid;grid-template-columns:120px 1fr auto;gap:12px;align-items:center;
+    background:var(--surface2);border:1px solid var(--line);border-radius:10px;padding:10px 14px}
+  .trow .tn{font-weight:750;font-size:.85rem}
+  .trow .td{font-size:.76rem;color:var(--mut)}
+  .trow .tv{font-family:var(--mono);font-size:.74rem;text-align:right;color:#c8d0da;white-space:nowrap}
+  @media(max-width:640px){
+    .trow{grid-template-columns:1fr}
+    .trow .tv{text-align:left;white-space:normal}
+  }
+
+  .bars{display:grid;gap:9px;margin-top:6px}
+  .brow{display:grid;grid-template-columns:64px 1fr 52px;gap:10px;align-items:center;font-family:var(--mono);font-size:.72rem}
+  .btrack{height:9px;border-radius:5px;background:#232c38;overflow:hidden}
+  .bfill{height:100%;border-radius:5px;background:linear-gradient(90deg,#3e6ea8,var(--acc))}
+  .impl{background:var(--surface2);border:1px solid var(--line);border-left:3px solid var(--acc);
+    border-radius:10px;padding:15px 19px;font-size:.84rem;color:#cfd6de;line-height:1.68;margin-top:16px;text-align:justify}
+  .impl b{color:var(--acc)}
+  footer{margin-top:48px;padding-top:20px;border-top:1px solid var(--line);font-size:.74rem;color:var(--mut);line-height:1.7}
+  footer a{color:var(--acc)}
+</style></head><body>
+
+<div class="wrap">
+  <div class="eyebrow">Deep Tech · Server Memory</div>
+  <h1>RDIMM — AI 시대에 재평가되는<br>서버 메모리 모듈의 구조</h1>
+  <p class="sub">RDIMM은 "구형 메모리"가 아니라 HBM의 용량 한계를 받쳐주는 필수 계층으로 격상되고 있다. RDIMM→MRDIMM 전환은 모듈당 인터페이스 칩 가치를 <b style="color:var(--fg)">$6~7 → $70~80으로 10배</b> 끌어올리는 콘텐츠 성장이며, 서버 대수 성장에 의존하지 않는다. 아래에서 UDIMM부터 MRDIMM까지 구조를 그림으로 뜯어보고, HBM과의 관계·밸류체인·침투 로드맵을 정리했다.</p>
+
+  <div class="kpis">
+    <div class="kpi"><div class="big">10배</div><div class="lbl">모듈당 인터페이스 칩 가치<br>$6~7 → $70~80 (MRDIMM)</div></div>
+    <div class="kpi"><div class="big">3%→25%</div><div class="lbl">MRDIMM 침투율<br>2026 → 2030 (번스타인)</div></div>
+    <div class="kpi"><div class="big">$200억</div><div class="lbl">메모리 인터페이스 칩 시장<br>2030E · CAGR 65%</div></div>
+  </div>
+
+  <section>
+    <div class="shead"><h2>① 모듈 구조 비교 — UDIMM부터 MRDIMM까지</h2></div>
+    <p class="sdesc">파란 선 = 명령/주소(CA) 신호, 빨간 선 = 데이터(DQ) 신호. 어떤 신호를 모듈 위 칩이 중계(버퍼링)하느냐가 네 모듈의 본질적 차이다. DDR5부터는 전원관리(PMIC)와 SPD Hub가 보드에서 모듈 위로 올라와 BOM과 기판 난이도가 구조적으로 상승했다.</p>
+
+    <div class="mods">
+      <div class="mod">
+        <h3>UDIMM <small>Unbuffered</small><span class="use">PC · 워크스테이션</span></h3>
+        <div class="cpu"><span class="box">CPU</span>
+          <div class="lanes">
+            <div class="lane" style="border-color:#4da3ff"><span style="color:#4da3ff">CA 직결</span></div>
+            <div class="lane" style="border-color:#e5484d"><span style="color:#e5484d">DQ 직결</span></div>
+          </div></div>
+        <div class="pcb">
+          <div class="chip spd">SPD</div>
+          <div class="chip dram">DRAM</div><div class="chip dram">DRAM</div><div class="chip dram">DRAM</div><div class="chip dram">DRAM</div><div class="chip dram">DRAM</div><div class="chip dram">DRAM</div><div class="chip dram">DRAM</div><div class="chip dram">DRAM</div>
+        </div>
+        <div class="note">CPU가 모든 DRAM을 <b>직접 구동</b> — 버퍼 칩이 없어 저렴하지만 전기 부하 한계로 채널당 용량·랭크 확장이 어렵다.</div>
+      </div>
+
+      <div class="mod">
+        <h3>DDR5 RDIMM <small>Registered</small><span class="use">서버 표준</span></h3>
+        <div class="cpu"><span class="box">CPU</span>
+          <div class="lanes">
+            <div class="lane" style="border-color:#4da3ff"><span style="color:#4da3ff">CA → RCD 중계</span></div>
+            <div class="lane" style="border-color:#e5484d"><span style="color:#e5484d">DQ 직결</span></div>
+          </div></div>
+        <div class="pcb">
+          <div class="chip spd">SPD Hub</div>
+          <div class="chip dram">DRAM</div><div class="chip dram">DRAM</div><div class="chip dram">DRAM</div><div class="chip dram">DRAM</div>
+          <div class="chip rcd">RCD</div>
+          <div class="chip dram">DRAM</div><div class="chip dram">DRAM</div><div class="chip dram">DRAM</div><div class="chip dram">DRAM</div>
+          <div class="chip pmic">PMIC</div>
+        </div>
+        <div class="note"><b>RCD(Registering Clock Driver)</b>가 명령/주소·클럭을 받아 재구동 → 채널당 더 많은 랭크·대용량을 안정 구동. 데이터 신호는 여전히 직결. DDR5부터 <b>PMIC(전원)·SPD Hub(정보)</b>가 모듈에 탑재돼 모듈 BOM↑, 기판 층수·설계 난이도↑ (6.4→8.8GT/s 고속화로 저손실 소재·임피던스 정밀 제어 요구 — 현대차증권).</div>
+      </div>
+
+      <div class="mod">
+        <h3>LRDIMM <small>Load-Reduced</small><span class="use">대용량 서버 (틈새)</span></h3>
+        <div class="cpu"><span class="box">CPU</span>
+          <div class="lanes">
+            <div class="lane" style="border-color:#4da3ff"><span style="color:#4da3ff">CA → RCD</span></div>
+            <div class="lane" style="border-color:#d4a24e"><span style="color:#d4a24e">DQ → DB 중계</span></div>
+          </div></div>
+        <div class="pcb">
+          <div class="chip spd">SPD</div>
+          <div class="chip db">DB</div><div class="chip dram">DRAM</div><div class="chip db">DB</div><div class="chip dram">DRAM</div>
+          <div class="chip rcd">RCD</div>
+          <div class="chip dram">DRAM</div><div class="chip db">DB</div><div class="chip dram">DRAM</div><div class="chip db">DB</div>
+          <div class="chip pmic">PMIC</div>
+        </div>
+        <div class="note">데이터 신호까지 <b>데이터버퍼(DB)</b>로 중계해 부하를 최소화 — 초대용량 구성용. MRDIMM의 기술적 전신.</div>
+      </div>
+
+      <div class="mod" style="border-color:#3a5f8f">
+        <h3 style="color:#bfe0ff">MRDIMM <small>Multiplexed Rank · 인텔 진영은 MCRDIMM</small><span class="use" style="background:#1d4d80;color:#bfe0ff">AI 호스트 CPU · 차세대</span></h3>
+        <div class="cpu"><span class="box">CPU</span>
+          <div class="lanes">
+            <div class="lane" style="border-color:#4da3ff"><span style="color:#4da3ff">CA → MRCD</span></div>
+            <div class="lane" style="border-color:#d4a24e"><span style="color:#d4a24e">DQ → MDB ×10 (랭크 결합)</span></div>
+          </div></div>
+        <div class="pcb">
+          <div class="chip spd">SPD</div>
+          <div class="chip db">MDB</div><div class="chip dram">R1</div><div class="chip db">MDB</div><div class="chip dram">R2</div>
+          <div class="chip rcd" style="width:52px">MRCD</div>
+          <div class="chip dram">R1</div><div class="chip db">MDB</div><div class="chip dram">R2</div><div class="chip db">MDB</div>
+          <div class="chip pmic">PMIC</div>
+        </div>
+        <div class="note">DRAM을 빠르게 하는 게 아니라 <b>두 랭크(R1·R2)를 동시에 열고</b>, 각각 6,400MT/s로 나오는 데이터를 <b>MRCD 1개 + MDB 10개</b>가 결합해 CPU 인터페이스에서 <b>12,800MT/s</b>를 구현. AMD Venice 16채널 기준 CPU당 약 1.6TB/s. 인터페이스 칩 가치가 모듈당 $70~80으로 10배 상승하는 이유가 이 칩 수 증가다 (번스타인).</div>
+      </div>
+    </div>
+
+    <div class="panel" style="margin-top:16px;overflow-x:auto"><div class="tblwrap"><table class="tbl">
+        <thead><tr><th>모듈</th><th>버퍼 대상</th><th>핵심 칩</th><th>속도(현행)</th><th>인터페이스 칩 가치</th><th>주 용도</th></tr></thead>
+        <tbody>
+          <tr><td>UDIMM</td><td>없음 (직결)</td><td>SPD</td><td style="font-family:var(--mono)">~6,400MT/s</td><td style="font-family:var(--mono)">~$0</td><td>PC</td></tr>
+          <tr><td>RDIMM</td><td>CA만</td><td>RCD·PMIC·SPD Hub</td><td style="font-family:var(--mono)">6,400~8,000</td><td style="font-family:var(--mono)">$6~7</td><td>서버 표준</td></tr>
+          <tr><td>LRDIMM</td><td>CA + DQ</td><td>RCD + DB</td><td style="font-family:var(--mono)">6,400</td><td style="font-family:var(--mono)">~$20</td><td>초대용량</td></tr>
+          <tr><td style="color:#bfe0ff">MRDIMM</td><td>CA + DQ (랭크 결합)</td><td>MRCD + MDB×10</td><td style="font-family:var(--mono);color:#bfe0ff">8,800→12,800</td><td style="font-family:var(--mono);color:var(--gold)">$70~80</td><td>AI 호스트 CPU</td></tr>
+        </tbody>
+      </table></div></div>
+  </section>
+
+  <section>
+    <div class="shead"><h2>② MRDIMM 동작 원리 — 두 랭크를 하나처럼</h2></div>
+    <div class="panel">
+      <div class="flow">
+        <div class="fbox" style="background:#26303e;border:1px solid #3a4a60">랭크 1<b>6,400 MT/s</b></div>
+        <div class="fbox" style="background:#26303e;border:1px solid #3a4a60">랭크 2<b>6,400 MT/s</b></div>
+        <div class="arrow">→</div>
+        <div class="fbox" style="background:#1d4d80;border:1px solid #4da3ff">MRCD + MDB×10<b>멀티플렉싱 결합</b></div>
+        <div class="arrow">→</div>
+        <div class="fbox" style="background:#2d5240;border:1px solid #3fbf7f">CPU 인터페이스<b>12,800 MT/s</b></div>
+      </div>
+      <div class="impl" style="margin-top:14px">
+        저부하에선 오히려 RDIMM의 레이턴시가 짧을 수 있지만, <b>메모리 사용률이 높은 고동시성 환경</b>에서 MRDIMM은 대기열을 줄여 처리량·지연을 동시에 개선한다. 128GB 기준 가격 프리미엄이 동급 RDIMM 대비 약 <b>$300~350(+10%)</b>에 불과해 진입장벽이 낮고, DRAM 가격이 오를수록 추가 칩 비용의 상대 부담은 더 작아진다. 제약은 전력·발열·공간 — "인증이 샘플을 넘어 양산 배치로 이어지는가"가 채택 확인 포인트 (번스타인, 2026.9.8).
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="shead"><h2>③ HBM과의 관계 — 대체재가 아닌 용량 계층</h2></div>
+    <p class="sdesc">에이전틱 AI에서 GPU Working Set(340GB→1.28TB)이 GPU당 HBM 용량(192→576GB)을 넘어선다. 넘치는 데이터는 CPU 쪽 RDIMM으로, 그다음 CXL로 흘러내린다 — AI 서버의 메모리 병목은 대역폭보다 <b style="color:var(--fg)">용량</b>에서 먼저 온다 (LS증권, 2026.8.25).</p>
+    <div class="tier">
+      <div class="trow" style="border-color:#7c4dcc55"><div class="tn" style="color:#c9b3f0">HBM (GPU 직결)</div><div class="td">초고대역폭 · 적층 DRAM+TSV, GPU 패키지 안</div><div class="tv">GPU당 192→576GB<br>대역폭 최상</div></div>
+      <div class="trow" style="border-color:#4da3ff55"><div class="tn" style="color:#bfe0ff">RDIMM/MRDIMM<br>(CPU Local)</div><div class="td">KV Cache·오프로드 수용 — HBM이 못 담는 Working Set의 1차 수용층. AI 호스트 CPU가 가장 유력한 MRDIMM 적용처</div><div class="tv">Task당 Inference 75→250회<br>KV Cache 160GB→1TB</div></div>
+      <div class="trow"><div class="tn" style="color:#9fc79f">CXL 확장</div><div class="td">2차 오프로드 · 풀드 메모리</div><div class="tv">용량 최상 · 지연 ↑</div></div>
+    </div>
+    <div class="impl">구글은 세미콘 대만 2026에서 "AI 병목이 연산에서 <b>메모리</b>로 전이됐고, 고성능 메모리가 AI 서버 BOM의 75% 이상"이라 발표. 공급 측면에서는 HBM이 같은 웨이퍼 CAPA를 잠식해 서버 RDIMM 공급을 제한 — 이것이 서버 DRAM 가격 강세의 구조적 배경이다. SOCAMM2와도 대체가 아닌 분업: MRDIMM은 절대 대역폭·용량·DIMM 생태계 호환(16ch Gen2 ~1.64TB/s), SOCAMM2는 전력효율·소형화(엔비디아 플랫폼, 8개 ~1.23TB/s).</div>
+  </section>
+
+  <section>
+    <div class="shead"><h2>④ 침투 로드맵 & 밸류체인</h2></div>
+    <div class="panel">
+      <div style="font-family:var(--mono);font-size:.68rem;color:var(--mut);margin-bottom:10px">MRDIMM 출하 비중 전망 (번스타인)</div>
+      <div class="bars">
+        <div class="brow"><span>2026</span><div class="btrack"><div class="bfill" style="width:12%"></div></div><span>3%</span></div>
+        <div class="brow"><span>2027</span><div class="btrack"><div class="bfill" style="width:24%"></div></div><span>6%</span></div>
+        <div class="brow"><span>2028</span><div class="btrack"><div class="bfill" style="width:48%"></div></div><span>12%</span></div>
+        <div class="brow"><span>2029</span><div class="btrack"><div class="bfill" style="width:80%"></div></div><span>20%</span></div>
+        <div class="brow"><span>2030</span><div class="btrack"><div class="bfill" style="width:100%"></div></div><span>25%+</span></div>
+      </div>
+      <div style="font-size:.76rem;color:var(--mut);margin-top:10px">성장 삼중주: 서버 CPU 3,060만→8,930만개 × CPU당 DIMM 9.5→13.6개 × DIMM당 칩 가치 $5.9→$16.3 → 2030년 시장 $200억 (MRCD·MDB가 73%)</div>
+    </div>
+    <div class="panel" style="margin-top:14px;overflow-x:auto"><div class="tblwrap"><table class="tbl">
+        <thead><tr><th>레이어</th><th>플레이어</th><th>포인트</th></tr></thead>
+        <tbody>
+          <tr><td>모듈 (3사 과점)</td><td>삼성전자 · SK하이닉스 · 마이크론</td><td>2Q26 DRAM 점유 39.4 / 24.9 / 23.3% — HBM 우선 배분이 RDIMM 공급을 잠식해 가격 강세. MRDIMM Gen1은 마이크론 선행</td></tr>
+          <tr><td>인터페이스 칩 (3사 과점)</td><td>몬타지 · 르네사스 · 램버스</td><td>MRDIMM 전환의 최대 수혜 — 몬타지 2Q26 사상 최고 이익, 번스타인 Outperform(A주 TP 400위안)</td></tr>
+          <tr><td>국내 기판·부품</td><td>티엘비 · 심텍 · 해성디에스</td><td>① 티엘비: SOCAMM2+고부가 RDIMM 전환, '28 매출 상단 9,000억 시나리오 ② 심텍: 2H26 가이던스가 컨센 +50% ③ 해성디에스: 저밸류 턴어라운드</td></tr>
+        </tbody>
+      </table></div></div>
+    <div class="impl" style="border-left-color:var(--gold)"><b style="color:var(--gold)">체크포인트</b> — ▲4Q26 서버 DRAM 계약가 상승률 ▲AMD Venice 서버의 MRDIMM 샘플→양산 배치 전환 증거 ▲티엘비 4Q26 매출 1,000억 돌파 ▲심텍 청주 증설 CAPA 반영 ▲해성디에스 4Q26 가동률 70% ▲CSP CapEx 내 메모리 비중(68% 전망) 현실화.</div>
+  </section>
+
+  <footer>
+    본 페이지는 딥리서치 리포트의 시각 요약본. 전문(밸류체인 재무·가격 전망 포함)은
+    <a href="https://app.notion.com/p/RDIMM-Registered-DIMM-DDR5-RDIMM-RCD-SPD-Hub-PMIC-UDIMM-MR-3dc8e39b22a1815499c2cc074379707a">노션 리포트</a> 참고.
+    출처: 번스타인(2026.9.8) · LS증권(2026.8.25) · 현대차증권(2026.1.20) · TrendForce · DART — 아카이브 수집분. 다이어그램은 개념도이며 실제 배치와 다를 수 있음. · 쩜상리서치 2026-09-16
+  </footer>
+</div>
+
+</body></html>
