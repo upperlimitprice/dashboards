@@ -1,0 +1,436 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Global Export Tracker</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.1/echarts.min.js"></script>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--ink:#1c2430;--sub:#6b7480;--line:#e3e6ea;--acc:#2563eb;--up:#d63c3c;--dn:#2f6fd6;--pos:#1a9e5c;--neg:#d63c3c}
+@media (prefers-color-scheme: dark){:root{--bg:#0f1318;--card:#171c23;--ink:#e6eaf0;--sub:#98a2b3;--line:#2a313b;--acc:#5b8cff}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Pretendard,"Malgun Gothic",sans-serif;padding:16px 16px 40px}
+h1{font-size:20px;margin:0 0 4px}.sub{color:var(--sub);font-size:12px;margin-bottom:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-bottom:14px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end}.row>div{display:flex;flex-direction:column;gap:4px}
+label{font-size:11px;color:var(--sub)}select,input,button,textarea{font:inherit;padding:7px 10px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink)}
+button{cursor:pointer}button.pri{background:var(--acc);color:#fff;border-color:var(--acc)}button.sm{padding:4px 9px;font-size:12px}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}.tabs button{border-radius:20px;padding:6px 14px}.tabs button.on{background:var(--acc);color:#fff;border-color:var(--acc)}
+.subtabs button{border-radius:8px;padding:5px 12px}.subtabs button.on{background:var(--acc);color:#fff;border-color:var(--acc)}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:10px 0}.tile{background:var(--bg);border-radius:10px;padding:10px 12px}.tile .k{font-size:11px;color:var(--sub)}.tile .v{font-size:18px;font-weight:600;margin-top:2px}
+.up{color:var(--up)}.dn{color:var(--dn)}
+.chart{width:100%;height:380px}.chart.tall{height:520px}.chart.mini{height:220px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:12px}
+.toggles{display:flex;flex-wrap:wrap;gap:12px;margin:8px 0;font-size:12px}.toggles label{color:var(--ink);display:flex;gap:4px;align-items:center;font-size:12px}
+.tblwrap{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:13px}th,td{padding:8px 16px 8px 10px;border-bottom:1px solid var(--line);white-space:nowrap;text-align:right}th:first-child,td:first-child,th.l,td.l{text-align:left}th{cursor:pointer;user-select:none;color:var(--sub);font-weight:600}th .ar{font-size:10px;margin-left:3px;color:var(--sub)}
+tr:hover td{background:rgba(37,99,235,.05)}td.hs{font-family:ui-monospace,Menlo,monospace;cursor:pointer;color:var(--acc)}
+.dd{position:absolute;background:var(--card);border:1px solid var(--line);border-radius:8px;max-height:280px;overflow:auto;z-index:20;min-width:320px;box-shadow:0 8px 24px rgba(0,0,0,.12)}.dd div{padding:6px 10px;cursor:pointer;font-size:12px}.dd div:hover{background:rgba(37,99,235,.08)}
+.spark{width:90px;height:22px;display:inline-block;vertical-align:middle}
+.crumb{font-size:12px;color:var(--sub);margin:4px 0 8px}.crumb span{cursor:pointer;color:var(--acc)}
+.muted{color:var(--sub);font-size:12px}[hidden]{display:none!important}
+.chip{display:inline-flex;align-items:center;gap:6px;background:var(--bg);border:1px solid var(--line);border-radius:20px;padding:4px 10px;font-size:12px;margin:3px 4px 3px 0}.chip b{font-family:ui-monospace,Menlo,monospace}.chip .x{cursor:pointer;color:var(--sub)}
+.star{cursor:pointer;font-size:18px;color:#c9cdd3;user-select:none}.star.on{color:#f5b301}
+.badge{display:inline-block;font-size:10px;padding:1px 6px;border-radius:10px;background:var(--bg);border:1px solid var(--line);color:var(--sub);margin-left:4px}
+.hm{border-collapse:collapse;font-size:11px}.hm th,.hm td{padding:3px 6px;border:1px solid var(--line);text-align:center;white-space:nowrap}.hm td.n{text-align:left;max-width:260px;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
+.homecards{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}.hc{background:var(--bg);border-radius:10px;padding:10px 12px}.hc h4{margin:0 0 6px;font-size:13px}.hc div.r{display:flex;justify-content:space-between;font-size:12px;padding:3px 0;border-bottom:1px dashed var(--line);cursor:pointer}
+@media (max-width:480px){body{padding:12px 16px 30px}.chart{height:300px}}
+</style>
+</head>
+<body>
+<h1>🧅 Global Export Tracker</h1>
+<div class="sub" id="genInfo">데이터 로딩 중…</div>
+
+<div class="card">
+  <div class="row">
+    <div><label>수집국</label><select id="origin"></select></div>
+    <div><label>방향</label><select id="flow"><option value="X">수출</option><option value="M">수입</option></select></div>
+    <div style="position:relative;flex:1;min-width:260px"><label>HS코드 / 품목명</label><input id="hsq" placeholder="예: 854232, 메모리, memory" autocomplete="off"><div class="dd" id="dd" hidden></div></div>
+    <div><label>&nbsp;</label><button class="pri" id="go">조회</button></div>
+    <div><label>&nbsp;</label><button id="addCond" title="현재 조건을 합산 목록에 추가">+ 조건 추가</button></div>
+  </div>
+  <div class="tabs" style="margin-top:12px">
+    <button data-tab="home" class="on">🏠 홈</button><button data-tab="series">📈 시계열</button><button data-tab="combined">➕ 합산</button><button data-tab="surge">🚀 급등 탐색</button><button data-tab="treemap">🗺️ 트리맵/히트맵</button><button data-tab="partner">🌏 상대국</button><button data-tab="hs">🔍 HS코드</button><button data-tab="ppi">📊 PPI</button><button data-tab="my">⭐ 마이페이지</button>
+  </div>
+</div>
+
+<!-- 홈 -->
+<div class="card" id="p-home">
+  <div class="row"><div><label>글로벌 수출입 트리맵 · 박스 = 최신월 금액, 색 = YoY(±30% 클리핑)</label></div><div class="subtabs" style="flex-direction:row;gap:6px"><button id="homeX" class="on">수출</button><button id="homeM">수입</button></div><div class="muted" id="homeInfo"></div></div>
+  <div class="chart" id="cHome" style="height:300px"></div>
+</div>
+<div class="card" id="p-home2">
+  <div class="row"><div><label>🚀 급등 품목 TOP 5 (3M 평균 ≥ 5M$)</label></div><div><select id="homeSort"><option value="mom">MoM</option><option value="yoy">YoY</option><option value="yoy3">3M YoY</option></select></div></div>
+  <div class="homecards" id="homeSurge"></div>
+</div>
+<div class="card" id="p-home3">
+  <div class="row"><div><label>📊 PPI 상승 품목 TOP 5 (YoY)</label></div></div>
+  <div class="homecards" id="homePpi"></div>
+</div>
+
+<!-- 시계열 -->
+<div class="card" id="p-series" hidden>
+  <div style="display:flex;justify-content:space-between;align-items:center"><div id="title" style="font-weight:600"></div><div><span class="star" id="favSeries" title="관심 품목">☆</span></div></div>
+  <div class="tiles" id="tiles"></div>
+  <div class="toggles">
+    <label><input type="checkbox" id="tAmt" checked>금액</label><label><input type="checkbox" id="tKg">중량</label><label><input type="checkbox" id="tUp">단가</label>
+    <label><input type="checkbox" id="t3m">3M 평균</label><label><input type="checkbox" id="tYoy">YoY 모드</label>
+  </div>
+  <div class="chart" id="cSeries"></div>
+  <details style="margin-top:8px"><summary class="muted">데이터 테이블 · <a href="#" id="csv">CSV 내보내기</a></summary><div class="tblwrap"><table id="tbl"></table></div></details>
+</div>
+
+<!-- 합산 -->
+<div class="card" id="p-combined" hidden>
+  <div class="row"><div><label>합산 조건 (시계열 탭에서 "+ 조건 추가")</label><div id="condChips"></div></div>
+    <div><label>&nbsp;</label><button id="condClear">전체 지우기</button></div>
+    <div><label>합산 프리셋</label><select id="condPreset"><option value="">-- 불러오기 --</option></select></div>
+    <div><label>&nbsp;</label><button id="condSave">★ 프리셋 저장</button></div>
+    <div><label>&nbsp;</label><button id="condDel">× 삭제</button></div></div>
+  <div class="tiles" id="condTiles"></div>
+  <div class="chart" id="cComb"></div>
+  <div class="grid2">
+    <div><div class="muted">금액 YoY (%)</div><div class="chart mini" id="cComb1"></div></div>
+    <div><div class="muted">비중 (%)</div><div class="chart mini" id="cComb2"></div></div>
+    <div><div class="muted">중량 (t)</div><div class="chart mini" id="cComb3"></div></div>
+    <div><div class="muted">단가 ($/kg)</div><div class="chart mini" id="cComb4"></div></div>
+    <div><div class="muted">3M 평균 금액 (USD K)</div><div class="chart mini" id="cComb5"></div></div>
+  </div>
+</div>
+
+<!-- 급등 -->
+<div class="card" id="p-surge" hidden>
+  <div class="row">
+    <div><label>정렬</label><select id="sSort"><option value="yoy">YoY</option><option value="mom">MoM</option><option value="qoq">QoQ</option><option value="yoy3">3M 누적 YoY</option><option value="v">금액</option></select></div>
+    <div><label>HS 접두</label><input id="sHs" placeholder="예: 85, 8542" style="width:110px"></div>
+    <div><label>자릿수</label><select id="sLen"><option value="">전체</option><option>6</option><option>8</option><option>9</option><option>10</option><option>11</option></select></div>
+    <div><label>3M 평균 하한 (USD K)</label><input id="sMin" type="number" value="1000" style="width:120px"></div>
+    <div><label>가속 횟수 ≥</label><input id="sAcc" type="number" value="0" style="width:80px"></div>
+    <div><label>MoM ≥ %</label><input id="sMom" type="number" style="width:80px"></div>
+    <div><label>QoQ ≥ %</label><input id="sQoq" type="number" style="width:80px"></div>
+    <div><label>&nbsp;</label><button class="pri" id="sGo">검색</button></div>
+    <div><label>프리셋</label><select id="sPreset"><option value="">-- 불러오기 --</option></select></div>
+    <div><label>&nbsp;</label><button id="sPresetSave">저장</button></div><div><label>&nbsp;</label><button id="sPresetDel">× 삭제</button></div>
+  </div>
+  <div class="muted" id="sInfo" style="margin:8px 0"></div>
+  <div class="tblwrap"><table id="sTbl"></table></div>
+</div>
+
+<!-- 트리맵/히트맵 -->
+<div class="card" id="p-treemap" hidden>
+  <div class="row">
+    <div class="subtabs" style="flex-direction:row;gap:6px"><button id="tmTabTree" class="on">트리맵</button><button id="tmTabHeat">히트맵</button></div>
+    <div><label>색상</label><select id="tmMode"><option value="yoy">금액 YoY</option><option value="up">단가 YoY</option><option value="v">금액 규모</option></select></div>
+    <div><label>변화율 기준</label><select id="tmYoyMode"><option value="1m">월별</option><option value="3m">3M</option></select></div>
+    <div id="hmCtl" hidden style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end"><div><label>Top N</label><select id="hmTop"><option>30</option><option selected>50</option><option>80</option></select></div><div><label>최소 금액 (USD K/월)</label><input id="hmMin" type="number" value="1000" style="width:110px"></div><div><label>&nbsp;</label><label style="font-size:12px"><input type="checkbox" id="hmDual"> 월별·3M 동반 상승만</label></div><div><label>기준월</label><select id="hmMonth"></select></div></div>
+    <div class="muted" id="tmInfo" style="padding-bottom:8px"></div>
+  </div>
+  <div id="treeWrap"><div class="crumb" id="crumb"></div><div class="chart tall" id="cTree"></div></div>
+  <div id="heatWrap" hidden class="tblwrap"></div>
+</div>
+
+<!-- 상대국 -->
+<div class="card" id="p-partner" hidden>
+  <div id="pTitle" style="font-weight:600"></div>
+  <div class="muted" id="pInfo"></div>
+  <div class="chart" id="cPartner"></div>
+  <div class="tblwrap"><table id="pTbl"></table></div>
+</div>
+
+<!-- HS 검색 -->
+<div class="card" id="p-hs" hidden>
+  <div class="row"><div><label>수집국</label><select id="hsOrigin"><option value="">전체</option></select></div><div style="flex:1;min-width:260px"><label>코드 / 한글·영문 품목명</label><input id="hsSearch" placeholder="예: 854232, 메모리, lithium"></div><div><label>&nbsp;</label><button class="pri" id="hsGo">검색</button></div></div>
+  <div class="muted" id="hsInfo" style="margin:8px 0"></div>
+  <div class="tblwrap"><table id="hsTbl"></table></div>
+</div>
+
+<!-- PPI -->
+<div class="card" id="p-ppi" hidden>
+  <div class="row">
+    <div><label>국가</label><select id="ppiCountry"></select></div>
+    <div><label>정렬</label><select id="ppiSort"><option value="yoy_desc">YoY% 높은순</option><option value="yoy_asc">YoY% 낮은순</option><option value="yoy_abs">YoY% 절대값 (급변)</option><option value="mom_desc">MoM% 높은순</option><option value="mom_asc">MoM% 낮은순</option><option value="name">시리즈명순</option></select></div>
+    <div><label>카테고리</label><select id="ppiCat"><option value="">전체</option></select></div>
+    <div style="flex:1;min-width:200px"><label>검색</label><input id="ppiQ" placeholder="시리즈명 / ID"></div>
+    <div><label>급등락 임계 |YoY| ≥</label><input id="ppiTh" type="number" value="10" style="width:80px"></div>
+    <div><label>&nbsp;</label><label style="font-size:12px"><input type="checkbox" id="ppiHl"> 급등락만</label></div>
+    <div><label>&nbsp;</label><label style="font-size:12px"><input type="checkbox" id="ppiFav"> 즐겨찾기만</label></div>
+  </div>
+  <div class="muted" id="ppiInfo" style="margin:8px 0"></div>
+  <div id="ppiGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px"></div>
+  <div class="muted" style="margin-top:8px"><button id="ppiMore">더 보기</button></div>
+</div>
+<div id="ppiModal" hidden style="position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:50;display:flex;align-items:center;justify-content:center;padding:16px">
+  <div class="card" style="width:min(960px,100%);max-height:90vh;overflow:auto;margin:0"><div style="display:flex;justify-content:space-between;align-items:center"><div id="ppiMTitle" style="font-weight:600"></div><div><span class="star" id="ppiMFav">☆</span> <button id="ppiMClose">×</button></div></div><div class="tiles" id="ppiMTiles"></div><div class="chart" id="cPpi"></div></div>
+</div>
+
+<!-- 마이페이지 -->
+<div class="card" id="p-my" hidden>
+  <div class="subtabs" style="display:flex;gap:6px;margin-bottom:10px"><button data-my="trade" class="on">무역 품목</button><button data-my="cond">합산 프리셋</button><button data-my="ppi">PPI</button></div>
+  <div class="muted" id="myInfo" style="margin-bottom:8px"></div>
+  <div id="myList"></div>
+</div>
+
+<script>
+const $=s=>document.querySelector(s);
+const fmt=n=>n==null?'-':Math.round(n).toLocaleString();
+const fk=n=>n==null?'-':'$'+Math.round(n/1000).toLocaleString()+'K';
+const fb=n=>n==null?'-':(Math.abs(n)>=1e9?'$'+(n/1e9).toFixed(2)+'B':Math.abs(n)>=1e6?'$'+(n/1e6).toFixed(1)+'M':'$'+Math.round(n/1e3).toLocaleString()+'K');
+const fp=n=>n==null?'-':(n>0?'+':'')+n.toFixed(1)+'%';
+const cls=n=>n==null?'':(n>0?'up':n<0?'dn':'');
+const arrow=n=>n==null?'':(n>0?'🔺':n<0?'🔽':'');
+const FLOWK={X:'수출',M:'수입'};
+let META,ORIGIN='',FLOW='X',SER,NAMES,SURGE,TREE,curHs='',PPI=null;
+const charts={};
+function ch(id){if(!charts[id])charts[id]=echarts.init(document.getElementById(id),null,{renderer:'canvas'});return charts[id]}
+window.addEventListener('resize',()=>Object.values(charts).forEach(c=>c.resize()));
+const dark=matchMedia('(prefers-color-scheme: dark)').matches;const txt=dark?'#e6eaf0':'#1c2430';
+const base={textStyle:{color:txt},tooltip:{trigger:'axis',axisPointer:{type:'cross'}},toolbox:{feature:{dataZoom:{yAxisIndex:'none',title:{zoom:'드래그 확대',back:'되돌리기'}},restore:{title:'초기화'},saveAsImage:{title:'저장'}}},dataZoom:[{type:'inside'},{type:'slider',height:18,bottom:6}],grid:{left:70,right:80,top:60,bottom:70}};
+const miniBase={textStyle:{color:txt},tooltip:{trigger:'axis'},grid:{left:55,right:20,top:24,bottom:28}};
+// ── 로컬 저장 (즐겨찾기·프리셋·메모)
+const LS={get:k=>{try{return JSON.parse(localStorage.getItem('gx_'+k)||'null')}catch(e){return null}},set:(k,v)=>{try{localStorage.setItem('gx_'+k,JSON.stringify(v))}catch(e){}}};
+const FAV=LS.get('fav')||{trade:{},ppi:{}};const NOTES=LS.get('notes')||{};function saveFav(){LS.set('fav',FAV);LS.set('notes',NOTES)}
+const favKey=(o,f,h)=>`${o}|${f}|${h}`;
+async function j(u){const r=await fetch(u+'?v='+Date.now());if(!r.ok)throw new Error(u);return r.json()}
+
+// ── 초기화
+async function init(){
+  META=await j('data/meta.json');
+  const os=Object.keys(META.origins);
+  $('#origin').innerHTML=os.map(o=>`<option value="${o}">${META.origins[o].label} (${META.origins[o].months[0]}~${META.origins[o].months[1]})</option>`).join('');
+  $('#hsOrigin').innerHTML='<option value="">전체</option>'+os.map(o=>`<option value="${o}">${META.origins[o].label}</option>`).join('');
+  $('#genInfo').textContent=`생성 ${META.generated} · 수집국 ${os.length}개 · 월별, 금액 USD`;
+  const pc=Object.keys(META.ppi||{});
+  $('#ppiCountry').innerHTML=pc.map(c=>`<option value="${c}">${META.ppi[c].label} (${META.ppi[c].n}개, ${META.ppi[c].latest||''})</option>`).join('');
+  $('#ppiCountry').onchange=e=>loadPpi(e.target.value);
+  renderHome();
+  await loadOrigin(os.includes('US')?'US':os[0]);
+  loadCondPresets();loadSurgePresets();
+}
+async function loadOrigin(o,flow){
+  ORIGIN=o;$('#origin').value=o;const flows=META.origins[o].flows||['X'];
+  $('#flow').innerHTML=flows.map(f=>`<option value="${f}">${FLOWK[f]}</option>`).join('');
+  FLOW=flow&&flows.includes(flow)?flow:'X';$('#flow').value=FLOW;
+  const sfx=FLOW==='X'?'':'_M';
+  [SER,NAMES,SURGE,TREE]=await Promise.all([j(`data/${o}/series${sfx}.json`),j(`data/${o}/names.json`),j(`data/${o}/surge${sfx}.json`),j(`data/${o}/treemap${sfx}.json`)]);
+  if(!curHs||!SER.series[curHs]){const top=SURGE.items.slice().sort((a,b)=>b.v-a.v)[0];curHs=top?top.hs:''}
+  fillHmMonths();renderSeries();renderSurge();if(tmTab==='tree')renderTree();else renderHeat();renderPartner();
+}
+$('#origin').onchange=e=>loadOrigin(e.target.value,FLOW);$('#flow').onchange=e=>loadOrigin(ORIGIN,e.target.value);
+const TABS=['home','series','combined','surge','treemap','partner','hs','ppi','my'];
+function showTab(t){document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('on',x.dataset.tab===t));TABS.forEach(x=>{const el=$('#p-'+x);if(el)el.hidden=x!==t});['p-home2','p-home3'].forEach(id=>$('#'+id).hidden=t!=='home');Object.values(charts).forEach(c=>c.resize());if(t==='combined')renderCombined();if(t==='my')renderMy();if(t==='ppi'&&!PPI){const pc=Object.keys(META.ppi||{});if(pc.length)loadPpi(pc.includes('US')?'US':pc[0])}}
+document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>showTab(b.dataset.tab));
+
+// ── HS 검색 드롭다운(현재 국가)
+$('#hsq').oninput=()=>{const q=$('#hsq').value.trim().toLowerCase();const dd=$('#dd');if(q.length<2||!SER){dd.hidden=true;return}
+  const hits=Object.keys(SER.series).filter(h=>h.startsWith(q)||(NAMES[h]||'').toLowerCase().includes(q)).slice(0,40);
+  dd.innerHTML=hits.map(h=>`<div data-h="${h}"><b>${h}</b> ${NAMES[h]||''}</div>`).join('')||'<div class="muted">결과 없음</div>';dd.hidden=false;
+  dd.querySelectorAll('div[data-h]').forEach(d=>d.onclick=()=>{curHs=d.dataset.h;$('#hsq').value=curHs;dd.hidden=true;showTab('series');renderSeries();renderPartner()})};
+document.addEventListener('click',e=>{if(!e.target.closest('#hsq,#dd'))$('#dd').hidden=true});
+$('#go').onclick=()=>{const q=$('#hsq').value.trim();if(SER.series[q]){curHs=q}else{const h=Object.keys(SER.series).find(h=>h.startsWith(q));if(h)curHs=h}showTab('series');renderSeries();renderPartner()};
+['tAmt','tKg','tUp','t3m','tYoy'].forEach(id=>$('#'+id).onchange=renderSeries);
+
+function ma3(a){return a.map((v,i)=>i<2||a[i]==null||a[i-1]==null||a[i-2]==null?null:Math.round((a[i]+a[i-1]+a[i-2])/3))}
+function yoy(a){return a.map((v,i)=>i<12||v==null||!a[i-12]?null:+((v/a[i-12]-1)*100).toFixed(1))}
+function gotoHs(o,h,flow){const f=flow||'X';if(o!==ORIGIN||f!==FLOW){curHs=h;loadOrigin(o,f).then(()=>{showTab('series')})}else{curHs=h;$('#hsq').value=h;showTab('series');renderSeries();renderPartner()}}
+
+// ── 시계열
+function renderSeries(){
+  const s=SER&&SER.series[curHs];if(!s){$('#title').textContent='품목을 선택하세요';return}
+  const m=SER.months,L=m.length-1;const up=s.v.map((v,i)=>v&&s.kg[i]?+(v/s.kg[i]).toFixed(3):null);
+  $('#title').textContent=`${META.origins[ORIGIN].label} ${FLOWK[FLOW]} · HS ${curHs} ${NAMES[curHs]||''}`;
+  const fk_=favKey(ORIGIN,FLOW,curHs);const st=$('#favSeries');st.textContent=FAV.trade[fk_]?'★':'☆';st.className='star'+(FAV.trade[fk_]?' on':'');
+  st.onclick=()=>{if(FAV.trade[fk_])delete FAV.trade[fk_];else FAV.trade[fk_]={o:ORIGIN,f:FLOW,hs:curHs,name:NAMES[curHs]||'',added:new Date().toISOString().slice(0,10)};saveFav();renderSeries()};
+  const y=yoy(s.v),m3=ma3(s.v),uy=yoy(up),ky=yoy(s.kg);
+  $('#tiles').innerHTML=[['최근 금액 ('+m[L]+')',fk(s.v[L]),''],['금액 YoY',fp(y[L])+' '+arrow(y[L]),cls(y[L])],['3M 평균',fk(m3[L]),''],['단가 YoY',fp(uy[L])+' '+arrow(uy[L]),cls(uy[L])],['중량 YoY',fp(ky[L])+' '+arrow(ky[L]),cls(ky[L])]].map(t=>`<div class="tile"><div class="k">${t[0]}</div><div class="v ${t[2]}">${t[1]}</div></div>`).join('');
+  const Y=$('#tYoy').checked,series=[],yAxis=[{type:'value',name:Y?'YoY %':'USD K',axisLabel:{formatter:v=>Y?v+'%':(v/1000).toLocaleString()}},{type:'value',name:$('#tUp').checked?'$/kg':'톤',position:'right',axisLabel:{formatter:v=>v.toLocaleString()}}];
+  if($('#tAmt').checked)series.push({name:Y?'금액 YoY':'금액',type:Y?'line':'bar',data:Y?y:s.v,itemStyle:{color:'#2563eb'},barMaxWidth:18});
+  if($('#t3m').checked)series.push({name:Y?'3M YoY':'3M 평균',type:'line',smooth:true,data:Y?yoy(m3):m3,itemStyle:{color:'#f59e0b'},showSymbol:false});
+  if($('#tKg').checked)series.push({name:Y?'중량 YoY':'중량(t)',type:'line',yAxisIndex:Y?0:1,data:Y?ky:s.kg.map(k=>k?Math.round(k/1000):null),itemStyle:{color:'#10b981'},showSymbol:false});
+  if($('#tUp').checked)series.push({name:Y?'단가 YoY':'단가 $/kg',type:'line',yAxisIndex:Y?0:1,data:Y?uy:up,itemStyle:{color:'#8b5cf6'},showSymbol:false});
+  ch('cSeries').setOption({...base,legend:{top:4,textStyle:{color:txt}},xAxis:{type:'category',data:m},yAxis,series,
+    tooltip:{trigger:'axis',formatter:ps=>ps[0].axisValue+'<br>'+ps.map(p=>`${p.marker}${p.seriesName}: <b>${Y||/YoY/.test(p.seriesName)?fp(p.value):p.value==null?'-':p.value.toLocaleString()}</b>`).join('<br>')}},true);
+  const rows=m.map((mm,i)=>[mm,s.v[i],y[i],s.kg[i]?Math.round(s.kg[i]/1000):null,up[i]]).reverse();
+  $('#tbl').innerHTML='<tr><th class="l">기간</th><th>금액(USD K)</th><th>YoY(%)</th><th>중량(t)</th><th>단가($/kg)</th></tr>'+rows.map(r=>`<tr><td class="l">${r[0]}</td><td>${r[1]==null?'-':Math.round(r[1]/1000).toLocaleString()}</td><td class="${cls(r[2])}">${fp(r[2])}</td><td>${fmt(r[3])}</td><td>${r[4]==null?'-':r[4]}</td></tr>`).join('');
+  $('#csv').onclick=e=>{e.preventDefault();const csv='month,value_usd,yoy_pct,weight_t,unit_price\n'+rows.map(r=>r.join(',')).join('\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download=`${ORIGIN}_${FLOW}_${curHs}.csv`;a.click()};
+}
+
+// ── 합산 (조건 칩)
+let COND=LS.get('cond')||[];
+$('#addCond').onclick=()=>{if(!curHs||!SER)return;if(COND.length>=12){alert('최대 12개');return}COND.push({o:ORIGIN,f:FLOW,hs:curHs,name:NAMES[curHs]||''});LS.set('cond',COND);showTab('combined')};
+$('#condClear').onclick=()=>{COND=[];LS.set('cond',COND);renderCombined()};
+function loadCondPresets(){const p=LS.get('condPresets')||{};$('#condPreset').innerHTML='<option value="">-- 불러오기 --</option>'+Object.keys(p).map(k=>`<option>${k}</option>`).join('')}
+$('#condPreset').onchange=e=>{const p=LS.get('condPresets')||{};if(p[e.target.value]){COND=JSON.parse(JSON.stringify(p[e.target.value]));LS.set('cond',COND);renderCombined()}};
+$('#condSave').onclick=()=>{const n=prompt('프리셋 이름');if(!n)return;const p=LS.get('condPresets')||{};p[n]=COND;LS.set('condPresets',p);loadCondPresets();$('#condPreset').value=n};
+$('#condDel').onclick=()=>{const n=$('#condPreset').value;if(!n)return;const p=LS.get('condPresets')||{};delete p[n];LS.set('condPresets',p);loadCondPresets()};
+const SERCACHE={};
+async function getSeries(o,f){const k=o+'|'+f;if(!SERCACHE[k])SERCACHE[k]=await j(`data/${o}/series${f==='X'?'':'_M'}.json`);return SERCACHE[k]}
+async function renderCombined(){
+  $('#condChips').innerHTML=COND.map((c,i)=>`<span class="chip">${META.origins[c.o].label} ${FLOWK[c.f]} <b>${c.hs}</b> ${c.name.slice(0,22)} <span class="x" data-i="${i}">×</span></span>`).join('')||'<span class="muted">조건이 없습니다. 시계열 탭에서 "+ 조건 추가"</span>';
+  $('#condChips').querySelectorAll('.x').forEach(x=>x.onclick=()=>{COND.splice(+x.dataset.i,1);LS.set('cond',COND);renderCombined()});
+  if(!COND.length){['cComb','cComb1','cComb2','cComb3','cComb4','cComb5'].forEach(id=>ch(id).clear());$('#condTiles').innerHTML='';return}
+  const data=await Promise.all(COND.map(c=>getSeries(c.o,c.f)));
+  const months=[...new Set(data.flatMap(d=>d.months))].sort();const L=months.length-1;
+  const rows=COND.map((c,i)=>{const d=data[i],s=d.series[c.hs]||{v:[],kg:[]};const mi={};d.months.forEach((m,k)=>mi[m]=k);return{label:`${c.hs} ${META.origins[c.o].label}`,v:months.map(m=>mi[m]!=null?s.v[mi[m]]:null),kg:months.map(m=>mi[m]!=null?s.kg[mi[m]]:null)}});
+  const tot=months.map((m,i)=>rows.reduce((a,r)=>a+(r.v[i]||0),0));const totKg=months.map((m,i)=>rows.reduce((a,r)=>a+(r.kg[i]||0),0));
+  const ty=yoy(tot),t3=ma3(tot),tu=months.map((m,i)=>tot[i]&&totKg[i]?+(tot[i]/totKg[i]).toFixed(3):null);
+  $('#condTiles').innerHTML=[['합산 최근 금액 ('+months[L]+')',fk(tot[L]),''],['합산 YoY',fp(ty[L])+' '+arrow(ty[L]),cls(ty[L])],['3M 평균',fk(t3[L]),''],['단가 ($/kg)',tu[L]==null?'-':tu[L],''],['조건 수',COND.length,'']].map(t=>`<div class="tile"><div class="k">${t[0]}</div><div class="v ${t[2]}">${t[1]}</div></div>`).join('');
+  ch('cComb').setOption({...base,legend:{type:'scroll',top:4,textStyle:{color:txt}},xAxis:{type:'category',data:months},yAxis:{type:'value',name:'USD K',axisLabel:{formatter:v=>(v/1000).toLocaleString()}},
+    tooltip:{trigger:'axis',formatter:ps=>ps[0].axisValue+'<br>'+ps.filter(p=>p.value).map(p=>`${p.marker}${p.seriesName}: <b>${fk(p.value)}</b>`).join('<br>')+`<br><b>합계 ${fk(tot[ps[0].dataIndex])}</b>`},
+    series:rows.map(r=>({name:r.label,type:'bar',stack:'t',data:r.v,barMaxWidth:18}))},true);
+  const x={type:'category',data:months};
+  ch('cComb1').setOption({...miniBase,xAxis:x,yAxis:{type:'value',axisLabel:{formatter:'{value}%'}},series:[{type:'bar',data:ty,itemStyle:{color:'#d63c3c'}}]},true);
+  ch('cComb2').setOption({...miniBase,legend:{show:false},xAxis:x,yAxis:{type:'value',max:100,axisLabel:{formatter:'{value}%'}},series:rows.map(r=>({name:r.label,type:'bar',stack:'p',data:r.v.map((v,i)=>tot[i]?+((v||0)/tot[i]*100).toFixed(1):null),barMaxWidth:14}))},true);
+  ch('cComb3').setOption({...miniBase,xAxis:x,yAxis:{type:'value'},series:[{type:'line',data:totKg.map(k=>k?Math.round(k/1000):null),showSymbol:false,itemStyle:{color:'#10b981'}}]},true);
+  ch('cComb4').setOption({...miniBase,xAxis:x,yAxis:{type:'value',scale:true},series:[{type:'line',data:tu,showSymbol:false,itemStyle:{color:'#8b5cf6'}}]},true);
+  ch('cComb5').setOption({...miniBase,xAxis:x,yAxis:{type:'value',axisLabel:{formatter:v=>(v/1000).toLocaleString()}},series:[{type:'line',data:t3,showSymbol:false,itemStyle:{color:'#f59e0b'}}]},true);
+}
+
+// ── 급등 탐색
+let sSortKey='yoy',sDir=-1,sClicks={};
+function surgeParams(){return{sort:$('#sSort').value,hs:$('#sHs').value,len:$('#sLen').value,min:$('#sMin').value,acc:$('#sAcc').value,mom:$('#sMom').value,qoq:$('#sQoq').value}}
+function applySurgeParams(p){$('#sSort').value=p.sort||'yoy';$('#sHs').value=p.hs||'';$('#sLen').value=p.len||'';$('#sMin').value=p.min||0;$('#sAcc').value=p.acc||0;$('#sMom').value=p.mom||'';$('#sQoq').value=p.qoq||'';sSortKey=p.sort||'yoy';sDir=-1}
+function loadSurgePresets(){const p=LS.get('surgePresets')||{};$('#sPreset').innerHTML='<option value="">-- 불러오기 --</option>'+Object.keys(p).map(k=>`<option>${k}</option>`).join('')}
+$('#sPreset').onchange=e=>{const p=LS.get('surgePresets')||{};if(p[e.target.value]){applySurgeParams(p[e.target.value]);renderSurge()}};
+$('#sPresetSave').onclick=()=>{const n=prompt('프리셋 이름');if(!n)return;const p=LS.get('surgePresets')||{};p[n]=surgeParams();LS.set('surgePresets',p);loadSurgePresets();$('#sPreset').value=n};
+$('#sPresetDel').onclick=()=>{const n=$('#sPreset').value;if(!n)return;const p=LS.get('surgePresets')||{};delete p[n];LS.set('surgePresets',p);loadSurgePresets()};
+function renderSurge(){
+  if(!SURGE)return;const p=surgeParams(),min=+p.min*1000||0,acc=+p.acc||0,mom=p.mom===''?null:+p.mom,qoq=p.qoq===''?null:+p.qoq;
+  let items=SURGE.items.filter(x=>(!p.hs||x.hs.startsWith(p.hs.trim()))&&(!p.len||x.hs.length===+p.len)&&(x.avg3||0)>=min&&x.acc>=acc&&(mom==null||(x.mom!=null&&x.mom>=mom))&&(qoq==null||(x.qoq!=null&&x.qoq>=qoq))&&x[sSortKey]!=null);
+  items.sort((a,b)=>sDir*((a[sSortKey]??-1e18)-(b[sSortKey]??-1e18)));
+  $('#sInfo').textContent=`${META.origins[ORIGIN].label} ${FLOWK[FLOW]} · 기준월 ${SURGE.month} · ${items.length}개 품목 (상위 200 표시)`;
+  const cols=[['fav','★','l'],['hs','HS','l'],['name','품목','l'],['v','금액(K)'],['yoy','YoY'],['mom','MoM'],['qoq','QoQ'],['yoy3','3M YoY'],['avg3','3M평균(K)'],['acc','가속'],['up_yoy','단가YoY'],['spark','12M','l']];
+  $('#sTbl').innerHTML='<tr>'+cols.map(c=>`<th class="${c[2]||''}" data-k="${c[0]}">${c[1]}${c[0]===sSortKey?`<span class="ar">${sDir<0?'▼':'▲'}</span>`:''}</th>`).join('')+'</tr>'+
+    items.slice(0,200).map(x=>{const k=favKey(ORIGIN,FLOW,x.hs);return `<tr><td class="l"><span class="star ${FAV.trade[k]?'on':''}" data-h="${x.hs}" style="font-size:15px">${FAV.trade[k]?'★':'☆'}</span></td><td class="hs" data-h="${x.hs}">${x.hs}</td><td class="l" style="max-width:260px;overflow:hidden;text-overflow:ellipsis">${NAMES[x.hs]||''}</td><td>${fmt(x.v/1000)}</td><td class="${cls(x.yoy)}">${fp(x.yoy)}</td><td class="${cls(x.mom)}">${fp(x.mom)}</td><td class="${cls(x.qoq)}">${fp(x.qoq)}</td><td class="${cls(x.yoy3)}">${fp(x.yoy3)}</td><td>${fmt(x.avg3/1000)}</td><td>${x.acc}</td><td class="${cls(x.up_yoy)}">${fp(x.up_yoy)}</td><td class="l"><canvas class="spark" data-s="${x.spark.map(v=>v??'').join('|')}"></canvas></td></tr>`}).join('');
+  $('#sTbl').querySelectorAll('th').forEach(th=>th.onclick=()=>{const k=th.dataset.k;if(!k||['name','spark','fav'].includes(k))return;sClicks[k]=((sClicks[k]||0)+1)%3;if(sClicks[k]===0){sSortKey='yoy';sDir=-1}else{sSortKey=k;sDir=sClicks[k]===1?-1:1}renderSurge()});
+  $('#sTbl').querySelectorAll('td.hs').forEach(td=>td.onclick=()=>gotoHs(ORIGIN,td.dataset.h,FLOW));
+  $('#sTbl').querySelectorAll('.star').forEach(s=>s.onclick=()=>{const k=favKey(ORIGIN,FLOW,s.dataset.h);if(FAV.trade[k])delete FAV.trade[k];else FAV.trade[k]={o:ORIGIN,f:FLOW,hs:s.dataset.h,name:NAMES[s.dataset.h]||'',added:new Date().toISOString().slice(0,10)};saveFav();renderSurge()});
+  drawSparks($('#sTbl'));
+}
+function drawSparks(root){root.querySelectorAll('canvas.spark').forEach(c=>{const v=c.dataset.s.split('|').map(x=>x===''?null:+x);const ctx=c.getContext('2d');c.width=90;c.height=22;const vv=v.filter(x=>x!=null);if(!vv.length)return;const mx=Math.max(...vv),mn=Math.min(...vv);ctx.strokeStyle='#2563eb';ctx.lineWidth=1.2;ctx.beginPath();let st=false;v.forEach((x,i)=>{if(x==null)return;const px=i/(v.length-1)*88+1,py=20-(mx>mn?(x-mn)/(mx-mn):0.5)*18;st?ctx.lineTo(px,py):ctx.moveTo(px,py);st=true});ctx.stroke()})}
+$('#sGo').onclick=renderSurge;$('#sSort').onchange=e=>{sSortKey=e.target.value;sDir=-1;renderSurge()};
+
+// ── 트리맵 / 히트맵
+let treePath=[],tmTab='tree';
+$('#tmTabTree').onclick=()=>{tmTab='tree';$('#tmTabTree').classList.add('on');$('#tmTabHeat').classList.remove('on');$('#treeWrap').hidden=false;$('#heatWrap').hidden=true;$('#hmCtl').hidden=true;renderTree()};
+$('#tmTabHeat').onclick=()=>{tmTab='heat';$('#tmTabHeat').classList.add('on');$('#tmTabTree').classList.remove('on');$('#treeWrap').hidden=true;$('#heatWrap').hidden=false;$('#hmCtl').hidden=false;renderHeat()};
+function fillHmMonths(){const m=SER.months.slice(-24).reverse();$('#hmMonth').innerHTML=m.map(x=>`<option>${x}</option>`).join('')}
+function renderTree(){
+  if(!TREE)return;const mode=$('#tmMode').value;let nodes=TREE.tree,crumb=['전체'];
+  for(const p of treePath){const n=nodes.find(x=>x.name===p);if(!n)break;nodes=n.children||[];crumb.push(p)}
+  $('#crumb').innerHTML=crumb.map((c,i)=>`<span data-i="${i}">${c}</span>`).join(' › ');
+  $('#crumb').querySelectorAll('span').forEach(s=>s.onclick=()=>{treePath=treePath.slice(0,+s.dataset.i);renderTree()});
+  $('#tmInfo').textContent=`${META.origins[ORIGIN].label} ${FLOWK[FLOW]} · ${TREE.month} · 박스 = 금액, 색 = ${mode==='v'?'금액':'YoY (±30% 클리핑)'} · 클릭 = 드릴다운`;
+  const col=n=>{if(mode==='v')return '#3b82f6';const y=Math.max(-30,Math.min(30,n.yoy??0));return y>=0?`rgba(26,158,92,${0.25+y/30*0.75})`:`rgba(214,60,60,${0.25+(-y)/30*0.75})`};
+  const data=nodes.filter(n=>n.value>0).map(n=>({name:n.name,value:n.value,yoy:n.yoy,hasKids:!!(n.children&&n.children.length),itemStyle:{color:col(n)}}));
+  const c=ch('cTree');c.setOption({textStyle:{color:txt},tooltip:{formatter:p=>`<b>HS ${p.name}</b> ${NAMES[p.name]||''}<br>금액 ${fk(p.value)}<br>YoY ${fp(p.data.yoy)}`},series:[{type:'treemap',roam:false,nodeClick:false,breadcrumb:{show:false},label:{formatter:p=>`${p.name}\n${fp(p.data.yoy)}`,fontSize:11},data,levels:[{itemStyle:{borderColor:dark?'#0f1318':'#fff',borderWidth:2,gapWidth:2}}]}]},true);
+  c.off('click');c.on('click',p=>{if(p.data&&p.data.hasKids){treePath.push(p.name);renderTree()}else if(p.data&&SER.series[p.name]){gotoHs(ORIGIN,p.name,FLOW)}});
+}
+function renderHeat(){
+  if(!SER)return;const mode=$('#tmMode').value,ym=$('#tmYoyMode').value,top=+$('#hmTop').value,min=+$('#hmMin').value*1000||0,dual=$('#hmDual').checked;
+  const months=SER.months,endM=$('#hmMonth').value||months[months.length-1],E=months.indexOf(endM),cols=months.slice(Math.max(0,E-23),E+1),c0=months.indexOf(cols[0]);
+  const rows=[];
+  for(const [hs,s] of Object.entries(SER.series)){
+    const v=s.v;if(!v[E]||v[E]<min)continue;
+    const up=v.map((x,i)=>x&&s.kg[i]?x/s.kg[i]:null);const src=mode==='up'?up:v;
+    const y1=src.map((x,i)=>i>=12&&x&&src[i-12]?(x/src[i-12]-1)*100:null);
+    const s3=src.map((x,i)=>i>=2&&x!=null&&src[i-1]!=null&&src[i-2]!=null?x+src[i-1]+src[i-2]:null);
+    const y3=s3.map((x,i)=>i>=12&&x&&s3[i-12]?(x/s3[i-12]-1)*100:null);
+    if(dual&&!(y1[E]>0&&y3[E]>0))continue;
+    rows.push({hs,v:v[E],cells:cols.map((m,k)=>(ym==='3m'?y3:y1)[c0+k])});
+  }
+  rows.sort((a,b)=>b.v-a.v);const R=rows.slice(0,top);
+  $('#tmInfo').textContent=`${META.origins[ORIGIN].label} ${FLOWK[FLOW]} · 행 = 품목(최신월 금액 상위 ${top}), 열 = 월, 색 = ${mode==='up'?'단가':'금액'} ${ym==='3m'?'3M 누적':'월별'} YoY · 셀 클릭 = 시계열`;
+  const col=y=>{if(y==null)return 'transparent';const c=Math.max(-30,Math.min(30,y));return c>=0?`rgba(26,158,92,${0.12+c/30*0.7})`:`rgba(214,60,60,${0.12+(-c)/30*0.7})`};
+  $('#heatWrap').innerHTML=`<table class="hm"><tr><th>HS</th><th>품목</th><th>최신(K$)</th>${cols.map(m=>`<th>${m.slice(2).replace('-','.')}</th>`).join('')}</tr>`+R.map(r=>`<tr><td class="n hsx" data-h="${r.hs}" style="font-family:ui-monospace,Menlo,monospace;color:var(--acc)">${r.hs}</td><td class="n hsx" data-h="${r.hs}">${(NAMES[r.hs]||'').slice(0,40)}</td><td>${fmt(r.v/1000)}</td>${r.cells.map(y=>`<td style="background:${col(y)}" title="${fp(y)}">${y==null?'':Math.round(y)}</td>`).join('')}</tr>`).join('')+'</table>';
+  $('#heatWrap').querySelectorAll('.hsx').forEach(td=>td.onclick=()=>gotoHs(ORIGIN,td.dataset.h,FLOW));
+}
+['tmMode','tmYoyMode','hmTop','hmMin','hmDual','hmMonth'].forEach(id=>$('#'+id).onchange=()=>tmTab==='tree'?renderTree():renderHeat());
+
+// ── 상대국
+async function renderPartner(){
+  if(!curHs)return;$('#pTitle').textContent=`HS ${curHs} ${NAMES[curHs]||''} · 상대국별 ${FLOWK[FLOW]}`;
+  let d;try{d=await j(`data/${ORIGIN}/partners/${curHs}.json`)}catch(e){$('#pInfo').textContent='이 품목은 상대국 상세가 아직 수집되지 않았습니다 (상위 1,500개 품목·추적 품목, 수출만).';ch('cPartner').clear();$('#pTbl').innerHTML='';return}
+  const m=d.months,L=m.length-1,ps=Object.keys(d.partners).slice(0,12);
+  $('#pInfo').textContent=`상위 ${ps.length}개 상대국 누적 막대 · 최근 12개월 합계 기준`;
+  ch('cPartner').setOption({...base,legend:{type:'scroll',top:4,textStyle:{color:txt}},xAxis:{type:'category',data:m},yAxis:{type:'value',name:'USD K',axisLabel:{formatter:v=>(v/1000).toLocaleString()}},
+    tooltip:{trigger:'axis',formatter:pp=>pp[0].axisValue+'<br>'+pp.filter(p=>p.value).sort((a,b)=>b.value-a.value).map(p=>`${p.marker}${p.seriesName}: <b>${fk(p.value)}</b>`).join('<br>')},
+    series:ps.map(p=>({name:`${d.partners[p].name||p}`,type:'bar',stack:'t',data:d.partners[p].v,barMaxWidth:18}))},true);
+  const rows=Object.keys(d.partners).map(p=>{const v=d.partners[p].v;const s12=v.slice(-12).reduce((a,b)=>a+(b||0),0),p12=v.slice(-24,-12).reduce((a,b)=>a+(b||0),0);return[p,d.partners[p].name||p,v[L],v[L]&&v[L-12]?+((v[L]/v[L-12]-1)*100).toFixed(1):null,s12,p12?+((s12/p12-1)*100).toFixed(1):null]});
+  $('#pTbl').innerHTML='<tr><th class="l">코드</th><th class="l">상대국</th><th>최근월(K)</th><th>YoY</th><th>12M 합계(K)</th><th>12M YoY</th></tr>'+rows.map(r=>`<tr><td class="l">${r[0]}</td><td class="l">${r[1]}</td><td>${fmt(r[2]/1000)}</td><td class="${cls(r[3])}">${fp(r[3])}</td><td>${fmt(r[4]/1000)}</td><td class="${cls(r[5])}">${fp(r[5])}</td></tr>`).join('');
+}
+
+// ── HS 통합 검색
+const NAMECACHE={};
+async function getNames(o){if(!NAMECACHE[o])NAMECACHE[o]=await j(`data/${o}/names.json`);return NAMECACHE[o]}
+async function hsSearch(){
+  const q=$('#hsSearch').value.trim().toLowerCase();if(q.length<2)return;const os=$('#hsOrigin').value?[$('#hsOrigin').value]:Object.keys(META.origins);
+  $('#hsInfo').textContent='검색 중…';const out=[];
+  for(const o of os){const n=await getNames(o);for(const [h,name] of Object.entries(n)){if(h.startsWith(q)||(name||'').toLowerCase().includes(q)){out.push({o,h,name});if(out.length>=400)break}}if(out.length>=400)break}
+  const hl=s=>{const i=(s||'').toLowerCase().indexOf(q);return i<0?s:s.slice(0,i)+'<mark>'+s.slice(i,i+q.length)+'</mark>'+s.slice(i+q.length)};
+  $('#hsInfo').textContent=`${out.length}건 (최대 400) · 행 클릭 = 해당 국가 시계열`;
+  $('#hsTbl').innerHTML='<tr><th class="l">국가</th><th class="l">HS</th><th class="l">품목명</th></tr>'+out.slice(0,400).map(r=>`<tr class="hsr" data-o="${r.o}" data-h="${r.h}" style="cursor:pointer"><td class="l"><span class="badge">${META.origins[r.o].label}</span></td><td class="l" style="font-family:ui-monospace,Menlo,monospace;color:var(--acc)">${hl(r.h)}</td><td class="l">${hl(r.name)}</td></tr>`).join('');
+  $('#hsTbl').querySelectorAll('.hsr').forEach(tr=>tr.onclick=()=>gotoHs(tr.dataset.o,tr.dataset.h,'X'));
+}
+$('#hsGo').onclick=hsSearch;$('#hsSearch').addEventListener('keydown',e=>{if(e.key==='Enter')hsSearch()});
+
+// ── 홈
+let homeFlow='X';
+$('#homeX').onclick=()=>{homeFlow='X';$('#homeX').classList.add('on');$('#homeM').classList.remove('on');renderHome()};
+$('#homeM').onclick=()=>{homeFlow='M';$('#homeM').classList.add('on');$('#homeX').classList.remove('on');renderHome()};
+async function renderHome(){
+  const os=Object.keys(META.origins);const data=[];
+  for(const o of os){const t=homeFlow==='X'?META.origins[o].totals:(META.origins[o].import||{}).totals;if(!t||!t.v.length)continue;const L=t.v.length-1;const y=L>=12&&t.v[L-12]?(t.v[L]/t.v[L-12]-1)*100:null;data.push({name:META.origins[o].label,o,value:t.v[L],yoy:y,month:t.months[L]})}
+  $('#homeInfo').textContent=data.length?`${data.length}개국 · 각국 최신월 기준 (${[...new Set(data.map(d=>d.month))].join(', ')})`:'수입 데이터는 미국만 수집됨';
+  const col=n=>{const y=Math.max(-30,Math.min(30,n.yoy??0));return y>=0?`rgba(26,158,92,${0.3+y/30*0.7})`:`rgba(214,60,60,${0.3+(-y)/30*0.7})`};
+  const c=ch('cHome');c.setOption({textStyle:{color:txt},tooltip:{formatter:p=>`<b>${p.name}</b> ${FLOWK[homeFlow]} ${p.data.month}<br>${fb(p.value)}<br>YoY ${fp(p.data.yoy)}`},series:[{type:'treemap',roam:false,nodeClick:false,breadcrumb:{show:false},label:{formatter:p=>`${p.name}\n${fb(p.value)}\n${fp(p.data.yoy)}`,fontSize:12},data:data.map(d=>({...d,itemStyle:{color:col(d)}})),levels:[{itemStyle:{borderColor:dark?'#0f1318':'#fff',borderWidth:2,gapWidth:2}}]}]},true);
+  c.off('click');c.on('click',p=>{if(p.data&&p.data.o){loadOrigin(p.data.o,homeFlow).then(()=>showTab('treemap'))}});
+  const key=$('#homeSort').value;const cards=await Promise.all(os.map(async o=>{try{const s=await j(`data/${o}/surge${homeFlow==='X'?'':'_M'}.json`);const n=await getNames(o);const it=s.items.filter(x=>(x.avg3||0)>=5e6&&x[key]!=null).sort((a,b)=>b[key]-a[key]).slice(0,5);return{o,month:s.month,it,n}}catch(e){return null}}));
+  $('#homeSurge').innerHTML=cards.filter(Boolean).map(c=>`<div class="hc"><h4>${META.origins[c.o].label} ${FLOWK[homeFlow]} <span class="badge">${c.month}</span></h4>${c.it.map(x=>`<div class="r" data-o="${c.o}" data-h="${x.hs}"><span><b style="font-family:ui-monospace,Menlo,monospace">${x.hs}</b> ${(c.n[x.hs]||'').slice(0,26)}</span><span class="${cls(x[key])}">${fp(x[key])}</span></div>`).join('')}</div>`).join('');
+  $('#homeSurge').querySelectorAll('.r').forEach(r=>r.onclick=()=>gotoHs(r.dataset.o,r.dataset.h,homeFlow));
+  const pc=Object.keys(META.ppi||{});const pp=await Promise.all(pc.map(async c=>{try{const d=await j(`data/ppi/${c}.json`);return{c,label:d.label,it:d.items.filter(i=>i.yoy!=null).sort((a,b)=>b.yoy-a.yoy).slice(0,5),latest:META.ppi[c].latest}}catch(e){return null}}));
+  $('#homePpi').innerHTML=pp.filter(Boolean).map(p=>`<div class="hc"><h4>${p.label} PPI <span class="badge">${p.latest}</span></h4>${p.it.map(i=>`<div class="r"><span>${i.t.slice(0,30)}</span><span class="${cls(i.yoy)}">${fp(i.yoy)}</span></div>`).join('')}</div>`).join('');
+}
+$('#homeSort').onchange=renderHome;
+
+// ── PPI
+let ppiShown=60;
+async function loadPpi(c){PPI=await j(`data/ppi/${c}.json`);$('#ppiCountry').value=c;const cats=[...new Set(PPI.items.map(i=>i.cat))].sort();$('#ppiCat').innerHTML='<option value="">전체</option>'+cats.map(x=>`<option>${x}</option>`).join('');ppiShown=60;renderPpi()}
+function ppiFilter(){const q=$('#ppiQ').value.trim().toLowerCase(),cat=$('#ppiCat').value,th=+$('#ppiTh').value||0,hl=$('#ppiHl').checked,fav=$('#ppiFav').checked,sort=$('#ppiSort').value;
+  let it=PPI.items.filter(i=>(!cat||i.cat===cat)&&(!q||i.t.toLowerCase().includes(q)||(i.en||'').toLowerCase().includes(q)||i.id.toLowerCase().includes(q))&&(!hl||Math.abs(i.yoy??0)>=th)&&(!fav||FAV.ppi[PPI.country+'|'+i.id]));
+  const k=sort.startsWith('yoy')?'yoy':sort.startsWith('mom')?'mom':null;
+  if(sort==='name')it.sort((a,b)=>a.t.localeCompare(b.t,'ko'));else if(sort==='yoy_abs')it.sort((a,b)=>Math.abs(b.yoy??0)-Math.abs(a.yoy??0));else it.sort((a,b)=>sort.endsWith('desc')?((b[k]??-1e9)-(a[k]??-1e9)):((a[k]??1e9)-(b[k]??1e9)));
+  return it}
+function renderPpi(){if(!PPI)return;const it=ppiFilter(),th=+$('#ppiTh').value||0;$('#ppiInfo').textContent=`${PPI.label} PPI · ${it.length}개 시리즈 · 최신 ${META.ppi[PPI.country].latest} · 카드 클릭 = 확대`;
+  $('#ppiGrid').innerHTML=it.slice(0,ppiShown).map(i=>`<div class="tile" data-i="${i.id}" style="cursor:pointer;border:1px solid ${Math.abs(i.yoy??0)>=th?'var(--acc)':'transparent'}"><div class="k" title="${i.en||''}">${FAV.ppi[PPI.country+'|'+i.id]?'★ ':''}${i.t.slice(0,60)}</div><div style="display:flex;justify-content:space-between;align-items:center"><span class="v ${cls(i.yoy)}" style="font-size:15px">${fp(i.yoy)} ${arrow(i.yoy)}</span><span class="muted">MoM ${fp(i.mom)}</span></div><canvas class="spark" data-s="${i.v.slice(-24).join('|')}" style="width:100%;height:28px"></canvas><div class="muted">${i.cat.slice(-40)} · ${i.last} · ${i.val}</div></div>`).join('');
+  $('#ppiMore').hidden=it.length<=ppiShown;
+  $('#ppiGrid').querySelectorAll('canvas.spark').forEach(c=>{const v=c.dataset.s.split('|').map(Number);const ctx=c.getContext('2d');c.width=230;c.height=28;const mx=Math.max(...v),mn=Math.min(...v);ctx.strokeStyle='#2563eb';ctx.lineWidth=1.3;ctx.beginPath();v.forEach((x,k)=>{const px=k/(v.length-1)*228+1,py=26-(mx>mn?(x-mn)/(mx-mn):0.5)*24;k?ctx.lineTo(px,py):ctx.moveTo(px,py)});ctx.stroke()});
+  $('#ppiGrid').querySelectorAll('[data-i]').forEach(d=>d.onclick=()=>openPpi(d.dataset.i))}
+function openPpi(id){const i=PPI.items.find(x=>x.id===id);if(!i)return;$('#ppiModal').hidden=false;$('#ppiMTitle').textContent=`${i.t} (${i.id})`;
+  const fk_=PPI.country+'|'+id;const st=$('#ppiMFav');st.textContent=FAV.ppi[fk_]?'★':'☆';st.className='star'+(FAV.ppi[fk_]?' on':'');st.onclick=()=>{if(FAV.ppi[fk_])delete FAV.ppi[fk_];else FAV.ppi[fk_]={c:PPI.country,id,t:i.t};saveFav();openPpi(id);renderPpi()};
+  const yoyv=i.v.map((v,k)=>{const m=i.d[k],pm=`${+m.slice(0,4)-1}${m.slice(4)}`,pi=i.d.indexOf(pm);return pi<0?null:+((v/i.v[pi]-1)*100).toFixed(1)});
+  $('#ppiMTiles').innerHTML=[['최신값 ('+i.last+')',i.val,''],['YoY',fp(i.yoy)+' '+arrow(i.yoy),cls(i.yoy)],['MoM',fp(i.mom)+' '+arrow(i.mom),cls(i.mom)],['단위',i.u||'-','']].map(t=>`<div class="tile"><div class="k">${t[0]}</div><div class="v ${t[2]}">${t[1]}</div></div>`).join('');
+  setTimeout(()=>{ch('cPpi').setOption({...base,legend:{top:4,textStyle:{color:txt}},xAxis:{type:'category',data:i.d},yAxis:[{type:'value',name:i.u||'지수',scale:true},{type:'value',name:'YoY %',position:'right'}],series:[{name:'지수',type:'line',data:i.v,showSymbol:false,itemStyle:{color:'#2563eb'}},{name:'YoY %',type:'bar',yAxisIndex:1,data:yoyv,itemStyle:{color:'rgba(214,60,60,.55)'},barMaxWidth:10}],tooltip:{trigger:'axis'}},true);ch('cPpi').resize()},30)}
+$('#ppiMClose').onclick=()=>$('#ppiModal').hidden=true;$('#ppiModal').addEventListener('click',e=>{if(e.target.id==='ppiModal')$('#ppiModal').hidden=true});
+['ppiSort','ppiCat','ppiHl','ppiFav'].forEach(id=>$('#'+id).onchange=()=>{ppiShown=60;renderPpi()});$('#ppiQ').oninput=()=>{ppiShown=60;renderPpi()};$('#ppiTh').oninput=()=>renderPpi();$('#ppiMore').onclick=()=>{ppiShown+=60;renderPpi()};
+
+// ── 마이페이지
+let myTab='trade';
+document.querySelectorAll('[data-my]').forEach(b=>b.onclick=()=>{myTab=b.dataset.my;document.querySelectorAll('[data-my]').forEach(x=>x.classList.toggle('on',x===b));renderMy()});
+async function renderMy(){
+  const el=$('#myList');
+  if(myTab==='trade'){const ks=Object.keys(FAV.trade);$('#myInfo').textContent=`관심 무역 품목 ${ks.length}개 · 클릭 = 시계열 · 메모는 자동 저장`;
+    const rows=await Promise.all(ks.map(async k=>{const f=FAV.trade[k];let s=null,months=null;try{const d=await getSeries(f.o,f.f);s=d.series[f.hs];months=d.months}catch(e){}const L=s?s.v.length-1:0;const y=s?yoy(s.v)[L]:null;return{k,f,s,L,y,m:months?months[L]:''}}));
+    el.innerHTML=rows.map(r=>`<div class="tile" style="margin-bottom:8px"><div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap"><div style="cursor:pointer" data-o="${r.f.o}" data-h="${r.f.hs}" data-f="${r.f.f}"><b style="font-family:ui-monospace,Menlo,monospace">${r.f.hs}</b> ${r.f.name.slice(0,40)} <span class="badge">${META.origins[r.f.o]?META.origins[r.f.o].label:r.f.o} ${FLOWK[r.f.f]}</span></div><div>${r.s?`<span class="muted">${r.m}</span> <b>${fk(r.s.v[r.L])}</b> <span class="${cls(r.y)}">${fp(r.y)}</span>`:''} <canvas class="spark" data-s="${r.s?r.s.v.slice(-12).map(v=>v??'').join('|'):''}"></canvas> <button class="sm" data-del="${r.k}">🗑</button></div></div><textarea data-note="${r.k}" placeholder="메모" style="width:100%;margin-top:6px;min-height:36px">${NOTES[r.k]||''}</textarea></div>`).join('')||'<div class="muted">시계열·급등 탐색에서 ★를 눌러 추가하세요.</div>';
+    drawSparks(el);el.querySelectorAll('[data-h]').forEach(d=>d.onclick=()=>gotoHs(d.dataset.o,d.dataset.h,d.dataset.f));
+  }else if(myTab==='cond'){const p=LS.get('condPresets')||{};$('#myInfo').textContent=`합산 프리셋 ${Object.keys(p).length}개`;
+    el.innerHTML=Object.entries(p).map(([n,c])=>`<div class="tile" style="margin-bottom:8px"><div style="display:flex;justify-content:space-between"><b>${n}</b><span><button class="sm" data-load="${n}">불러오기</button> <button class="sm" data-delp="${n}">🗑</button></span></div><div class="muted">${c.map(x=>`${META.origins[x.o]?META.origins[x.o].label:x.o} ${x.hs}`).join(' · ')}</div></div>`).join('')||'<div class="muted">합산 탭에서 저장하세요.</div>';
+    el.querySelectorAll('[data-load]').forEach(b=>b.onclick=()=>{COND=JSON.parse(JSON.stringify(p[b.dataset.load]));LS.set('cond',COND);showTab('combined')});
+    el.querySelectorAll('[data-delp]').forEach(b=>b.onclick=()=>{delete p[b.dataset.delp];LS.set('condPresets',p);loadCondPresets();renderMy()});
+  }else{const ks=Object.keys(FAV.ppi);$('#myInfo').textContent=`관심 PPI ${ks.length}개`;
+    el.innerHTML=ks.map(k=>{const f=FAV.ppi[k];return `<div class="tile" style="margin-bottom:8px"><div style="display:flex;justify-content:space-between"><span><span class="badge">${(META.ppi[f.c]||{}).label||f.c}</span> ${f.t.slice(0,60)} <span class="muted">${f.id}</span></span><button class="sm" data-del="${k}">🗑</button></div><textarea data-note="${k}" placeholder="메모" style="width:100%;margin-top:6px;min-height:36px">${NOTES[k]||''}</textarea></div>`}).join('')||'<div class="muted">PPI 탭에서 ★를 눌러 추가하세요.</div>';
+  }
+  el.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{const k=b.dataset.del;delete FAV.trade[k];delete FAV.ppi[k];delete NOTES[k];saveFav();renderMy()});
+  el.querySelectorAll('[data-note]').forEach(t=>t.oninput=()=>{NOTES[t.dataset.note]=t.value;saveFav()});
+}
+init().catch(e=>{$('#genInfo').textContent='로드 실패: '+e.message});
+</script>
+</body>
+</html>
