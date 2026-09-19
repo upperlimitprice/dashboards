@@ -21,7 +21,7 @@ youtube/
 ## 1회 준비 (로컬 PC)
 
 ```bash
-pip install -U yt-dlp anthropic
+python3.12 -m pip install -U yt-dlp anthropic    # Mac 기본 python3(3.9)는 anthropic 1.x 미지원 → Homebrew 3.12 사용
 export ANTHROPIC_API_KEY=sk-ant-...      # 또는 ant auth login
 ```
 텔레그램 요약봇: `youtube/telegram.json` 에 `{"bot_token": "...", "chat_id": "..."}` (또는 환경변수 `TG_BOT_TOKEN`/`TG_CHAT_ID`).
