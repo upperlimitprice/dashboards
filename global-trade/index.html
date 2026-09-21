@@ -144,21 +144,32 @@ tr:hover td{background:rgba(37,99,235,.05)}td.hs{font-family:ui-monospace,Menlo,
 
 <!-- PPI -->
 <div class="card" id="p-ppi" hidden>
-  <div class="row">
+  <div class="row" style="align-items:flex-end">
     <div><label>국가</label><select id="ppiCountry"></select></div>
-    <div><label>정렬</label><select id="ppiSort"><option value="yoy_desc">YoY% 높은순</option><option value="yoy_asc">YoY% 낮은순</option><option value="yoy_abs">YoY% 절대값 (급변)</option><option value="mom_desc">MoM% 높은순</option><option value="mom_asc">MoM% 낮은순</option><option value="name">시리즈명순</option></select></div>
-    <div><label>카테고리</label><select id="ppiCat"><option value="">전체</option></select></div>
+    <div><label>보기</label><div class="subtabs" style="display:flex;gap:6px"><button data-pv="grid" class="on">카드</button><button data-pv="surge">급등 탐색</button></div></div>
+    <div><label>정렬</label><select id="ppiSort"><option value="yoy_desc">YoY% 높은순</option><option value="yoy_asc">YoY% 낮은순</option><option value="mom_desc">MoM% 높은순</option><option value="mom_asc">MoM% 낮은순</option><option value="qoq_desc">QoQ% 높은순</option><option value="yoy_abs">절대값 급변 (|YoY|)</option><option value="name">시리즈명순</option></select></div>
     <div style="flex:1;min-width:200px"><label>검색</label><input id="ppiQ" placeholder="시리즈명 / ID"></div>
     <div><label>급등락 임계 |YoY| ≥</label><input id="ppiTh" type="number" value="10" style="width:80px"></div>
     <div><label>&nbsp;</label><label style="font-size:12px"><input type="checkbox" id="ppiHl"> 급등락만</label></div>
     <div><label>&nbsp;</label><label style="font-size:12px"><input type="checkbox" id="ppiFav"> 즐겨찾기만</label></div>
+    <div><label>&nbsp;</label><label style="font-size:12px"><input type="checkbox" id="ppiLive" checked> 중단 시리즈 제외(6개월+)</label></div>
   </div>
-  <div class="muted" id="ppiInfo" style="margin:8px 0"></div>
+  <div class="row" id="ppiSurgeRow" hidden style="margin-top:6px">
+    <div><label>가속 횟수 ≥ (최근 6개월 MoM 양수)</label><input id="ppiAcc" type="number" value="0" min="0" max="6" style="width:80px"></div>
+    <div><label>YoY ≥ %</label><input id="ppiMinYoy" type="number" style="width:80px"></div>
+    <div><label>MoM ≥ %</label><input id="ppiMinMom" type="number" style="width:80px"></div>
+    <div><label>QoQ ≥ %</label><input id="ppiMinQoq" type="number" style="width:80px"></div>
+    <div><label>프리셋</label><select id="ppiPreset"><option value="">-- 불러오기 --</option></select></div>
+    <div><label>&nbsp;</label><button id="ppiPresetSave">저장</button></div><div><label>&nbsp;</label><button id="ppiPresetDel">× 삭제</button></div>
+  </div>
+  <div id="ppiCats" class="subtabs" style="display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 4px"></div>
+  <div class="muted" id="ppiInfo" style="margin:6px 0 10px"></div>
   <div id="ppiGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px"></div>
+  <div class="tblwrap" id="ppiTblWrap" hidden><table id="ppiTbl"></table></div>
   <div class="muted" style="margin-top:8px"><button id="ppiMore">더 보기</button></div>
 </div>
 <div id="ppiModal" hidden style="position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:50;display:flex;align-items:center;justify-content:center;padding:16px">
-  <div class="card" style="width:min(960px,100%);max-height:90vh;overflow:auto;margin:0"><div style="display:flex;justify-content:space-between;align-items:center"><div id="ppiMTitle" style="font-weight:600"></div><div><span class="star" id="ppiMFav">☆</span> <button id="ppiMClose">×</button></div></div><div class="tiles" id="ppiMTiles"></div><div class="chart" id="cPpi"></div></div>
+  <div class="card" style="width:min(1000px,100%);max-height:92vh;overflow:auto;margin:0"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap"><div id="ppiMTitle" style="font-weight:600"></div><div style="display:flex;gap:6px;align-items:center"><div class="subtabs" id="ppiPeriod" style="display:flex;gap:4px"><button data-y="3" class="on">3년</button><button data-y="5">5년</button><button data-y="10">10년</button><button data-y="0">전체</button></div><span class="star" id="ppiMFav">☆</span> <button id="ppiMClose">×</button></div></div><div class="muted" id="ppiMSub" style="margin:4px 0 8px"></div><div class="tiles" id="ppiMTiles"></div><div class="chart" id="cPpi"></div><div class="muted" style="margin-top:6px">막대 = YoY%, 선 = 지수. 드래그 확대 · 슬라이더 기간 조절 · 종목 오버레이는 가격 데이터 미연동으로 제공하지 않음.</div></div>
 </div>
 
 <!-- 마이페이지 -->
@@ -390,26 +401,53 @@ async function renderHome(){
 }
 $('#homeSort').onchange=renderHome;
 
-// ── PPI
-let ppiShown=60;
-async function loadPpi(c){PPI=await j(`data/ppi/${c}.json`);$('#ppiCountry').value=c;const cats=[...new Set(PPI.items.map(i=>i.cat))].sort();$('#ppiCat').innerHTML='<option value="">전체</option>'+cats.map(x=>`<option>${x}</option>`).join('');ppiShown=60;renderPpi()}
-function ppiFilter(){const q=$('#ppiQ').value.trim().toLowerCase(),cat=$('#ppiCat').value,th=+$('#ppiTh').value||0,hl=$('#ppiHl').checked,fav=$('#ppiFav').checked,sort=$('#ppiSort').value;
-  let it=PPI.items.filter(i=>(!cat||i.cat===cat)&&(!q||i.t.toLowerCase().includes(q)||(i.en||'').toLowerCase().includes(q)||i.id.toLowerCase().includes(q))&&(!hl||Math.abs(i.yoy??0)>=th)&&(!fav||FAV.ppi[PPI.country+'|'+i.id]));
-  const k=sort.startsWith('yoy')?'yoy':sort.startsWith('mom')?'mom':null;
+// ── PPI (나쁜양파 /ppi + /ppi/surge 복제)
+let ppiShown=60,ppiView='grid',ppiGrp='',ppiHist={},ppiCur=null,ppiSortKey='yoy',ppiDir=-1;
+async function loadPpi(c){PPI=await j(`data/ppi/${c}.json`);$('#ppiCountry').value=c;ppiGrp='';ppiHist={};renderPpiCats();ppiShown=60;renderPpi()}
+function renderPpiCats(){const cnt={};PPI.items.forEach(i=>cnt[i.g]=(cnt[i.g]||0)+1);const order=['종합지수','식음료','농산물','화학','금속','에너지','기계','전기·전자','운송장비','섬유·의류','목재·제지','비금속광물·건설','서비스','기타'].filter(g=>cnt[g]);
+  $('#ppiCats').innerHTML=`<button data-g="" class="${ppiGrp===''?'on':''}">전체 ${PPI.items.length}</button>`+order.map(g=>`<button data-g="${g}" class="${ppiGrp===g?'on':''}">${g} ${cnt[g]}</button>`).join('');
+  $('#ppiCats').querySelectorAll('button').forEach(b=>b.onclick=()=>{ppiGrp=b.dataset.g;ppiShown=60;renderPpiCats();renderPpi()})}
+function ppiFilter(){const q=$('#ppiQ').value.trim().toLowerCase(),th=+$('#ppiTh').value||0,hl=$('#ppiHl').checked,fav=$('#ppiFav').checked,sort=$('#ppiSort').value;
+  const acc=+$('#ppiAcc').value||0,my=$('#ppiMinYoy').value===''?null:+$('#ppiMinYoy').value,mm=$('#ppiMinMom').value===''?null:+$('#ppiMinMom').value,mq=$('#ppiMinQoq').value===''?null:+$('#ppiMinQoq').value;
+  let it=PPI.items.filter(i=>(!ppiGrp||i.g===ppiGrp)&&(!q||i.t.toLowerCase().includes(q)||(i.en||'').toLowerCase().includes(q)||i.id.toLowerCase().includes(q))&&(!hl||Math.abs(i.yoy??0)>=th)&&(!fav||FAV.ppi[PPI.country+'|'+i.id])&&(!$('#ppiLive').checked||ppiStale(i)<6));
+  if(ppiView==='surge')it=it.filter(i=>(i.acc||0)>=acc&&(my==null||(i.yoy!=null&&i.yoy>=my))&&(mm==null||(i.mom!=null&&i.mom>=mm))&&(mq==null||(i.qoq!=null&&i.qoq>=mq)));
+  if(ppiView==='surge'){it.sort((a,b)=>ppiSortKey==='t'?ppiDir*a.t.localeCompare(b.t,'ko'):ppiSortKey==='abs'?ppiDir*(Math.abs(a.yoy??0)-Math.abs(b.yoy??0)):ppiDir*((a[ppiSortKey]??-1e18)-(b[ppiSortKey]??-1e18)));return it}
+  const k=sort.startsWith('yoy')?'yoy':sort.startsWith('mom')?'mom':sort.startsWith('qoq')?'qoq':null;
   if(sort==='name')it.sort((a,b)=>a.t.localeCompare(b.t,'ko'));else if(sort==='yoy_abs')it.sort((a,b)=>Math.abs(b.yoy??0)-Math.abs(a.yoy??0));else it.sort((a,b)=>sort.endsWith('desc')?((b[k]??-1e9)-(a[k]??-1e9)):((a[k]??1e9)-(b[k]??1e9)));
   return it}
-function renderPpi(){if(!PPI)return;const it=ppiFilter(),th=+$('#ppiTh').value||0;$('#ppiInfo').textContent=`${PPI.label} PPI · ${it.length}개 시리즈 · 최신 ${META.ppi[PPI.country].latest} · 카드 클릭 = 확대`;
-  $('#ppiGrid').innerHTML=it.slice(0,ppiShown).map(i=>`<div class="tile" data-i="${i.id}" style="cursor:pointer;border:1px solid ${Math.abs(i.yoy??0)>=th?'var(--acc)':'transparent'}"><div class="k" title="${i.en||''}">${FAV.ppi[PPI.country+'|'+i.id]?'★ ':''}${i.t.slice(0,60)}</div><div style="display:flex;justify-content:space-between;align-items:center"><span class="v ${cls(i.yoy)}" style="font-size:15px">${fp(i.yoy)} ${arrow(i.yoy)}</span><span class="muted">MoM ${fp(i.mom)}</span></div><canvas class="spark" data-s="${i.v.slice(-24).join('|')}" style="width:100%;height:28px"></canvas><div class="muted">${i.cat.slice(-40)} · ${i.last} · ${i.val}</div></div>`).join('');
-  $('#ppiMore').hidden=it.length<=ppiShown;
-  $('#ppiGrid').querySelectorAll('canvas.spark').forEach(c=>{const v=c.dataset.s.split('|').map(Number);const ctx=c.getContext('2d');c.width=230;c.height=28;const mx=Math.max(...v),mn=Math.min(...v);ctx.strokeStyle='#2563eb';ctx.lineWidth=1.3;ctx.beginPath();v.forEach((x,k)=>{const px=k/(v.length-1)*228+1,py=26-(mx>mn?(x-mn)/(mx-mn):0.5)*24;k?ctx.lineTo(px,py):ctx.moveTo(px,py)});ctx.stroke()});
+const ppiName=i=>(i.t||'').replace(/^Producer Price Index by (Commodity|Industry):\s*/i,'');const ppiStale=i=>{const L=META.ppi[PPI.country].latest;if(!L||!i.last)return 0;return (+L.slice(0,4)-+i.last.slice(0,4))*12+(+L.slice(5)-+i.last.slice(5))};
+function sparkCanvas(c){const v=c.dataset.s.split('|').map(Number);const ctx=c.getContext('2d');c.width=230;c.height=28;const mx=Math.max(...v),mn=Math.min(...v);ctx.strokeStyle='#2563eb';ctx.lineWidth=1.3;ctx.beginPath();v.forEach((x,k)=>{const px=k/(v.length-1)*228+1,py=26-(mx>mn?(x-mn)/(mx-mn):0.5)*24;k?ctx.lineTo(px,py):ctx.moveTo(px,py)});ctx.stroke()}
+function renderPpi(){if(!PPI)return;const it=ppiFilter(),th=+$('#ppiTh').value||0;const surge=ppiView==='surge';
+  $('#ppiInfo').textContent=`${PPI.label} PPI · ${it.length}개 시리즈${ppiGrp?' · '+ppiGrp:''} · 최신 ${META.ppi[PPI.country].latest} · ${surge?'행 클릭 = 확대 (상위 200 표시)':'카드 클릭 = 확대'}`;
+  $('#ppiGrid').hidden=surge;$('#ppiTblWrap').hidden=!surge;$('#ppiMore').hidden=surge||it.length<=ppiShown;
+  if(surge){const cols=[['fav','★','l'],['id','ID','l'],['t','시리즈','l'],['g','그룹','l'],['val','최신값'],['yoy','YoY'],['mom','MoM'],['qoq','QoQ'],['yoy3','3M YoY'],['acc','가속'],['abs','|YoY|'],['spark','24M','l']];
+    $('#ppiTbl').innerHTML='<tr>'+cols.map(c=>`<th class="${c[2]||''}" data-k="${c[0]}">${c[1]}${c[0]===ppiSortKey?`<span class="ar">${ppiDir<0?'▼':'▲'}</span>`:''}</th>`).join('')+'</tr>'+
+      it.slice(0,200).map(i=>`<tr data-i="${i.id}" style="cursor:pointer"><td class="l"><span class="star ${FAV.ppi[PPI.country+'|'+i.id]?'on':''}">${FAV.ppi[PPI.country+'|'+i.id]?'★':'☆'}</span></td><td class="l muted">${i.id}</td><td class="l" title="${i.t}">${ppiName(i).slice(0,70)}${ppiStale(i)>=6?' <span class="muted">(중단 '+i.last+')</span>':''}</td><td class="l muted">${i.g}</td><td>${i.val}</td><td class="${cls(i.yoy)}">${fp(i.yoy)}</td><td class="${cls(i.mom)}">${fp(i.mom)}</td><td class="${cls(i.qoq)}">${fp(i.qoq)}</td><td class="${cls(i.yoy3)}">${fp(i.yoy3)}</td><td>${i.acc??'-'}</td><td>${i.yoy==null?'-':Math.abs(i.yoy).toFixed(1)}</td><td class="l"><canvas class="spark" data-s="${i.v.join('|')}" style="width:120px;height:22px"></canvas></td></tr>`).join('');
+    $('#ppiTbl').querySelectorAll('th[data-k]').forEach(h=>h.onclick=()=>{const k=h.dataset.k;if(k==='fav'||k==='spark')return;if(ppiSortKey===k)ppiDir=-ppiDir;else{ppiSortKey=k;ppiDir=k==='t'?1:-1}renderPpi()});
+    $('#ppiTbl').querySelectorAll('canvas.spark').forEach(sparkCanvas);$('#ppiTbl').querySelectorAll('tr[data-i]').forEach(r=>r.onclick=()=>openPpi(r.dataset.i));return}
+  $('#ppiGrid').innerHTML=it.slice(0,ppiShown).map(i=>`<div class="tile" data-i="${i.id}" style="cursor:pointer;border:1px solid ${Math.abs(i.yoy??0)>=th?'var(--acc)':'transparent'}"><div class="k" title="${i.t}" style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:2.6em">${FAV.ppi[PPI.country+'|'+i.id]?'★ ':''}${ppiName(i)}${ppiStale(i)>=6?' <span class="badge" style="background:#999">중단 '+i.last+'</span>':''}</div><div style="display:flex;justify-content:space-between;align-items:center"><span class="v ${cls(i.yoy)}" style="font-size:15px">${fp(i.yoy)} ${arrow(i.yoy)}</span><span class="muted">MoM ${fp(i.mom)} · QoQ ${fp(i.qoq)}</span></div><canvas class="spark" data-s="${i.v.join('|')}" style="width:100%;height:28px"></canvas><div class="muted" style="display:flex;justify-content:space-between"><span>${i.g}${i.acc?' · 가속 '+i.acc:''}</span><span>${i.last} · ${i.val}</span></div></div>`).join('');
+  $('#ppiGrid').querySelectorAll('canvas.spark').forEach(sparkCanvas);
   $('#ppiGrid').querySelectorAll('[data-i]').forEach(d=>d.onclick=()=>openPpi(d.dataset.i))}
-function openPpi(id){const i=PPI.items.find(x=>x.id===id);if(!i)return;$('#ppiModal').hidden=false;$('#ppiMTitle').textContent=`${i.t} (${i.id})`;
+function crc32(str){let c,crc=0^(-1);for(let i=0;i<str.length;i++){c=(crc^str.charCodeAt(i))&0xff;for(let k=0;k<8;k++)c=c&1?(0xEDB88320^(c>>>1)):(c>>>1);crc=(crc>>>8)^c}return (crc^(-1))>>>0}
+async function ppiHistory(id){const n=PPI.shards||32,sh=String(crc32(id)%n).padStart(2,'0');if(!ppiHist[sh])ppiHist[sh]=await j(`data/ppi/${PPI.country}_h/${sh}.json`);return ppiHist[sh][id]}
+function ppiYears(){return +($('#ppiPeriod button.on')?.dataset.y||3)}
+async function openPpi(id){const i=PPI.items.find(x=>x.id===id);if(!i)return;ppiCur=i;$('#ppiModal').hidden=false;$('#ppiMTitle').textContent=`${i.t} (${i.id})`;$('#ppiMSub').textContent=`${i.en&&i.en!==i.t?i.en+' · ':''}${i.cat||'-'} · ${i.g} · ${i.sa?'계절조정':'원계열'} · 자료 ${i.d0}~${i.last} (${i.n}개월)`;
   const fk_=PPI.country+'|'+id;const st=$('#ppiMFav');st.textContent=FAV.ppi[fk_]?'★':'☆';st.className='star'+(FAV.ppi[fk_]?' on':'');st.onclick=()=>{if(FAV.ppi[fk_])delete FAV.ppi[fk_];else FAV.ppi[fk_]={c:PPI.country,id,t:i.t};saveFav();openPpi(id);renderPpi()};
-  const yoyv=i.v.map((v,k)=>{const m=i.d[k],pm=`${+m.slice(0,4)-1}${m.slice(4)}`,pi=i.d.indexOf(pm);return pi<0?null:+((v/i.v[pi]-1)*100).toFixed(1)});
-  $('#ppiMTiles').innerHTML=[['최신값 ('+i.last+')',i.val,''],['YoY',fp(i.yoy)+' '+arrow(i.yoy),cls(i.yoy)],['MoM',fp(i.mom)+' '+arrow(i.mom),cls(i.mom)],['단위',i.u||'-','']].map(t=>`<div class="tile"><div class="k">${t[0]}</div><div class="v ${t[2]}">${t[1]}</div></div>`).join('');
-  setTimeout(()=>{ch('cPpi').setOption({...base,legend:{top:4,textStyle:{color:txt}},xAxis:{type:'category',data:i.d},yAxis:[{type:'value',name:i.u||'지수',scale:true},{type:'value',name:'YoY %',position:'right'}],series:[{name:'지수',type:'line',data:i.v,showSymbol:false,itemStyle:{color:'#2563eb'}},{name:'YoY %',type:'bar',yAxisIndex:1,data:yoyv,itemStyle:{color:'rgba(214,60,60,.55)'},barMaxWidth:10}],tooltip:{trigger:'axis'}},true);ch('cPpi').resize()},30)}
+  $('#ppiMTiles').innerHTML=[['최신값 ('+i.last+')',i.val,''],['YoY',fp(i.yoy)+' '+arrow(i.yoy),cls(i.yoy)],['MoM',fp(i.mom)+' '+arrow(i.mom),cls(i.mom)],['QoQ',fp(i.qoq)+' '+arrow(i.qoq),cls(i.qoq)],['3M YoY',fp(i.yoy3),cls(i.yoy3)],['가속(6M)',i.acc??'-',''],['단위',i.u||'-','']].map(t=>`<div class="tile"><div class="k">${t[0]}</div><div class="v ${t[2]}">${t[1]}</div></div>`).join('');
+  let h;try{h=await ppiHistory(id)}catch(e){h=null}const d=h?h.d:i.d,v=h?h.v:i.v;const yrs=ppiYears();const n=yrs?Math.min(d.length,yrs*12):d.length;const dd=d.slice(-n),vv=v.slice(-n);
+  const yoyv=dd.map((m,k)=>{const pm=`${+m.slice(0,4)-1}${m.slice(4)}`,pi=d.indexOf(pm);return pi<0?null:+((v[d.length-n+k]/v[pi]-1)*100).toFixed(1)});
+  setTimeout(()=>{ch('cPpi').setOption({...base,legend:{top:4,textStyle:{color:txt}},xAxis:{type:'category',data:dd},yAxis:[{type:'value',name:i.u||'지수',scale:true},{type:'value',name:'YoY %',position:'right'}],series:[{name:'지수',type:'line',data:vv,showSymbol:false,itemStyle:{color:'#2563eb'}},{name:'YoY %',type:'bar',yAxisIndex:1,data:yoyv,itemStyle:{color:'rgba(214,60,60,.55)'},barMaxWidth:10}],tooltip:{trigger:'axis'}},true);ch('cPpi').resize()},30)}
+$('#ppiPeriod').querySelectorAll('button').forEach(b=>b.onclick=()=>{$('#ppiPeriod').querySelectorAll('button').forEach(x=>x.classList.remove('on'));b.classList.add('on');LS.set('ppiYears',b.dataset.y);if(ppiCur)openPpi(ppiCur.id)});
+(function(){const y=LS.get('ppiYears');if(y!=null){$('#ppiPeriod').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x.dataset.y===String(y)))}})();
 $('#ppiMClose').onclick=()=>$('#ppiModal').hidden=true;$('#ppiModal').addEventListener('click',e=>{if(e.target.id==='ppiModal')$('#ppiModal').hidden=true});
-['ppiSort','ppiCat','ppiHl','ppiFav'].forEach(id=>$('#'+id).onchange=()=>{ppiShown=60;renderPpi()});$('#ppiQ').oninput=()=>{ppiShown=60;renderPpi()};$('#ppiTh').oninput=()=>renderPpi();$('#ppiMore').onclick=()=>{ppiShown+=60;renderPpi()};
+document.querySelectorAll('[data-pv]').forEach(b=>b.onclick=()=>{document.querySelectorAll('[data-pv]').forEach(x=>x.classList.toggle('on',x===b));ppiView=b.dataset.pv;$('#ppiSurgeRow').hidden=ppiView!=='surge';$('#ppiSort').parentElement.hidden=ppiView==='surge';ppiShown=60;renderPpi()});
+['ppiSort','ppiHl','ppiFav','ppiLive','ppiAcc','ppiMinYoy','ppiMinMom','ppiMinQoq'].forEach(id=>$('#'+id).onchange=()=>{ppiShown=60;renderPpi()});$('#ppiQ').oninput=()=>{ppiShown=60;renderPpi()};$('#ppiTh').oninput=()=>renderPpi();$('#ppiMore').onclick=()=>{ppiShown+=60;renderPpi()};
+function ppiParams(){return{acc:$('#ppiAcc').value,yoy:$('#ppiMinYoy').value,mom:$('#ppiMinMom').value,qoq:$('#ppiMinQoq').value,th:$('#ppiTh').value,hl:$('#ppiHl').checked,g:ppiGrp}}
+function loadPpiPresets(){const p=LS.get('ppiPresets')||{};$('#ppiPreset').innerHTML='<option value="">-- 불러오기 --</option>'+Object.keys(p).map(k=>`<option>${k}</option>`).join('')}
+$('#ppiPreset').onchange=e=>{const p=(LS.get('ppiPresets')||{})[e.target.value];if(!p)return;$('#ppiAcc').value=p.acc;$('#ppiMinYoy').value=p.yoy;$('#ppiMinMom').value=p.mom;$('#ppiMinQoq').value=p.qoq;$('#ppiTh').value=p.th;$('#ppiHl').checked=!!p.hl;ppiGrp=p.g||'';if(PPI)renderPpiCats();renderPpi()};
+$('#ppiPresetSave').onclick=()=>{const n=prompt('프리셋 이름');if(!n)return;const p=LS.get('ppiPresets')||{};p[n]=ppiParams();LS.set('ppiPresets',p);loadPpiPresets();$('#ppiPreset').value=n};
+$('#ppiPresetDel').onclick=()=>{const n=$('#ppiPreset').value;if(!n)return;const p=LS.get('ppiPresets')||{};delete p[n];LS.set('ppiPresets',p);loadPpiPresets()};
+loadPpiPresets();
 
 // ── 마이페이지
 let myTab='trade';
