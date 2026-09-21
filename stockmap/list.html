@@ -1,24 +1,27 @@
 <!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>검증 구분별 기업 목록 — 종목 × 무역품목 맵</title>
 <style>
-:root{--bg:#f4f6f9;--card:#fff;--ink:#1b2330;--mut:#6a7583;--line:#e3e7ed;--chk:#2f855a;--chkbg:#e6f6ec;--est:#b7791f;--estbg:#fff6e0;--fail:#8a94a3;--failbg:#eef0f3;--acc:#2b6cb0;--up:#c53030;--dn:#2b6cb0}
+:root{--bg:#f4f6f9;--card:#fff;--ink:#1b2330;--mut:#6a7583;--line:#e3e7ed;--chk:#2f855a;--chkbg:#e6f6ec;--est:#b7791f;--estbg:#fff6e0;--fail:#8a94a3;--failbg:#eef0f3;--acc:#2b6cb0;--up:#c53030;--dn:#2b6cb0;--hov:#f7f9fc;--sel:#eef4fb;--chipbg:#f1f4f8;--thbg:#eef2f7;color-scheme:light}
+:root[data-theme=dark]{--bg:#0f141b;--card:#171d27;--ink:#e6e9ef;--mut:#97a1ae;--line:#2a323f;--chk:#48bb78;--chkbg:#173425;--est:#ecc94b;--estbg:#3a2f12;--fail:#8f99a6;--failbg:#242b35;--acc:#63b3ed;--up:#fc8181;--dn:#63b3ed;--hov:#1c2430;--sel:#1f2d3d;--chipbg:#232b36;--thbg:#1c232d;color-scheme:dark}
+@media (prefers-color-scheme: dark){:root:not([data-theme=light]){--bg:#0f141b;--card:#171d27;--ink:#e6e9ef;--mut:#97a1ae;--line:#2a323f;--chk:#48bb78;--chkbg:#173425;--est:#ecc94b;--estbg:#3a2f12;--fail:#8f99a6;--failbg:#242b35;--acc:#63b3ed;--up:#fc8181;--dn:#63b3ed;--hov:#1c2430;--sel:#1f2d3d;--chipbg:#232b36;--thbg:#1c232d;color-scheme:dark}}
+.tbtn{height:32px;width:36px;border:1px solid var(--line);border-radius:8px;background:var(--card);cursor:pointer;font-size:15px;color:var(--ink)}
 *{box-sizing:border-box}[hidden]{display:none!important}html,body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 -apple-system,"Apple SD Gothic Neo","Noto Sans KR",sans-serif}
 a{color:inherit;text-decoration:none}
-header{position:sticky;top:0;z-index:20;background:#fff;border-bottom:1px solid var(--line);padding:10px 18px}
+header{position:sticky;top:0;z-index:20;background:var(--card);border-bottom:1px solid var(--line);padding:10px 18px}
 .hrow{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center}h1{font-size:18px;margin:0;white-space:nowrap}.crumb{color:var(--mut);font-size:13px}
 .tools{display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center;margin-top:8px}
-.tools #q,.tools select{height:32px;border:1px solid var(--line);border-radius:8px;padding:0 10px;font-size:13px;background:#fff}.tools #q{width:240px;max-width:100%}
-.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}.seg a{padding:0 12px;height:30px;line-height:30px;font-size:13px;color:var(--mut);background:#fff}
+.tools #q,.tools select{height:32px;border:1px solid var(--line);border-radius:8px;padding:0 10px;font-size:13px;background:var(--card)}.tools #q{width:240px;max-width:100%}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}.seg a{padding:0 12px;height:30px;line-height:30px;font-size:13px;color:var(--mut);background:var(--card)}
 .seg a.on{color:#fff}.seg a.on.c-check{background:var(--chk)}.seg a.on.c-est{background:var(--est)}.seg a.on.c-fail{background:var(--fail)}
 .pill{display:inline-block;padding:1px 8px;border-radius:999px;font-size:12px;font-weight:600}.p-check{background:var(--chkbg);color:var(--chk)}.p-est{background:var(--estbg);color:var(--est)}.p-fail{background:var(--failbg);color:var(--fail)}
 .wrap{padding:16px 22px 60px}.intro{color:var(--mut);font-size:13px;margin-bottom:12px}.intro b{color:var(--ink)}
-.tw{overflow-x:auto;background:#fff;border:1px solid var(--line);border-radius:12px}table{border-collapse:collapse;width:100%;min-width:900px;font-size:13px}
-th,td{padding:10px 16px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{background:#eef2f7;cursor:pointer;white-space:nowrap;position:sticky;top:0}
+.tw{overflow-x:auto;background:var(--card);border:1px solid var(--line);border-radius:12px}table{border-collapse:collapse;width:100%;min-width:900px;font-size:13px}
+th,td{padding:10px 16px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{background:var(--thbg);cursor:pointer;white-space:nowrap;position:sticky;top:0}
 td.num,th.num{text-align:right;white-space:nowrap}td:last-child,th:last-child{padding-right:30px}
 td:nth-child(5){min-width:420px}
-tr.r{cursor:pointer}tr.r:hover{background:#f7f9fc}
+tr.r{cursor:pointer}tr.r:hover{background:var(--hov)}
 .sy{font-weight:700;font-size:14px}.nm{color:var(--mut);font-size:12px}
-.chip{display:inline-block;background:#f1f4f8;border-radius:6px;padding:1px 7px;font-size:12px;margin:2px 4px 2px 0;white-space:nowrap}.chip .hs{font-family:ui-monospace,Menlo,monospace;color:var(--mut)}
+.chip{display:inline-block;background:var(--chipbg);border-radius:6px;padding:1px 7px;font-size:12px;margin:2px 4px 2px 0;white-space:nowrap}.chip .hs{font-family:ui-monospace,Menlo,monospace;color:var(--mut)}
 .up{color:var(--up);font-weight:600}.dn{color:var(--dn);font-weight:600}
 .go{color:var(--acc);font-weight:600;white-space:nowrap}
 .empty{color:var(--mut);padding:30px;text-align:center}
@@ -28,9 +31,10 @@ tr.r{cursor:pointer}tr.r:hover{background:#f7f9fc}
 <div class="tools"><input id="q" placeholder="종목·기업·품목·HS 검색 (Enter)">
 <div class="seg"><a href="list.html?st=check" class="c-check" data-v="check">✅ 체크</a><a href="list.html?st=est" class="c-est" data-v="est">🟡 추정</a><a href="list.html?st=fail" class="c-fail" data-v="fail">⚪ 미충족</a></div>
 <select id="mk"><option value="">시장 전체</option><option>미국</option><option>일본</option></select>
-<select id="sort"><option value="cap">시총순</option><option value="n">품목 수순</option><option value="yoy">최고 YoY순</option><option value="sym">종목명순</option></select></div></header>
+<select id="sort"><option value="cap">시총순</option><option value="n">품목 수순</option><option value="yoy">최고 YoY순</option><option value="sym">종목명순</option></select><button class="tbtn" id="theme" title="다크/라이트 전환">🌙</button></div></header>
 <div class="wrap"><div class="intro" id="intro"></div><div class="tw" id="tbl"></div></div>
 <script>
+const TH={get(){try{return localStorage.getItem('sm_theme')||'';}catch(e){return '';}},apply(v){if(v)document.documentElement.dataset.theme=v;else delete document.documentElement.dataset.theme;const b=document.getElementById('theme');if(b)b.textContent=TH.dark()?'☀️':'🌙';},dark(){const t=document.documentElement.dataset.theme;return t?t==='dark':matchMedia('(prefers-color-scheme: dark)').matches;},toggle(){const v=TH.dark()?'light':'dark';try{localStorage.setItem('sm_theme',v);}catch(e){}TH.apply(v);if(typeof render==='function'&&window.D)render();}};TH.apply(TH.get());
 const G={check:['체크','공식통계(관세청·Census·각국 통계청·Comtrade)와 나쁜양파 시계열이 일치(±5% 근사 포함)'],est:['추정','상위 HS6 합계에 포함됨은 확인(비중 10% 이상)했으나 세부코드 일치는 미확인'],fail:['미충족','공식통계와 불일치·자료 없음·소속 근거 약함(10% 미만)·조회 오류']};
 const ICON={check:'✅',est:'🟡',fail:'⚪'};
 const $=s=>document.querySelector(s);const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -51,5 +55,6 @@ function build(){const q=S.q.toLowerCase();const rows=[];
 document.addEventListener('click',e=>{const r=e.target.closest('tr.r');if(r)location.href=`index.html?st=${st}#${encodeURIComponent(r.dataset.sym)}`;});
 $('#q').addEventListener('keydown',e=>{if(e.key==='Enter'){S.q=e.target.value.trim();build();}});$('#q').addEventListener('input',e=>{if(!e.target.value){S.q='';build();}});
 $('#mk').onchange=e=>{S.mk=e.target.value;build();};$('#sort').onchange=e=>{S.sort=e.target.value;S.d=e.target.value==='sym'?1:-1;build();};
+$('#theme').onclick=()=>TH.toggle();
 fetch('data.json').then(r=>r.json()).then(d=>{D=d;D.byStock={};d.items.forEach(i=>(D.byStock[i.sym]=D.byStock[i.sym]||[]).push(i));build();});
 </script></body></html>

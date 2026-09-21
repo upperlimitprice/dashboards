@@ -2,27 +2,30 @@
 <title>종목 × 무역품목 맵 (HS 검증)</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
 <style>
-:root{--bg:#f4f6f9;--card:#fff;--ink:#1b2330;--mut:#6a7583;--line:#e3e7ed;--chk:#2f855a;--chkbg:#e6f6ec;--est:#b7791f;--estbg:#fff6e0;--fail:#8a94a3;--failbg:#eef0f3;--acc:#2b6cb0;--up:#c53030;--dn:#2b6cb0}
+:root{--bg:#f4f6f9;--card:#fff;--ink:#1b2330;--mut:#6a7583;--line:#e3e7ed;--chk:#2f855a;--chkbg:#e6f6ec;--est:#b7791f;--estbg:#fff6e0;--fail:#8a94a3;--failbg:#eef0f3;--acc:#2b6cb0;--up:#c53030;--dn:#2b6cb0;--hov:#f7f9fc;--sel:#eef4fb;--chipbg:#f1f4f8;--thbg:#eef2f7;color-scheme:light}
+:root[data-theme=dark]{--bg:#0f141b;--card:#171d27;--ink:#e6e9ef;--mut:#97a1ae;--line:#2a323f;--chk:#48bb78;--chkbg:#173425;--est:#ecc94b;--estbg:#3a2f12;--fail:#8f99a6;--failbg:#242b35;--acc:#63b3ed;--up:#fc8181;--dn:#63b3ed;--hov:#1c2430;--sel:#1f2d3d;--chipbg:#232b36;--thbg:#1c232d;color-scheme:dark}
+@media (prefers-color-scheme: dark){:root:not([data-theme=light]){--bg:#0f141b;--card:#171d27;--ink:#e6e9ef;--mut:#97a1ae;--line:#2a323f;--chk:#48bb78;--chkbg:#173425;--est:#ecc94b;--estbg:#3a2f12;--fail:#8f99a6;--failbg:#242b35;--acc:#63b3ed;--up:#fc8181;--dn:#63b3ed;--hov:#1c2430;--sel:#1f2d3d;--chipbg:#232b36;--thbg:#1c232d;color-scheme:dark}}
+.tbtn{height:32px;width:36px;border:1px solid var(--line);border-radius:8px;background:var(--card);cursor:pointer;font-size:15px;color:var(--ink)}
 *{box-sizing:border-box}[hidden]{display:none!important}html,body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 -apple-system,"Apple SD Gothic Neo","Noto Sans KR",sans-serif}
 a{color:inherit;text-decoration:none}
-header{position:sticky;top:0;z-index:20;background:#fff;border-bottom:1px solid var(--line);padding:10px 18px}
+header{position:sticky;top:0;z-index:20;background:var(--card);border-bottom:1px solid var(--line);padding:10px 18px}
 .hrow{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center}
 h1{font-size:18px;margin:0;white-space:nowrap}.sum{font-size:12px;color:var(--mut)}
 .sum b{color:var(--ink)}
 .pill{display:inline-block;padding:1px 8px;border-radius:999px;font-size:12px;font-weight:600}
 .p-check{background:var(--chkbg);color:var(--chk)}.p-est{background:var(--estbg);color:var(--est)}.p-fail{background:var(--failbg);color:var(--fail)}
 .tools{display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center;margin-top:8px}
-.tools #q,.tools select{height:32px;border:1px solid var(--line);border-radius:8px;padding:0 10px;font-size:13px;background:#fff}
+.tools #q,.tools select{height:32px;border:1px solid var(--line);border-radius:8px;padding:0 10px;font-size:13px;background:var(--card)}
 .tools #q{width:240px;max-width:100%}
 .seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}
-.seg button{border:0;background:#fff;padding:0 11px;height:30px;font-size:13px;cursor:pointer;color:var(--mut)}
-.seg button.on{background:var(--ink);color:#fff}
+.seg button{border:0;background:var(--card);padding:0 11px;height:30px;font-size:13px;cursor:pointer;color:var(--mut)}
+.seg button.on{background:var(--ink);color:var(--bg)}
 .seg button.on.c-check{background:var(--chk)}.seg button.on.c-est{background:var(--est)}.seg button.on.c-fail{background:var(--fail)}
 .chk{font-size:13px;color:var(--mut);display:inline-flex;align-items:center;gap:4px;cursor:pointer}
 main{display:grid;grid-template-columns:300px 1fr;gap:0;min-height:calc(100vh - 110px)}
-aside{border-right:1px solid var(--line);background:#fff;overflow-y:auto;max-height:calc(100vh - 110px);position:sticky;top:110px}
+aside{border-right:1px solid var(--line);background:var(--card);overflow-y:auto;max-height:calc(100vh - 110px);position:sticky;top:110px}
 .srow{padding:9px 14px;border-bottom:1px solid var(--line);cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:8px}
-.srow:hover{background:#f7f9fc}.srow.on{background:#eef4fb;border-left:3px solid var(--acc)}
+.srow:hover{background:var(--hov)}.srow.on{background:var(--sel);border-left:3px solid var(--acc)}
 .srow .sy{font-weight:700;font-size:14px}.srow .nm{font-size:12px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:170px}
 .srow .cnt{display:flex;gap:4px;font-size:11px;flex-shrink:0}
 .dot{display:inline-block;min-width:20px;text-align:center;padding:0 5px;border-radius:6px;font-weight:600}
@@ -39,31 +42,31 @@ section.detail{padding:16px 22px 60px;overflow:hidden}
 .c1{display:flex;justify-content:space-between;gap:6px;font-size:12px;color:var(--mut);align-items:center}
 .c1 .star{color:#d69e2e}
 .lab{font-weight:700;font-size:15px;margin:5px 0 1px;line-height:1.3}.prod{font-size:12px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.hs{display:inline-block;font-family:ui-monospace,Menlo,monospace;font-size:12px;background:#f1f4f8;border-radius:6px;padding:1px 6px;margin-top:6px}
+.hs{display:inline-block;font-family:ui-monospace,Menlo,monospace;font-size:12px;background:var(--chipbg);border-radius:6px;padding:1px 6px;margin-top:6px}
 .nums{display:flex;gap:14px;margin-top:8px;font-size:12px;color:var(--mut);flex-wrap:wrap}
 .nums b{font-size:15px;color:var(--ink)}.up{color:var(--up);font-weight:600}.dn{color:var(--dn);font-weight:600}
 .spark{height:56px;margin-top:6px}
 .kpi{font-size:11.5px;color:var(--mut);margin-top:6px;border-top:1px dashed var(--line);padding-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .reason{font-size:11.5px;color:var(--fail);margin-top:4px}
 .empty{color:var(--mut);padding:30px;text-align:center}
-.welcome{max-width:820px;padding:24px 4px}.welcome h2{margin:0 0 8px;font-size:24px}.welcome p{color:var(--mut);line-height:1.7}.wgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:16px 0}.wbox{display:block;background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 16px;border-top:4px solid var(--fail);cursor:pointer;transition:box-shadow .15s}.wbox:hover{box-shadow:0 4px 16px rgba(0,0,0,.08)}.wgo{font-size:12px;color:var(--acc);margin-top:8px;font-weight:600}.wbox.b-check{border-top-color:var(--chk)}.wbox.b-est{border-top-color:var(--est)}.wn{font-size:28px;font-weight:700}.wt{font-weight:600;margin-top:2px}.wd{font-size:12px;color:var(--mut);margin-top:4px;line-height:1.5}.wh{font-size:13px}
+.welcome{max-width:820px;padding:24px 4px}.welcome h2{margin:0 0 8px;font-size:24px}.welcome p{color:var(--mut);line-height:1.7}.wgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:16px 0}.wbox{display:block;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;border-top:4px solid var(--fail);cursor:pointer;transition:box-shadow .15s}.wbox:hover{box-shadow:0 4px 16px rgba(0,0,0,.08)}.wgo{font-size:12px;color:var(--acc);margin-top:8px;font-weight:600}.wbox.b-check{border-top-color:var(--chk)}.wbox.b-est{border-top-color:var(--est)}.wn{font-size:28px;font-weight:700}.wt{font-weight:600;margin-top:2px}.wd{font-size:12px;color:var(--mut);margin-top:4px;line-height:1.5}.wh{font-size:13px}
 .mob-stock{display:none}
 /* 품목 카드 전체 보기 */
 .allgrid{padding:16px 22px 60px}
 /* 표 보기 */
-.tw{padding:16px 22px 60px;overflow-x:auto}table{border-collapse:collapse;width:100%;min-width:1100px;background:#fff;font-size:13px}
-th,td{padding:8px 14px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}th{background:#eef2f7;position:sticky;top:0;cursor:pointer}
+.tw{padding:16px 22px 60px;overflow-x:auto}table{border-collapse:collapse;width:100%;min-width:1100px;background:var(--card);font-size:13px}
+th,td{padding:8px 14px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}th{background:var(--thbg);position:sticky;top:0;cursor:pointer}
 td:nth-child(-n+6),th:nth-child(-n+6){text-align:left}td:last-child,th:last-child{padding-right:30px}
 /* 모달 */
 .ov{position:fixed;inset:0;background:rgba(15,20,30,.45);z-index:50;display:none;align-items:flex-start;justify-content:center;padding:30px 12px;overflow-y:auto}
 .ov.on{display:flex}
-.md{background:#fff;border-radius:14px;width:min(1000px,100%);padding:20px 22px 24px;position:relative}
-.md .x{position:absolute;right:12px;top:10px;border:0;background:#f1f4f8;border-radius:8px;width:32px;height:32px;font-size:16px;cursor:pointer}
+.md{background:var(--card);border-radius:14px;width:min(1000px,100%);padding:20px 22px 24px;position:relative}
+.md .x{position:absolute;right:12px;top:10px;border:0;background:var(--chipbg);border-radius:8px;width:32px;height:32px;font-size:16px;cursor:pointer}
 .md h2{margin:0 26px 4px 0;font-size:19px}.md .sub{color:var(--mut);font-size:13px;margin-bottom:10px}
 .mchart{height:300px;margin-top:6px}.mgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .mbox{border:1px solid var(--line);border-radius:10px;padding:10px 12px;min-width:0;overflow:hidden}.mbox h4{margin:0 0 4px;font-size:13px;color:var(--mut);font-weight:600}
 .vt{font-size:13px;width:100%;table-layout:fixed}.vt td{padding:4px 10px 4px 0;border:0;text-align:left;white-space:normal}.vt td:first-child{color:var(--mut);width:110px}
-.mtabs{display:flex;gap:6px;margin:8px 0 2px}.mtabs button{border:1px solid var(--line);background:#fff;border-radius:8px;padding:3px 10px;font-size:12px;cursor:pointer}.mtabs button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.mtabs{display:flex;gap:6px;margin:8px 0 2px}.mtabs button{border:1px solid var(--line);background:var(--card);border-radius:8px;padding:3px 10px;font-size:12px;cursor:pointer}.mtabs button.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 @media(max-width:860px){main{grid-template-columns:1fr}aside{display:none}.mob-stock{display:block;width:100%}.mgrid{grid-template-columns:1fr}section.detail,.allgrid,.tw{padding:12px 14px 50px}.tools #q{width:100%}}
 </style></head><body>
 <header>
@@ -79,6 +82,7 @@ td:nth-child(-n+6),th:nth-child(-n+6){text-align:left}td:last-child,th:last-chil
   <label class="chk"><input type="checkbox" id="pri"> ★대표만</label>
   <select id="sort"><option value="cap">시총순</option><option value="yoy">YoY순</option><option value="mom">MoM순</option><option value="qoq">QoQ순</option><option value="amt">최신금액순</option></select>
   <div class="seg" id="viewseg"><button data-v="stock" class="on">종목별</button><button data-v="cards">품목 카드</button><button data-v="table">표</button></div>
+  <button class="tbtn" id="theme" title="다크/라이트 전환">🌙</button>
  </div>
 </header>
 <main id="main"><aside id="side"></aside><section class="detail" id="detail"></section></main>
@@ -86,6 +90,7 @@ td:nth-child(-n+6),th:nth-child(-n+6){text-align:left}td:last-child,th:last-chil
 <div class="tw" id="tbl" hidden></div>
 <div class="ov" id="ov"><div class="md" id="md"></div></div>
 <script>
+const TH={get(){try{return localStorage.getItem('sm_theme')||'';}catch(e){return '';}},apply(v){if(v)document.documentElement.dataset.theme=v;else delete document.documentElement.dataset.theme;const b=document.getElementById('theme');if(b)b.textContent=TH.dark()?'☀️':'🌙';},dark(){const t=document.documentElement.dataset.theme;return t?t==='dark':matchMedia('(prefers-color-scheme: dark)').matches;},toggle(){const v=TH.dark()?'light':'dark';try{localStorage.setItem('sm_theme',v);}catch(e){}TH.apply(v);if(typeof render==='function'&&window.D)render();}};TH.apply(TH.get());
 const G={check:['체크','공식통계(관세청·Census·각국 통계청·Comtrade)와 나쁜양파 시계열이 일치(±5% 근사 포함)'],est:['추정','상위 HS6 합계에 포함됨은 확인(비중 10% 이상)했으나 세부코드 일치는 미확인'],fail:['미충족','공식통계와 불일치·자료 없음·소속 근거 약함(10% 미만)·조회 오류']};
 const ICON={check:'✅',est:'🟡',fail:'⚪'};
 let D,S={q:'',st:'',mk:'',og:'',dr:'',pri:false,sort:'cap',view:'stock',sym:null},charts=[];
@@ -107,8 +112,8 @@ function card(i,withSym){return `<div class="card g-${i.grp}" data-id="${i.id}">
  <div class="spark" id="sp-${i.id}"></div>
  ${i.reason?`<div class="reason">⚠ ${esc(i.reason)}</div>`:''}
  <div class="kpi" title="${esc(i.kpi||'')}">KPI ${esc(i.kpi||'-')}${i.cur_r!=null?` · r ${i.cur_r}${i.cur_lag?' '+i.cur_lag:''}`:''} · ${esc(i.src||'-')}</div></div>`;}
-function drawSparks(root){for(const el of root.querySelectorAll('.spark')){const i=D.byId[el.id.slice(3)];if(!i.spark)continue;const ms=months12(i);const c=echarts.init(el);charts.push(c);
- c.setOption({animation:false,grid:{left:2,right:2,top:4,bottom:2},xAxis:{type:'category',data:ms,show:false},yAxis:{type:'value',show:false},tooltip:{trigger:'axis',formatter:p=>`${p[0].axisValue}<br>${fmt(p[0].value)}`},
+function drawSparks(root){for(const el of root.querySelectorAll('.spark')){const i=D.byId[el.id.slice(3)];if(!i.spark)continue;const ms=months12(i);const c=echarts.init(el,TH.dark()?'dark':null);charts.push(c);
+ c.setOption({animation:false,backgroundColor:'transparent',grid:{left:2,right:2,top:4,bottom:2},xAxis:{type:'category',data:ms,show:false},yAxis:{type:'value',show:false},tooltip:{trigger:'axis',formatter:p=>`${p[0].axisValue}<br>${fmt(p[0].value)}`},
   series:[{type:'bar',data:i.spark.map(v=>v==null?null:v),itemStyle:{color:i.grp==='check'?'#48bb78':i.grp==='est'?'#ecc94b':'#a0aec0',borderRadius:[2,2,0,0]},barCategoryGap:'25%'}]});}}
 function clearCharts(){charts.forEach(c=>c.dispose());charts=[];}
 function groupsHtml(items,withSym){let h='';for(const g of ['check','est','fail']){const a=items.filter(i=>i.grp===g);if(!a.length)continue;
@@ -148,18 +153,19 @@ function openModal(id){const i=D.byId[id];const s=D.stockMap[i.sym];mcharts.forE
  <div class="mgrid"><div class="mbox"><h4>분기 무역값 vs 종목 KPI (${esc(i.kpi||'-')}${i.kpi_unit?', '+esc(i.kpi_unit):''})</h4><div class="mchart" id="mc2" style="height:240px"></div></div>
  <div class="mbox"><h4>HS 검증 상세</h4><table class="vt"><tr><td>구분</td><td><span class="pill p-${i.grp}">${i.st}</span> ${i.reason?'— '+esc(i.reason):''}</td></tr><tr><td>검증 상태</td><td>${i.vstatus||'-'}</td></tr><tr><td>HS6</td><td>${i.hs6||'-'}${i.ratio!=null?` (상위 HS6 합계 대비 ${i.ratio}%)`:''}</td></tr><tr><td>검증 출처</td><td>${esc(i.src)}</td></tr><tr><td>후보 HS</td><td>${(i.cand||[]).join(', ')||'-'}</td></tr><tr><td>KPI 연동</td><td>${esc(i.kpi_kind||'-')} · r ${i.cur_r??'-'} ${i.cur_lag||''} ${i.cur_span?'('+i.cur_span+')':''} · 최신 ${i.kpi_latest||'-'}</td></tr><tr><td>가속 패턴</td><td>${esc(i.accel||'-')} · 3M YoY ${i.yoy3==null?'-':i.yoy3.toFixed(1)}% · 데이터 ${i.months??'-'}개월</td></tr><tr><td>종목</td><td>${s.market} · 시총 ${cap(s.cap)}</td></tr></table></div></div>`;
  $('#ov').classList.add('on');
- const base=(x,extra)=>Object.assign({tooltip:{trigger:'axis',axisPointer:{type:'shadow'},valueFormatter:v=>fmt(v)},grid:{left:64,right:24,top:30,bottom:56},xAxis:{type:'category',data:x,axisLabel:{rotate:45,fontSize:11}},yAxis:{type:'value',name:'$K',axisLabel:{formatter:axf}},
+ const base=(x,extra)=>Object.assign({backgroundColor:'transparent',tooltip:{trigger:'axis',axisPointer:{type:'shadow'},valueFormatter:v=>fmt(v)},grid:{left:64,right:24,top:30,bottom:56},xAxis:{type:'category',data:x,axisLabel:{rotate:45,fontSize:11}},yAxis:{type:'value',name:'$K',axisLabel:{formatter:axf}},
   dataZoom:[{type:'inside',zoomOnMouseWheel:false,moveOnMouseMove:true},{type:'slider',height:16,bottom:6}],toolbox:{right:8,top:0,feature:{dataZoom:{yAxisIndex:'none',title:{zoom:'드래그 확대',back:'되돌리기'}},restore:{title:'원상태'}}}},extra);
- const c1=echarts.init($('#mc1'));mcharts.push(c1);
+ const c1=echarts.init($('#mc1'),TH.dark()?'dark':null);mcharts.push(c1);
  const show=t=>{if(t==='db')c1.setOption(base(D.months,{series:[{type:'bar',name:'공식통계 (전세계, $K)',data:i.db,itemStyle:{color:'#2b6cb0',borderRadius:[3,3,0,0]}}]}),true);
   else c1.setOption(base(ms,{series:[{type:'bar',name:'나쁜양파 ($K)',data:i.spark,itemStyle:{color:i.grp==='check'?'#48bb78':i.grp==='est'?'#ecc94b':'#a0aec0',borderRadius:[3,3,0,0]}}]}),true);};
  show('bo');$('#mtabs').querySelectorAll('button').forEach(b=>b.onclick=()=>{$('#mtabs').querySelectorAll('button').forEach(x=>x.classList.remove('on'));b.classList.add('on');show(b.dataset.t);});
- const c2=echarts.init($('#mc2'));mcharts.push(c2);const q=i.q||[];
- c2.setOption({tooltip:{trigger:'axis'},legend:{top:0,textStyle:{fontSize:11}},grid:{left:60,right:60,top:30,bottom:46},xAxis:{type:'category',data:q.map(x=>x[0]),axisLabel:{rotate:45,fontSize:10}},yAxis:[{type:'value',name:'무역 $K',axisLabel:{formatter:axf}},{type:'value',name:'KPI $M',axisLabel:{formatter:v=>v>=1e3?(v/1e3).toFixed(1)+'B':v}}],dataZoom:[{type:'inside'}],
+ const c2=echarts.init($('#mc2'),TH.dark()?'dark':null);mcharts.push(c2);const q=i.q||[];
+ c2.setOption({backgroundColor:'transparent',tooltip:{trigger:'axis'},legend:{top:0,textStyle:{fontSize:11}},grid:{left:60,right:60,top:30,bottom:46},xAxis:{type:'category',data:q.map(x=>x[0]),axisLabel:{rotate:45,fontSize:10}},yAxis:[{type:'value',name:'무역 $K',axisLabel:{formatter:axf}},{type:'value',name:'KPI $M',axisLabel:{formatter:v=>v>=1e3?(v/1e3).toFixed(1)+'B':v}}],dataZoom:[{type:'inside'}],
   series:[{type:'bar',name:'무역값(분기)',data:q.map(x=>x[1]),itemStyle:{color:'#a0aec0'}},{type:'line',name:'KPI',yAxisIndex:1,data:q.map(x=>x[2]),smooth:true,itemStyle:{color:'#c53030'}}]});
 }
 function closeModal(){$('#ov').classList.remove('on');mcharts.forEach(c=>c.dispose());mcharts=[];}
 $('#ov').onclick=e=>{if(e.target.id==='ov')closeModal();};document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
+$('#theme').onclick=()=>{TH.toggle();closeModal();};
 document.addEventListener('click',e=>{const c=e.target.closest('.card,tr[data-id]');if(c&&c.dataset.id){openModal(c.dataset.id);return;}const r=e.target.closest('.srow');if(r){S.sym=r.dataset.sym;render();}});
 // ── 이벤트 ──
 $('#q').addEventListener('keydown',e=>{if(e.key==='Enter'){S.q=e.target.value.trim();render();}});$('#q').addEventListener('input',e=>{if(!e.target.value){S.q='';render();}});
