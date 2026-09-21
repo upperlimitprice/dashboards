@@ -1,0 +1,55 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>검증 구분별 기업 목록 — 종목 × 무역품목 맵</title>
+<style>
+:root{--bg:#f4f6f9;--card:#fff;--ink:#1b2330;--mut:#6a7583;--line:#e3e7ed;--chk:#2f855a;--chkbg:#e6f6ec;--est:#b7791f;--estbg:#fff6e0;--fail:#8a94a3;--failbg:#eef0f3;--acc:#2b6cb0;--up:#c53030;--dn:#2b6cb0}
+*{box-sizing:border-box}[hidden]{display:none!important}html,body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 -apple-system,"Apple SD Gothic Neo","Noto Sans KR",sans-serif}
+a{color:inherit;text-decoration:none}
+header{position:sticky;top:0;z-index:20;background:#fff;border-bottom:1px solid var(--line);padding:10px 18px}
+.hrow{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center}h1{font-size:18px;margin:0;white-space:nowrap}.crumb{color:var(--mut);font-size:13px}
+.tools{display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center;margin-top:8px}
+.tools #q,.tools select{height:32px;border:1px solid var(--line);border-radius:8px;padding:0 10px;font-size:13px;background:#fff}.tools #q{width:240px;max-width:100%}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}.seg a{padding:0 12px;height:30px;line-height:30px;font-size:13px;color:var(--mut);background:#fff}
+.seg a.on{color:#fff}.seg a.on.c-check{background:var(--chk)}.seg a.on.c-est{background:var(--est)}.seg a.on.c-fail{background:var(--fail)}
+.pill{display:inline-block;padding:1px 8px;border-radius:999px;font-size:12px;font-weight:600}.p-check{background:var(--chkbg);color:var(--chk)}.p-est{background:var(--estbg);color:var(--est)}.p-fail{background:var(--failbg);color:var(--fail)}
+.wrap{padding:16px 22px 60px}.intro{color:var(--mut);font-size:13px;margin-bottom:12px}.intro b{color:var(--ink)}
+.tw{overflow-x:auto;background:#fff;border:1px solid var(--line);border-radius:12px}table{border-collapse:collapse;width:100%;min-width:900px;font-size:13px}
+th,td{padding:10px 16px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}th{background:#eef2f7;cursor:pointer;white-space:nowrap;position:sticky;top:0}
+td.num,th.num{text-align:right;white-space:nowrap}td:last-child,th:last-child{padding-right:30px}
+td:nth-child(5){min-width:420px}
+tr.r{cursor:pointer}tr.r:hover{background:#f7f9fc}
+.sy{font-weight:700;font-size:14px}.nm{color:var(--mut);font-size:12px}
+.chip{display:inline-block;background:#f1f4f8;border-radius:6px;padding:1px 7px;font-size:12px;margin:2px 4px 2px 0;white-space:nowrap}.chip .hs{font-family:ui-monospace,Menlo,monospace;color:var(--mut)}
+.up{color:var(--up);font-weight:600}.dn{color:var(--dn);font-weight:600}
+.go{color:var(--acc);font-weight:600;white-space:nowrap}
+.empty{color:var(--mut);padding:30px;text-align:center}
+@media(max-width:860px){.wrap{padding:12px 12px 50px}.tools #q{width:100%}}
+</style></head><body>
+<header><div class="hrow"><h1><a href="index.html">🧅 종목 × 무역품목 맵</a></h1><span class="crumb">› 검증 구분별 기업 목록</span></div>
+<div class="tools"><input id="q" placeholder="종목·기업·품목·HS 검색 (Enter)">
+<div class="seg"><a href="list.html?st=check" class="c-check" data-v="check">✅ 체크</a><a href="list.html?st=est" class="c-est" data-v="est">🟡 추정</a><a href="list.html?st=fail" class="c-fail" data-v="fail">⚪ 미충족</a></div>
+<select id="mk"><option value="">시장 전체</option><option>미국</option><option>일본</option></select>
+<select id="sort"><option value="cap">시총순</option><option value="n">품목 수순</option><option value="yoy">최고 YoY순</option><option value="sym">종목명순</option></select></div></header>
+<div class="wrap"><div class="intro" id="intro"></div><div class="tw" id="tbl"></div></div>
+<script>
+const G={check:['체크','공식통계(관세청·Census·각국 통계청·Comtrade)와 나쁜양파 시계열이 일치(±5% 근사 포함)'],est:['추정','상위 HS6 합계에 포함됨은 확인(비중 10% 이상)했으나 세부코드 일치는 미확인'],fail:['미충족','공식통계와 불일치·자료 없음·소속 근거 약함(10% 미만)·조회 오류']};
+const ICON={check:'✅',est:'🟡',fail:'⚪'};
+const $=s=>document.querySelector(s);const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const cap=v=>v==null?'-':v>=1e12?'$'+(v/1e12).toFixed(2)+'T':v>=1e9?'$'+(v/1e9).toFixed(1)+'B':'$'+(v/1e6).toFixed(0)+'M';
+const pct=v=>v==null?'-':`<span class="${v>=0?'up':'dn'}">${v>=0?'🔺':'🔽'}${Math.abs(v).toFixed(1)}%</span>`;
+let st=new URLSearchParams(location.search).get('st');if(!G[st])st='check';
+document.querySelectorAll('.seg a').forEach(a=>a.classList.toggle('on',a.dataset.v===st));document.title=`${G[st][0]} 기업 목록 — 종목 × 무역품목 맵`;
+let D,S={q:'',mk:'',sort:'cap',d:-1};
+function build(){const q=S.q.toLowerCase();const rows=[];
+ for(const s of D.stocks){if(S.mk&&s.market!==S.mk)continue;const its=D.byStock[s.sym].filter(i=>i.grp===st);if(!its.length)continue;
+  if(q&&![s.sym,s.name].some(x=>x.toLowerCase().includes(q))&&!its.some(i=>[i.label,i.product,i.hs6,i.o_ko].some(x=>String(x||'').toLowerCase().includes(q))))continue;
+  rows.push({s,its,n:its.length,yoy:Math.max(...its.map(i=>i.yoy??-1e18))});}
+ const k=S.sort;rows.sort((a,b)=>{if(k==='sym')return a.s.sym.localeCompare(b.s.sym)*-S.d;const x=k==='cap'?(a.s.cap||0):k==='n'?a.n:a.yoy,y=k==='cap'?(b.s.cap||0):k==='n'?b.n:b.yoy;return (x-y)*S.d;});
+ $('#intro').innerHTML=`<span class="pill p-${st}">${ICON[st]} ${G[st][0]}</span> ${G[st][1]} — 해당 품목을 가진 기업 <b>${rows.length}곳</b> · 품목 <b>${rows.reduce((a,r)=>a+r.n,0)}개</b>. 행을 누르면 종목 페이지(${G[st][0]} 필터 적용)로 이동합니다.`;
+ const arrow=c=>S.sort===c?(S.d<0?' ▼':' ▲'):' ⇅';
+ $('#tbl').innerHTML=rows.length?`<table><thead><tr><th data-k="sym">종목${arrow('sym')}</th><th>시장</th><th class="num" data-k="cap">시총${arrow('cap')}</th><th class="num" data-k="n">${G[st][0]} 품목${arrow('n')}</th><th>품목 (수집국 · 방향 · HS6 · YoY)</th><th class="num" data-k="yoy">최고 YoY${arrow('yoy')}</th><th></th></tr></thead><tbody>${rows.map(r=>`<tr class="r" data-sym="${r.s.sym}"><td><div class="sy">${esc(r.s.sym)}</div><div class="nm">${esc(r.s.name)}</div></td><td>${r.s.market}</td><td class="num">${cap(r.s.cap)}</td><td class="num"><b>${r.n}</b> / ${r.s.n}</td><td>${r.its.map(i=>`<span class="chip">${i.flag} ${i.dir} · ${esc(i.label)} <span class="hs">${i.hs6||'미확정'}</span> ${pct(i.yoy)}</span>`).join('')}</td><td class="num">${pct(r.yoy>-1e17?r.yoy:null)}</td><td class="go">종목 페이지 →</td></tr>`).join('')}</tbody></table>`:'<div class="empty">조건에 맞는 기업이 없습니다</div>';
+ $('#tbl').querySelectorAll('th[data-k]').forEach(th=>th.onclick=()=>{const k=th.dataset.k;if(S.sort===k)S.d=-S.d;else{S.sort=k;S.d=-1;}$('#sort').value=k;build();});}
+document.addEventListener('click',e=>{const r=e.target.closest('tr.r');if(r)location.href=`index.html?st=${st}#${encodeURIComponent(r.dataset.sym)}`;});
+$('#q').addEventListener('keydown',e=>{if(e.key==='Enter'){S.q=e.target.value.trim();build();}});$('#q').addEventListener('input',e=>{if(!e.target.value){S.q='';build();}});
+$('#mk').onchange=e=>{S.mk=e.target.value;build();};$('#sort').onchange=e=>{S.sort=e.target.value;S.d=e.target.value==='sym'?1:-1;build();};
+fetch('data.json').then(r=>r.json()).then(d=>{D=d;D.byStock={};d.items.forEach(i=>(D.byStock[i.sym]=D.byStock[i.sym]||[]).push(i));build();});
+</script></body></html>
