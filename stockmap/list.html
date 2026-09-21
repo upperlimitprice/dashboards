@@ -4,6 +4,7 @@
 :root{--bg:#f4f6f9;--card:#fff;--ink:#1b2330;--mut:#6a7583;--line:#e3e7ed;--chk:#2f855a;--chkbg:#e6f6ec;--est:#b7791f;--estbg:#fff6e0;--fail:#8a94a3;--failbg:#eef0f3;--acc:#2b6cb0;--up:#c53030;--dn:#2b6cb0;--hov:#f7f9fc;--sel:#eef4fb;--chipbg:#f1f4f8;--thbg:#eef2f7;color-scheme:light}
 :root[data-theme=dark]{--bg:#0f141b;--card:#171d27;--ink:#e6e9ef;--mut:#97a1ae;--line:#2a323f;--chk:#48bb78;--chkbg:#173425;--est:#ecc94b;--estbg:#3a2f12;--fail:#8f99a6;--failbg:#242b35;--acc:#63b3ed;--up:#fc8181;--dn:#63b3ed;--hov:#1c2430;--sel:#1f2d3d;--chipbg:#232b36;--thbg:#1c232d;color-scheme:dark}
 @media (prefers-color-scheme: dark){:root:not([data-theme=light]){--bg:#0f141b;--card:#171d27;--ink:#e6e9ef;--mut:#97a1ae;--line:#2a323f;--chk:#48bb78;--chkbg:#173425;--est:#ecc94b;--estbg:#3a2f12;--fail:#8f99a6;--failbg:#242b35;--acc:#63b3ed;--up:#fc8181;--dn:#63b3ed;--hov:#1c2430;--sel:#1f2d3d;--chipbg:#232b36;--thbg:#1c232d;color-scheme:dark}}
+.nav{display:inline-flex;gap:2px;border:1px solid var(--line);border-radius:8px;overflow:hidden}.nav a{padding:3px 11px;font-size:13px;color:var(--mut);background:var(--card)}.nav a.on{background:var(--ink);color:var(--bg)}
 .tbtn{height:32px;width:36px;border:1px solid var(--line);border-radius:8px;background:var(--card);cursor:pointer;font-size:15px;color:var(--ink)}
 *{box-sizing:border-box}[hidden]{display:none!important}html,body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 -apple-system,"Apple SD Gothic Neo","Noto Sans KR",sans-serif}
 a{color:inherit;text-decoration:none}
@@ -27,7 +28,7 @@ tr.r{cursor:pointer}tr.r:hover{background:var(--hov)}
 .empty{color:var(--mut);padding:30px;text-align:center}
 @media(max-width:860px){.wrap{padding:12px 12px 50px}.tools #q{width:100%}}
 </style></head><body>
-<header><div class="hrow"><h1><a href="index.html">🧅 종목 × 무역품목 맵</a></h1><span class="crumb">› 검증 구분별 기업 목록</span></div>
+<header><div class="hrow"><h1><a href="index.html">🧅 종목 × 무역품목 맵</a></h1><nav class="nav"><a href="index.html">종목 맵</a><a class="on" href="list.html?st=check">기업 목록</a><a href="ppi.html">PPI</a></nav><span class="crumb">› 검증 구분별 기업 목록</span></div>
 <div class="tools"><input id="q" placeholder="종목·기업·품목·HS 검색 (Enter)">
 <div class="seg"><a href="list.html?st=check" class="c-check" data-v="check">✅ 체크</a><a href="list.html?st=est" class="c-est" data-v="est">🟡 추정</a><a href="list.html?st=fail" class="c-fail" data-v="fail">⚪ 미충족</a></div>
 <select id="mk"><option value="">시장 전체</option><option>미국</option><option>일본</option></select>

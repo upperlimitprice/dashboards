@@ -5,6 +5,7 @@
 :root{--bg:#f4f6f9;--card:#fff;--ink:#1b2330;--mut:#6a7583;--line:#e3e7ed;--chk:#2f855a;--chkbg:#e6f6ec;--est:#b7791f;--estbg:#fff6e0;--fail:#8a94a3;--failbg:#eef0f3;--acc:#2b6cb0;--up:#c53030;--dn:#2b6cb0;--hov:#f7f9fc;--sel:#eef4fb;--chipbg:#f1f4f8;--thbg:#eef2f7;color-scheme:light}
 :root[data-theme=dark]{--bg:#0f141b;--card:#171d27;--ink:#e6e9ef;--mut:#97a1ae;--line:#2a323f;--chk:#48bb78;--chkbg:#173425;--est:#ecc94b;--estbg:#3a2f12;--fail:#8f99a6;--failbg:#242b35;--acc:#63b3ed;--up:#fc8181;--dn:#63b3ed;--hov:#1c2430;--sel:#1f2d3d;--chipbg:#232b36;--thbg:#1c232d;color-scheme:dark}
 @media (prefers-color-scheme: dark){:root:not([data-theme=light]){--bg:#0f141b;--card:#171d27;--ink:#e6e9ef;--mut:#97a1ae;--line:#2a323f;--chk:#48bb78;--chkbg:#173425;--est:#ecc94b;--estbg:#3a2f12;--fail:#8f99a6;--failbg:#242b35;--acc:#63b3ed;--up:#fc8181;--dn:#63b3ed;--hov:#1c2430;--sel:#1f2d3d;--chipbg:#232b36;--thbg:#1c232d;color-scheme:dark}}
+.nav{display:inline-flex;gap:2px;border:1px solid var(--line);border-radius:8px;overflow:hidden}.nav a{padding:3px 11px;font-size:13px;color:var(--mut);background:var(--card)}.nav a.on{background:var(--ink);color:var(--bg)}
 .tbtn{height:32px;width:36px;border:1px solid var(--line);border-radius:8px;background:var(--card);cursor:pointer;font-size:15px;color:var(--ink)}
 *{box-sizing:border-box}[hidden]{display:none!important}html,body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 -apple-system,"Apple SD Gothic Neo","Noto Sans KR",sans-serif}
 a{color:inherit;text-decoration:none}
@@ -70,7 +71,7 @@ td:nth-child(-n+6),th:nth-child(-n+6){text-align:left}td:last-child,th:last-chil
 @media(max-width:860px){main{grid-template-columns:1fr}aside{display:none}.mob-stock{display:block;width:100%}.mgrid{grid-template-columns:1fr}section.detail,.allgrid,.tw{padding:12px 14px 50px}.tools #q{width:100%}}
 </style></head><body>
 <header>
- <div class="hrow"><h1><a href="#" id="home" title="첫 화면으로">🧅 종목 × 무역품목 맵</a> <span style="font-weight:400;color:var(--mut);font-size:14px">HS 검증</span></h1>
+ <div class="hrow"><h1><a href="#" id="home" title="첫 화면으로">🧅 종목 × 무역품목 맵</a> <span style="font-weight:400;color:var(--mut);font-size:14px">HS 검증</span></h1><nav class="nav"><a class="on" href="index.html">종목 맵</a><a href="list.html?st=check">기업 목록</a><a href="ppi.html">PPI</a></nav>
   <div class="sum" id="sum"></div></div>
  <div class="tools">
   <input id="q" placeholder="종목·기업·품목·HS 검색 (Enter)">

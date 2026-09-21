@@ -1,0 +1,130 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PPI 생산자물가 — 종목 × 무역품목 맵</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
+<style>
+:root{--bg:#f4f6f9;--card:#fff;--ink:#1b2330;--mut:#6a7583;--line:#e3e7ed;--chk:#2f855a;--chkbg:#e6f6ec;--est:#b7791f;--estbg:#fff6e0;--fail:#8a94a3;--failbg:#eef0f3;--acc:#2b6cb0;--up:#c53030;--dn:#2b6cb0;--hov:#f7f9fc;--sel:#eef4fb;--chipbg:#f1f4f8;--thbg:#eef2f7;color-scheme:light}
+:root[data-theme=dark]{--bg:#0f141b;--card:#171d27;--ink:#e6e9ef;--mut:#97a1ae;--line:#2a323f;--chk:#48bb78;--chkbg:#173425;--est:#ecc94b;--estbg:#3a2f12;--fail:#8f99a6;--failbg:#242b35;--acc:#63b3ed;--up:#fc8181;--dn:#63b3ed;--hov:#1c2430;--sel:#1f2d3d;--chipbg:#232b36;--thbg:#1c232d;color-scheme:dark}
+@media (prefers-color-scheme: dark){:root:not([data-theme=light]){--bg:#0f141b;--card:#171d27;--ink:#e6e9ef;--mut:#97a1ae;--line:#2a323f;--chk:#48bb78;--chkbg:#173425;--est:#ecc94b;--estbg:#3a2f12;--fail:#8f99a6;--failbg:#242b35;--acc:#63b3ed;--up:#fc8181;--dn:#63b3ed;--hov:#1c2430;--sel:#1f2d3d;--chipbg:#232b36;--thbg:#1c232d;color-scheme:dark}}
+*{box-sizing:border-box}[hidden]{display:none!important}html,body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 -apple-system,"Apple SD Gothic Neo","Noto Sans KR",sans-serif}
+a{color:inherit;text-decoration:none}
+header{position:sticky;top:0;z-index:20;background:var(--card);border-bottom:1px solid var(--line);padding:10px 18px}
+.hrow{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center}h1{font-size:18px;margin:0;white-space:nowrap}.sum{font-size:12px;color:var(--mut)}.sum b{color:var(--ink)}
+.nav{display:inline-flex;gap:2px;border:1px solid var(--line);border-radius:8px;overflow:hidden}.nav a{padding:3px 11px;font-size:13px;color:var(--mut);background:var(--card)}.nav a.on{background:var(--ink);color:var(--bg)}
+.tools{display:flex;flex-wrap:wrap;gap:6px 8px;align-items:center;margin-top:8px}
+.tools #q,.tools select,.tools input[type=number]{height:32px;border:1px solid var(--line);border-radius:8px;padding:0 10px;font-size:13px;background:var(--card);color:var(--ink)}.tools #q{width:220px;max-width:100%}.tools input[type=number]{width:76px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;overflow:hidden}.seg button{border:0;background:var(--card);padding:0 11px;height:30px;font-size:13px;cursor:pointer;color:var(--mut)}.seg button.on{background:var(--ink);color:var(--bg)}
+.chk{font-size:13px;color:var(--mut);display:inline-flex;align-items:center;gap:4px;cursor:pointer}
+.tbtn{height:32px;width:36px;border:1px solid var(--line);border-radius:8px;background:var(--card);cursor:pointer;font-size:15px;color:var(--ink)}
+.lab{font-size:11px;color:var(--mut);display:block;margin-bottom:2px}
+.wrap{padding:14px 22px 60px}
+.cats{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 8px}.cats button{border:1px solid var(--line);background:var(--card);color:var(--mut);border-radius:8px;padding:3px 10px;font-size:12.5px;cursor:pointer}.cats button.on{background:var(--acc);color:#fff;border-color:var(--acc)}
+.info{font-size:12.5px;color:var(--mut);margin:4px 0 10px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;cursor:pointer;transition:box-shadow .15s}.card:hover{box-shadow:0 4px 16px rgba(0,0,0,.08)}.card.hot{border-color:var(--acc)}
+.t{font-weight:600;font-size:13.5px;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:2.7em}
+.nums{display:flex;justify-content:space-between;align-items:baseline;margin-top:6px;font-size:12px;color:var(--mut)}.nums b{font-size:17px}
+.up{color:var(--up);font-weight:600}.dn{color:var(--dn);font-weight:600}
+.spark{height:44px;margin-top:4px}.foot{display:flex;justify-content:space-between;font-size:11.5px;color:var(--mut);margin-top:4px}
+.pill{display:inline-block;padding:0 7px;border-radius:999px;font-size:11px;font-weight:600;background:var(--failbg);color:var(--fail)}
+.more{margin:14px 0;text-align:center}.more button{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:8px;padding:6px 16px;cursor:pointer}
+.tw{overflow-x:auto;background:var(--card);border:1px solid var(--line);border-radius:12px}table{border-collapse:collapse;width:100%;min-width:1000px;font-size:13px}
+th,td{padding:8px 14px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}th{background:var(--thbg);cursor:pointer;position:sticky;top:0}
+td.l,th.l{text-align:left}td:last-child,th:last-child{padding-right:30px}tr.r{cursor:pointer}tr.r:hover{background:var(--hov)}
+.ov{position:fixed;inset:0;background:rgba(15,20,30,.5);z-index:50;display:none;align-items:flex-start;justify-content:center;padding:30px 12px;overflow-y:auto}.ov.on{display:flex}
+.md{background:var(--card);border-radius:14px;width:min(1000px,100%);padding:20px 22px 24px;position:relative}.md .x{position:absolute;right:12px;top:10px;border:0;background:var(--chipbg);color:var(--ink);border-radius:8px;width:32px;height:32px;font-size:16px;cursor:pointer}
+.md h2{margin:0 30px 4px 0;font-size:17px}.md .sub{color:var(--mut);font-size:12.5px;margin-bottom:10px}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin:8px 0}.tile{border:1px solid var(--line);border-radius:10px;padding:8px 10px}.tile .k{font-size:11px;color:var(--mut)}.tile .v{font-size:16px;font-weight:700}
+.mchart{height:360px;margin-top:6px}.mrow{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin:6px 0}
+.star{cursor:pointer;color:#c9a227;font-size:16px}
+@media(max-width:860px){.wrap{padding:12px 12px 50px}.tools #q{width:100%}}
+</style></head><body>
+<header>
+ <div class="hrow"><h1><a href="index.html">🧅 종목 × 무역품목 맵</a></h1><nav class="nav"><a href="index.html">종목 맵</a><a href="list.html?st=check">기업 목록</a><a class="on" href="ppi.html">PPI</a></nav><div class="sum" id="sum">불러오는 중…</div></div>
+ <div class="tools">
+  <div><span class="lab">국가</span><select id="cty"></select></div>
+  <div><span class="lab">보기</span><div class="seg" id="vseg"><button data-v="grid" class="on">카드</button><button data-v="surge">급등 탐색</button></div></div>
+  <div id="sortbox"><span class="lab">정렬</span><select id="sort"><option value="yoy_desc">YoY% 높은순</option><option value="yoy_asc">YoY% 낮은순</option><option value="mom_desc">MoM% 높은순</option><option value="mom_asc">MoM% 낮은순</option><option value="qoq_desc">QoQ% 높은순</option><option value="yoy_abs">절대값 급변 (|YoY|)</option><option value="name">시리즈명순</option></select></div>
+  <div style="flex:1;min-width:180px"><span class="lab">검색</span><input id="q" placeholder="시리즈명 / ID (Enter)"></div>
+  <div><span class="lab">급등락 임계 |YoY| ≥</span><input id="th" type="number" value="10"></div>
+  <label class="chk"><input type="checkbox" id="hl"> 급등락만</label>
+  <label class="chk"><input type="checkbox" id="fav"> 즐겨찾기만</label>
+  <label class="chk"><input type="checkbox" id="live" checked> 중단 시리즈 제외(6개월+)</label>
+  <button class="tbtn" id="theme" title="다크/라이트 전환">🌙</button>
+ </div>
+ <div class="tools" id="srow" hidden>
+  <div><span class="lab">가속 횟수 ≥ (최근 6개월 MoM 양수)</span><input id="acc" type="number" value="0" min="0" max="6"></div>
+  <div><span class="lab">YoY ≥ %</span><input id="minyoy" type="number"></div>
+  <div><span class="lab">MoM ≥ %</span><input id="minmom" type="number"></div>
+  <div><span class="lab">QoQ ≥ %</span><input id="minqoq" type="number"></div>
+  <div><span class="lab">프리셋</span><select id="preset"><option value="">-- 불러오기 --</option></select></div>
+  <div><span class="lab">&nbsp;</span><button class="tbtn" style="width:auto;padding:0 10px;font-size:13px" id="psave">저장</button> <button class="tbtn" style="width:auto;padding:0 10px;font-size:13px" id="pdel">× 삭제</button></div>
+ </div>
+</header>
+<div class="wrap"><div class="cats" id="cats"></div><div class="info" id="info"></div><div class="cards" id="grid"></div><div class="tw" id="tw" hidden><table id="tbl"></table></div><div class="more" id="more" hidden><button id="morebtn">더 보기</button></div>
+<div class="info" style="margin-top:20px">출처: 미국 FRED(BLS PPI, 상품·산업 기준) · 한국 ECOS 생산자물가지수. 일본(BOJ 기업물가)·중국(NBS 공업생산자물가)은 미수집. 카테고리는 시리즈명 키워드로 자동 분류. 값 단위는 각 시리즈 기준지수. 종목 오버레이는 가격 데이터 미연동으로 제공하지 않음.</div></div>
+<div class="ov" id="ov"><div class="md" id="md"></div></div>
+<script>
+const TH={get(){try{return localStorage.getItem('sm_theme')||'';}catch(e){return '';}},apply(v){if(v)document.documentElement.dataset.theme=v;else delete document.documentElement.dataset.theme;const b=document.getElementById('theme');if(b)b.textContent=TH.dark()?'☀️':'🌙';},dark(){const t=document.documentElement.dataset.theme;return t?t==='dark':matchMedia('(prefers-color-scheme: dark)').matches;},toggle(){const v=TH.dark()?'light':'dark';try{localStorage.setItem('sm_theme',v);}catch(e){}TH.apply(v);if(typeof render==='function'&&window.D)render();}};TH.apply(TH.get());
+const DATA='../global-trade/data/ppi/';const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fp=v=>v==null?'-':(v>=0?'+':'')+v.toFixed(1)+'%';const cls=v=>v==null?'':v>=0?'up':'dn';const arrow=v=>v==null?'':v>=0?'🔺':'🔽';
+const ORDER=['종합지수','식음료','농산물','화학','금속','에너지','기계','전기·전자','운송장비','섬유·의류','목재·제지','비금속광물·건설','서비스','기타'];
+const LS={get:k=>{try{return JSON.parse(localStorage.getItem('smppi_'+k)||'null')}catch(e){return null}},set:(k,v)=>{try{localStorage.setItem('smppi_'+k,JSON.stringify(v))}catch(e){}}};
+let META,PPI,S=Object.assign({cty:'US',view:'grid',grp:'',sort:'yoy_desc',q:'',th:10,hl:false,fav:false,live:true,acc:0,minyoy:'',minmom:'',minqoq:'',years:3},LS.get('state')||{});
+let FAV=LS.get('fav')||{},shown=60,hist={},charts=[],mcharts=[],cur=null,tsort={k:'yoy',d:-1};
+const name=i=>(i.t||'').replace(/^Producer Price Index by (Commodity|Industry):\s*/i,'');
+const stale=i=>{const L=META.ppi[PPI.country].latest;if(!L||!i.last)return 0;return (+L.slice(0,4)-+i.last.slice(0,4))*12+(+L.slice(5)-+i.last.slice(5))};
+function crc32(str){let c,crc=0^(-1);for(let i=0;i<str.length;i++){c=(crc^str.charCodeAt(i))&0xff;for(let k=0;k<8;k++)c=c&1?(0xEDB88320^(c>>>1)):(c>>>1);crc=(crc>>>8)^c}return (crc^(-1))>>>0}
+async function j(u){const r=await fetch(u);if(!r.ok)throw new Error(u);return r.json()}
+function save(){LS.set('state',S);LS.set('fav',FAV)}
+function filt(){const q=S.q.toLowerCase();let it=PPI.items.filter(i=>(!S.grp||i.g===S.grp)&&(!q||i.t.toLowerCase().includes(q)||(i.en||'').toLowerCase().includes(q)||i.id.toLowerCase().includes(q))&&(!S.hl||Math.abs(i.yoy??0)>=S.th)&&(!S.fav||FAV[PPI.country+'|'+i.id])&&(!S.live||stale(i)<6));
+ if(S.view==='surge'){const my=S.minyoy===''?null:+S.minyoy,mm=S.minmom===''?null:+S.minmom,mq=S.minqoq===''?null:+S.minqoq;it=it.filter(i=>(i.acc||0)>=(+S.acc||0)&&(my==null||(i.yoy!=null&&i.yoy>=my))&&(mm==null||(i.mom!=null&&i.mom>=mm))&&(mq==null||(i.qoq!=null&&i.qoq>=mq)));
+  it.sort((a,b)=>tsort.k==='t'?tsort.d*a.t.localeCompare(b.t,'ko'):tsort.k==='abs'?tsort.d*(Math.abs(a.yoy??0)-Math.abs(b.yoy??0)):tsort.d*((a[tsort.k]??-1e18)-(b[tsort.k]??-1e18)));return it}
+ const k=S.sort.startsWith('yoy')?'yoy':S.sort.startsWith('mom')?'mom':'qoq';
+ if(S.sort==='name')it.sort((a,b)=>a.t.localeCompare(b.t,'ko'));else if(S.sort==='yoy_abs')it.sort((a,b)=>Math.abs(b.yoy??0)-Math.abs(a.yoy??0));else it.sort((a,b)=>S.sort.endsWith('desc')?((b[k]??-1e9)-(a[k]??-1e9)):((a[k]??1e9)-(b[k]??1e9)));return it}
+function cats(){const cnt={};PPI.items.forEach(i=>cnt[i.g]=(cnt[i.g]||0)+1);$('#cats').innerHTML=`<button data-g="" class="${S.grp===''?'on':''}">전체 ${PPI.items.length}</button>`+ORDER.filter(g=>cnt[g]).map(g=>`<button data-g="${g}" class="${S.grp===g?'on':''}">${g} ${cnt[g]}</button>`).join('');
+ $('#cats').querySelectorAll('button').forEach(b=>b.onclick=()=>{S.grp=b.dataset.g;shown=60;cats();render()})}
+function sparks(root){for(const el of root.querySelectorAll('.spark')){const i=PPI.byId[el.dataset.i];const c=echarts.init(el,TH.dark()?'dark':null);charts.push(c);
+ c.setOption({animation:false,backgroundColor:'transparent',grid:{left:2,right:2,top:4,bottom:2},xAxis:{type:'category',data:i.d,show:false},yAxis:{type:'value',show:false,scale:true},tooltip:{trigger:'axis',formatter:p=>`${p[0].axisValue}<br>${p[0].value}`},series:[{type:'line',data:i.v,showSymbol:false,lineStyle:{width:1.6,color:(i.yoy??0)>=0?'#e53e3e':'#3182ce'},areaStyle:{opacity:.08}}]})}}
+function render(){charts.forEach(c=>c.dispose());charts=[];const it=filt();const surge=S.view==='surge';
+ $('#sum').innerHTML=`${PPI.label} PPI <b>${PPI.items.length.toLocaleString()}</b>개 시리즈 · 최신 <b>${META.ppi[PPI.country].latest}</b>`;
+ $('#info').textContent=`${it.length.toLocaleString()}개 표시${S.grp?' · '+S.grp:''}${surge?' · 행 클릭 = 확대 (상위 200)':' · 카드 클릭 = 확대'}`;
+ $('#grid').hidden=surge;$('#tw').hidden=!surge;$('#more').hidden=surge||it.length<=shown;$('#srow').hidden=!surge;$('#sortbox').hidden=surge;
+ if(surge){const cols=[['fav','★','l'],['id','ID','l'],['t','시리즈','l'],['g','그룹','l'],['val','최신값'],['yoy','YoY'],['mom','MoM'],['qoq','QoQ'],['yoy3','3M YoY'],['acc','가속'],['abs','|YoY|']];
+  $('#tbl').innerHTML='<tr>'+cols.map(c=>`<th class="${c[2]||''}" data-k="${c[0]}">${c[1]}${c[0]===tsort.k?(tsort.d<0?' ▼':' ▲'):(c[0]==='fav'?'':' ⇅')}</th>`).join('')+'</tr>'+it.slice(0,200).map(i=>`<tr class="r" data-i="${i.id}"><td class="l"><span class="star">${FAV[PPI.country+'|'+i.id]?'★':'☆'}</span></td><td class="l" style="color:var(--mut)">${i.id}</td><td class="l" title="${esc(i.t)}">${esc(name(i)).slice(0,70)}${stale(i)>=6?' <span class="pill">중단 '+i.last+'</span>':''}</td><td class="l" style="color:var(--mut)">${i.g}</td><td>${i.val}</td><td class="${cls(i.yoy)}">${fp(i.yoy)}</td><td class="${cls(i.mom)}">${fp(i.mom)}</td><td class="${cls(i.qoq)}">${fp(i.qoq)}</td><td class="${cls(i.yoy3)}">${fp(i.yoy3)}</td><td>${i.acc??'-'}</td><td>${i.yoy==null?'-':Math.abs(i.yoy).toFixed(1)}</td></tr>`).join('');
+  $('#tbl').querySelectorAll('th').forEach(h=>h.onclick=()=>{const k=h.dataset.k;if(k==='fav')return;if(tsort.k===k)tsort.d=-tsort.d;else tsort={k,d:k==='t'?1:-1};render()});return}
+ $('#grid').innerHTML=it.slice(0,shown).map(i=>`<div class="card ${Math.abs(i.yoy??0)>=S.th?'hot':''}" data-i="${i.id}"><div class="t" title="${esc(i.t)}">${FAV[PPI.country+'|'+i.id]?'★ ':''}${esc(name(i))}</div><div class="nums"><b class="${cls(i.yoy)}">${fp(i.yoy)} ${arrow(i.yoy)}</b><span>MoM ${fp(i.mom)} · QoQ ${fp(i.qoq)}</span></div><div class="spark" data-i="${i.id}"></div><div class="foot"><span>${i.g}${i.acc?' · 가속 '+i.acc:''}${stale(i)>=6?' · <span class="pill">중단 '+i.last+'</span>':''}</span><span>${i.last} · ${i.val}</span></div></div>`).join('');
+ sparks($('#grid'));save()}
+async function load(c){S.cty=c;PPI=await j(DATA+c+'.json');PPI.byId={};PPI.items.forEach(i=>PPI.byId[i.id]=i);hist={};shown=60;$('#cty').value=c;cats();render()}
+async function history(id){const n=PPI.shards||32,sh=String(crc32(id)%n).padStart(2,'0');if(!hist[sh])hist[sh]=await j(`${DATA}${PPI.country}_h/${sh}.json`);return hist[sh][id]}
+async function open(id){const i=PPI.byId[id];if(!i)return;cur=i;const fk=PPI.country+'|'+id;
+ $('#md').innerHTML=`<button class="x" onclick="closeM()">✕</button><h2>${esc(name(i))} <span style="font-weight:400;color:var(--mut);font-size:13px">${i.id}</span></h2><div class="sub">${i.en&&i.en!==i.t?esc(i.en)+' · ':''}${esc(i.cat||'-')} · ${i.g} · ${i.sa?'계절조정':'원계열'} · 자료 ${i.d0}~${i.last} (${i.n}개월)</div>
+ <div class="mrow"><div class="seg" id="per">${[[3,'3년'],[5,'5년'],[10,'10년'],[0,'전체']].map(([y,l])=>`<button data-y="${y}" class="${S.years===y?'on':''}">${l}</button>`).join('')}</div><span class="star" id="mfav">${FAV[fk]?'★ 즐겨찾기':'☆ 즐겨찾기'}</span></div>
+ <div class="tiles">${[['최신값 ('+i.last+')',i.val,''],['YoY',fp(i.yoy)+' '+arrow(i.yoy),cls(i.yoy)],['MoM',fp(i.mom)+' '+arrow(i.mom),cls(i.mom)],['QoQ',fp(i.qoq)+' '+arrow(i.qoq),cls(i.qoq)],['3M YoY',fp(i.yoy3),cls(i.yoy3)],['가속(6M)',i.acc??'-',''],['단위',esc(i.u||'-'),'']].map(t=>`<div class="tile"><div class="k">${t[0]}</div><div class="v ${t[2]}">${t[1]}</div></div>`).join('')}</div>
+ <div class="mchart" id="mc"></div><div class="info">막대 = YoY%, 선 = 지수 · 드래그 확대 · 슬라이더 기간 조절</div>`;
+ $('#ov').classList.add('on');
+ $('#per').querySelectorAll('button').forEach(b=>b.onclick=()=>{S.years=+b.dataset.y;save();open(id)});$('#mfav').onclick=()=>{if(FAV[fk])delete FAV[fk];else FAV[fk]={c:PPI.country,id,t:i.t};save();open(id);render()};
+ let h;try{h=await history(id)}catch(e){h=null}const d=h?h.d:i.d,v=h?h.v:i.v;const n=S.years?Math.min(d.length,S.years*12):d.length;const dd=d.slice(-n),vv=v.slice(-n);
+ const yoyv=dd.map((m,k)=>{const pm=`${+m.slice(0,4)-1}${m.slice(4)}`,pi=d.indexOf(pm);return pi<0?null:+((v[d.length-n+k]/v[pi]-1)*100).toFixed(1)});
+ mcharts.forEach(c=>c.dispose());mcharts=[];const c=echarts.init($('#mc'),TH.dark()?'dark':null);mcharts.push(c);
+ c.setOption({backgroundColor:'transparent',tooltip:{trigger:'axis'},legend:{top:0},grid:{left:64,right:60,top:34,bottom:64},xAxis:{type:'category',data:dd,axisLabel:{rotate:45,fontSize:11}},yAxis:[{type:'value',name:i.u||'지수',scale:true},{type:'value',name:'YoY %'}],
+  dataZoom:[{type:'inside',zoomOnMouseWheel:false,moveOnMouseMove:true},{type:'slider',height:16,bottom:8}],toolbox:{right:8,top:0,feature:{dataZoom:{yAxisIndex:'none',title:{zoom:'드래그 확대',back:'되돌리기'}},restore:{title:'원상태'}}},
+  series:[{name:'YoY %',type:'bar',yAxisIndex:1,data:yoyv,itemStyle:{color:'rgba(229,62,62,.55)'},barMaxWidth:10},{name:'지수',type:'line',data:vv,showSymbol:false,lineStyle:{width:2,color:'#3182ce'}}]});}
+function closeM(){$('#ov').classList.remove('on');mcharts.forEach(c=>c.dispose());mcharts=[]}
+$('#ov').onclick=e=>{if(e.target.id==='ov')closeM()};document.addEventListener('keydown',e=>{if(e.key==='Escape')closeM()});
+document.addEventListener('click',e=>{const c=e.target.closest('.card,tr.r');if(c&&c.dataset.i)open(c.dataset.i)});
+$('#cty').onchange=e=>load(e.target.value);$('#sort').onchange=e=>{S.sort=e.target.value;shown=60;render()};$('#q').addEventListener('keydown',e=>{if(e.key==='Enter'){S.q=e.target.value.trim();shown=60;render()}});$('#q').addEventListener('input',e=>{if(!e.target.value){S.q='';render()}});
+$('#th').oninput=e=>{S.th=+e.target.value||0;render()};for(const k of ['hl','fav','live'])$('#'+k).onchange=e=>{S[k]=e.target.checked;shown=60;render()};
+for(const k of ['acc','minyoy','minmom','minqoq'])$('#'+k).onchange=e=>{S[k]=e.target.value;render()};
+$('#vseg').querySelectorAll('button').forEach(b=>b.onclick=()=>{$('#vseg').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));S.view=b.dataset.v;shown=60;render()});
+$('#morebtn').onclick=()=>{shown+=60;render()};$('#theme').onclick=()=>{TH.toggle();closeM();if(PPI)render()};
+function presets(){const p=LS.get('presets')||{};$('#preset').innerHTML='<option value="">-- 불러오기 --</option>'+Object.keys(p).map(k=>`<option>${esc(k)}</option>`).join('')}
+$('#preset').onchange=e=>{const p=(LS.get('presets')||{})[e.target.value];if(!p)return;Object.assign(S,p);['acc','minyoy','minmom','minqoq','th'].forEach(k=>$('#'+k).value=S[k]);$('#hl').checked=S.hl;cats();render()};
+$('#psave').onclick=()=>{const n=prompt('프리셋 이름');if(!n)return;const p=LS.get('presets')||{};p[n]={acc:S.acc,minyoy:S.minyoy,minmom:S.minmom,minqoq:S.minqoq,th:S.th,hl:S.hl,grp:S.grp};LS.set('presets',p);presets();$('#preset').value=n};
+$('#pdel').onclick=()=>{const n=$('#preset').value;if(!n)return;const p=LS.get('presets')||{};delete p[n];LS.set('presets',p);presets()};
+window.addEventListener('resize',()=>{charts.forEach(c=>c.resize());mcharts.forEach(c=>c.resize())});
+presets();
+j('../global-trade/data/meta.json').then(m=>{META=m;const cs=Object.keys(m.ppi);$('#cty').innerHTML=cs.map(c=>`<option value="${c}">${m.ppi[c].label} (${m.ppi[c].n.toLocaleString()}개, ${m.ppi[c].latest})</option>`).join('');
+ $('#sort').value=S.sort;$('#q').value=S.q;$('#th').value=S.th;$('#hl').checked=S.hl;$('#fav').checked=S.fav;$('#live').checked=S.live;['acc','minyoy','minmom','minqoq'].forEach(k=>$('#'+k).value=S[k]);$('#vseg').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x.dataset.v===S.view));
+ load(cs.includes(S.cty)?S.cty:cs[0])}).catch(e=>{$('#sum').textContent='PPI 데이터를 불러오지 못했습니다';});
+</script></body></html>
