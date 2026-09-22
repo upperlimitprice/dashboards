@@ -82,6 +82,7 @@ svg text{font-family:inherit}
       <option>20</option><option>30</option></select>
       <button id="lblBtn" class="on">라벨</button>
       <button id="playBtn">▶ 재생</button>
+      <button id="copyBtn" title="현재 차트를 PNG 이미지로 클립보드에 복사">📋 이미지 복사</button>
       <button id="pinClear" style="display:none">고정 해제</button>
       <input type="range" id="week" min="0" max="0" value="0">
       <span id="weekLbl"></span>
@@ -291,6 +292,35 @@ tailSel.addEventListener('change',render);
 wkSlider.addEventListener('input',render);
 document.getElementById('lblBtn').addEventListener('click',function(){
  showLbl=!showLbl;this.className=showLbl?'on':'';render();});
+// 차트 이미지 복사: SVG(인라인 속성) → 캔버스(2x) → PNG → 클립보드. 클립보드 미지원 시 PNG 다운로드.
+document.getElementById('copyBtn').addEventListener('click',function(){
+ var btn=this, done=function(t){btn.textContent=t;setTimeout(function(){btn.textContent='📋 이미지 복사';},1600);};
+ var node=svg.cloneNode(true);
+ node.setAttribute('xmlns','http://www.w3.org/2000/svg');
+ node.setAttribute('width',Wpx);node.setAttribute('height',Hpx);
+ node.setAttribute('font-family',"-apple-system,'Apple SD Gothic Neo','Noto Sans KR',sans-serif");
+ node.removeAttribute('style');
+ var cap=document.getElementById('title').textContent+' · '+document.getElementById('weekLbl').textContent;
+ var S=2, top=34, cv=document.createElement('canvas');
+ cv.width=Wpx*S; cv.height=(Hpx+top)*S;
+ var ctx=cv.getContext('2d'); ctx.scale(S,S);
+ ctx.fillStyle='#fff'; ctx.fillRect(0,0,Wpx,Hpx+top);
+ ctx.fillStyle='#16202c'; ctx.font="700 14px -apple-system,'Apple SD Gothic Neo','Noto Sans KR',sans-serif";
+ ctx.fillText(cap,14,22);
+ var img=new Image();
+ var url=URL.createObjectURL(new Blob([new XMLSerializer().serializeToString(node)],{type:'image/svg+xml;charset=utf-8'}));
+ img.onload=function(){
+  ctx.drawImage(img,0,top,Wpx,Hpx); URL.revokeObjectURL(url);
+  var png=new Promise(function(res){cv.toBlob(res,'image/png');});
+  var fname='rrg_'+cap.replace(/[^\w가-힣.-]+/g,'_')+'.png';
+  var download=function(){png.then(function(b){var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=fname;a.click();done('⬇️ 다운로드됨');});};
+  if(navigator.clipboard&&window.ClipboardItem){
+   navigator.clipboard.write([new ClipboardItem({'image/png':png})]).then(function(){done('✅ 복사됨');},download);
+  }else{download();}
+ };
+ img.onerror=function(){done('⚠️ 실패');};
+ img.src=url;
+});
 document.getElementById('playBtn').addEventListener('click',function(){
  var btn=this;
  if(playing){clearInterval(playing);playing=null;btn.textContent='▶ 재생';return;}
