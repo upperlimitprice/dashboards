@@ -74,7 +74,7 @@ const LS={get:k=>{try{return JSON.parse(localStorage.getItem('smppi_'+k)||'null'
 let META,PPI,S=Object.assign({cty:'US',view:'grid',grp:'',sort:'yoy_desc',q:'',th:10,hl:false,fav:false,live:true,acc:0,minyoy:'',minmom:'',minqoq:'',years:3,lang:'ko'},LS.get('state')||{});
 let FAV=LS.get('fav')||{},shown=60,hist={},charts=[],mcharts=[],cur=null,tsort={k:'yoy',d:-1};
 const pt=i=>S.lang==='ko'?(i.t||i.en||''):(i.en||i.t||'');const pcat=i=>S.lang==='ko'?(i.ck||i.cat||''):(i.cat||'');
-const name=i=>pt(i).replace(/^(Producer Price Index by (Commodity|Industry)|(상품별|산업별) PPI):\s*/i,'');
+const name=i=>pt(i).replace(/^Producer Price Index by (Commodity|Industry):\s*/i,'');
 const stale=i=>{const L=META.ppi[PPI.country].latest;if(!L||!i.last)return 0;return (+L.slice(0,4)-+i.last.slice(0,4))*12+(+L.slice(5)-+i.last.slice(5))};
 function crc32(str){let c,crc=0^(-1);for(let i=0;i<str.length;i++){c=(crc^str.charCodeAt(i))&0xff;for(let k=0;k<8;k++)c=c&1?(0xEDB88320^(c>>>1)):(c>>>1);crc=(crc>>>8)^c}return (crc^(-1))>>>0}
 async function j(u){const r=await fetch(u);if(!r.ok)throw new Error(u);return r.json()}
