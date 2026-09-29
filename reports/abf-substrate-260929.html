@@ -1,0 +1,377 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ABF 기판 슈퍼사이클 보고서</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;700&family=IBM+Plex+Mono:wght@400;600&family=Noto+Serif+KR:wght@700;900&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
+<style>
+/* Layout: 단일 읽기 컬럼(최대 1080px) — 솔더마스크 그린 바탕에 구리(Cu) 포인트, 섹션마다 요약→차트→표 */
+:root{
+  --bg:#f3f6f3; --panel:#ffffff; --ink:#15211b; --mut:#5d6d64; --line:#dbe3dd; --soft:#e8efe9;
+  --mask:#1f5c45;   /* 솔더마스크 그린 */
+  --cu:#b8672e;     /* 구리 */
+  --c1:#1f5c45; --c2:#b8672e; --c3:#3b6ea8; --c4:#8a5bb0; --c5:#c2477a; --c6:#4a9a9a; --c7:#8c8f3a; --c8:#7a8791;
+  --up:#c0392b; --dn:#2c6fb0; --warn:#b7791f;
+  --f-disp:"Noto Serif KR",Georgia,serif; --f-body:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif; --f-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f1512; --panel:#161f1a; --ink:#e3ebe6; --mut:#93a39a; --line:#2a3630; --soft:#1c2721;
+  --mask:#5fbf96; --cu:#e0935a;
+  --c1:#5fbf96; --c2:#e0935a; --c3:#6fa3de; --c4:#b38ad6; --c5:#e57aa5; --c6:#6cc4c4; --c7:#c3c65e; --c8:#9aa8b2;
+  --up:#ef6b5d; --dn:#6fa3de; --warn:#e0b050; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1512; --panel:#161f1a; --ink:#e3ebe6; --mut:#93a39a; --line:#2a3630; --soft:#1c2721;
+  --mask:#5fbf96; --cu:#e0935a;
+  --c1:#5fbf96; --c2:#e0935a; --c3:#6fa3de; --c4:#b38ad6; --c5:#e57aa5; --c6:#6cc4c4; --c7:#c3c65e; --c8:#9aa8b2;
+  --up:#ef6b5d; --dn:#6fa3de; --warn:#e0b050; color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.65 var(--f-body)}
+.wrap{max-width:1080px;margin:0 auto;padding-inline:16px;padding-block:28px 64px}
+header.hero{display:grid;gap:10px;padding-block:8px 22px;border-bottom:2px solid var(--mask)}
+.eyebrow{font:600 12px/1 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--cu)}
+h1{font:900 clamp(26px,4.4vw,40px)/1.2 var(--f-disp);margin:0;text-wrap:balance}
+.lede{max-width:68ch;color:var(--mut);margin:0}
+.meta{font:12px/1.6 var(--f-mono);color:var(--mut)}
+h2{font:700 22px/1.3 var(--f-disp);margin:0;text-wrap:balance}
+h3{font:700 16px/1.4 var(--f-body);margin:0}
+section{display:grid;gap:14px;padding-block:34px 6px}
+.sec-head{display:grid;gap:4px}
+.sec-head .num{font:600 12px/1 var(--f-mono);color:var(--cu);letter-spacing:.08em}
+.sec-head p{margin:0;color:var(--mut);max-width:72ch}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:20px}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px;display:grid;gap:2px;align-content:start}
+.kpi .l{font-size:12.5px;color:var(--mut)}
+.kpi .v{font:600 26px/1.2 var(--f-mono);color:var(--mask);font-variant-numeric:tabular-nums}
+.kpi .s{font-size:12.5px;color:var(--mut)}
+.box{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 16px 8px;min-width:0}
+.box h3{margin-bottom:2px}.box .cap{font-size:12.5px;color:var(--mut);margin:0 0 6px}
+.chart{width:100%;height:360px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,440px),1fr));gap:14px}
+.grid2 .chart{height:300px}
+.tw{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--panel)}
+table{border-collapse:collapse;width:100%;min-width:720px;font-size:13.5px}
+th,td{padding:9px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{background:var(--soft);font-weight:600;white-space:nowrap}
+td.n,th.n{text-align:right;font-family:var(--f-mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+tr:last-child td{border-bottom:0}
+.tag{display:inline-block;font:600 10.5px/1 var(--f-mono);padding:3px 5px;border-radius:4px;vertical-align:1px;margin-left:4px;border:1px solid var(--line);color:var(--mut)}
+.tag.v{color:var(--mask);border-color:var(--mask)}.tag.e{color:var(--warn);border-color:var(--warn)}
+.take{background:var(--soft);border-left:3px solid var(--cu);border-radius:0 10px 10px 0;padding:14px 18px}
+.take ul{margin:0;padding-left:18px;display:grid;gap:6px}
+.take b{color:var(--ink)}
+.up{color:var(--up);font-weight:600}.dn{color:var(--dn);font-weight:600}
+.pill{display:inline-block;font-size:11.5px;padding:2px 8px;border-radius:99px;background:var(--soft);color:var(--mask);font-weight:600;white-space:nowrap}
+.pill.cu{color:var(--cu)}
+.toc{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.toc a{font-size:13px;color:var(--mask);text-decoration:none;border:1px solid var(--line);background:var(--panel);padding:5px 10px;border-radius:99px}
+.toc a:hover,.toc a:focus-visible{border-color:var(--mask);outline:none}
+.foot{font-size:12px;color:var(--mut);line-height:1.8;border-top:1px solid var(--line);margin-top:40px;padding-top:16px}
+.foot a{color:var(--mut)}
+.foot ol{padding-left:18px;margin:6px 0}
+@media(max-width:600px){.chart{height:300px}.grid2 .chart{height:280px}.kpi .v{font-size:22px}}
+</style>
+
+<div class="wrap">
+<header class="hero">
+  <div class="eyebrow">Industry Deep Dive · FC-BGA / ABF Substrate</div>
+  <h1>ABF 기판 슈퍼사이클: 증설 경쟁과 AI 수요</h1>
+  <p class="lede">2023~24년 재고조정 끝에 ABF 기판은 AI 가속기·커스텀 ASIC 덕분에 다시 공급 부족 국면에 들어섰습니다. 글로벌 주요 업체의 capex(금액·면적)가 2021~22년 고점을 넘어서고 있고, 전방 수요는 칩당 기판 면적과 층수 증가로 출하량보다 빠르게 늘고 있습니다.</p>
+  <div class="meta">작성 2026-09-29 · 통화는 USD 환산(¥150, NT$31.5, ₩1,400, €1=$1.12 기준 근사) · <span class="tag v">V</span> 복수출처·공식 확인 <span class="tag">S</span> 단일 보도 <span class="tag e">E</span> 자체 추정</div>
+  <nav class="toc">
+    <a href="#summary">핵심 요약</a><a href="#capex">① 업체별 Capex</a><a href="#area">② 면적·캐파 증설</a><a href="#market">③ 시장규모</a><a href="#customers">④ 전방처</a><a href="#balance">⑤ 수급·가격</a><a href="#korea">⑥ 투자 포인트</a>
+  </nav>
+</header>
+
+<section id="summary">
+  <div class="kpis">
+    <div class="kpi"><span class="l">ABF 업계 capex (2025~28 누적)</span><span class="v">$19.1B</span><span class="s">2020~23년 $12.7B 대비 <span class="up">+51%</span> · KGI</span></div>
+    <div class="kpi"><span class="l">업계 월 캐파 면적 (2028 vs 2025)</span><span class="v">+86%</span><span class="s">Ibiden AI 기판 면적 2.5× (2028 vs 2024)</span></div>
+    <div class="kpi"><span class="l">ABF 수요면적 CAGR (2025~28)</span><span class="v">39%</span><span class="s">AI 연산칩 +63%/yr · 2028년 수요면적 59%</span></div>
+    <div class="kpi"><span class="l">2027년 공급부족률 (컨센서스 범위)</span><span class="v">10~34%</span><span class="s">2028년 16~51% · BofA·MS·KGI·GS</span></div>
+  </div>
+  <div class="take">
+    <ul>
+      <li><b>Capex 2차 사이클 진입:</b> Ibiden ¥500B(3년), Unimicron 2026년 NT$34B(역대 최대), AT&amp;S FY26/27 €1.0~1.2B, 삼성전기 2026년 ₩2~3조로 capex가 동시에 늘고 있습니다. 1차 사이클(2021~22)과 달리 <b>고객 선수금과 장기계약(LTA)으로 자금을 대는 증설</b>이라는 점이 다릅니다.</li>
+      <li><b>면적 수요가 출하량보다 빠릅니다:</b> PC CPU(40×40mm, 8~12층)에서 Rubin(100mm+, 20~22층), TSMC 2027 패키지(120×120mm)로 가면서 칩 1개당 기판 면적은 4~9배, 층수까지 반영하면 10~20배로 커집니다.</li>
+      <li><b>병목은 기판 공장 밖에도 있습니다:</b> T-glass(Nittobo 점유율 ~90%)는 2027년 중반 전까지 의미 있는 증설이 없고, ABF 필름(Ajinomoto)은 3Q26부터 +30% 인상, 진공 라미네이터 리드타임은 2031년까지 잡혀 있습니다. 따라서 capex를 늘려도 2027년까지는 실제 캐파 증가가 제한적입니다.</li>
+      <li><b>가격 레버리지:</b> 2Q26부터 +5~10% 인상됐고, GS는 3Q26~2027년 말 분기마다 +10~15%를 전망합니다. 업계 GPM은 2026년 22~30%에서 2027년 30~35%로 높아질 전망입니다.</li>
+    </ul>
+  </div>
+</section>
+
+<section id="capex">
+  <div class="sec-head"><span class="num">01 · CAPEX 금액</span><h2>주요 글로벌 업체 capex 추이와 전망</h2>
+  <p>2021~22년 1차 증설 → 2023~25년 감축 → 2026~28년 AI 기반 2차 증설. 삼성전기·LG이노텍·臻鼎은 회사 전체 capex(기판 외 사업 포함)이고, 일본·유럽 업체는 3월 결산 기준입니다.</p></div>
+  <div class="box">
+    <h3>업체별 연간 capex (USD 십억, 환산)</h3>
+    <p class="cap">실선=실적, 점선 구간=가이던스·계획·증권사 추정(범위는 중간값). 빈 구간은 공개 수치를 확인하지 못한 연도입니다.</p>
+    <div class="chart" id="chCapex"></div>
+  </div>
+  <div class="grid2">
+    <div class="box">
+      <h3>ABF 상위 업체 합산 capex</h3>
+      <p class="cap">KGI(2026-07) 집계, 4년 누적 USD 십억</p>
+      <div class="chart" id="chAgg"></div>
+    </div>
+    <div class="box">
+      <h3>2026년 capex 가이던스 · 전년 대비</h3>
+      <p class="cap">USD 십억 · 2025 실적 → 2026 계획(범위 중간값)</p>
+      <div class="chart" id="chCapex26"></div>
+    </div>
+  </div>
+  <div class="tw"><table>
+    <thead><tr><th>업체</th><th class="n">2021</th><th class="n">2022</th><th class="n">2023</th><th class="n">2024</th><th class="n">2025</th><th class="n">2026E</th><th class="n">2027E~</th><th>비고</th></tr></thead>
+    <tbody>
+      <tr><td><b>Ibiden</b> (FY3월)</td><td class="n">–</td><td class="n">–</td><td class="n">–</td><td class="n">¥157B</td><td class="n" colspan="3">¥500B / 3년 (FY26~28, 연 ~¥167B)</td><td>1단계 ¥220B Gama(Cell 6) · 2단계 ¥280B Ono. FY27 매출 ¥650B 목표 <span class="tag v">V</span></td></tr>
+      <tr><td><b>Unimicron 欣興</b></td><td class="n">NT$34.5B</td><td class="n">NT$43.5B</td><td class="n">~NT$30B</td><td class="n">NT$24~25B</td><td class="n">NT$20.6B</td><td class="n">NT$34.0B</td><td class="n">–</td><td>2026년 역대 최대 · ~70% ABF · 광복2공장 가속 <span class="tag v">V</span></td></tr>
+      <tr><td><b>Nan Ya PCB 南電</b></td><td class="n">NT$8.4B</td><td class="n">NT$13~17B</td><td class="n">–</td><td class="n">NT$3~4B</td><td class="n">NT$4.3B</td><td class="n">&gt;2022 고점</td><td class="n">–</td><td>"사상 최대" 발언, 금액 미공개 · ABF 가동률 ~85% <span class="tag">S</span></td></tr>
+      <tr><td><b>Kinsus 景碩</b></td><td class="n">–</td><td class="n">~NT$10B</td><td class="n">~NT$10B</td><td class="n">–</td><td class="n">–</td><td class="n">NT$14B</td><td class="n">NT$16B</td><td>양메이 6공장 · ABF 월 40M→50M개 <span class="tag">S</span></td></tr>
+      <tr><td><b>AT&amp;S</b> (FY3월)</td><td class="n">–</td><td class="n">~€1.0B</td><td class="n" colspan="2">FY23~25 €450M 감축</td><td class="n">€178M</td><td class="n">€1.0~1.2B</td><td class="n">Kulim €1.5~2.0B</td><td>AMD+1개사 장기계약으로 전액 커버 <span class="tag v">V</span></td></tr>
+      <tr><td><b>삼성전기</b> (전사)</td><td class="n" colspan="2">FC-BGA ₩1.9조 프로그램</td><td class="n">₩1.28조</td><td class="n">–</td><td class="n">₩1.19조</td><td class="n">₩2~3조</td><td class="n">~₩3조/yr</td><td>베트남 FC-BGA $1.2B(2028 가동) · 유리기판 JV ₩4,800억 <span class="tag">S</span></td></tr>
+      <tr><td><b>LG이노텍</b> (전사)</td><td class="n">–</td><td class="n">FC-BGA ₩4,130억</td><td class="n">₩1.79조</td><td class="n">₩0.72조</td><td class="n">₩0.68조</td><td class="n">~₩2조</td><td class="n">베트남 ₩1조+</td><td>구미 드림팩토리 · 기판 가동률 94% <span class="tag">S</span></td></tr>
+      <tr><td><b>대덕전자</b></td><td class="n" colspan="2">FC-BGA 누적 ₩5,400억 (20~22)</td><td class="n">–</td><td class="n">–</td><td class="n">–</td><td class="n">~₩4,970억</td><td class="n">–</td><td>시흥·안산 · FC-BGA 매출캐파 ₩4,500억→₩6,500억 <span class="tag">S</span></td></tr>
+      <tr><td><b>Zhen Ding 臻鼎</b> (그룹)</td><td class="n">–</td><td class="n">–</td><td class="n">–</td><td class="n">–</td><td class="n">ABF NT$8B</td><td class="n">NT$50~80B</td><td class="n">고수준 유지</td><td>KGI 2025~28 누적 $4.35B, ABF 업체 중 최대 <span class="tag">S</span></td></tr>
+      <tr><td><b>Shinko</b> (비상장)</td><td class="n" colspan="4">FY22~25 ¥140B (FC 캐파 +50%)</td><td class="n" colspan="3">비공개 (JIC 인수 후)</td><td>Chikuma ¥53.3B, 보조금 최대 ¥17.8B <span class="tag">S</span></td></tr>
+      <tr><td><b>Toppan</b></td><td class="n" colspan="5">니가타 FC-BGA 캐파 2배(2026-01)</td><td class="n">싱가포르 ~¥50B</td><td class="n">–</td><td>FY27까지 FC-BGA 캐파 FY22 대비 2.5× <span class="tag">S</span></td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="area">
+  <div class="sec-head"><span class="num">02 · CAPEX 면적·캐파</span><h2>면적 기준 증설 규모와 신공장 타임라인</h2>
+  <p>업계는 이제 출하 개수보다 <b>패키지 면적과 층수</b>로 캐파를 셉니다. 공개된 증설 배수를 기준연도에 맞춰 비교했습니다.</p></div>
+  <div class="grid2">
+    <div class="box">
+      <h3>캐파 증설 배수 (기준연도 = 1.0×)</h3>
+      <p class="cap">회사·기관 공시·보도 기준 · 기준연도와 측정단위(면적/개수/매출)가 서로 다릅니다</p>
+      <div class="chart" id="chArea"></div>
+    </div>
+    <div class="box">
+      <h3>Ibiden AI 서버 기판 생산부하 (2024 = 1.0×)</h3>
+      <p class="cap">SAP 환산 면적 · 2026-05 실적발표, Nikkei 2025-09</p>
+      <div class="chart" id="chIbiden"></div>
+    </div>
+  </div>
+  <div class="tw"><table>
+    <thead><tr><th>업체</th><th>거점</th><th>규모</th><th>가동 시점</th><th>주 고객·용도</th></tr></thead>
+    <tbody>
+      <tr><td>Ibiden</td><td>Ono(오노) 신공장 / Gama Cell 6</td><td>¥280B / ¥220B</td><td>Ono 2025-10 순차 양산 → FY27말 풀가동 · Gama FY27~</td><td>Nvidia GPU(~70% 점유), AMD, Intel</td></tr>
+      <tr><td>Unimicron</td><td>광복(신주) 2공장 · 양메이 2공장</td><td>2026 capex의 핵심</td><td>광복2 장비 반입 중 · 양메이2 ~2028</td><td>Nvidia(Rubin 핵심), Google TPU, EMIB</td></tr>
+      <tr><td>AT&amp;S</td><td>말레이시아 Kulim 1·2동, Chongqing</td><td>€1.5~2.0B</td><td>FY26/27부터 단계적</td><td>AMD + 대형 테크사 LTA</td></tr>
+      <tr><td>Kinsus</td><td>타오위안 양메이 6공장</td><td>NT$23.5B(3년)</td><td>2027년부터 신규 캐파</td><td>Nvidia GB200·Vera Rubin, TPU</td></tr>
+      <tr><td>삼성전기</td><td>베트남 · 부산 · 세종(유리)</td><td>베트남 $1.2B · 장기 부산 ₩15조·세종 ₩8조(~2040, MLCC 포함)</td><td>베트남 2028 · 유리기판 2026~27 목표</td><td>AMD, AWS Trainium, 빅테크 ASIC</td></tr>
+      <tr><td>LG이노텍</td><td>구미 4공장(23만㎡) · 베트남 하이퐁</td><td>구미 ₩6,000억(25~26) · 베트남 ₩1조+</td><td>~2027</td><td>PC·서버 FC-BGA 진입 단계</td></tr>
+      <tr><td>Toppan</td><td>니가타 · 싱가포르 Jurong(95,000㎡)</td><td>~¥50B</td><td>니가타 2026-01 · 싱가포르 2026말</td><td>Broadcom</td></tr>
+      <tr><td>Shinko</td><td>Chikuma · Arai(PBGA)</td><td>¥53.3B · ¥28B</td><td>Arai FY26 · Chikuma 보조금 계획상 2029-07</td><td>Intel, AMD</td></tr>
+      <tr><td>Kyocera</td><td>가고시마 · 센다이</td><td>¥60B</td><td>센다이 유기패키지 4.5×</td><td>xPU·스위치 ASIC</td></tr>
+      <tr><td>중국 (深南·兴森·越亚)</td><td>광저우 · 주하이</td><td>兴森 FCBGA 누적 RMB3.5B+</td><td>22층 이하 양산 · 24층+ 샘플</td><td>현지 AI칩 (고다층 진입 전)</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="market">
+  <div class="sec-head"><span class="num">03 · 수요 추이</span><h2>시장규모 추이와 전망</h2>
+  <p>ABF 시장은 2022년 $9.7B 고점 → 2024년 $6.5B 저점 → 2025년 $7.7B로 반등했습니다. 2026년 이후는 전망 주체에 따라 격차가 큽니다(MS 16% CAGR vs GS 62% CAGR).</p></div>
+  <div class="box">
+    <h3>ABF · IC 기판 시장규모 (USD 십억)</h3>
+    <p class="cap">2022~25 TPCA/ITRI 실적, 2026F IC 기판 TPCA · ABF 2026~28은 2025년 기준 MS(16.1%)·GS(62%, 2028 $33B) CAGR 경로로 환산 <span class="tag e">E</span></p>
+    <div class="chart" id="chMarket"></div>
+  </div>
+  <div class="grid2">
+    <div class="box">
+      <h3>ABF 수요 믹스 변화</h3>
+      <p class="cap">2025 금액 기준(GS: AI 24%, BofA: 서버CPU 13%) → 2028 면적 기준(대만 증권사: AI 59%) <span class="tag e">E</span> 기준 혼재</p>
+      <div class="chart" id="chMix"></div>
+    </div>
+    <div class="box">
+      <h3>하이퍼스케일러 capex (Top 4~5, USD 십억)</h3>
+      <p class="cap">AMZN·GOOGL·MSFT·META(+ORCL) · 2026은 최근 가이던스, 2027은 컨센서스</p>
+      <div class="chart" id="chHyper"></div>
+    </div>
+  </div>
+  <div class="grid2">
+    <div class="box">
+      <h3>TSMC CoWoS 캐파 (연말, 천 wafer/월)</h3>
+      <p class="cap">AI 가속기 기판 수요의 선행지표 · 2027 MS는 200k로 상향</p>
+      <div class="chart" id="chCowos"></div>
+    </div>
+    <div class="box">
+      <h3>2026 출하 전망</h3>
+      <p class="cap">PC 역성장(메모리 원가 급등)과 AI 서버 고성장 · YoY %</p>
+      <div class="chart" id="chShip"></div>
+    </div>
+  </div>
+</section>
+
+<section id="customers">
+  <div class="sec-head"><span class="num">04 · 전방처</span><h2>주요 전방처와 칩당 기판 면적</h2>
+  <p>AI GPU 기판 1개는 PC CPU 기판 대비 면적 4~9배, 층수까지 곱하면 10~20배의 ABF를 씁니다. 출하량이 조금만 늘어도 면적 수요가 크게 늘어나는 이유입니다.</p></div>
+  <div class="box">
+    <h3>칩별 패키지 기판 면적 (PC CPU = 1×)</h3>
+    <p class="cap">막대=면적(mm²) · 라벨=층수 · Rubin·TSMC 2027은 공개 사양 기반 추정 <span class="tag e">E</span></p>
+    <div class="chart" id="chSize"></div>
+  </div>
+  <div class="tw"><table>
+    <thead><tr><th>전방처 / 제품</th><th>주요 기판 공급사</th><th>수요 포인트</th></tr></thead>
+    <tbody>
+      <tr><td><b>Nvidia</b> Blackwell → Rubin</td><td>Ibiden(~70%), Unimicron(~30%, Rubin 핵심), Kinsus(GB200·Vera Rubin 진입)</td><td>Rubin 랙당 ABF 가치 Blackwell 대비 <span class="up">+82%</span> · CoWoS 할당 ~60% (2026 595~700k wafer)</td></tr>
+      <tr><td><b>Nvidia</b> Vera CPU</td><td>Unimicron, Kinsus, Nan Ya</td><td>Grace 대비 면적 +50%</td></tr>
+      <tr><td><b>AMD</b> MI350/MI400·EPYC</td><td>Ibiden, 삼성전기(2024-07 계약), AT&amp;S(장기계약), Absolics 유리코어 샘플</td><td>Helios(MI455X+Venice) 3Q26 출하 · CoWoS 90~130k(2026) → 240k(2027)</td></tr>
+      <tr><td><b>Google TPU</b> (Broadcom)</td><td>Ibiden, Unimicron, Kinsus, Nan Ya, Shinko</td><td>TPU 3.2M(2026) → 5M(2027), MS</td></tr>
+      <tr><td><b>AWS Trainium</b></td><td>삼성전기(부산·베트남), 대만 업체</td><td>2.1M(2026) → 3M(2027), BofA</td></tr>
+      <tr><td><b>Meta MTIA · MS Maia · OpenAI</b></td><td>대만 업체, 삼성전기 (배분 비공개)</td><td>커스텀 ASIC 출하 2026 <span class="up">+44.6%</span> (GPU +16.1%)</td></tr>
+      <tr><td><b>Intel</b> Xeon·클라이언트</td><td>Ibiden, Shinko, Unimicron(EMIB)</td><td>자체 유리기판 R&amp;D 중단(2025), 외부 조달로 전환</td></tr>
+      <tr><td><b>스위치 ASIC</b> (Tomahawk 6, Cisco)</td><td>Nan Ya, Kinsus, Ibiden</td><td>102.4T 세대 · 서버+네트워크 2028 수요면적 25%</td></tr>
+      <tr><td><b>Apple</b> M-series</td><td>Unimicron(주력)</td><td>PC 출하 2026 −10~11%로 저가 ABF에는 역풍</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="balance">
+  <div class="sec-head"><span class="num">05 · 수급·가격</span><h2>공급부족률 전망과 가격</h2>
+  <p>2023년 ~5% 공급과잉에서 2026년 하반기 부족으로 돌아섰습니다. 전망 주체별 격차가 크지만, 모두 2028년까지 부족이 커지는 방향입니다.</p></div>
+  <div class="grid2">
+    <div class="box">
+      <h3>ABF 공급부족률 전망 (수요/공급 −1, %)</h3>
+      <p class="cap">음수=공급과잉 · GS는 강세 시나리오</p>
+      <div class="chart" id="chGap"></div>
+    </div>
+    <div class="box">
+      <h3>2026 상반기 가동률</h3>
+      <p class="cap">회사 공시·보도 · %</p>
+      <div class="chart" id="chUtil"></div>
+    </div>
+  </div>
+  <div class="tw"><table>
+    <thead><tr><th>병목 요인</th><th>현황</th><th>해소 시점</th></tr></thead>
+    <tbody>
+      <tr><td>ABF 기판 판가</td><td>2Q26 +5~10%, 일부 스팟 +30% · GS: 3Q26~27말 분기 +10~15% · MS: 2026 +15~25% YoY</td><td>2027년까지 인상 지속</td></tr>
+      <tr><td>ABF 필름 (Ajinomoto, 점유율 95%+)</td><td>3Q26부터 +30% (기판 원가 +3~6%) · 2030년까지 캐파 +50%</td><td>기후 신공장 2032 가동</td></tr>
+      <tr><td>T-glass (Nittobo, ~90%)</td><td>FY3/29까지 캐파 3× · 2026 부족 10%+, 2027 ~20% · 추가 인상은 없음(2026-08)</td><td>2027년 중반부터 완화</td></tr>
+      <tr><td>장비 (진공 라미네이터)</td><td>리드타임 2031년까지</td><td>2H27 이전 업계 증설 제한</td></tr>
+      <tr><td>리드타임</td><td>12~18주 → 20주+</td><td>–</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="korea">
+  <div class="sec-head"><span class="num">06 · 시사점</span><h2>투자 포인트와 리스크</h2></div>
+  <div class="grid2">
+    <div class="take">
+      <h3>포인트</h3>
+      <ul>
+        <li><b>Capex↑이지만 공급은 2H27부터:</b> 소재·장비 병목 때문에 2026~27년에는 가격·믹스 주도의 이익 레버리지가 먼저 나타납니다.</li>
+        <li><b>Ibiden·Unimicron 양강</b>(캐파 ~52%)이 Nvidia 물량을 쥐고 있고, <b>Kinsus·Nan Ya</b>는 Rubin·Vera·TPU 진입으로 베타가 가장 큽니다.</li>
+        <li><b>한국:</b> 삼성전기는 "수요가 캐파를 50% 이상 초과"하고 2026년 FC-BGA ASP가 +13%입니다. ASIC(AWS·AMD)과 유리기판 옵션을 보유했습니다. LG이노텍은 FC-BGA 매출 ₩1,400억(26E) → ₩1.2조(28E)(증권사 추정)로 턴어라운드 초기입니다. 대덕전자는 FC-BGA 매출캐파를 +44% 늘립니다(1H27).</li>
+        <li><b>소재 밸류체인:</b> Ajinomoto(ABF GPM 50%+), Nittobo·Nan Ya Plastics(T-glass), 라미네이터 장비사.</li>
+      </ul>
+    </div>
+    <div class="take">
+      <h3>리스크</h3>
+      <ul>
+        <li><b>AI capex 둔화:</b> 하이퍼스케일러 2027년 $1조+ 컨센서스가 꺾이면 2028년 신규 캐파(Ono·Kulim·베트남·양메이2)가 한꺼번에 나옵니다. 2021~22년 증설이 2023~24년 과잉으로 이어진 사례가 있습니다.</li>
+        <li><b>전망 편차:</b> 2028년 부족률이 16%(BofA)에서 51%(GS)까지 벌어져 있어 컨센서스 신뢰도가 낮습니다.</li>
+        <li><b>유리기판 전환:</b> Absolics·삼성전기·TSMC가 2027~28년 양산을 노리지만 Intel은 자체 R&amp;D를 중단했습니다. 단기 대체 위험은 낮고, 중기 믹스 변화 변수입니다.</li>
+        <li><b>PC·저가 ABF 약세:</b> 2026년 PC −10%대. 로우엔드 비중이 높은 업체는 AI 호황과 괴리가 생깁니다.</li>
+        <li><b>중국 추격:</b> 22층 이하 양산 단계로, 로우·미드엔드 가격 압력 요인입니다.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<footer class="foot">
+  <b>데이터 주석.</b> 수치는 회사 IR·공시와 언론·증권사 보도 요약에서 가져왔고, 원문 PDF를 모두 검증하지는 못했습니다. 투자 판단 전에 원문 공시(DART·EDINET·MOPS)로 교차 확인하세요. 삼성전기·LG이노텍·臻鼎 capex는 회사 전체 기준입니다. Ibiden 2019~23, Nan Ya 2023, 삼성전기 2024 capex는 확인하지 못해 비워 두었습니다. 업계 월 캐파(㎡/월) 절대치는 Prismark·Yole 유료 자료라 확인하지 못했습니다.
+  <ol>
+    <li>Ibiden 설비투자 공시 (2026-02) · Digitimes 2026-02-04 · TechNews 2025-09-22, 2026-05-14 · Newswitch</li>
+    <li>Unimicron: TaiwanNews, uanalyze, TechNews 2026-07-29, Digitimes · Nan Ya PCB: Fugle 2026-06-12, UDN · Kinsus: UDN/CTEE 2026-08</li>
+    <li>AT&amp;S IR 2026-06-13, 2026-08-04 · Evertiq 2026-07-02</li>
+    <li>삼성전기·LG이노텍: 헤럴드경제 2026-04-13, 뉴스토마토, 딜사이트, TrendForce 2026-08-27, 이데일리 2026-09-03 · 대덕전자: 증권사 리포트 2026-07/08</li>
+    <li>KGI(UDN 2026-07) · Goldman Sachs(TechNews 2026-02, 工商/旺得富 2026-09) · Morgan Stanley(鉅亨 2026-05) · BofA(CTEE 2026-08-24) · Counterpoint</li>
+    <li>TPCA/ITRI IEK 2026-09-10 · Yole 2025/2026 · Gartner·IDC·TrendForce 서버/PC · CNBC 하이퍼스케일러 실적</li>
+    <li>Ajinomoto: Digitimes 2026-05-13, TrendForce 2026-05-08 · Nittobo: TrendForce 2026-08-06 · Tom's Hardware(기판 사이즈)</li>
+  </ol>
+</footer>
+</div>
+
+<script>
+(function(){
+const css=()=>{const s=getComputedStyle(document.documentElement);const g=k=>s.getPropertyValue(k).trim();
+  return {ink:g('--ink'),mut:g('--mut'),line:g('--line'),panel:g('--panel'),mask:g('--mask'),cu:g('--cu'),up:g('--up'),warn:g('--warn'),
+  pal:['--c1','--c2','--c3','--c4','--c5','--c6','--c7','--c8'].map(g)};};
+const charts=[];
+function base(t){return {textStyle:{fontFamily:'IBM Plex Sans KR, sans-serif',color:t.ink},color:t.pal,
+  grid:{left:8,right:16,top:40,bottom:8,containLabel:true},
+  tooltip:{trigger:'axis',backgroundColor:t.panel,borderColor:t.line,textStyle:{color:t.ink,fontSize:12}},
+  legend:{top:0,type:'scroll',textStyle:{color:t.mut,fontSize:11.5},itemWidth:14,itemHeight:8,pageTextStyle:{color:t.mut}}};}
+const ax=(t,o={})=>Object.assign({axisLine:{lineStyle:{color:t.line}},axisTick:{show:false},axisLabel:{color:t.mut,fontSize:11},splitLine:{lineStyle:{color:t.line,type:'dashed'}}},o);
+
+const yrs=['2019','2020','2021','2022','2023','2024','2025','2026E','2027E','2028E'];
+// USD bn (환산 근사). 실적 idx<=6, 전망 idx>=7
+const capex={
+ 'Unimicron':[0.30,0.55,1.23,1.46,0.96,0.77,0.66,1.08,null,null],
+ 'Ibiden(FY)':[null,null,null,null,null,1.05,null,1.11,1.11,1.11],
+ '삼성전기(전사)':[null,null,null,null,0.98,null,0.85,1.79,2.14,2.14],
+ 'LG이노텍(전사)':[null,null,null,null,1.37,0.51,0.49,1.43,null,null],
+ 'AT&S(FY)':[null,null,null,1.10,null,0.46,0.20,1.23,null,null],
+ 'Kinsus':[null,null,null,0.33,0.32,null,null,0.44,0.51,null],
+ 'Nan Ya PCB':[null,null,0.28,0.50,null,0.11,0.14,0.35,null,null],
+ '臻鼎(그룹)':[null,null,null,null,null,null,null,2.06,null,null]
+};
+function build(){
+ const t=css();charts.forEach(c=>c.dispose());charts.length=0;
+ const mk=(id,opt)=>{const el=document.getElementById(id);const c=echarts.init(el,null,{renderer:'svg'});c.setOption(Object.assign(base(t),opt));charts.push(c);};
+ // 1 capex lines: split actual/forecast
+ const ser=[];Object.entries(capex).forEach(([n,a],i)=>{
+   const act=a.map((v,j)=>j<=6?v:null), fc=a.map((v,j)=>j>=6?(j===6&&a[7]!=null?v:(j>=7?v:null)):null);
+   ser.push({name:n,type:'line',data:act,connectNulls:true,symbolSize:6,lineStyle:{width:2.2},itemStyle:{color:t.pal[i]}});
+   ser.push({name:n,type:'line',data:fc,connectNulls:true,symbolSize:6,lineStyle:{width:2.2,type:'dashed'},itemStyle:{color:t.pal[i]},tooltip:{show:true}});
+ });
+ mk('chCapex',{legend:Object.assign(base(t).legend,{data:Object.keys(capex)}),tooltip:Object.assign(base(t).tooltip,{valueFormatter:v=>v==null?'–':'$'+v.toFixed(2)+'B'}),
+   xAxis:ax(t,{type:'category',data:yrs,splitLine:{show:false},boundaryGap:false}),yAxis:ax(t,{type:'value',name:'$B',nameTextStyle:{color:t.mut}}),series:ser});
+ mk('chAgg',{legend:{show:false},xAxis:ax(t,{type:'category',data:['2020~23 누적','2025~28 누적'],splitLine:{show:false}}),yAxis:ax(t,{type:'value'}),
+   series:[{type:'bar',barWidth:'42%',data:[{value:12.7,itemStyle:{color:t.mut}},{value:19.1,itemStyle:{color:t.cu}}],label:{show:true,position:'top',color:t.ink,fontFamily:'IBM Plex Mono',formatter:p=>'$'+p.value+'B'}}]});
+ const c26=[['臻鼎(그룹)',null,2.06],['삼성전기',0.85,1.79],['LG이노텍',0.49,1.43],['AT&S',0.20,1.23],['Ibiden',1.05,1.11],['Unimicron',0.66,1.08],['Kinsus',null,0.44],['Nan Ya PCB',0.14,0.35]].reverse();
+ mk('chCapex26',{grid:{left:8,right:40,top:30,bottom:8,containLabel:true},xAxis:ax(t,{type:'value'}),yAxis:ax(t,{type:'category',data:c26.map(r=>r[0]),splitLine:{show:false}}),
+   tooltip:Object.assign(base(t).tooltip,{valueFormatter:v=>v==null?'–':'$'+v+'B'}),
+   series:[{name:'2025 실적',type:'bar',data:c26.map(r=>r[1]),itemStyle:{color:t.mut}},{name:'2026 계획',type:'bar',data:c26.map(r=>r[2]),itemStyle:{color:t.cu},label:{show:true,position:'right',color:t.ink,fontSize:11,formatter:p=>p.value}}]});
+ // area multiples
+ const am=[['Kyocera 센다이 유기PKG',4.5,'vs 현재'],['Toppan FC-BGA (FY27 vs FY22)',2.5,''],['Ibiden AI 면적 (2028 vs 2024)',2.5,''],['KGI 업계 월캐파 면적 (2028 vs 2025)',1.86,''],['Shinko FC (FY25 vs FY22)',1.5,''],['대덕 FC-BGA 매출캐파 (1H27)',1.44,''],['Kinsus ABF 개수 (2027)',1.25,'']].reverse();
+ mk('chArea',{legend:{show:false},grid:{left:8,right:44,top:10,bottom:8,containLabel:true},xAxis:ax(t,{type:'value',min:0}),yAxis:ax(t,{type:'category',data:am.map(r=>r[0]),splitLine:{show:false},axisLabel:{color:t.mut,fontSize:10.5}}),
+   series:[{type:'bar',data:am.map(r=>({value:r[1],itemStyle:{color:r[0].startsWith('KGI')?t.cu:t.mask}})),barWidth:'55%',label:{show:true,position:'right',color:t.ink,fontFamily:'IBM Plex Mono',formatter:p=>p.value+'×'}}]});
+ mk('chIbiden',{legend:{show:false},xAxis:ax(t,{type:'category',data:['2024','2026','2027','2028'],splitLine:{show:false}}),yAxis:ax(t,{type:'value',min:0}),
+   series:[{type:'bar',barWidth:'46%',data:[{value:1.0,itemStyle:{color:t.mut}},{value:1.8,itemStyle:{color:t.mask}},{value:2.5,itemStyle:{color:t.mask}},{value:2.45,itemStyle:{color:t.cu}}],
+   label:{show:true,position:'top',color:t.ink,fontFamily:'IBM Plex Mono',formatter:p=>p.value+'×'}}]});
+ // market
+ const my=['2021','2022','2023','2024','2025','2026','2027','2028'];
+ const ms=[null,null,null,null,7.72,8.96,10.41,12.08], gs=[null,null,null,null,7.72,12.51,20.26,33.0];
+ mk('chMarket',{tooltip:Object.assign(base(t).tooltip,{valueFormatter:v=>v==null?'–':'$'+v+'B'}),xAxis:ax(t,{type:'category',data:my,splitLine:{show:false}}),yAxis:ax(t,{type:'value',name:'$B',nameTextStyle:{color:t.mut}}),
+   series:[{name:'IC 기판 전체 (TPCA)',type:'bar',data:[16.4,17.84,13.5,12.45,14.75,19.51,null,null],itemStyle:{color:t.line},barGap:'-100%',barWidth:'56%'},
+           {name:'ABF 실적 (TPCA)',type:'bar',data:[7.7,9.66,7.16,6.51,7.72,null,null,null],itemStyle:{color:t.mask},barWidth:'56%'},
+           {name:'ABF — MS 경로 (16.1%)',type:'line',data:ms,lineStyle:{type:'dashed',width:2},itemStyle:{color:t.pal[2]},symbolSize:6},
+           {name:'ABF — GS 경로 (62%)',type:'line',data:gs,lineStyle:{type:'dashed',width:2.4},itemStyle:{color:t.cu},symbolSize:6,label:{show:true,position:'top',color:t.cu,fontFamily:'IBM Plex Mono',fontSize:11,formatter:p=>p.dataIndex===7?'$33B':''}}]});
+ mk('chMix',{tooltip:Object.assign(base(t).tooltip,{valueFormatter:v=>v+'%'}),xAxis:ax(t,{type:'category',data:['2025 (금액)','2028E (면적)'],splitLine:{show:false}}),yAxis:ax(t,{type:'value',max:100}),
+   series:[['AI GPU·ASIC',[24,59],t.cu],['서버CPU·네트워크',[25,25],t.mask],['PC·기타',[51,16],t.mut]].map(([n,d,c])=>({name:n,type:'bar',stack:'m',data:d,barWidth:'46%',itemStyle:{color:c},label:{show:true,color:t.panel,fontWeight:600,formatter:p=>p.value+'%'}}))});
+ mk('chHyper',{legend:{show:false},xAxis:ax(t,{type:'category',data:['2023','2024','2025','2026G','2027E'],splitLine:{show:false}}),yAxis:ax(t,{type:'value'}),
+   series:[{type:'bar',barWidth:'50%',data:[150,240,415,725,1000].map((v,i)=>({value:v,itemStyle:{color:i>=3?t.cu:t.mask}})),label:{show:true,position:'top',color:t.ink,fontFamily:'IBM Plex Mono',formatter:p=>'$'+p.value+(p.dataIndex===4?'+':'')}}]});
+ mk('chCowos',{legend:{show:false},xAxis:ax(t,{type:'category',data:['2024','2025','2026E','2027E','2028E'],splitLine:{show:false}}),yAxis:ax(t,{type:'value'}),
+   series:[{type:'line',areaStyle:{opacity:.15},data:[37.5,77.5,130,185,260],itemStyle:{color:t.mask},lineStyle:{width:2.5},symbolSize:7,label:{show:true,position:'top',color:t.ink,fontFamily:'IBM Plex Mono',formatter:p=>p.value+'k'}}]});
+ mk('chShip',{legend:{show:false},grid:{left:8,right:40,top:10,bottom:8,containLabel:true},xAxis:ax(t,{type:'value'}),yAxis:ax(t,{type:'category',data:['PC (IDC)','서버 전체 (Gartner)','AI 서버 (TrendForce)','AI 서버 (Gartner)','커스텀 ASIC'].reverse(),splitLine:{show:false}}),
+   series:[{type:'bar',barWidth:'55%',data:[-11.3,11.6,31,55.9,44.6].reverse().map(v=>({value:v,itemStyle:{color:v<0?t.pal[2]:t.cu}})),label:{show:true,position:'right',color:t.ink,fontFamily:'IBM Plex Mono',formatter:p=>(p.value>0?'+':'')+p.value+'%'}}]});
+ // size
+ const sz=[['PC CPU',1600,'8~12L'],['H100',3190,'16~20L'],['MI300X',5530,'16~20L'],['B200',6400,'18~20L+'],['Rubin (E)',11200,'20~22L+'],['TSMC 2027 (12×HBM4E)',14400,'22L+']];
+ mk('chSize',{legend:{show:false},xAxis:ax(t,{type:'category',data:sz.map(r=>r[0]),splitLine:{show:false},axisLabel:{color:t.mut,fontSize:11,interval:0}}),yAxis:ax(t,{type:'value',name:'mm²',nameTextStyle:{color:t.mut}}),
+   tooltip:Object.assign(base(t).tooltip,{formatter:ps=>{const r=sz[ps[0].dataIndex];return `${r[0]}<br>${r[1].toLocaleString()} mm² · ${(r[1]/1600).toFixed(1)}× · ${r[2]}`;}}),
+   series:[{type:'bar',barWidth:'52%',data:sz.map((r,i)=>({value:r[1],itemStyle:{color:i===0?t.mut:(i>=4?t.cu:t.mask)}})),label:{show:true,position:'top',color:t.ink,fontSize:11,fontFamily:'IBM Plex Mono',formatter:p=>(sz[p.dataIndex][1]/1600).toFixed(1)+'× · '+sz[p.dataIndex][2]}}]});
+ // gap
+ mk('chGap',{tooltip:Object.assign(base(t).tooltip,{valueFormatter:v=>v==null?'–':v+'%'}),xAxis:ax(t,{type:'category',data:['2026','2027','2028'],splitLine:{show:false},boundaryGap:false}),yAxis:ax(t,{type:'value'}),
+   series:[['GS (2026-09)',[14,34,51],t.cu],['GS (2026-02)',[10,21,42],t.pal[4]],['KGI',[null,22,29],t.pal[3]],['MS',[-1.5,22,29],t.pal[2]],['BofA (2026-08)',[7,14,19],t.mask],['Counterpoint',[10,20,null],t.pal[5]]]
+   .map(([n,d,c])=>({name:n,type:'line',data:d,itemStyle:{color:c},lineStyle:{width:n.startsWith('GS (2026-09')?3:2},symbolSize:6,connectNulls:true}))});
+ mk('chUtil',{legend:{show:false},grid:{left:8,right:40,top:10,bottom:8,containLabel:true},xAxis:ax(t,{type:'value',min:60,max:100}),yAxis:ax(t,{type:'category',data:['Nan Ya PCB ABF','삼성전기 기판','Unimicron ABF','LG이노텍 기판','Kinsus ABF'],splitLine:{show:false}}),
+   series:[{type:'bar',barWidth:'55%',data:[85,89,90,94,95].map(v=>({value:v,itemStyle:{color:v>=90?t.cu:t.mask}})),label:{show:true,position:'right',color:t.ink,fontFamily:'IBM Plex Mono',formatter:p=>p.value+'%'+(p.dataIndex===2?'+':'')}}]});
+}
+build();
+let rt;addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>charts.forEach(c=>c.resize()),120);});
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',build);
+new MutationObserver(build).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+})();
+</script>
+</html>
