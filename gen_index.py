@@ -42,6 +42,7 @@ ITEMS = [
     ("llm-tokens.html", "🤖 LLM 토큰 사용량", "OpenRouter 주간 모델별 토큰 + Silicon Data Token Expenditure Index — AI 수요 프록시", True),
     ("solar-price.html", "☀️ 태양광 밸류체인 스팟가격", "폴리실리콘·웨이퍼·셀·모듈 주간 스팟 — EnergyTrend+InfoLink, Wayback 과거 복원", True),
     ("parts-trend.html", "📦 전자부품 리드타임 트렌드", "Future Electronics 월간 — 카테고리별 리드타임·가격 방향", True),
+    ("abf-substrate.html", "🧩 ABF 기판 capex·수요 전망", "글로벌 12사 capex 금액·공장 면적·생산능력 추이(FY22~28) · AI/서버/PC 전방 수요·공급갭·가격 (2026-09-29 심층보고서)", True),
     ("fx-flow.html", "💱 환율×외국인 수급 공식", "원화 1% 절하당 외국인 순매도 효과", True),
     ("fx-flow-5y.html", "💱 환율×수급 5개년 백테스트", "연도별·환율구간별 민감도 매트릭스", True),
     ("gunny-score.html", "🏅 기업분석 채점 리스트", "gunny_bot 종합의견 10점 기준 — 전수조사+질의 채점 (국내)", False),

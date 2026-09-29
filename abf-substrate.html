@@ -1,0 +1,509 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>🧩 ABF 기판 capex·수요 전망</title>
+<meta name="description" content="글로벌 ABF(FC-BGA) 기판 12사 capex·공장 면적·생산능력 추이(FY22~28)와 AI/서버/PC 전방 수요·공급갭·가격 — 2026-09-29 심층보고서 인포그래픽">
+<style>
+:root{color-scheme:light;
+ --page:#f9f9f7;--surface-1:#fcfcfb;--surface-2:#f3f2ee;--text-primary:#0b0b0b;--text-secondary:#52514e;--muted:#898781;
+ --grid:#e1e0d9;--axis:#c3c2b7;--border:rgba(11,11,11,.10);--accent:#2a78d6;--accent-soft:rgba(42,120,214,.10);
+ --s1:#2a78d6;--s2:#eb6834;--s3:#1baf7a;--s4:#eda100;--s5:#e87ba4;--s6:#008300;--s7:#4a3aa7;--s8:#e34948;
+ --o1:#86b6ef;--o2:#5598e7;--o3:#2a78d6;--o4:#184f95;--decal:rgba(0,0,0,.30);
+ --good:#006300;--bad:#d03b3b}
+@media (prefers-color-scheme:dark){:root:where(:not([data-theme="light"])){color-scheme:dark;
+ --page:#0d0d0d;--surface-1:#1a1a19;--surface-2:#222221;--text-primary:#ffffff;--text-secondary:#c3c2b7;--muted:#898781;
+ --grid:#2c2c2a;--axis:#383835;--border:rgba(255,255,255,.10);--accent:#3987e5;--accent-soft:rgba(57,135,229,.16);
+ --s1:#3987e5;--s2:#d95926;--s3:#199e70;--s4:#c98500;--s5:#d55181;--s6:#008300;--s7:#9085e9;--s8:#e66767;
+ --o1:#6da7ec;--o2:#3987e5;--o3:#256abf;--o4:#184f95;--decal:rgba(0,0,0,.38);--good:#0ca30c;--bad:#e66767}}
+:root[data-theme="dark"]{color-scheme:dark;
+ --page:#0d0d0d;--surface-1:#1a1a19;--surface-2:#222221;--text-primary:#ffffff;--text-secondary:#c3c2b7;--muted:#898781;
+ --grid:#2c2c2a;--axis:#383835;--border:rgba(255,255,255,.10);--accent:#3987e5;--accent-soft:rgba(57,135,229,.16);
+ --s1:#3987e5;--s2:#d95926;--s3:#199e70;--s4:#c98500;--s5:#d55181;--s6:#008300;--s7:#9085e9;--s8:#e66767;
+ --o1:#6da7ec;--o2:#3987e5;--o3:#256abf;--o4:#184f95;--decal:rgba(0,0,0,.38);--good:#0ca30c;--bad:#e66767}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;overflow-x:hidden}
+body{background:var(--page);color:var(--text-primary);font-family:system-ui,-apple-system,"Apple SD Gothic Neo","Segoe UI","Noto Sans KR",sans-serif;line-height:1.6;font-size:15px}
+.wrap{max-width:1100px;margin:0 auto;padding:28px 16px 64px}
+header.top{margin-bottom:18px}
+h1{font-size:1.5rem;margin:0 0 6px;letter-spacing:-.01em;font-weight:800}
+.sub{color:var(--text-secondary);font-size:.86rem;margin:0}
+.lead{background:var(--surface-1);border:1px solid var(--border);border-radius:14px;padding:16px 18px;margin:16px 0 8px;font-size:.93rem;line-height:1.75}
+.lead b{font-weight:700}
+nav.toc{display:flex;gap:6px;flex-wrap:wrap;margin:14px 0 4px;font-size:.8rem}
+nav.toc a{color:var(--text-secondary);text-decoration:none;border:1px solid var(--border);background:var(--surface-1);border-radius:999px;padding:4px 11px}
+nav.toc a:hover{border-color:var(--accent);color:var(--accent)}
+h2{font-size:1.12rem;margin:40px 0 4px;padding-left:10px;border-left:4px solid var(--accent);font-weight:800}
+h3{font-size:.95rem;margin:22px 0 6px;font-weight:700}
+.desc{color:var(--text-secondary);font-size:.84rem;margin:0 0 12px}
+.card{background:var(--surface-1);border:1px solid var(--border);border-radius:14px;padding:16px 16px 12px;margin:0 0 14px}
+.card h3{margin:0 0 2px}
+.card .en{color:var(--muted);font-size:.74rem;margin:0 0 10px}
+.chart{width:100%;height:380px}
+.chart.tall{height:520px}
+.chart.short{height:300px}
+.note{color:var(--muted);font-size:.76rem;margin:8px 0 0;line-height:1.6}
+.note b{color:var(--text-secondary);font-weight:600}
+/* stat tiles */
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin:14px 0 6px}
+.tile{background:var(--surface-1);border:1px solid var(--border);border-radius:14px;padding:14px 16px 12px}
+.tile .lbl{font-size:.78rem;color:var(--text-secondary);margin-bottom:6px}
+.tile .val{font-size:1.75rem;font-weight:800;letter-spacing:-.02em;line-height:1.15}
+.tile .val small{font-size:.95rem;font-weight:600;color:var(--text-secondary);margin-left:2px}
+.tile .cap{font-size:.72rem;color:var(--muted);margin-top:6px;line-height:1.5}
+.mini{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin:8px 0 12px}
+.mini .tile{padding:10px 14px}
+.mini .val{font-size:1.35rem}
+/* tables */
+.tblwrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin-top:8px}
+table{border-collapse:collapse;width:100%;font-size:.82rem}
+th,td{padding:8px 14px;border-bottom:1px solid var(--grid);text-align:left;vertical-align:top;white-space:nowrap}
+th{background:var(--surface-2);color:var(--text-secondary);font-weight:600;position:sticky;top:0}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+th:last-child,td:last-child{padding-right:30px}
+td.wrap-cell{white-space:normal;min-width:220px;max-width:420px}
+td.src{white-space:normal;min-width:260px;max-width:380px;color:var(--text-secondary);font-size:.76rem}
+.na{color:var(--muted);font-weight:400}
+sup.st{font-size:.68em;color:var(--muted);margin-left:2px;font-weight:600}
+th.sortable{cursor:pointer;user-select:none}
+th.sortable .arr{display:inline-block;margin-left:4px;font-size:inherit;color:inherit;opacity:.35}
+th.sortable.on .arr{opacity:1}
+tr.noterow td{white-space:normal;color:var(--text-secondary);font-size:.78rem;background:var(--surface-2);padding:8px 14px 10px 24px}
+button.exp{border:1px solid var(--border);background:transparent;color:var(--text-secondary);border-radius:6px;font-size:.72rem;padding:1px 7px;cursor:pointer;margin-left:6px}
+button.exp:hover{border-color:var(--accent);color:var(--accent)}
+.ctrl{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:0 0 8px}
+.ctrl button{border:1px solid var(--border);background:var(--surface-2);color:var(--text-secondary);border-radius:8px;font-size:.76rem;padding:4px 11px;cursor:pointer}
+.ctrl button.on{background:var(--accent-soft);color:var(--accent);border-color:var(--accent)}
+.ctrl .hint{font-size:.72rem;color:var(--muted);margin-left:auto}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.two>.card{min-width:0}
+@media(max-width:800px){.two{grid-template-columns:1fr}}
+ol.bul{padding-left:1.2em;margin:8px 0}
+ol.bul li{margin:10px 0;font-size:.9rem;line-height:1.7}
+ol.bul li b{font-weight:700}
+footer{margin-top:48px;color:var(--text-secondary);font-size:.8rem;border-top:1px solid var(--grid);padding-top:14px;line-height:1.7}
+footer a{color:var(--accent)}
+.srcs{columns:2;column-gap:28px;font-size:.74rem;color:var(--muted);margin:8px 0}
+@media(max-width:640px){.srcs{columns:1}.chart{height:340px}.chart.tall{height:560px}h1{font-size:1.28rem}}
+.notion{display:inline-block;margin-top:6px;padding:6px 12px;border:1px solid var(--accent);border-radius:8px;text-decoration:none;font-weight:600}
+</style></head><body><div class="wrap">
+<header class="top">
+<h1>🧩 ABF 기판 capex·수요 전망</h1>
+<p class="sub">글로벌 ABF(FC-BGA) 기판 12사 capex 금액·공장 면적·생산능력 추이(FY22~28) · AI/서버/PC 전방 수요 · 공급갭 · 가격 — <b>기준일 2026-09-29</b> 심층보고서 인포그래픽</p>
+</header>
+<div class="lead"><b>25조원을 증설해도 2028년까지 부족이 굳어진다.</b> 2026년 한 해에 Ibiden ¥5,000억·삼성전기 6.78조원·Unimicron NT$537억·Nan Ya NT$468억·AT&amp;S €15~20억·Kinsus NT$140~200억/년의 증설이 확정됐고 업계 2025~28 capex는 US$191억에 이르지만, Goldman·BofA·대만 브로커 어느 기관도 2027~28년 균형 회복을 모델링하지 않는다. 수요가 유닛이 아니라 <b>면적</b>으로 늘고(패널당 취득 수 270→20개), 신규 Capa 대부분이 2027년 하반기~2028년에 가동되며, 병목이 기판 공장에서 ABF 필름·T-glass·진공 라미네이터로 이동했기 때문이다.</div>
+<nav class="toc"><a href="#s1">핵심 지표</a><a href="#s2">Capex 추이</a><a href="#s3">공장 면적·Capa</a><a href="#s4">생산능력 지수</a><a href="#s5">전방 수요</a><a href="#s6">공급-수요 갭·가격</a><a href="#s7">투자 시사점</a></nav>
+
+<h2 id="s1">1. 핵심 지표</h2>
+<div class="tiles" id="tiles"></div>
+<p class="note">표기: <b>(A)</b>=실적/공시 · <b>(G)</b>=회사 가이던스·이사회 결의 · <b>(E)</b>=애널리스트·매체 추정. 환율 가정(원문에 USD가 없을 때만): ¥150/USD · US$1.15/€ · NT$31.5/USD · RMB 7.1/USD · KRW 1,450/USD. Ibiden·AT&amp;S·Ajinomoto는 3월 결산(FY2026 = 2026-04~2027-03), 그 외 역년.</p>
+
+<h2 id="s2">2. Capex 추이·전망 (FY2022~2028)</h2>
+<p class="desc">회사별 연도 capex를 위 환율 가정으로 <b>US$ bn</b>으로 환산해 한 축에 쌓았다. 미공개 연도는 0이 아니라 공백이므로 연도 합계는 <b>공개분 합계</b>다. 빗금 = 애널리스트·계산 추정(E). 아래 표는 현지통화 원값.</p>
+<div class="card"><h3>회사별 Capex (US$ bn 환산, 누적막대)</h3><p class="en">Ibiden·AT&amp;S는 3월 결산 FY · 드래그/휠로 구간 확대, 슬라이더로 이동 · 툴팁에 (A)/(G)/(E) 표기</p>
+<div id="c-capex" class="chart"></div>
+<p class="note">FY22 열의 삼성전기(1.9조, 2021~22 누계)·LG이노텍(0.413조, 2022-02~2024-04 누계)·대덕전자(2,700억, 2022-04 공시)·코리아써키트(2,000억, 2021~22)는 다년 누계다. 삼성전기 2026~28은 메리츠 실투자 ~10조의 20·60·20% 배분(E). 기타 = ZDT(IC기판 배정분)·Nan Ya PCB·코리아써키트·Ajinomoto. Shinko(비상장화)·중국 진입자·글라스 진영·업계 합계는 연도별 값이 없어 차트에서 제외(표 참조).</p></div>
+<div class="card"><h3>Capex 통합표 (현지통화 원값)</h3><p class="en">헤더 클릭 정렬: 1회 내림차순 · 2회 오름차순 · 3회 원래 순서 — 연도 열 정렬은 USD 환산 기준 · 회사명 옆 ⓘ = 프로그램 비고</p>
+<div class="tblwrap"><table id="t-capex"></table></div></div>
+
+<h2 id="s3">3. 공장 면적·생산능력</h2>
+<p class="desc">공장별 부지·연면적(GFA)·층수·생산능력. <span class="na">미공개</span>는 회사가 공표하지 않았거나 확인되지 않은 값이다. 업계 전체를 ㎡/월로 집계한 공개 표는 어디에도 없다.</p>
+<div class="card"><h3>부지·연면적 비교 (㎡, 수치 공개 공장)</h3><p class="en">세종·베트남·Kulim 부지는 사업장/캠퍼스 전체 · Nan Ya 樹林은 미검증 · ZDT 淮安(1.26M㎡, PCB 전체)은 ABF 공장이 아니어서 제외</p>
+<div id="c-plants" class="chart tall"></div></div>
+<div class="card"><h3>공장별 면적·생산능력 표</h3><p class="en">부지·연면적·층수 열 정렬 가능</p>
+<div class="tblwrap"><table id="t-plants"></table></div></div>
+
+<h2 id="s4">4. 생산능력 지수</h2>
+<p class="desc">단위가 다른 Capa 지표(지수·개/월·㎡/년)를 <b>기준연도=100</b>으로 통일해 한 축에 그렸다. 모든 시리즈에 2026 값이 있어 기본은 <b>2026=100</b>이며, 버튼으로 각 시리즈의 첫 해=100으로 바꿀 수 있다. 기준연도가 시리즈마다 다르면 절대 수준 비교는 불가하고 기울기만 비교해야 한다.</p>
+<div class="card"><div class="ctrl" id="idx-ctrl"><button data-m="2026" class="on">2026 = 100</button><button data-m="first">각 시리즈 첫 해 = 100</button><span class="hint">드래그/휠 확대 · 슬라이더 이동</span></div>
+<div id="c-capa" class="chart"></div>
+<p class="note">Ibiden 수요지수(SAP 환산, 회사 추정)는 <b>수요</b>이고 나머지는 <b>공급 Capa</b>다. Kinsus는 개(顆) 단위라 대면적 믹스 시 면적 성장을 과소 표시한다. 삼성전기 베트남은 허가 기준 ㎡/년(현재 63,000㎡/월과 불일치). Ajinomoto는 ABF 필름 ㎡/월(브로커 추정).</p></div>
+<div class="card"><h3>생산능력·매출 Capa 원자료</h3><div class="tblwrap"><table id="t-capa"></table></div></div>
+
+<h2 id="s5">5. 전방 수요</h2>
+<p class="desc">AI 가속기(GPU+ASIC)가 2028년 ABF 면적 수요의 59%(대만 브로커/TF)·2030년 75%(MS)로 커지고, PC는 2026년 −11.3%(IDC)로 축소된다. 서버 CPU(에이전틱 AI)와 NVSwitch(랙당 18→36개)가 제3의 수요축이다.</p>
+<div class="card"><h3>(a) 전방 수요처 구성 (%, 기관별·연도별)</h3><p class="en">기관마다 분모가 다르다(수요·면적·Capa 소비·Unimicron 매출) · 기타·미분류 = 100 − 공개 비중(역산)</p>
+<div id="c-mix" class="chart short"></div>
+<p class="note">대만 브로커/TF 2028은 "서버+네트워킹 합산 25%"만 공개돼 서버 CPU와 네트워크를 분리하지 않았다. Goldman 2028은 글로벌 ABF Capa 소비 비중(AI 45%·서버 CPU 17%), Unimicron 2025는 자사 기판 매출 내 AI 비중(2026 60%+).</p></div>
+<div class="card"><h3>(b) 시장규모 전망 — 기관별 (US$ bn)</h3><p class="en">실선 = ABF 전용 · 점선 = BT 포함 IC기판 전체/고급 IC기판 · 단일 연도만 있는 기관은 점으로 표시 · 스코프가 달라 합산·연결 금지</p>
+<div id="c-mkt" class="chart"></div>
+<div class="mini" id="cagr"></div>
+<p class="note">가치 CAGR 16%(MS)와 면적 CAGR 39%(대만 브로커)의 차이는 스코프(전체 vs 하이엔드) 차이로 해석하는 것이 현재 가격 상승과 부합한다. 두 수치를 합쳐 하나의 전망으로 쓰면 안 된다.</p></div>
+<div class="card"><h3>(c) 유닛·출하 지표</h3><div class="tblwrap"><table id="t-units"></table></div></div>
+<div class="two">
+<div class="card"><h3>(d) 칩당 기판 면적 (PC CPU 40×40mm = 1.0)</h3><p class="en">막대 끝 라벨 = 배수 · 패키지 치수 · 층수</p>
+<div id="c-area" class="chart short"></div>
+<p class="note">Nvidia Feynman(2028E)은 치수 미공개, 메리츠 "2026 대비 면적 3~5배". H100 120×120mm 표기는 SXM 모듈 추정과 상충. 층수 가중 시 Rubin Ultra는 서버 CPU의 ~13×.</p></div>
+<div class="card"><h3>515×515mm 패널당 취득 수</h3><p class="en">메리츠 2026-09-29 표2 — 패키지가 커질수록 명목 Capa의 실효 환산이 급감</p>
+<div class="tblwrap"><table id="t-panel"></table></div>
+<p class="note">40×40mm CPU(1,600㎟)급 270개 → Rubin 100×100mm(10,000㎟) 20개. 명목 Capa +30~40%가 실효 공급으로는 훨씬 작게 반영되는 이유.</p></div>
+</div>
+
+<h2 id="s6">6. 공급-수요 갭 · 가격·리드타임</h2>
+<p class="desc"><b>부호 규약: 음수 = 부족(수요 대비 공급 부족분 %), 양수 = 과잉.</b> 2H26 열은 기관에 따라 2026 연간 값. 모든 기관이 2027년 부족 전환과 2028년 확대에 동의한다.</p>
+<div class="card"><h3>기관별 공급 갭 전망 (%)</h3><p class="en">막대가 왼쪽(0 미만)이면 부족 · 색 농도 = 시점(2H26 → 2030) · Ibiden 자체 지수(수요 140/180/220 vs Capa 1.7/2.0/2.3~2.8)는 %가 아니어서 제외</p>
+<div id="c-gap" class="chart"></div>
+<p class="note">2028 갭이 −19%(BofA)~−51%(Goldman)로 벌어지는 이유는 스코프(하이엔드 vs 전체)와 Rubin Ultra 시점·ASIC 램프·수율 조정 가정 차이. 2021~22년 1차 부족은 수요의 ~20%였다.</p></div>
+<div class="card"><h3>가격·리드타임 변화</h3><div class="tblwrap"><table id="t-price"></table></div></div>
+
+<h2 id="s7">7. 투자 시사점 · 확인 포인트</h2>
+<div class="card"><ol class="bul">
+<li><b>2H26~2027은 가동률·가격 동시 상승 국면, 신규 Capa는 거의 들어오지 않는다.</b> Ibiden Cell 6/8(FY27 순차)·Unimicron 光復2(2H27)·삼성전기 세종(2028-09)·Nan Ya(2028+)·Kinsus 幼獅(2027) 모두 2027년 하반기 이후. 수혜 순서 = 하이엔드 인증 Capa 보유 순(Ibiden·Unimicron·삼성전기 &gt; Kinsus·Nan Ya·AT&amp;S &gt; 대덕·LG이노텍·코리아써키트).</li>
+<li><b>이번 Capex는 고객이 70% 안팎을 선불하고 최소가동률을 보장하는 구조다.</b> 삼성전기 70%+, AT&amp;S 전액, Unimicron "선수금이 두 공장 건설비 초과". 헤드라인 Capex보다 <b>선수금 부채 잔액과 계약 종료 시점(2029~31)</b>을 봐야 하며, 자체 현금 투자인 대덕전자(8,500억)·LTA 확보 전 LG이노텍은 2028 수요 지속성에 더 민감하다.</li>
+<li><b>2028년은 신규 Capa 가동과 갭 정점(−19~−51%)이 겹치는 분기점이다.</b> 수요가 유지되면 2029~30 완화, 꺾이면 2023~25년형 과잉 재현. 판단 변수는 Rubin Ultra·Feynman 면적 3~5배 로드맵, ASIC 3배·CPU 1:1 이동, CoWoS 26만 wpm. 메리츠 하방(AI 시스템 수요 절반이어도 면적 수요 1.5~2배)이 2차 사이클이 방어적인 이유.</li>
+<li><b>병목이 기판 Capa에서 소재·장비로 이동해 Ajinomoto·Nittobo·장비사의 가격 결정력이 더 오래간다.</b> 필름 +50% Capa(2030)는 Ibiden 수요지수 +120%(2028)를 따라가지 않고 가격(3Q26 +30%)·배정으로 조절. "소재 확보력 = 생산능력" — 소재 계약을 먼저 잠근 Ibiden·Unimicron이 2027 실출하에서 앞선다.</li>
+<li><b>밸류에이션은 2027년 이익 기준으로 이미 재평가됐다.</b> 삼성전기 목표주가에 Ibiden·Unimicron 2027 PER 35.4→39.5배 적용, 대덕 2027 PER 23배 vs 피어 28배. 2H27부터는 <b>증설 발표보다 가동률·수율(대덕 라지바디 70%, Unimicron EMIB-T 50%)·선수금 잔액</b>이 주가 변수.</li>
+</ol></div>
+<div class="card"><h3>확인 포인트 체크리스트</h3><div class="tblwrap"><table id="t-check"></table></div></div>
+
+<footer>
+<div><b>출처</b> (기관·일자, 본문 데이터 필드에서 자동 집계)</div>
+<div class="srcs" id="srcs"></div>
+<div>작성일 2026-09-29 · 데이터 파일 기준 · 표기 (A)/(G)/(E) · 상충 수치는 표의 비고에 병기</div>
+<div><a class="notion" href="https://app.notion.com/p/ABF-capex-2026-09-29-3ea8e39b22a181b89b42c0d1cb6b5423">📄 노션 전문 보고서 보기</a></div>
+<div class="note" style="margin-top:12px">⚠️ 업계 전체를 ㎡/월로 집계한 총량 표는 TrendForce·Prismark·TPCA·브로커 어디에도 공개되지 않아, 본 페이지는 면적 절대치 대신 회사 지수·유닛·매출 Capa를 병기한다. Shinko 2026~28 capex(비상장), Nan Ya 2023~24, Unimicron 2025 실적, Ibiden Ono·Gama GFA, 세종·베트남 신공장 연면적은 미공개다. 차트 색상은 dataviz 팔레트 검증(light/dark) 통과값.</div>
+</footer>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
+<script>
+const D = {"meta":{"asof":"2026-09-29","fx_assumptions":"¥150/USD, US$1.15/€, NT$31.5/USD, RMB 7.1/USD, KRW 1,450/USD (원문에 USD가 없을 때만 적용). Ibiden·AT&S·Ajinomoto는 3월 결산(FY2026 = 2026-04~2027-03), 그 외 역년.","label_convention":"A = 실적/공시, G = 회사 가이던스·이사회 결의, E = 애널리스트·매체 추정. null = 미공개/미확인.","report_path":"/Users/gun/reports/ABF 기판 capex와 수요 전망.md"},"capex":[{"company":"Ibiden","country":"JP","currency":"JPY bn (FY, 3월 결산)","series":{"2022":null,"2023":null,"2024":157.3,"2025":64.3,"2026":210.0,"2027":null,"2028":null},"usd_bn_total_program":3.3,"program_note":"FY26~28 ¥500bn (G 2026-02): Gama Cell6 ¥220bn(AI ASIC) + Ono Cell8 잔여 절반 ¥280bn(AI GPU), FY27 순차 양산. FY24·FY25는 설명회 차트 실적(A); FY25는 결산단신 ¥106.1bn과 상충(인식기준 차이). FY26 ¥210bn 계획(전자 ¥200bn). FY27~28은 차트상 FY26 초과이나 수치 미공개.","source":"Ibiden FY25 설명회 2026-05-12; Ibiden 공시 2026-02-03; MarketScreener 2026-05-11"},{"company":"Shinko","country":"JP","currency":"JPY bn","series":{"2022":null,"2023":null,"2024":null,"2025":null,"2026":null,"2027":null,"2028":null},"usd_bn_total_program":0.93,"program_note":"¥140bn FY22~25 프로그램(G 2021-10, 연평균 ~¥35bn) → FC 패키지 Capa +50%, 千曲 신공장 2H FY24 가동. 2025-06 JIC 비상장화 이후 2026~28 Capex 미공개.","source":"Shinko 2021-10-04"},{"company":"AT&S","country":"AT/MY","currency":"EUR m (FY, 3월 결산; 2024=FY24/25)","series":{"2022":null,"2023":null,"2024":415,"2025":178,"2026":1100,"2027":null,"2028":null},"usd_bn_total_program":2.0,"program_note":"FY24/25 순투자 €415m(A), FY25/26 €178m(A). FY26/27 가이던스 €400m(2026-05) → €1,000~1,200m(2026-06-15; 표기값은 중간값 1,100). Kulim 확장 €1.5~2.0bn(≈US$1.7~2.3bn, 표기값 중간값) 고객(AMD+1사) 선수금으로 전액 커버. FY27/28 미공개(잔여 €0.5~1.2bn 추정).","source":"AT&S IR 2026-06-15; AT&S FY결산 2026-05"},{"company":"Ajinomoto Fine-Techno (ABF 필름)","country":"JP","currency":"JPY bn","series":{"2022":null,"2023":null,"2024":null,"2025":null,"2026":1.2,"2027":null,"2028":null},"usd_bn_total_program":0.17,"program_note":"2023~2030 ¥25bn+ (G 2025-03) → ABF Capa +50%; 1차 群馬 昭和 바니시 공장 2025-03 완공. 2026-05 岐阜 可児 토지 ¥1.2bn(A) 매입 → 2028 착공, 2032 가동. 연도별 Capex 미공개.","source":"Nikkei 2025-03; Ajinomoto 2026-05-07"},{"company":"Unimicron","country":"TW","currency":"TWD bn","series":{"2022":38.9,"2023":35.4,"2024":24.2,"2025":19.5,"2026":53.7,"2027":null,"2028":null},"usd_bn_total_program":5.6,"program_note":"2022 감액 후 예산(G), 2023 가이던스(G), 2024 상한 17.3→24.2(G), 2025 ~19~20 역산(E), 2026 19.4→25.4→34→53.7(G 2026-07-29, 증액분 70~85% ABF). 2022~26 누적 ~NT$175~180bn(E ≈US$5.6bn). 光復2 NT$30~40bn 포함; 2027 ABF Capa +30~40% 목표.","source":"TechNews 2026-07-29; 工商時報 2026-02-26; cnyes 2023-02"},{"company":"Nan Ya PCB","country":"TW","currency":"TWD bn","series":{"2022":10.2,"2023":null,"2024":null,"2025":2.42,"2026":null,"2027":null,"2028":null},"usd_bn_total_program":1.5,"program_note":"2022 >NT$10.2bn 정점(A), 2025 NT$2.42bn(A). 2026 '역대 최대(>10.2)' 가이던스(G 2026-05, 수치 미공개). NT$46.8bn 대면적·고다층 스마트공장 이사회 승인(G 2026-08-06, 다년 프로젝트, Capa 2028+).","source":"工商時報 2026-05-15; 中央社 2026-08-06"},{"company":"Kinsus","country":"TW","currency":"TWD bn","series":{"2022":null,"2023":null,"2024":null,"2025":9.5,"2026":14.0,"2027":16.0,"2028":19.0},"usd_bn_total_program":1.9,"program_note":"2025 4.5→9.5(G, ABF 6공장 +5.0). 2026 14(G 2026-09-15: ABF 장비 6+건물 6+유지 2; 1월 보도 9.5, 현대차·유안타 7~8과 상충). 2027 16(G), 2028 18~20(G, 표기 중간값 19). 2025~28 누적 ~NT$58~60bn(E ≈US$1.9bn). ABF 장비 3년 NT$23.5bn(G 2026-01 이사회).","source":"工商時報 2026-09-15; udn 2026-01-04; 유안타 2026-06-09"},{"company":"ZDT (臻鼎)","country":"TW/CN","currency":"TWD bn (IC기판 배정분)","series":{"2022":null,"2023":null,"2024":null,"2025":null,"2026":15.0,"2027":null,"2028":null},"usd_bn_total_program":4.35,"program_note":"2026 전사 Capex NT$80bn+ (G 2026-06) 중 IC기판 15~20% ≈ NT$15bn. 2027 전사 >NT$50bn(G). 2025~28 전사 US$4.35bn(E 브로커, 대만 기판사 최대). 禮鼎 深圳 ≥RMB 12bn, 高雄 佰鼎 NT$8bn.","source":"Fugle 콜노트 2026-06-11; BigGo 2026-07-26"},{"company":"중국 진입자 합계 (Shennan·Xingsen·Victory Giant·珠海越亞)","country":"CN","currency":"RMB bn","series":{"2022":null,"2023":null,"2024":null,"2025":null,"2026":null,"2027":null,"2028":null},"usd_bn_total_program":2.9,"program_note":"2022년 이후 발표 누계 ~RMB 20bn(E): Shennan 광저우 RMB 6.0bn(연 2억개), Xingsen >3.8bn, Victory Giant ~6.0bn(월 2,000만개 계획), 珠海越亞 2기 2.15bn. 20~22층·저가동·부마진, CoWoS 미인증.","source":"siscmag; BigGo 2026-05-19; cls 2026-05-07"},{"company":"삼성전기","country":"KR","currency":"KRW 조원 (ABF/FC-BGA)","series":{"2022":1.9,"2023":null,"2024":null,"2025":null,"2026":2.0,"2027":6.0,"2028":2.0},"usd_bn_total_program":4.7,"program_note":"2022 값은 1차 사이클 2021~22 누계 1.9조(A). 2026-09-28 공시 6.78조(A: 세종 4.27 + 베트남 2.51, 2026-09~2028-05, 2028-09 양산 ≈US$4.7bn). 2026~28 값은 메리츠 실투자 ~10조의 연도별 20·60·20% 배분(E, calc). 타 브로커 실투자: 하나 8.5조, 키움 ~9조, IBK 8조+ (≈US$5.9~6.9bn). 공시 전 전사 Capex 추정 2026E 1.8+/2.4+/3.1조, 2027E 4.6~5조(E). 총액 70%+ 고객 선수금.","source":"TheElec 2026-09-28; 메리츠 2026-09-29; 하나 2026-09-29; TheElec 2022-06-22"},{"company":"LG이노텍","country":"KR","currency":"KRW 조원","series":{"2022":0.413,"2023":null,"2024":null,"2025":0.6,"2026":1.0,"2027":null,"2028":null},"usd_bn_total_program":1.2,"program_note":"2022 값은 2022-02~2024-04 FC-BGA 누계 0.413조(A). 2025 값은 구미 0.6조 MOU(G 2025-04~2026-12, 카메라 포함). 2026 값은 구미 ~1.0조 추가(E 더벨, 2027말 완공). 구미+베트남 1.6조(회사 프레이밍) / 2027년 말까지 2.0조+(전자신문) / KB '2년 >2조'(E) ≈ US$1.1~1.4bn(표기 중간값 1.2). 하이퐁 33만㎡ 2026-07 착공 → 2027-05 완공.","source":"LG이노텍 뉴스룸 2025-03-25; 더벨 2026-06-17; KB 2026-06-25"},{"company":"대덕전자","country":"KR","currency":"KRW 억원","series":{"2022":2700,"2023":null,"2024":null,"2025":null,"2026":8500,"2027":null,"2028":null},"usd_bn_total_program":0.59,"program_note":"2022 값은 2022-04 공시 2,700억(A; 2020-07~2022-04 누계 5,400억). 2023~25 축소(2,700억 증설 2027년 말로 연기). 2026 프로그램 ~8,500억(A: 장비 4,970 [2026-07-20, ~2027-12] + 시흥 B1 건물 2,130 + 안산 공장 528 + 인프라 700), 자체 현금. 안산 FC-BGA 2Q27, 시흥 FC-CSP 3Q27.","source":"경제타임스 2026-07-21; 딜사이트 2025-05-28"},{"company":"코리아써키트","country":"KR","currency":"KRW 억원","series":{"2022":2000,"2023":null,"2024":null,"2025":null,"2026":993,"2027":null,"2028":null},"usd_bn_total_program":null,"program_note":"2022 값은 P3 FC-BGA 공장 ~2,000억(A 2021~22, 2022-09 가동). 2024말 손상차손 1,100억. 2026-01-20 공시 993억(A; 70%+ 메모리모듈, 잔여 FC-BGA 스펙·층수 업그레이드). FC-BGA 그린필드 없음.","source":"데일리인베스트 2026-02; 현대차증권 2026-01-20"},{"company":"글라스 진영 (Absolics/SKC, 삼성전기 GlaSSEM, Intel-3DGS)","country":"US/KR/IN","currency":"mixed","series":{"2022":null,"2023":null,"2024":null,"2025":null,"2026":null,"2027":null,"2028":null},"usd_bn_total_program":null,"program_note":"Absolics Covington US$600m(G 2022-11; 1기 12,000㎡/yr, 2기 72,000㎡/yr 보류); SKC 누적 4,400억(2022~25) + 2026 증자 5,896억·2,810억. 삼성전기 GlaSSEM JV 4,800억(G 2026-07, 66/34, 2H27 양산 목표). Intel-3DGS 인도 US$3.3bn(연 7만장, 5~6년). 2028년 이전 ABF 대체 물량 미미.","source":"Bizwatch 2026-07-03; 딜사이트 2026-09-22; TrendForce 2026-06-01"},{"company":"업계 합계","country":"Global","currency":"USD bn","series":{"2022":null,"2023":null,"2024":null,"2025":null,"2026":null,"2027":null,"2028":null},"usd_bn_total_program":19.1,"program_note":"2025~2028 기판 업계 Capex US$19.1bn(E 대만 브로커 2026-07-26; ZDT US$4.35bn 포함).","source":"BigGo 2026-07-26"}],"plants":[{"company":"Ibiden","plant":"大野 Ono (Cell 8)","site_m2":149189,"gfa_m2":null,"floors":6,"capacity_note":"AI/ASIC Capa 지수 FY24 1.0 → FY28 2.3~2.8 (G); 2026-03 건물 Capa의 ~1/4 가동, 2027 풀빌드; GFA 非公表","timeline":"2021-09 부지, 2022-12 착공, 2025-01 개소, 2025-10 순차 양산; 잔여 절반 ¥280bn FY27 양산","source":"Ibiden Ono 사이트; Newswitch 2025"},{"company":"Ibiden","plant":"河間 Gama (Cell 6)","site_m2":52078,"gfa_m2":null,"floors":null,"capacity_note":"미공개 (AI ASIC용 ¥220bn, FY27 양산)","timeline":"2022-04 착공, FY2023 건물 완공(¥180bn 프로그램)","source":"Ibiden Gama 사이트; Ibiden 2022-04"},{"company":"Ibiden","plant":"大垣 Ogaki","site_m2":75036,"gfa_m2":null,"floors":null,"capacity_note":"미공개","timeline":"기존","source":"Ibiden 사이트"},{"company":"Ibiden","plant":"大垣中央 Ogaki-Central","site_m2":113059,"gfa_m2":null,"floors":null,"capacity_note":"미공개","timeline":"기존(2007 개소)","source":"Ibiden 사이트"},{"company":"Shinko","plant":"千曲 Chikuma","site_m2":51000,"gfa_m2":50000,"floors":6,"capacity_note":"프로그램 단위 FC 패키지 Capa +50% (千曲+更北+若穂+高丘, ¥140bn FY22~25)","timeline":"2022-06 착공, 2023-12 준공, 2H FY24 가동","source":"MONOist 2022-05-23; Shinko 2021-10-04"},{"company":"Shinko","plant":"更北·若穂·高丘","site_m2":null,"gfa_m2":null,"floors":null,"capacity_note":"미공개 (高丘 E동 28,815㎡ 5층은 ESC용, 기판 아님)","timeline":"FY23 가동","source":"Shinko 2021-10-04"},{"company":"AT&S","plant":"Kulim 캠퍼스 (1·2공장 + 신규 사이트)","site_m2":227000,"gfa_m2":255000,"floors":null,"capacity_note":"56.1 acre ≈ 227,000㎡(calc); GFA 255,000㎡ 캠퍼스 전체(1·2공장 분리 미공개); 약 500대 장비; 1공장 AMD HVM","timeline":"2021 착공, 2025-05 HVM; 2공장 피트아웃+신규 사이트 €1.5~2.0bn (2026-06)","source":"KHTP 2021; Bernama 2025-05; AT&S 2026-06-15"},{"company":"AT&S","plant":"Leoben HTB3","site_m2":null,"gfa_m2":11000,"floors":null,"capacity_note":"미공개; >€500m, 420명","timeline":"2025-06-03 개소","source":"AT&S 2025-06-03"},{"company":"Unimicron","plant":"光復2 / 楊梅2·3 / 新竹","site_m2":null,"gfa_m2":null,"floors":null,"capacity_note":"光復 월 3,000→4,000(2025, 단위 미확인); 2027 ABF Capa +30~40%(G); 2021 楊梅 토지 NT$699m 추가","timeline":"光復2 2H27 양산, 楊梅2 2028 장비, 楊梅3 2026말~2027초 착공","source":"鉅亨網 2021; DIGITIMES 2025-05-06; Gokhshtein 2026-09-16"},{"company":"Nan Ya PCB","plant":"樹林 신공장 (NT$46.8bn)","site_m2":28310,"gfa_m2":4385,"floors":null,"capacity_note":"임차 토지 28,310㎡·건물 1,326坪≈4,385㎡는 검색요약 기반 미검증; Capa 미공개","timeline":"임차 2026-10~2036-09; Capa 2028+","source":"工商時報 2026-08-06/07 (면적은 미검증)"},{"company":"Nan Ya PCB","plant":"樹林·錦興·昆山 기존","site_m2":null,"gfa_m2":null,"floors":null,"capacity_note":"樹林 >80% 비중, 昆山 ~20%; 3공장 가동률 >80%","timeline":"錦興 2H26 고급품 양산","source":"工商時報 2026-05-15"},{"company":"Kinsus","plant":"幼獅 Youshi (6공장, 舊 Wintek)","site_m2":90180,"gfa_m2":132740,"floors":null,"capacity_note":"27,279.5坪 / 40,154坪 (calc); ABF 월 4,000만개(2026말) → 5,000만(2027) → 6,500만(2028) → 8,000만(2029) (G)","timeline":"2021-02 NT$4.485bn 인수; K7~K9 토지 물색 중","source":"鉅亨網 2021-02; 工商時報 2026-09-15"},{"company":"ZDT","plant":"高雄 佰鼎 / 深圳 / 淮安","site_m2":1262000,"gfa_m2":null,"floors":null,"capacity_note":"site_m2는 淮安 科技城 1,893畝 전체(PCB, ABF 아님); 高雄 면적 미공개; 150×150mm/28층 능력","timeline":"高雄 1Q26 샘플 → 3Q26 CoWoS ABF 출하","source":"MOEA; 鉅亨網"},{"company":"삼성전기","plant":"세종 신공장 (명학산단)","site_m2":175340,"gfa_m2":70000,"floors":4,"capacity_note":"site_m2는 세종사업장 전체(≈53,000평); 신공장은 유휴 주차장 부지 바닥 ~20,000㎡ × 3~4층 → GFA ≈60,000~80,000㎡(calc, 언론 추정; 표기 중간값 70,000); 층수 3~4; Capa 미공개","timeline":"2026-09-28~2028-05-31, 2028-09 양산","source":"세종의소리; 뉴데일리 2026-09-28; TheElec 2026-09-28"},{"company":"삼성전기","plant":"베트남 SEMV (Thai Nguyen)","site_m2":264625,"gfa_m2":null,"floors":null,"capacity_note":"FCBGA 63,000㎡/월(현재); UL-FCBGA 36만㎡/년(≈71.4만 유닛) → 86.4만㎡/년(≈171만 유닛), 2.4배 (허가 기준; 두 수치 상호 불일치); 부지 변경 없음","timeline":"IRC 2026-05-12, 환경허가 2026-07-01; 설비 2028-04 완료","source":"파이낸셜뉴스 2026-08-07; Sigma Engineering"},{"company":"삼성전기","plant":"부산","site_m2":null,"gfa_m2":null,"floors":null,"capacity_note":"미공개 (서버 FC-BGA; 2026 소규모 보완)","timeline":"2022 증축","source":"TheElec 2022-06-22"},{"company":"LG이노텍","plant":"구미 4공장","site_m2":null,"gfa_m2":230000,"floors":null,"capacity_note":"GFA는 공장 전체; FC-BGA 점유분 미공개","timeline":"2024-12 FC-BGA 양산; ~1조 추가 2027말 완공","source":"LG이노텍 뉴스룸 2025-03-25"},{"company":"LG이노텍","plant":"하이퐁","site_m2":324000,"gfa_m2":null,"floors":null,"capacity_note":"98,000평 ≈ 324,000㎡(calc); RF-SiP/FC-CSP/FC-BGA; Capa 미공개","timeline":"2026-07 착공 → 2027-05 완공","source":"전자신문 2026-06-04"},{"company":"대덕전자","plant":"안산 B2 / 시흥 B1","site_m2":null,"gfa_m2":null,"floors":null,"capacity_note":"미공개; 매출 기준 FC-BGA 2024 1,781억 → 2026E 3,459억; 100×100mm/20층/L/S 10μm","timeline":"안산 FC-BGA 2Q27, 시흥 FC-CSP 3Q27","source":"디일렉 2026-07; SK증권 2026-04-30"},{"company":"코리아써키트","plant":"P3 (안산)","site_m2":null,"gfa_m2":null,"floors":null,"capacity_note":"'2공장의 1.5배'; 면적 미공개","timeline":"2022-09 가동","source":"전자신문 2022-09-14"},{"company":"Ajinomoto Fine-Techno","plant":"群馬 昭和 / 川崎","site_m2":null,"gfa_m2":null,"floors":null,"capacity_note":"ABF 필름 ≈200만㎡/월 풀가동 (2Q26, 브로커 추정); 2030 +50%","timeline":"바니시 신공장 2025-03 완공","source":"ChemNet; 메리츠 2026-08-21"},{"company":"Ajinomoto Fine-Techno","plant":"岐阜 可児 (3공장)","site_m2":35000,"gfa_m2":null,"floors":null,"capacity_note":"≈3.5ha; Capa 미공개('기존 거점보다 크게')","timeline":"2028 착공 → 2032 가동","source":"可児市; Ajinomoto 2026-05-07"},{"company":"Absolics (SKC)","plant":"Covington, GA (글라스)","site_m2":null,"gfa_m2":null,"floors":null,"capacity_note":"1기 12,000㎡/년; 2기 → 72,000㎡/년 보류","timeline":"1기 완공, 양산 시점 미정(2026-09)","source":"IC-PCB 2025-11-10; 딜사이트 2026-09-22"},{"company":"Intel–3DGS","plant":"인도 Odisha (글라스)","site_m2":null,"gfa_m2":null,"floors":null,"capacity_note":"연 70,000장 (5~6년 빌드), US$3.3bn","timeline":"2026-04 착공","source":"TrendForce 2026-06-01"}],"capacity_index":[{"label":"Ibiden ASIC/AI 서버 Capa 지수 (FY24=1.0, G)","series":{"2024":1.0,"2025":1.4,"2026":1.7,"2027":2.0,"2028":2.8},"note":"FY28 내 2.3→2.8 단계 상승","source":"Ibiden FY25 설명회 2026-05-12"},{"label":"Ibiden SAP 환산 수요지수 (CY24=100, 회사 추정)","series":{"2024":100,"2025":119,"2026":140,"2027":180,"2028":220},"note":"CY24·25 실적, CY26~28 전망","source":"Ibiden FY25 설명회 2026-05-12"},{"label":"Ibiden AI 서버 기판 생산부하 (2024=1.0, 회사 추정)","series":{"2024":1.0,"2026":1.8,"2028":2.5},"note":"Blackwell→Rubin 전환 시 실질 부하 ~1.8배","source":"Ibiden FY25 설명회; 유안타 2026-06-09"},{"label":"Kinsus ABF 월 생산능력 (백만개, G)","series":{"2026":40,"2027":50,"2028":65,"2029":80},"note":"단위 '개(顆)'; 대면적 믹스 시 면적 성장 과소 표시","source":"工商時報 2026-09-15"},{"label":"Unimicron ABF Capa 지수 (2026=100, G)","series":{"2026":100,"2027":135},"note":"2027 +30~40% (표기 중간값); 光復2·병목 해소·BT→ABF 전환","source":"Gokhshtein 2026-09-16"},{"label":"삼성전기 베트남 UL-FCBGA 허가 Capa (㎡/년)","series":{"2026":360000,"2028":864000},"note":"2.4배; 현재 FCBGA 63,000㎡/월과 불일치","source":"파이낸셜뉴스 2026-08-07"},{"label":"삼성전기 FC-BGA 매출 기준 Capa (조원, E)","series":{"2026":2.1,"2029":6.0},"note":"2026 2.0~2.2조(표기 중간값) → 2027 +20~30% → 2029~30 6조+ (키움·iM); IBK 최대 8조+","source":"키움 2026-09-29; iM 2026-09-29"},{"label":"Ajinomoto ABF 필름 Capa (㎡/월, E)","series":{"2026":2000000,"2030":3000000},"note":"2Q26 ≈200만㎡/월 풀가동(브로커 추정); 2030 +50% → 300만㎡/월(calc)","source":"메리츠 2026-08-21; Nikkei 2025-03"},{"label":"삼성전기 FC-BGA 매출 (조원, A/E)","series":{"2024":0.899,"2025":1.15,"2026":2.0,"2027":2.6,"2028":4.6},"note":"2024 A(SK); 2025 1.12~1.15조; 2026E 1.48~2.0(표기 2.0 SK 5월·iM); 2027E 2.57~2.8; 2028E 4.6(브로커 미상)","source":"SK증권 2026-05-14; iM 2026-05-26; telegram 2026-06"},{"label":"LG이노텍 FC-BGA 매출 (조원, KB E)","series":{"2025":0.1289,"2026":0.14,"2028":1.1,"2030":2.15},"note":"2030 2.0~2.3조(표기 중간값)","source":"KB 2026-06-25; 중앙일보 2026-06-17"},{"label":"대덕전자 FC-BGA 매출 (억원, A/E)","series":{"2024":1781,"2025":2126,"2026":3459,"2027":4071},"note":"2025 2,126(대신)~2,211(SK); 2026E 3,413(SK)~3,459(대신)","source":"대신 2026-01-19; SK증권 2026-04-30"}],"demand":{"market_size":[{"source":"TPCA (2026-09)","metric":"ABF 기판 생산액 (US$ bn)","series":{"2025":7.72},"note":"+18.6% YoY"},{"source":"TPCA (2026-09)","metric":"IC 기판 전체 생산액 (US$ bn)","series":{"2025":14.75,"2026":19.51},"note":"2026 +32.3%; BT 2025 7.03"},{"source":"DataGravity (2026-06-14)","metric":"ABF 기판 시장 (US$ bn)","series":{"2024":5.8,"2030":11.7},"note":"방법론 미공개; 블렌디드 ASP 2024 US$65 → 2025 US$82"},{"source":"Prismark (인용)","metric":"IC 기판 전체 (US$ bn)","series":{"2024":18.5,"2025":22.2},"note":"BT 포함"},{"source":"Yole (2025-07)","metric":"고급 IC 기판 (US$ bn)","series":{"2024":14.2,"2030":31.0},"note":"2024는 organic AICS; 2030은 organic+glass+SLP+embedded; 글라스코어 2030 '수억 달러'"},{"source":"Morgan Stanley (2026-02-23)","metric":"ABF 시장 가치 CAGR 2025~2030 (%)","series":{"2030":16.1},"note":"이전 5년 ~9%"},{"source":"대만 브로커/TrendForce (2026-07-26)","metric":"ABF 면적 수요 CAGR 2025~2028 (%)","series":{"2028":39},"note":"가치 CAGR 16%와 스코프 차이"},{"source":"Goldman Sachs (한국어 요약)","metric":"ABF CAGR 2025~2028 (%)","series":{"2028":33},"note":"1차 보고서 미확인"},{"source":"BigGo (2026-05-19)","metric":"글로벌 기판 시장 (US$ bn)","series":{"2026":16.1},"note":null}],"end_market_mix":[{"source":"Morgan Stanley (2026-02-23)","year":2015,"shares":{"AI":10,"server_cpu":null,"networking":null,"PC":70,"other":null},"note":"ABF 수요 비중 %"},{"source":"Morgan Stanley (2026-02-23)","year":2030,"shares":{"AI":75,"server_cpu":null,"networking":null,"PC":15,"other":null},"note":"AI = GPU/ASIC/네트워킹 포함"},{"source":"대만 브로커/TrendForce (2026-07-26)","year":2028,"shares":{"AI":59,"server_cpu":null,"networking":null,"PC":null,"other":null},"note":"ABF 면적 수요 기준; 서버+네트워킹 합산 25%, PC/기타 ≈16% (역산)"},{"source":"Goldman Sachs (2026-09-22)","year":2028,"shares":{"AI":45,"server_cpu":17,"networking":null,"PC":null,"other":null},"note":"글로벌 ABF Capa 소비 비중 %"},{"source":"Unimicron (G, 2026-02)","year":2025,"shares":{"AI":40,"server_cpu":null,"networking":null,"PC":null,"other":null},"note":"Unimicron 기판 매출 내 AI 비중; 2026 60%+, 2Q26 AI DC 61%"}],"units":[{"item":"AI 서버 출하 증가율 (% YoY)","source":"TrendForce 2026-08-03","series":{"2026":31},"note":"1월 전망 +28%; GPU 69.7%/ASIC 27.8%"},{"item":"AI 서버 출하 (백만대)","source":"Gartner via TPCA 2026-09","series":{"2026":3.7},"note":"+55.9%"},{"item":"전체 서버 출하 (백만대)","source":"Gartner via TPCA 2026-09","series":{"2026":14.0},"note":"+11.6%; TrendForce +12.8%"},{"item":"서버 지출 증가율 (%)","source":"IDC","series":{"2025":80,"2026":24.3},"note":null},{"item":"Nvidia 하이엔드 GPU 출하 증가율 (%)","source":"TrendForce 2026-04-08","series":{"2026":26},"note":"Blackwell >70%, Rubin 22%, Hopper 7%"},{"item":"Nvidia Blackwell GPU 출하 (백만개)","source":"JPM via TweakTown (헤드라인)","series":{"2025":5.2},"note":"2026 Rubin 5.7M 전망은 TF 하향과 상충"},{"item":"AI ASIC 출하 지수 (2024=1)","source":"Counterpoint 2026-01-26","series":{"2024":1,"2027":3},"note":"Bernstein: ASIC 점유 10%→20% (2027)"},{"item":"PC 출하 (백만대)","source":"IDC 2026","series":{"2025":284.7,"2026":252.5},"note":"−11.3%; 4Q26 −20%; ASP +18.3%"},{"item":"TSMC CoWoS Capa (천 wpm, 비공식)","source":"TrendForce 2026-09-14; DigiTimes 2026-07-10","series":{"2026":130,"2027":200,"2028":260},"note":"연말 기준; Nvidia ~60% 배정"},{"item":"NVSwitch 랙당 개수","source":"다올 2026-03-20 (GTC 2026)","series":{"Hopper":16,"Blackwell":18,"Rubin":36},"note":"트레이당 2→4개; 448G"},{"item":"상위 9 CSP Capex (US$ bn)","source":"TrendForce 2026-08-03","series":{"2026":886.7,"2027":1300},"note":"2027 ≈ +50%"},{"item":"Nvidia LPU 출하 (개)","source":"TrendForce 2026-04-08","series":{"2026":null,"2027":null},"note":"2026 수십만개, 2027 2배 (수치 비공개)"}],"substrate_area_per_chip":[{"chip":"PC CPU","size_mm":"40×40","layers":"~10","rel_area":1.0,"area_mm2":1600},{"chip":"서버 CPU (Xeon/EPYC)","size_mm":"40×40","layers":"14~16","rel_area":1.0,"area_mm2":1600},{"chip":"Nvidia H100","size_mm":"~80×80 (상충: 120×120은 SXM 모듈 추정)","layers":"12+","rel_area":4.0,"area_mm2":6400},{"chip":"Nvidia B200 / Blackwell","size_mm":"~100×100 (80×80 보도도 존재)","layers":"16~20+","rel_area":6.25,"area_mm2":10000,"note":"B200 1개 = H100 3~4개분 하이엔드 Capa"},{"chip":"Nvidia Rubin (VR200)","size_mm":"100×100","layers":"16~20+","rel_area":6.25,"area_mm2":10000,"note":"대만 브로커: Blackwell 대비 면적 +71%; Ibiden 실질 부하 ~1.8×"},{"chip":"Nvidia Rubin Ultra (2027E)","size_mm":"100×120 / 120×120","layers":"18~24","rel_area":9.0,"area_mm2":14400,"note":"층수 가중 시 서버 CPU의 ~13×"},{"chip":"Nvidia Feynman (2028E)","size_mm":null,"layers":null,"rel_area":null,"area_mm2":null,"note":"메리츠: 2026 대비 면적 3~5배"}],"panel_yield_515x515":[{"package_mm2":830,"units_per_panel":270},{"package_mm2":2500,"units_per_panel":90},{"package_mm2":6400,"units_per_panel":30},{"package_mm2":10000,"units_per_panel":20},{"package_mm2":22500,"units_per_panel":9},{"package_mm2":57000,"units_per_panel":2},{"source":"메리츠 2026-09-29 표2 (515×515mm 패널 기준)"}]},"gap":[{"broker":"Goldman Sachs (1차)","date":"2026-02","series":{"2H26":-10,"2027":-21,"2028":-42,"2030":null},"note":"하이엔드 ABF"},{"broker":"Goldman Sachs (2차)","date":"2026-09-22","series":{"2H26":-14,"2027":-34,"2028":-51,"2030":null},"note":"진공 라미네이터 2031년까지 예약; AI 서버 = 2028 Capa 45%, 서버 CPU 17%"},{"broker":"Bank of America","date":"2026-08","series":{"2H26":-7,"2027":-14,"2028":-19,"2030":null},"note":"2026 연간 기준"},{"broker":"대만 브로커 / TrendForce","date":"2026-07-26","series":{"2H26":1.5,"2027":-22,"2028":-29,"2030":null},"note":"2026 +1~2% 과잉(표기 중간값); 전체 ABF; 면적 수요 CAGR 39%"},{"broker":"Fubon (富邦)","date":"2026","series":{"2H26":null,"2027":-26,"2028":-46,"2030":null},"note":"2027 수요 +40% vs 공급 +12%; 1차 보고서 미확인"},{"broker":"Morgan Stanley","date":"2026-02 → 05 → 07","series":{"2H26":0,"2027":null,"2028":null,"2030":-25},"note":"2026 균형, 2027 부족 전환(수치 미공개); 2030 −15% → −22% → −25%(수요/공급 124.6%)"},{"broker":"매체 종합 (Black Line·semi-connect·ic.net)","date":"2026","series":{"2H26":-10,"2027":-20,"2028":null,"2030":null},"note":"2028 −20~40% 범위 언급"},{"broker":"Ibiden 자체 지수 (수요 vs 자사 Capa)","date":"2026-05-12","series":{"2H26":null,"2027":null,"2028":null,"2030":null},"note":"수요지수 140/180/220 vs Capa 지수 1.7/2.0/2.3~2.8 (CY26/27/28); 갭 %가 아닌 지수"},{"note":"부호 규약: 음수 = 부족(수요 대비 공급 부족분 %), 양수 = 과잉. 2H26 열은 기관에 따라 2026 연간 값."}],"pricing":[{"item":"ABF 필름 (Ajinomoto)","date":"3Q26 적용 통보","change":"+~30%; AI·고사양 우선 배정; 중국향 30% 축소 보도","source":"BigGo; 메리츠 2026-08-24"},{"item":"CCL (Resonac·MGC)","date":"2026-04-01","change":"+~30%","source":"AtlasPCB"},{"item":"CCL·프리프레그 (T-glass 부족)","date":"2026-08","change":"+20~25%","source":"Exponential Industry 2026-08-12"},{"item":"ABF 기판 (산업, MS)","date":"2Q26 / 2026 / 2027","change":"2Q26 ABF +~10%, BT +20~30%; 2026 연간 +20~25%; 2027 >25%","source":"鉅亨網/MS 2026-07-07; Gate Blog"},{"item":"Nan Ya PCB ABF/BT","date":"3Q26 → 4Q26","change":"+15~20% → 추가 +10~15% QoQ","source":"BigGo 2026-07-26"},{"item":"삼성전기 하이엔드 FC-BGA","date":"1Q26 / 2026-04","change":"일부 고객 +10%(iM); 4월 인상 보도","source":"iM증권 2026-05-26; Seoul Economic Daily 2026-04-30"},{"item":"Unimicron 연간 가격","date":"FY26 / FY27 협상 2026-09~10","change":"출하 70% LTA; JPM 'FY26 +40% 상회 가능'","source":"telegram 2026-05/06 (JPM)"},{"item":"블렌디드 ASP (US$/unit)","date":"2024 → 2025","change":"US$65 → US$82 (+26%)","source":"DataGravity 2026-06-14"},{"item":"패키징 비용·스팟 프리미엄","date":"4Q25 이후","change":"+18~25%; 스팟 계약가 대비 +15~20%","source":"Yrules/DigiTimes 요약 2026-07"},{"item":"리드타임 (ABF 기판)","date":"2025 중반 → 2026-07 → 2026-09","change":"12주 → 20~28주 → 26주 → 48~56주 (IT 부품 중 최장)","source":"메리츠 2026-09-29 표1 (TrendForce); 하나증권 2026-09-29"},{"item":"장비 납기","date":"2026-02 → 2026-09","change":"핵심 장비 12→14개월; 진공 라미네이터 2027년 말(DigiTimes) ~ 2031년 예약(GS)","source":"Fugle 2026-02-25; Digitimes Intelligence 2026-09"},{"item":"전 사이클 참고 (2019~2021)","date":"2019~2021","change":"동일 제품 단가 2년간 +50~150%","source":"SK증권 2026-05-14"}]};
+const YEARS = ['2022','2023','2024','2025','2026','2027','2028'];
+const STATUS = {
+ 'Ibiden':{2024:'A',2025:'A',2026:'G'},
+ 'AT&S':{2024:'A',2025:'A',2026:'G'},
+ 'Ajinomoto Fine-Techno (ABF 필름)':{2026:'A'},
+ 'Unimicron':{2022:'G',2023:'G',2024:'G',2025:'E',2026:'G'},
+ 'Nan Ya PCB':{2022:'A',2025:'A'},
+ 'Kinsus':{2025:'G',2026:'G',2027:'G',2028:'G'},
+ 'ZDT (臻鼎)':{2026:'G'},
+ '삼성전기':{2022:'A',2026:'E',2027:'E',2028:'E'},
+ 'LG이노텍':{2022:'A',2025:'G',2026:'E'},
+ '대덕전자':{2022:'A',2026:'A'},
+ '코리아써키트':{2022:'A',2026:'A'}
+};
+const SHORT = {'Ajinomoto Fine-Techno (ABF 필름)':'Ajinomoto','ZDT (臻鼎)':'ZDT','중국 진입자 합계 (Shennan·Xingsen·Victory Giant·珠海越亞)':'중국 진입자 합계','글라스 진영 (Absolics/SKC, 삼성전기 GlaSSEM, Intel-3DGS)':'글라스 진영'};
+const sn = c => SHORT[c] || c;
+function toUsd(cur, v){ if(v==null) return null;
+  if(cur.startsWith('JPY bn')) return v/150;
+  if(cur.startsWith('EUR m')) return v/1000*1.15;
+  if(cur.startsWith('TWD bn')) return v/31.5;
+  if(cur.startsWith('KRW 조원')) return v*1e12/1450/1e9;
+  if(cur.startsWith('KRW 억원')) return v*1e8/1450/1e9;
+  if(cur.startsWith('RMB bn')) return v/7.1;
+  return null; }
+const fmt = (v,d=1)=> v==null?'—':Number(v).toLocaleString('ko-KR',{maximumFractionDigits:d,minimumFractionDigits:0});
+const fmtInt = v => v==null?'—':Math.round(v).toLocaleString('ko-KR');
+const esc = s => String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const NA = '<span class="na">미공개</span>';
+const cssv = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const T = () => ({ink:cssv('--text-primary'),sec:cssv('--text-secondary'),mut:cssv('--muted'),grid:cssv('--grid'),axis:cssv('--axis'),surf:cssv('--surface-1'),border:cssv('--border'),
+  s:[1,2,3,4,5,6,7,8].map(i=>cssv('--s'+i)), o:[1,2,3,4].map(i=>cssv('--o'+i)), decal:cssv('--decal'), accent:cssv('--accent')});
+const isMobile = () => window.innerWidth < 640;
+const charts = {};
+function mk(id){ const el=document.getElementById(id); if(charts[id]) charts[id].dispose(); const c=echarts.init(el,null,{renderer:'canvas'}); charts[id]=c; return c; }
+function base(t){ return {
+  animationDuration:500,animationDurationUpdate:300,
+  textStyle:{fontFamily:'system-ui,-apple-system,"Apple SD Gothic Neo","Segoe UI",sans-serif',color:t.sec},
+  tooltip:{trigger:'axis',backgroundColor:t.surf,borderColor:t.grid,borderWidth:1,textStyle:{color:t.ink,fontSize:12},padding:[8,12],confine:true,
+    axisPointer:{type:'shadow',shadowStyle:{color:'rgba(128,128,128,.08)'}}},
+  legend:{type:'scroll',top:0,left:0,textStyle:{color:t.sec,fontSize:11},itemWidth:12,itemHeight:8,icon:'roundRect',pageTextStyle:{color:t.sec},pageIconColor:t.sec,pageIconInactiveColor:t.grid},
+  grid:{left:8,right:36,top:56,bottom:64,containLabel:true},
+  xAxis:{axisLine:{lineStyle:{color:t.axis}},axisTick:{show:false},axisLabel:{color:t.mut,fontSize:11},splitLine:{show:false}},
+  yAxis:{axisLine:{show:false},axisTick:{show:false},axisLabel:{color:t.mut,fontSize:11},splitLine:{lineStyle:{color:t.grid,width:1}}}
+};}
+function zoom(t,count){ return [{type:'inside',xAxisIndex:0,filterMode:'none'},{type:'slider',xAxisIndex:0,height:18,bottom:8,borderColor:t.grid,fillerColor:t.accent+'22',handleSize:14,
+  dataBackground:{lineStyle:{color:t.grid},areaStyle:{color:t.grid}},selectedDataBackground:{lineStyle:{color:t.accent},areaStyle:{color:t.accent+'33'}},textStyle:{color:t.mut,fontSize:10},brushSelect:false,filterMode:'none'}]; }
+const decal = t => ({symbol:'rect',dashArrayX:[1,0],dashArrayY:[2,4],rotation:Math.PI/4,color:t.decal,symbolSize:1});
+const lineKey = c => `<span style="display:inline-block;width:14px;height:0;border-top:2px solid ${c};vertical-align:middle;margin-right:6px"></span>`;
+const rectKey = c => `<span style="display:inline-block;width:9px;height:9px;border-radius:2px;background:${c};vertical-align:-1px;margin-right:6px"></span>`;
+
+/* ---------- 1. tiles ---------- */
+(function(){
+  const gs2 = D.gap.find(g=>g.broker&&g.broker.startsWith('Goldman Sachs (2차)')).series, bofa = D.gap.find(g=>g.broker==='Bank of America').series;
+  const ind = D.capex.find(c=>c.company==='업계 합계');
+  const tiles = [
+    {l:'2026년 확정 증설 (6대 진영 합산)', v:'25조원', u:'+', c:'Ibiden ¥5,000억(FY26~28) · 삼성전기 6.78조 · Unimicron NT$537억(2026) · Nan Ya NT$468억 · AT&S €15~20억 · Kinsus NT$140~200억/년 — 보고서 §1'},
+    {l:'업계 Capex 2025~2028', v:'US$'+fmt(ind.usd_bn_total_program,1), u:'bn', c:'(E) 대만 브로커 2026-07-26, ZDT US$4.35bn 포함 — '+ind.source},
+    {l:'ABF 기판 리드타임', v:'12→48~56', u:'주', c:'정상 12주(2025 중반) → 48~56주(2026-09, IT 부품 중 최장) — TrendForce·메리츠 표1·하나증권 2026-09-29'},
+    {l:'2027 공급 갭 컨센서스', v:fmt(bofa['2027'])+'~'+fmt(gs2['2027']), u:'%', c:'BofA(2026-08) −14% ~ Goldman 2차(2026-09-22) −34% · 2028은 −19% ~ −51% · 음수 = 부족'},
+    {l:'AI 가속기 ABF 수요 비중', v:'59→75', u:'%', c:'2028 면적 수요 59%(대만 브로커/TF 2026-07-26) → 2030 75%(Morgan Stanley 2026-02-23; 2015년 ~10%)'}
+  ];
+  document.getElementById('tiles').innerHTML = tiles.map(t=>`<div class="tile"><div class="lbl">${t.l}</div><div class="val">${t.v}<small>${t.u}</small></div><div class="cap">${esc(t.c)}</div></div>`).join('');
+})();
+
+/* ---------- sortable tables ---------- */
+function sortable(tbl){
+  const ths=[...tbl.querySelectorAll('th.sortable')]; const tb=tbl.tBodies[0];
+  const rows=[...tb.rows].filter(r=>!r.classList.contains('noterow'));
+  const noteOf=r=>r.nextElementSibling&&r.nextElementSibling.classList.contains('noterow')?r.nextElementSibling:null;
+  const orig=rows.slice(); let key=null, dir=null;
+  ths.forEach(th=>{ th.insertAdjacentHTML('beforeend',' <span class="arr">↕</span>');
+    th.addEventListener('click',()=>{ const k=th.cellIndex;
+      if(key!==k){key=k;dir='desc';} else if(dir==='desc'){dir='asc';} else {key=null;dir=null;}
+      ths.forEach(h=>{h.classList.remove('on');h.querySelector('.arr').textContent='↕';});
+      let list=orig.slice();
+      if(key!=null){ th.classList.add('on'); th.querySelector('.arr').textContent=dir==='desc'?'▾':'▴';
+        const val=r=>{const c=r.cells[key]; const v=c.dataset.v; if(v===undefined||v==='') return null; const n=parseFloat(v); return isNaN(n)?c.textContent.trim():n;};
+        list.sort((a,b)=>{const x=val(a),y=val(b); if(x==null&&y==null)return 0; if(x==null)return 1; if(y==null)return -1;
+          const r=(typeof x==='number'&&typeof y==='number')?x-y:String(x).localeCompare(String(y),'ko'); return dir==='desc'?-r:r;}); }
+      list.forEach(r=>{ const n=noteOf(r); tb.appendChild(r); if(n) tb.appendChild(n); });
+    }); });
+}
+function stSup(s){ return s?`<sup class="st">${s}</sup>`:''; }
+
+/* ---------- 2. capex ---------- */
+const CAPEX_ORDER = ['삼성전기','Unimicron','Ibiden','AT&S','Kinsus','LG이노텍','대덕전자'];
+const OTHER = ['ZDT (臻鼎)','Nan Ya PCB','코리아써키트','Ajinomoto Fine-Techno (ABF 필름)'];
+function drawCapex(){
+  const t=T(); const c=mk('c-capex'); const byName=Object.fromEntries(D.capex.map(x=>[x.company,x]));
+  const series=CAPEX_ORDER.map((name,i)=>{ const r=byName[name];
+    return {name:sn(name),type:'bar',stack:'usd',barMaxWidth:isMobile()?26:34,itemStyle:{color:t.s[i]},emphasis:{focus:'series'},
+      data:YEARS.map(y=>{const v=toUsd(r.currency,r.series[y]); if(v==null) return null; const st=(STATUS[name]||{})[y];
+        return {value:v,st:st,local:r.series[y],cur:r.currency,itemStyle:st==='E'?{decal:decal(t)}:{}};})}; });
+  const others={name:'기타',type:'bar',stack:'usd',barMaxWidth:isMobile()?26:34,itemStyle:{color:t.s[7]},emphasis:{focus:'series'},
+    data:YEARS.map(y=>{ let sum=0,parts=[],any=false; OTHER.forEach(n=>{const r=byName[n]; const v=toUsd(r.currency,r.series[y]); if(v!=null){any=true;sum+=v;parts.push(`${sn(n)} ${fmt(r.series[y],2)} ${r.currency.split(' ')[0]}${r.currency.includes('억원')?' 억원':r.currency.includes('조원')?' 조원':''}(${(STATUS[n]||{})[y]||'?'})`);}});
+      return any?{value:sum,parts:parts}:null; })};
+  series.push(others);
+  const totals=YEARS.map((y,i)=>series.reduce((a,s)=>a+((s.data[i]&&s.data[i].value)||0),0));
+  const o=base(t);
+  Object.assign(o,{
+    tooltip:Object.assign(o.tooltip,{formatter:ps=>{ const yi=ps[0].dataIndex, y=YEARS[yi]; let h=`<b>FY${y.slice(2)}</b> 공개분 합계 <b>US$${fmt(totals[yi],2)}bn</b><br>`;
+      const miss=[]; ps.forEach(p=>{ const d=p.data; if(!d||d.value==null){return;}
+        if(d.parts){h+=`${rectKey(p.color)}<b>US$${fmt(d.value,2)}bn</b> 기타<br><span style="color:${t.mut};font-size:11px;padding-left:15px">${d.parts.join(' · ')}</span><br>`;}
+        else{ const cu=d.cur.split(' (')[0]; h+=`${rectKey(p.color)}<b>US$${fmt(d.value,2)}bn</b> ${p.seriesName} <span style="color:${t.mut}">${fmt(d.local,3)} ${cu} (${d.st||'?'})</span><br>`;} });
+      series.forEach(s=>{const d=s.data[yi]; if(!d) miss.push(s.name);});
+      if(miss.length) h+=`<span style="color:${t.mut};font-size:11px">미공개: ${miss.join(', ')}</span>`; return h; }}),
+    legend:Object.assign(o.legend,{data:series.map(s=>s.name)}),
+    xAxis:Object.assign(o.xAxis,{type:'category',data:YEARS.map(y=>'FY'+y.slice(2))}),
+    yAxis:Object.assign(o.yAxis,{type:'value',name:'US$ bn',nameTextStyle:{color:t.mut,fontSize:11,align:'left'}}),
+    dataZoom:zoom(t),
+    series:series
+  });
+  c.setOption(o);
+}
+(function tableCapex(){
+  const tbl=document.getElementById('t-capex');
+  let h='<thead><tr><th>회사</th><th>국가</th><th>통화·단위</th><th class="num sortable">프로그램 규모 (≈US$ bn)</th>'+YEARS.map(y=>`<th class="num sortable">FY${y.slice(2)}</th>`).join('')+'<th>성격</th><th>출처</th></tr></thead><tbody>';
+  D.capex.forEach((r,i)=>{ const st=STATUS[r.company]||{}; const kinds=[...new Set(Object.values(st))].join('·')||'—';
+    h+=`<tr><td><b>${esc(sn(r.company))}</b><button class="exp" data-i="${i}" title="프로그램 비고">ⓘ</button></td><td>${esc(r.country)}</td><td>${esc(r.currency)}</td><td class="num" data-v="${r.usd_bn_total_program??''}">${r.usd_bn_total_program==null?NA:fmt(r.usd_bn_total_program,2)}</td>`;
+    YEARS.forEach(y=>{const v=r.series[y]; const u=toUsd(r.currency,v); h+=`<td class="num" data-v="${u??''}">${v==null?NA:fmt(v,3)+stSup(st[y])}</td>`;});
+    h+=`<td>${esc(kinds)}</td><td class="src">${esc(r.source)}</td></tr>`;
+    h+=`<tr class="noterow" hidden><td colspan="${5+YEARS.length}">${esc(r.program_note)}</td></tr>`; });
+  tbl.innerHTML=h+'</tbody>';
+  tbl.querySelectorAll('button.exp').forEach(b=>b.addEventListener('click',()=>{const n=b.closest('tr').nextElementSibling; n.hidden=!n.hidden;}));
+  sortable(tbl);
+})();
+
+/* ---------- 3. plants ---------- */
+function drawPlants(){
+  const t=T(); const c=mk('c-plants');
+  const rows=D.plants.filter(p=>(p.site_m2!=null||p.gfa_m2!=null)&&!(p.company==='ZDT')).sort((a,b)=>(Math.max(a.site_m2||0,a.gfa_m2||0))-(Math.max(b.site_m2||0,b.gfa_m2||0)));
+  const lab=p=>`${p.company} · ${p.plant.replace(/\s*\(.*$/,'')}`;
+  const o=base(t);
+  Object.assign(o,{
+    tooltip:Object.assign(o.tooltip,{formatter:ps=>{const p=rows[ps[0].dataIndex]; let h=`<b>${esc(p.company)} ${esc(p.plant)}</b><br>`;
+      ps.forEach(q=>{h+=`${rectKey(q.color)}<b>${q.value==null?'미공개':fmtInt(q.value)+' ㎡'}</b> ${q.seriesName}<br>`;});
+      h+=`<span style="color:${t.mut};font-size:11px">층수 ${p.floors??'미공개'} · ${esc(p.capacity_note)}</span>`; return h;}}),
+    legend:Object.assign(o.legend,{data:['부지 (㎡)','연면적 GFA (㎡)']}),
+    grid:{left:8,right:60,top:40,bottom:16,containLabel:true},
+    xAxis:Object.assign(o.xAxis,{type:'value',splitNumber:isMobile()?3:7,axisLabel:{color:t.mut,fontSize:11,formatter:v=>v>=10000?(v/10000)+'만':v>=1000?(v/1000)+'k':v},splitLine:{lineStyle:{color:t.grid}},axisLine:{show:false}}),
+    yAxis:Object.assign(o.yAxis,{type:'category',data:rows.map(lab),axisLabel:{color:t.sec,fontSize:11,width:isMobile()?120:190,overflow:'break',lineHeight:13},splitLine:{show:false}}),
+    series:[
+      {name:'부지 (㎡)',type:'bar',barMaxWidth:12,barGap:'20%',itemStyle:{color:t.s[0],borderRadius:[0,3,3,0]},data:rows.map(p=>p.site_m2),label:{show:!isMobile(),position:'right',color:t.sec,fontSize:10,formatter:p=>fmtInt(p.value)}},
+      {name:'연면적 GFA (㎡)',type:'bar',barMaxWidth:12,itemStyle:{color:t.s[1],borderRadius:[0,3,3,0]},data:rows.map(p=>p.gfa_m2),label:{show:!isMobile(),position:'right',color:t.sec,fontSize:10,formatter:p=>fmtInt(p.value)}}
+    ]
+  });
+  c.setOption(o);
+}
+(function tablePlants(){
+  const tbl=document.getElementById('t-plants');
+  let h='<thead><tr><th>회사</th><th>공장</th><th class="num sortable">부지 (㎡)</th><th class="num sortable">연면적 (㎡)</th><th class="num sortable">층수</th><th>생산능력</th><th>일정</th><th>출처</th></tr></thead><tbody>';
+  D.plants.forEach(p=>{ h+=`<tr><td><b>${esc(p.company)}</b></td><td>${esc(p.plant)}</td><td class="num" data-v="${p.site_m2??''}">${p.site_m2==null?NA:fmtInt(p.site_m2)}</td><td class="num" data-v="${p.gfa_m2??''}">${p.gfa_m2==null?NA:fmtInt(p.gfa_m2)}</td><td class="num" data-v="${p.floors??''}">${p.floors==null?NA:p.floors}</td><td class="wrap-cell">${esc(p.capacity_note).replace(/미공개/g,NA)}</td><td class="wrap-cell" style="min-width:180px">${esc(p.timeline)}</td><td class="src">${esc(p.source)}</td></tr>`; });
+  tbl.innerHTML=h+'</tbody>'; sortable(tbl);
+})();
+
+/* ---------- 4. capacity index ---------- */
+const CAPA_PICK = [
+  {label:'Ibiden SAP 환산 수요지수 (CY24=100, 회사 추정)', name:'Ibiden 수요지수 (SAP 환산, 수요)', slot:0, width:3},
+  {label:'Ibiden ASIC/AI 서버 Capa 지수 (FY24=1.0, G)', name:'Ibiden AI 서버 Capa 지수', slot:1},
+  {label:'Kinsus ABF 월 생산능력 (백만개, G)', name:'Kinsus ABF 월 생산능력 (개)', slot:2},
+  {label:'Unimicron ABF Capa 지수 (2026=100, G)', name:'Unimicron ABF Capa 지수', slot:3},
+  {label:'삼성전기 베트남 UL-FCBGA 허가 Capa (㎡/년)', name:'삼성전기 베트남 허가 Capa (㎡/년)', slot:4},
+  {label:'Ajinomoto ABF 필름 Capa (㎡/월, E)', name:'Ajinomoto ABF 필름 Capa (㎡/월)', slot:5}
+];
+let idxMode='2026';
+function drawCapa(){
+  const t=T(); const c=mk('c-capa');
+  const yrs=['2024','2025','2026','2027','2028','2029','2030'];
+  const series=CAPA_PICK.map(p=>{ const r=D.capacity_index.find(x=>x.label===p.label); const ks=Object.keys(r.series).sort();
+    const baseK=idxMode==='2026'?'2026':ks[0]; const b=r.series[baseK];
+    const data=yrs.map(y=>r.series[y]==null?null:{value:r.series[y]/b*100,raw:r.series[y],base:baseK});
+    const last=ks[ks.length-1];
+    return {name:p.name,type:'line',connectNulls:true,symbol:'circle',symbolSize:8,lineStyle:{width:p.width||2,color:t.s[p.slot]},itemStyle:{color:t.s[p.slot],borderColor:t.surf,borderWidth:2},
+      emphasis:{focus:'series'},data:data,endLabel:{show:!isMobile(),formatter:q=>q.value==null?'':fmt(q.value,0),color:t.sec,fontSize:10,offset:[4,0]},
+      label:{show:false},raw:r}; });
+  const o=base(t);
+  Object.assign(o,{
+    tooltip:Object.assign(o.tooltip,{axisPointer:{type:'line',lineStyle:{color:t.axis}},formatter:ps=>{ let h=`<b>${ps[0].axisValue}</b><br>`; ps.forEach(p=>{ const d=p.data; if(!d||d.value==null) return;
+      h+=`${lineKey(p.color)}<b>${fmt(d.value,0)}</b> ${p.seriesName} <span style="color:${t.mut}">원값 ${fmt(d.raw,2)} · 기준 ${d.base}=100</span><br>`; }); return h; }}),
+    legend:Object.assign(o.legend,{data:series.map(s=>s.name)}),
+    grid:{left:8,right:isMobile()?24:52,top:isMobile()?72:56,bottom:64,containLabel:true},
+    xAxis:Object.assign(o.xAxis,{type:'category',data:yrs,boundaryGap:false}),
+    yAxis:Object.assign(o.yAxis,{type:'value',name:(idxMode==='2026'?'2026':'첫 해')+' = 100',nameTextStyle:{color:t.mut,fontSize:11,align:'left'},scale:true}),
+    dataZoom:zoom(t),
+    series:series
+  });
+  c.setOption(o);
+}
+document.querySelectorAll('#idx-ctrl button').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('#idx-ctrl button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); idxMode=b.dataset.m; drawCapa();}));
+(function tableCapa(){
+  const tbl=document.getElementById('t-capa'); const yrs=['2024','2025','2026','2027','2028','2029','2030'];
+  let h='<thead><tr><th>지표</th>'+yrs.map(y=>`<th class="num">${y}</th>`).join('')+'<th>비고</th><th>출처</th></tr></thead><tbody>';
+  D.capacity_index.forEach(r=>{ h+=`<tr><td class="wrap-cell" style="min-width:200px"><b>${esc(r.label)}</b></td>`+yrs.map(y=>`<td class="num">${r.series[y]==null?'<span class="na">—</span>':fmt(r.series[y],3)}</td>`).join('')+`<td class="wrap-cell">${esc(r.note)}</td><td class="src">${esc(r.source)}</td></tr>`; });
+  tbl.innerHTML=h+'</tbody>';
+})();
+
+/* ---------- 5a. mix ---------- */
+const MIX_ROWS = [
+  {key:'2015 · Morgan Stanley (ABF 수요)', src:'Morgan Stanley (2026-02-23)', year:2015, parts:{AI:10, PC:70}},
+  {key:'2025 · Unimicron (자사 기판 매출)', src:'Unimicron (G, 2026-02)', year:2025, parts:{AI:40}},
+  {key:'2028 · 대만 브로커/TF (면적 수요)', src:'대만 브로커/TrendForce (2026-07-26)', year:2028, parts:{AI:59, SN:25, PC:16}},
+  {key:'2028 · Goldman (ABF Capa 소비)', src:'Goldman Sachs (2026-09-22)', year:2028, parts:{AI:45, CPU:17}},
+  {key:'2030 · Morgan Stanley (ABF 수요)', src:'Morgan Stanley (2026-02-23)', year:2030, parts:{AI:75, PC:15}}
+];
+const MIX_SERIES = [['AI','AI 가속기 (GPU+ASIC)'],['CPU','서버 CPU'],['SN','서버+네트워크 (합산)'],['PC','PC'],['ETC','기타·미분류 (역산)']];
+function drawMix(){
+  const t=T(); const c=mk('c-mix');
+  // verify against data end_market_mix
+  MIX_ROWS.forEach(r=>{ const d=D.demand.end_market_mix.find(x=>x.source===r.src&&x.year===r.year); if(d){ if(d.shares.AI!=null) r.parts.AI=d.shares.AI; if(d.shares.PC!=null) r.parts.PC=d.shares.PC; if(d.shares.server_cpu!=null) r.parts.CPU=d.shares.server_cpu; }
+    const known=Object.values(r.parts).reduce((a,b)=>a+b,0); r.parts.ETC=Math.max(0,100-known); });
+  const o=base(t);
+  Object.assign(o,{
+    tooltip:Object.assign(o.tooltip,{formatter:ps=>{ let h=`<b>${ps[0].axisValue}</b><br>`; ps.forEach(p=>{ if(p.value==null||p.value===0) return; h+=`${rectKey(p.color)}<b>${p.value}%</b> ${p.seriesName}<br>`; }); return h; }}),
+    legend:Object.assign(o.legend,{data:MIX_SERIES.map(s=>s[1])}),
+    grid:{left:8,right:24,top:isMobile()?60:40,bottom:16,containLabel:true},
+    xAxis:Object.assign(o.xAxis,{type:'value',max:100,axisLabel:{color:t.mut,fontSize:11,formatter:'{value}%'},splitLine:{lineStyle:{color:t.grid}},axisLine:{show:false}}),
+    yAxis:Object.assign(o.yAxis,{type:'category',data:MIX_ROWS.map(r=>r.key),inverse:true,axisLabel:{color:t.sec,fontSize:11,width:isMobile()?120:200,overflow:'break',lineHeight:13},splitLine:{show:false}}),
+    series:MIX_SERIES.map((s,i)=>({name:s[1],type:'bar',stack:'mix',barMaxWidth:22,itemStyle:{color:i===4?t.grid:t.s[i],borderColor:t.surf,borderWidth:1},emphasis:{focus:'series'},
+      data:MIX_ROWS.map(r=>r.parts[s[0]]??null),label:{show:true,position:'inside',color:i===4?t.sec:'#fff',fontSize:10,formatter:p=>p.value>=12?p.value+'%':''}}))
+  });
+  c.setOption(o);
+}
+/* ---------- 5b. market size ---------- */
+function drawMkt(){
+  const t=T(); const c=mk('c-mkt'); const yrs=['2024','2025','2026','2027','2028','2029','2030'];
+  const pick=[
+    {src:'TPCA (2026-09)',metric:'ABF 기판 생산액 (US$ bn)',name:'TPCA · ABF 기판 생산액',abf:true},
+    {src:'DataGravity (2026-06-14)',metric:'ABF 기판 시장 (US$ bn)',name:'DataGravity · ABF 시장',abf:true},
+    {src:'TPCA (2026-09)',metric:'IC 기판 전체 생산액 (US$ bn)',name:'TPCA · IC기판 전체',abf:false},
+    {src:'Prismark (인용)',metric:'IC 기판 전체 (US$ bn)',name:'Prismark · IC기판 전체 (BT 포함)',abf:false},
+    {src:'Yole (2025-07)',metric:'고급 IC 기판 (US$ bn)',name:'Yole · 고급 IC기판',abf:false},
+    {src:'BigGo (2026-05-19)',metric:'글로벌 기판 시장 (US$ bn)',name:'BigGo · 글로벌 기판시장',abf:false}
+  ];
+  const series=pick.map((p,i)=>{ const r=D.demand.market_size.find(x=>x.source===p.src&&x.metric===p.metric); const n=Object.keys(r.series).length;
+    return {name:p.name,type:'line',connectNulls:true,symbol:n===1?'diamond':'circle',symbolSize:n===1?11:8,lineStyle:{width:2,type:p.abf?'solid':'dashed',color:t.s[i]},itemStyle:{color:t.s[i],borderColor:t.surf,borderWidth:2},
+      emphasis:{focus:'series'},data:yrs.map(y=>r.series[y]==null?null:{value:r.series[y],note:r.note}),endLabel:{show:!isMobile()&&n>1,formatter:q=>fmt(q.value,1),color:t.sec,fontSize:10,offset:[4,0]}}; });
+  const o=base(t);
+  Object.assign(o,{
+    tooltip:Object.assign(o.tooltip,{axisPointer:{type:'line',lineStyle:{color:t.axis}},formatter:ps=>{ let h=`<b>${ps[0].axisValue}</b><br>`; ps.forEach(p=>{ const d=p.data; if(!d||d.value==null) return; h+=`${lineKey(p.color)}<b>US$${fmt(d.value,2)}bn</b> ${p.seriesName}${d.note?` <span style="color:${t.mut}">${esc(d.note)}</span>`:''}<br>`; }); return h; }}),
+    legend:Object.assign(o.legend,{data:series.map(s=>s.name)}),
+    grid:{left:8,right:isMobile()?24:52,top:isMobile()?72:56,bottom:64,containLabel:true},
+    xAxis:Object.assign(o.xAxis,{type:'category',data:yrs,boundaryGap:false}),
+    yAxis:Object.assign(o.yAxis,{type:'value',name:'US$ bn',nameTextStyle:{color:t.mut,fontSize:11,align:'left'}}),
+    dataZoom:zoom(t), series:series
+  });
+  c.setOption(o);
+  const cg=[
+    ['Morgan Stanley (2026-02-23)','ABF 시장 가치 CAGR 2025~2030 (%)','가치 CAGR 2025~30','이전 5년 ~9%'],
+    ['대만 브로커/TrendForce (2026-07-26)','ABF 면적 수요 CAGR 2025~2028 (%)','면적 수요 CAGR 2025~28','가치 CAGR 16%와 스코프 차이'],
+    ['Goldman Sachs (한국어 요약)','ABF CAGR 2025~2028 (%)','ABF CAGR 2025~28','1차 보고서 미확인']
+  ].map(([s,m,l,n])=>{const r=D.demand.market_size.find(x=>x.source===s&&x.metric===m); const v=Object.values(r.series)[0]; return `<div class="tile"><div class="lbl">${esc(l)}</div><div class="val">${fmt(v,1)}<small>%</small></div><div class="cap">${esc(s)} · ${esc(r.note||n)}</div></div>`;});
+  document.getElementById('cagr').innerHTML=cg.join('');
+}
+/* ---------- 5c. units table ---------- */
+(function(){
+  const tbl=document.getElementById('t-units');
+  let h='<thead><tr><th>항목</th><th>값 (연도/세대)</th><th>비고</th><th>출처</th></tr></thead><tbody>';
+  D.demand.units.forEach(u=>{ const vals=Object.entries(u.series).map(([k,v])=>`${k}: <b>${v==null?'<span class="na">비공개</span>':fmt(v,1)}</b>`).join(' · ');
+    h+=`<tr><td class="wrap-cell" style="min-width:180px"><b>${esc(u.item)}</b></td><td class="wrap-cell">${vals}</td><td class="wrap-cell">${esc(u.note||'—')}</td><td class="src">${esc(u.source)}</td></tr>`; });
+  tbl.innerHTML=h+'</tbody>';
+})();
+/* ---------- 5d. area per chip ---------- */
+function drawArea(){
+  const t=T(); const c=mk('c-area');
+  const rows=D.demand.substrate_area_per_chip.filter(r=>r.rel_area!=null);
+  const o=base(t);
+  Object.assign(o,{
+    tooltip:Object.assign(o.tooltip,{formatter:ps=>{const r=rows[ps[0].dataIndex]; return `<b>${esc(r.chip)}</b><br>${rectKey(ps[0].color)}<b>${fmt(r.rel_area,2)}×</b> (${fmtInt(r.area_mm2)} ㎟)<br><span style="color:${t.mut}">${esc(r.size_mm)} · ${esc(r.layers)}층${r.note?' · '+esc(r.note):''}</span>`;}}),
+    legend:{show:false},
+    grid:{left:8,right:isMobile()?90:150,top:12,bottom:16,containLabel:true},
+    xAxis:Object.assign(o.xAxis,{type:'value',axisLabel:{color:t.mut,fontSize:11,formatter:'{value}×'},splitLine:{lineStyle:{color:t.grid}},axisLine:{show:false}}),
+    yAxis:Object.assign(o.yAxis,{type:'category',data:rows.map(r=>r.chip.replace(/\s*\(.*$/,'')),inverse:true,axisLabel:{color:t.sec,fontSize:11,width:isMobile()?90:140,overflow:'break'},splitLine:{show:false}}),
+    series:[{type:'bar',barMaxWidth:18,itemStyle:{color:t.s[0],borderRadius:[0,3,3,0]},data:rows.map(r=>r.rel_area),
+      label:{show:true,position:'right',color:t.sec,fontSize:10,formatter:p=>{const r=rows[p.dataIndex]; return isMobile()?`${fmt(r.rel_area,2)}× · ${r.size_mm.split(' ')[0]}`:`${fmt(r.rel_area,2)}× · ${r.size_mm.split(' ')[0]}mm · ${r.layers}층`;}}}]
+  });
+  c.setOption(o);
+}
+(function(){
+  const tbl=document.getElementById('t-panel'); const rows=D.demand.panel_yield_515x515.filter(r=>r.package_mm2!=null);
+  let h='<thead><tr><th class="num">패키지 면적 (㎟)</th><th>≈ 치수</th><th class="num">패널당 취득 수 (개)</th></tr></thead><tbody>';
+  rows.forEach(r=>{ const side=Math.sqrt(r.package_mm2); h+=`<tr><td class="num">${fmtInt(r.package_mm2)}</td><td>${fmt(side,0)}×${fmt(side,0)}mm</td><td class="num"><b>${fmtInt(r.units_per_panel)}</b></td></tr>`; });
+  tbl.innerHTML=h+'</tbody>';
+})();
+
+/* ---------- 6. gap ---------- */
+function drawGap(){
+  const t=T(); const c=mk('c-gap');
+  const rows=D.gap.filter(g=>g.broker&&Object.values(g.series).some(v=>v!=null));
+  const periods=[['2H26','2H26 / 2026'],['2027','2027'],['2028','2028'],['2030','2030']];
+  const o=base(t);
+  Object.assign(o,{
+    tooltip:Object.assign(o.tooltip,{formatter:ps=>{const r=rows[ps[0].dataIndex]; let h=`<b>${esc(r.broker)}</b> <span style="color:${t.mut}">${esc(r.date)}</span><br>`;
+      ps.forEach(p=>{ const v=p.value; h+=`${rectKey(p.color)}<b>${v==null?'—':(v>0?'+':'')+fmt(v,1)+'%'}</b> ${p.seriesName}${v===0?' (균형)':''}<br>`; });
+      h+=`<span style="color:${t.mut};font-size:11px">${esc(r.note)}</span>`; return h;}}),
+    legend:Object.assign(o.legend,{data:periods.map(p=>p[1]),icon:'roundRect'}),
+    grid:{left:8,right:36,top:40,bottom:16,containLabel:true},
+    xAxis:Object.assign(o.xAxis,{type:'value',min:-60,max:10,interval:isMobile()?20:10,axisLabel:{color:t.mut,fontSize:11,formatter:v=>(v>0?'+':'')+v+'%'},splitLine:{lineStyle:{color:t.grid}},axisLine:{show:false}}),
+    yAxis:Object.assign(o.yAxis,{type:'category',data:rows.map(r=>r.broker),inverse:true,axisLabel:{color:t.sec,fontSize:11,width:isMobile()?110:170,overflow:'break',lineHeight:13},splitLine:{show:false}}),
+    series:periods.map((p,i)=>({name:p[1],type:'bar',barMaxWidth:9,barGap:'15%',itemStyle:{color:t.o[i],borderRadius:[3,0,0,3]},emphasis:{focus:'series'},data:rows.map(r=>r.series[p[0]]),
+      label:{show:!isMobile(),position:'left',color:t.sec,fontSize:9,formatter:q=>q.value==null?'':(q.value>0?'+':'')+fmt(q.value,0)+'%'},
+      markLine:i===0?{silent:true,symbol:'none',lineStyle:{color:t.ink,width:1},label:{show:false},data:[{xAxis:0}]}:undefined}))
+  });
+  c.setOption(o);
+}
+(function(){
+  const tbl=document.getElementById('t-price');
+  let h='<thead><tr><th>항목</th><th>시점</th><th>변화</th><th>출처</th></tr></thead><tbody>';
+  D.pricing.forEach(p=>{ h+=`<tr><td class="wrap-cell" style="min-width:170px"><b>${esc(p.item)}</b></td><td class="wrap-cell" style="min-width:140px">${esc(p.date)}</td><td class="wrap-cell" style="min-width:240px">${esc(p.change)}</td><td class="src">${esc(p.source)}</td></tr>`; });
+  tbl.innerHTML=h+'</tbody>';
+})();
+
+/* ---------- 7. checklist ---------- */
+(function(){
+  const rows=[
+    ['2026-10~11','Unimicron·Nan Ya FY27 가격 협상 결과(9~10월) · Kinsus K7~K9 토지 매입 공시 · Ibiden Cell 7/9 결정(FY26 내)','2027 ASP 인상폭(JPM: FY26 +40% 상회 가능)과 ¥5,000억 이후 3차 증설 여부','Unimicron 출하 70% LTA · Ibiden "FY28까지 계획 초과 증설 어려움"'],
+    ['2026-10~11 (3Q 실적)','삼성전기 FC-BGA OPM(~30% 추정)·선수금 유입액 · Ibiden 2Q FY26 가이던스 재상향 · 대덕 FC-BGA 가동률(연말 80%+ 목표)','가격 전가와 고객 선불 규모의 실증','3Q26 삼성전기 OP 추정 6,615~6,710억 · 대덕 1Q26 68.5%'],
+    ['2026-12','삼성전기 GlaSSEM JV 법인 설립 · Absolics 패키지 신뢰성 평가 결과','글라스 2027~28 소량 양산의 현실성','Absolics 양산 시점 "특정 불가"'],
+    ['2027-01~03','Ajinomoto 4Q FY25/FY26 전자재료 매출·OP, 추가 인상·배정 정책 · Nittobo T-glass 증설 진도(2027 +100%)','소재 병목의 완화·심화 판단','필름 월 ~200만㎡ 풀가동, 3Q26 +30%'],
+    ['2027 상반기','Unimicron 光復2 3단계 · Kinsus 幼獅 2,000만개/월 가동 · Ibiden Cell 6/8 장비 반입(발주 50→100%) · 대덕 안산 FC-BGA 2Q27','2027 실효 Capa 증가율(Unimicron +30~40%, Kinsus +25%) 검증','각사 가동률 85~95%'],
+    ['2027 하반기','Rubin Ultra 기판 치수(100×120/120×120, 18~24층) 확정·수율 · ASIC 출하 3배 진도 · CPU:GPU 비율 변화','2028 면적 수요 가정(Ibiden 220, 면적 CAGR 39%) 유지 여부','Rubin 2026 점유 22%(TF), Blackwell >70%'],
+    ['2027-12~2028-09','삼성전기 세종 양산(2028-09)·베트남 설비 완료(2028-04) · Nan Ya NT$468억 공장 착공 · Unimicron 楊梅2 장비 · 브로커 2028 갭 수정치','갭 정점(−19~−51%) 해소 속도와 2029~30 과잉 여부','삼성전기 Capa 2.0~2.2조 → 6조+(2029~30)'],
+    ['상시','선수금 부채 잔액·LTA 종료연도(2029~2032) · 고객 집중도(Ibiden GPU 70~80%, Unimicron TPU 60%, 삼성전기 Nvidia 최대)','계약 종료 이후 가동률 보장 공백','삼성전기 "2032 공급 가시성"']
+  ];
+  document.getElementById('t-check').innerHTML='<thead><tr><th>시점</th><th>확인 항목</th><th>왜 중요한가</th><th>현재 기준값</th></tr></thead><tbody>'+rows.map(r=>`<tr><td style="min-width:120px"><b>${esc(r[0])}</b></td><td class="wrap-cell" style="min-width:260px">${esc(r[1])}</td><td class="wrap-cell">${esc(r[2])}</td><td class="wrap-cell" style="min-width:200px">${esc(r[3])}</td></tr>`).join('')+'</tbody>';
+})();
+
+/* ---------- footer sources ---------- */
+(function(){
+  const set=new Set(); const add=s=>{ if(!s) return; String(s).split(/;\s*/).forEach(x=>{x=x.trim(); if(x) set.add(x);}); };
+  D.capex.forEach(c=>add(c.source)); D.plants.forEach(p=>add(p.source)); D.capacity_index.forEach(c=>add(c.source));
+  D.demand.market_size.forEach(m=>add(m.source)); D.demand.end_market_mix.forEach(m=>add(m.source)); D.demand.units.forEach(u=>add(u.source));
+  D.gap.forEach(g=>add(g.date&&g.broker?`${g.broker} ${g.date}`:null)); D.pricing.forEach(p=>add(p.source)); add(D.demand.panel_yield_515x515.find(r=>r.source).source);
+  document.getElementById('srcs').innerHTML=[...set].sort((a,b)=>a.localeCompare(b,'ko')).map(s=>`<div>· ${esc(s)}</div>`).join('');
+})();
+
+/* ---------- render / theme / resize ---------- */
+function drawAll(){ drawCapex(); drawPlants(); drawCapa(); drawMix(); drawMkt(); drawArea(); drawGap(); }
+drawAll();
+let rt, lastMobile=isMobile(); window.addEventListener('resize',()=>{ clearTimeout(rt); rt=setTimeout(()=>{ if(isMobile()!==lastMobile){lastMobile=isMobile(); drawAll();} else Object.values(charts).forEach(c=>c.resize()); },150); });
+if(window.matchMedia){ window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',drawAll); }
+</script>
+</body></html>
