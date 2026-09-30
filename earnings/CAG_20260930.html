@@ -1,7 +1,7 @@
 <!doctype html><html lang="ko"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>🎯 CAG 어닝 프리뷰 2026-09-30</title>
-<!--EPMETA {"ticker": "CAG", "name": "Conagra Brands, Inc.", "event": "2026-09-30", "tentative": false, "generated": "2026-09-30 16:55", "file": "CAG_20260930.html"} -->
+<!--EPMETA {"ticker": "CAG", "name": "Conagra Brands, Inc.", "event": "2026-09-30", "tentative": false, "generated": "2026-09-30 16:59", "file": "CAG_20260930.html"} -->
 <meta name="description" content="CAG Conagra Brands, Inc. 어닝 프리뷰 — 컨센서스 대비 예상·과거 발표일 주가 반응 기반 방향/폭 추정 (2026-09-30)">
 <style>
 :root{color-scheme:light;
@@ -125,7 +125,7 @@ footer a,.notion{color:var(--accent)}
 <h3>방법론</h3>
 <blockquote>P(beat) = 0.6×최근 4분기 비트율 + 0.4×전체 비트율(시장 사전확률 65% 반영, 표본 12회). 예상 반응 = P(beat)×비트 평균 + (1-P)×미스 평균 - 0.1×20일 런업 + 0.3×(IB 상향-하향), 변동폭은 과거 |반응| 분포 프록시.</blockquote></div>
 
-<footer>출처: FMP (프로필·실적·컨센서스·시세·목표가), Nasdaq 캘린더 (발표 시간) · 생성 2026-09-30 16:55 KST · <a class='notion' href='https://app.notion.com/p/CAG-Conagra-Brands-Inc-2026-09-30-3eb8e39b22a181f998e5fc1ee720adcb' target='_blank'>📄 노션 리포트 열기</a><br>
+<footer>출처: FMP (프로필·실적·컨센서스·시세·목표가), Nasdaq 캘린더 (발표 시간) · 생성 2026-09-30 16:59 KST · <a class='notion' href='https://app.notion.com/p/CAG-Conagra-Brands-Inc-2026-09-30-3eb8e39b22a181f998e5fc1ee720adcb' target='_blank'>📄 노션 리포트 열기</a><br>
 방법론: 옵션 내재변동성(implied move) 데이터 없음 — 과거 |반응| 분포를 예상 변동폭 프록시로 사용 · P(beat) = 0.6×최근4분기 비트율 + 0.4×전체 비트율, 시장 사전확률 65%로 표본 12개 축소 · 예상 반응 = P(beat)×평균(비트 반응) + (1−P)×평균(미스 반응) − 0.1×20일 런업(±20%p 한도) + 0.3×(IB 상향−하향, ±1%p 한도)<br>
 본 자료는 공개 데이터의 통계적 요약이며 투자 권유가 아닙니다. 과거 반응 패턴이 미래를 보장하지 않으며 표본이 작을수록(발표 12회) 불확실성이 큽니다.</footer>
 </div>
@@ -172,15 +172,14 @@ function drawReact(){
   const o=base(t);Object.assign(o,{
     tooltip:Object.assign(o.tooltip,{formatter:ps=>{const e=ev[ps[0].dataIndex];
       return `<b>${e.date}</b> ${e.timing?(e.timing.toUpperCase()+(e.timing_src==='관례추정'?' (추정)':'')):'시간 미정'} · ${e.win} 창<br>${rectKey(e.beat?t.s1:t.s2)}${e.beat?'비트':'미스'} EPS 서프라이즈 <b>${pct(e.eps_surp)}</b><br>반응 <b>${pct(e.move)}</b> (갭 ${pct(e.gap)}) · 5일 ${pct(e.post5)} · 사전20일 ${pct(e.pre20)}<br><span style="color:${t.mut};font-size:11px">${e.base_date} 종가 → ${e.react_date} 종가</span>`;}}),
-    legend:Object.assign(o.legend,{data:[{name:'비트',itemStyle:{color:t.s1}},{name:'미스',itemStyle:{color:t.s2}}]}),
+    legend:{show:false},  // 범례는 카드 상단 커스텀 HTML 범례(--s1/--s2) 하나만 사용
     xAxis:Object.assign(o.xAxis,{data:ev.map(e=>qlab(e.date))}),
     yAxis:Object.assign(o.yAxis,{axisLabel:{color:t.mut,fontSize:11,formatter:v=>v+'%'}}),
-    series:[{name:'비트',type:'bar',barMaxWidth:isMobile()?18:28,data:ev.map(e=>e.beat?{value:e.move,itemStyle:{color:t.s1,borderRadius:e.move>=0?[4,4,0,0]:[0,0,4,4]}}:null),
+    series:[{name:'비트',type:'bar',itemStyle:{color:t.s1},barMaxWidth:isMobile()?18:28,data:ev.map(e=>e.beat?{value:e.move,itemStyle:{color:t.s1,borderRadius:e.move>=0?[4,4,0,0]:[0,0,4,4]}}:null),
       label:{show:true,position:'top',fontSize:10,color:t.sec,formatter:p=>p.value==null?'':pct(p.value)}},
-     {name:'미스',type:'bar',barMaxWidth:isMobile()?18:28,barGap:'-100%',data:ev.map(e=>e.beat?null:{value:e.move,itemStyle:{color:t.s2,borderRadius:e.move>=0?[4,4,0,0]:[0,0,4,4]}}),
+     {name:'미스',type:'bar',itemStyle:{color:t.s2},barMaxWidth:isMobile()?18:28,barGap:'-100%',data:ev.map(e=>e.beat?null:{value:e.move,itemStyle:{color:t.s2,borderRadius:e.move>=0?[4,4,0,0]:[0,0,4,4]}}),
       label:{show:true,position:'top',fontSize:10,color:t.sec,formatter:p=>p.value==null?'':pct(p.value)}},
      {name:'평균',type:'line',data:[],markLine:{silent:true,symbol:'none',lineStyle:{color:t.mut,type:'solid',width:1},label:{color:t.mut,fontSize:10,formatter:'평균 '+pct(D.analysis.stats.avg)},data:[{yAxis:D.analysis.stats.avg}]}}]});
-  o.legend.data=['비트','미스'];
   c.setOption(o);
 }
 function drawPrice(){
