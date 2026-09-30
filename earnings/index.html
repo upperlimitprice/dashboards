@@ -1,0 +1,74 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>🎯 어닝 프리뷰</title><style>
+:root{color-scheme:light;
+ --page:#f9f9f7;--surface-1:#fcfcfb;--surface-2:#f3f2ee;--text-primary:#0b0b0b;--text-secondary:#52514e;--muted:#898781;
+ --grid:#e1e0d9;--axis:#c3c2b7;--border:rgba(11,11,11,.10);--accent:#2a78d6;--accent-soft:rgba(42,120,214,.10);
+ --s1:#2a78d6;--s2:#eb6834;--s3:#1baf7a;--good:#006300;--bad:#d03b3b}
+@media (prefers-color-scheme:dark){:root:where(:not([data-theme="light"])){color-scheme:dark;
+ --page:#0d0d0d;--surface-1:#1a1a19;--surface-2:#222221;--text-primary:#ffffff;--text-secondary:#c3c2b7;--muted:#898781;
+ --grid:#2c2c2a;--axis:#383835;--border:rgba(255,255,255,.10);--accent:#3987e5;--accent-soft:rgba(57,135,229,.16);
+ --s1:#3987e5;--s2:#d95926;--s3:#199e70;--good:#0ca30c;--bad:#e66767}}
+:root[data-theme="dark"]{color-scheme:dark;
+ --page:#0d0d0d;--surface-1:#1a1a19;--surface-2:#222221;--text-primary:#ffffff;--text-secondary:#c3c2b7;--muted:#898781;
+ --grid:#2c2c2a;--axis:#383835;--border:rgba(255,255,255,.10);--accent:#3987e5;--accent-soft:rgba(57,135,229,.16);
+ --s1:#3987e5;--s2:#d95926;--s3:#199e70;--good:#0ca30c;--bad:#e66767}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;overflow-x:hidden}
+body{background:var(--page);color:var(--text-primary);font-family:system-ui,-apple-system,"Apple SD Gothic Neo","Segoe UI","Noto Sans KR",sans-serif;line-height:1.6;font-size:15px}
+.wrap{max-width:1100px;margin:0 auto;padding:28px 16px 64px}
+h1{font-size:1.5rem;margin:0 0 6px;letter-spacing:-.01em;font-weight:800}
+.sub{color:var(--text-secondary);font-size:.86rem;margin:0}
+.lead{background:var(--surface-1);border:1px solid var(--border);border-radius:14px;padding:16px 18px;margin:16px 0 8px;font-size:.93rem;line-height:1.75}
+h2{font-size:1.12rem;margin:40px 0 4px;padding-left:10px;border-left:4px solid var(--accent);font-weight:800}
+h3{font-size:.95rem;margin:22px 0 6px;font-weight:700}
+h4{font-size:.9rem;margin:16px 0 4px;font-weight:700}
+.desc{color:var(--text-secondary);font-size:.84rem;margin:0 0 12px}
+.card{background:var(--surface-1);border:1px solid var(--border);border-radius:14px;padding:16px 16px 12px;margin:0 0 14px;min-width:0}
+.card h3{margin:0 0 2px}
+.card .en{color:var(--muted);font-size:.74rem;margin:0 0 10px}
+.chart{width:100%;height:360px}
+.chart.tall{height:420px}
+.note{color:var(--muted);font-size:.76rem;margin:8px 0 0;line-height:1.6}
+.note b{color:var(--text-secondary);font-weight:600}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin:14px 0 6px}
+.tile{background:var(--surface-1);border:1px solid var(--border);border-radius:14px;padding:14px 16px 12px;min-width:0}
+.tile .lbl{font-size:.78rem;color:var(--text-secondary);margin-bottom:6px}
+.tile .val{font-size:1.65rem;font-weight:800;letter-spacing:-.02em;line-height:1.15;word-break:keep-all}
+.tile .val small{font-size:.9rem;font-weight:600;color:var(--text-secondary);margin-left:2px}
+.tile .cap{font-size:.72rem;color:var(--muted);margin-top:6px;line-height:1.5}
+.tblwrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin-top:8px;max-width:100%}
+table{border-collapse:collapse;width:100%;font-size:.82rem}
+th,td{padding:8px 14px;border-bottom:1px solid var(--grid);text-align:left;vertical-align:top;white-space:nowrap}
+th{background:var(--surface-2);color:var(--text-secondary);font-weight:600;position:sticky;top:0}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+th:last-child,td:last-child{padding-right:30px}
+td.wrap-cell{white-space:normal;min-width:200px;max-width:420px}
+.na{color:var(--muted);font-weight:400}
+th.sortable{cursor:pointer;user-select:none}
+th.sortable .arr{display:inline-block;margin-left:4px;font-size:inherit;color:inherit;opacity:.35}
+th.sortable.on .arr{opacity:1}
+.tag{display:inline-block;border-radius:6px;padding:1px 7px;font-size:.74rem;font-weight:700}
+.tag.beat{background:var(--accent-soft);color:var(--s1)}
+.tag.miss{background:rgba(235,104,52,.14);color:var(--s2)}
+.up{color:var(--good)}.dn{color:var(--bad)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:800px){.two{grid-template-columns:1fr}}
+.narr{background:var(--surface-1);border:1px solid var(--border);border-radius:14px;padding:6px 18px 14px;font-size:.92rem}
+.narr h2{font-size:1.05rem;margin:24px 0 6px}
+.narr h3{font-size:.95rem}
+.narr blockquote{margin:8px 0;padding:6px 12px;border-left:3px solid var(--accent);background:var(--surface-2);border-radius:6px}
+.narr ul{padding-left:1.2em}
+.narr li{margin:4px 0}
+.narr p{margin:8px 0}
+.narr .tblwrap table{font-size:.8rem}
+.narr td,.narr th{white-space:normal;min-width:70px}
+footer{margin-top:48px;color:var(--text-secondary);font-size:.8rem;border-top:1px solid var(--grid);padding-top:14px;line-height:1.7}
+footer a,.notion{color:var(--accent)}
+.notion{display:inline-block;margin-top:6px;padding:6px 12px;border:1px solid var(--accent);border-radius:8px;text-decoration:none;font-weight:600}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:.76rem;color:var(--text-secondary);margin:4px 0 6px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+@media(max-width:640px){.chart{height:320px}.chart.tall{height:380px}h1{font-size:1.25rem}.tile .val{font-size:1.4rem}}
+</style></head><body><div class="wrap">
+<header><h1>🎯 어닝 프리뷰 (티커별)</h1><p class="sub">거니봇 /earnings 티커 — 컨센서스 대비 예상 · 과거 발표일 주가 반응 기반 방향/폭 추정 · 최신순 2건</p></header>
+<div class="card"><div class="tblwrap"><table><thead><tr><th>티커</th><th>회사</th><th>발표일</th><th>생성</th></tr></thead><tbody><tr><td><a href='CAG_20260930.html'><b>CAG</b></a></td><td class='wrap-cell'>Conagra Brands, Inc.</td><td>2026-09-30</td><td>2026-09-30 16:55</td></tr><tr><td><a href='FPS_20261215.html'><b>FPS</b></a></td><td class='wrap-cell'>Forgent Power Solutions, Inc.</td><td>2026-12-15 <span class=na>(잠정)</span></td><td>2026-09-30 16:52</td></tr></tbody></table></div></div>
+<footer>출처: FMP · Nasdaq 캘린더 · 본 자료는 통계적 요약이며 투자 권유가 아닙니다.</footer></div></body></html>
