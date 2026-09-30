@@ -179,7 +179,7 @@ function drawReact(){
       label:{show:true,position:'top',fontSize:10,color:t.sec,formatter:p=>p.value==null?'':pct(p.value)}},
      {name:'미스',type:'bar',itemStyle:{color:t.s2},barMaxWidth:isMobile()?18:28,barGap:'-100%',data:ev.map(e=>e.beat?null:{value:e.move,itemStyle:{color:t.s2,borderRadius:e.move>=0?[4,4,0,0]:[0,0,4,4]}}),
       label:{show:true,position:'top',fontSize:10,color:t.sec,formatter:p=>p.value==null?'':pct(p.value)}},
-     {name:'평균',type:'line',data:[],markLine:{silent:true,symbol:'none',lineStyle:{color:t.mut,type:'solid',width:1},label:{color:t.mut,fontSize:10,formatter:'평균 '+pct(D.analysis.stats.avg)},data:[{yAxis:D.analysis.stats.avg}]}}]});
+     {name:'평균',type:'line',data:[],markLine:{silent:true,symbol:'none',lineStyle:{color:t.mut,type:'solid',width:1},label:{color:t.mut,fontSize:10,position:'insideEndTop',formatter:'평균 '+pct(D.analysis.stats.avg)},data:[{yAxis:D.analysis.stats.avg}]}}]});
   c.setOption(o);
 }
 function drawPrice(){
