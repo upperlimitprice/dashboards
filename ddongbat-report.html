@@ -1,3 +1,7 @@
+<!doctype html>
+<html lang="ko">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>조건검색 종가베팅 전략 검증 리포트</title>
 <style>
   :root{
@@ -55,11 +59,13 @@
     color:var(--mut);text-align:right;padding:0 12px 10px;border-bottom:1px solid var(--line)}
   .tbl th:first-child,.tbl td:first-child{text-align:left}
   .tbl td{padding:11px 12px;border-bottom:1px solid #232c38;text-align:right}
+  .tbl th,.tbl td{white-space:nowrap}
   .tbl tr:last-child td{border-bottom:none}
   .tbl .nm{font-weight:600}
   .chip{font-family:var(--mono);font-size:.7rem;font-weight:700;padding:3px 8px;border-radius:6px;letter-spacing:.02em}
   .chip.p{color:var(--up);background:rgba(229,72,77,.12)}
   .chip.l{color:var(--dn);background:rgba(76,134,232,.12)}
+  .chip.n{color:var(--gold);background:rgba(212,162,78,.12)}
   .pnl{font-family:var(--mono);font-weight:700}
 
   /* logic box */
@@ -110,20 +116,21 @@
 
   <div class="eyebrow">Quant Strategy Validation · 똥밭 종가베팅</div>
   <h1>거래대금 폭발 종가베팅,<br>검증 리포트</h1>
-  <p class="sub">황금똥 연간방 공유 검색식(갭 3%↑ · 20봉 신고가 · 거래량 20봉최대&amp;전일 5배↑)을 12개월 전종목 백테스트로 검증하고, 실계좌 모의(페이퍼) 운용으로 재확인했다.</p>
+  <p class="sub">황금똥 연간방 공유 검색식(갭 3%↑ · 20봉 신고가 · 거래량 20봉최대&amp;전일 5배↑)을 13개월 전종목 백테스트로 검증하고, 실계좌 모의(페이퍼) 운용 1개월로 재확인했다. 2026-10-01 전 종목 재수집 후 갱신.</p>
   <div class="meta">
-    <span>검증기간 <b>2025.09 – 2026.09</b></span>
-    <span>유니버스 <b>2,499종목</b></span>
-    <span>페이퍼 운용 <b>2026.09.04~</b></span>
+    <span>검증기간 <b>2025.09.08 – 2026.10.01</b></span>
+    <span>유니버스 <b>2,512종목</b></span>
+    <span>페이퍼 운용 <b>2026.09.04 – 10.01</b></span>
     <span>손절 <b>−4%</b> · 익절 <b>+6%</b></span>
+    <span>기준일 <b>2026-10-01</b></span>
   </div>
 
   <div class="verdict">
     <div class="vcard win">
-      <span class="verd">검증됨</span>
+      <span class="verd">관찰 중 — 표본 24, 백테스트 기대치 상회</span>
       <div class="vtag">Strategy A · 일봉 종가베팅</div>
-      <div class="vhead">통했다</div>
-      <div class="vsub">페이퍼 운용 5거래 중 4익절. 하루 종일 수급이 소화된 뒤 종가 진입하는 타이밍이 알파의 핵심.</div>
+      <div class="vhead">통했다 — 단, 기대치 상회 중</div>
+      <div class="vsub">페이퍼 24거래 · 승률 75% · 평균 +3.19%. 하루 종일 수급이 소화된 뒤 종가 진입하는 타이밍이 알파의 핵심. 다만 동일 청산규칙 백테스트 기대치(−0.15% · 승률 42%)를 크게 웃돌아 1개월 표본·9월 강세 효과를 의심해야 한다.</div>
     </div>
     <div class="vcard fail">
       <span class="verd">기각</span>
@@ -164,54 +171,143 @@
 
   <!-- ===== 페이퍼 트레이딩 ===== -->
   <section>
-    <div class="shead"><span class="n">02</span><h2>실계좌 모의 운용</h2></div>
-    <p class="sdesc">전략 A(일봉 종가베팅 + 거래대금 300억 필터)를 종목당 100만원 · 최대 3종목으로 실시간 운용. 매매 없이 신호·가상체결만 기록.</p>
+    <div class="shead"><span class="n">02</span><h2>실계좌 모의 운용(페이퍼) 실적</h2></div>
+    <p class="sdesc">전략 A(일봉 종가베팅 + 거래대금 300억 필터)를 종목당 100만원 · 최대 3종목으로 실시간 운용. 매매 없이 신호·가상체결만 기록. 2026.09.04~10.01 · 13거래일 진입 · <b style="color:var(--fg)">24거래 진입 / 24거래 청산</b>(10.01 기준 보유 없음). 아래 수치는 가짜 5행 정정 후 기준.</p>
 
     <div class="kpis">
-      <div class="kpi"><div class="big gold">+4.11<span style="font-size:1rem">%</span></div><div class="lbl">거래당 평균 수익률</div></div>
-      <div class="kpi"><div class="big up">80<span style="font-size:1rem">%</span></div><div class="lbl">승률 (4 / 5)</div></div>
-      <div class="kpi"><div class="big up">+205,700<span style="font-size:.9rem">원</span></div><div class="lbl">누적 손익</div></div>
+      <div class="kpi"><div class="big gold">+3.19<span style="font-size:1rem">%</span></div><div class="lbl">거래당 평균 손익률 (중앙값 +6.00%)</div></div>
+      <div class="kpi"><div class="big up">75<span style="font-size:1rem">%</span></div><div class="lbl">승률 (18 / 24)</div></div>
+      <div class="kpi"><div class="big up">+765,900<span style="font-size:.9rem">원</span></div><div class="lbl">누적 손익 (종목당 100만원 가정)</div></div>
     </div>
 
+    <div class="grid2">
+      <div class="panel">
+        <h3>청산 사유 분포</h3>
+        <div class="ph">24거래 · 건수 · 비중</div>
+        <div class="vrow">
+          <div class="vn">익절 +6%<small>16건 · 익일 고가 터치</small></div>
+          <div class="bar"><i style="width:67%;background:var(--up)"></i></div>
+          <div class="vval up">66.7%</div>
+        </div>
+        <div class="vrow">
+          <div class="vn">로스컷 −4%<small>4건 · 갭다운 체결 0건</small></div>
+          <div class="bar"><i style="width:17%;background:var(--dn)"></i></div>
+          <div class="vval dn">16.7%</div>
+        </div>
+        <div class="vrow">
+          <div class="vn">종가청산<small>4건 · 평균 −0.68%</small></div>
+          <div class="bar"><i style="width:17%;background:var(--gold)"></i></div>
+          <div class="vval gold">16.7%</div>
+        </div>
+      </div>
+      <div class="panel">
+        <h3>백테스트 기대치와 비교</h3>
+        <div class="ph">동일 청산규칙(+6% / −4% / 종가) · 변형 C · 평균 손익률</div>
+        <div class="vrow">
+          <div class="vn">페이퍼 실적<small>24거래 · 승 75%</small></div>
+          <div class="bar"><i style="width:100%;background:var(--gold)"></i></div>
+          <div class="vval gold">+3.19%</div>
+        </div>
+        <div class="vrow">
+          <div class="vn">백테스트 · 같은 기간<small>09.04~ · 19신호 · 승 57.9%</small></div>
+          <div class="bar"><i style="width:35%;background:var(--up)"></i></div>
+          <div class="vval up">+1.10%</div>
+        </div>
+        <div class="vrow">
+          <div class="vn">백테스트 · 전체<small>379신호 · 승 42.5%</small></div>
+          <div class="bar"><i style="width:5%;right:0;background:var(--dn)"></i></div>
+          <div class="vval dn">−0.15%</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="note"><b>어느 백테스트 지표와 비교해야 하나.</b> 페이퍼 규칙(익일 +6% 익절 / −4% 로스컷 / 미체결 시 종가청산)은 D+1 시가(o1)·종가(c1)·고가(h1) 단일 지표와 1:1로 대응하지 않는다. h1(+7.01%)은 '고가에 전량 매도'한 상한 기대치, c1(+0.41%)은 아무 것도 안 걸렸을 때의 하한 근사이고, 실제 규칙은 o1·h1·l1·c1을 합성한 시뮬레이션(아래 시간외 모델의 '기본' 경로)이 정확한 대응이다 — 379신호 평균 <b>−0.15%</b> · 승률 42.5% · 익절 32.7% / 로스컷 50.4% / 종가청산 16.9%. 페이퍼 +3.19% · 승률 75% · 익절 66.7%는 이 기대 범위 <b>안이 아니라 위</b>다. 설명 요인: ① 9월 구간 자체가 좋았다(같은 기간 백테스트 +1.10%, 승률 58%) ② 백테스트는 익절·로스컷 동시충족(10.8%)을 보수적으로 손실 처리하지만 실시간 운용은 먼저 닿은 쪽으로 체결 ③ 종목 선정이 실시간 조건검색 + 거래대금 상위 3종목이라 백테스트 신호 집합과 다름 ④ 표본 24건. 하락장 미검증 상태는 그대로다.</div>
+
+    <h3 style="font-size:1rem;font-weight:700;margin:26px 0 10px">일별 거래 내역</h3>
     <div style="overflow-x:auto">
     <table class="tbl">
-      <thead><tr><th>종목</th><th>진입</th><th>청산</th><th>사유</th><th>수익률</th><th>손익</th></tr></thead>
+      <thead><tr><th>진입일</th><th>종목</th><th>진입가</th><th>청산</th><th>사유</th><th>손익률</th><th>손익(원)</th><th>누적</th></tr></thead>
       <tbody>
-        <tr><td class="nm">로보티즈</td><td class="tnum">09.04</td><td class="tnum">09.07</td><td><span class="chip p">익절</span></td><td class="pnl up">+6.00%</td><td class="pnl up tnum">+60,000</td></tr>
-        <tr><td class="nm">한화투자증권</td><td class="tnum">09.04</td><td class="tnum">09.07</td><td><span class="chip l">종가청산</span></td><td class="pnl dn">−3.43%</td><td class="pnl dn tnum">−34,300</td></tr>
-        <tr><td class="nm">삼미금속</td><td class="tnum">09.07</td><td class="tnum">09.08</td><td><span class="chip p">익절</span></td><td class="pnl up">+6.00%</td><td class="pnl up tnum">+60,000</td></tr>
-        <tr><td class="nm">필옵틱스</td><td class="tnum">09.07</td><td class="tnum">09.08</td><td><span class="chip p">익절</span></td><td class="pnl up">+6.00%</td><td class="pnl up tnum">+60,000</td></tr>
-        <tr><td class="nm">빛과전자</td><td class="tnum">09.08</td><td class="tnum">09.09</td><td><span class="chip p">익절</span></td><td class="pnl up">+6.00%</td><td class="pnl up tnum">+60,000</td></tr>
+        <tr><td class="tnum">09.04</td><td class="nm">로보티즈</td><td class="tnum">304,500</td><td class="tnum">09.07</td><td><span class="chip p">익절</span></td><td class="pnl up">+6.00%</td><td class="pnl up tnum">+60,000</td><td class="pnl tnum" style="color:var(--mut);font-weight:600">+60,000</td></tr>
+        <tr><td class="tnum">09.04</td><td class="nm">한화투자증권</td><td class="tnum">5,100</td><td class="tnum">09.07</td><td><span class="chip n">종가청산</span></td><td class="pnl dn">−3.43%</td><td class="pnl dn tnum">−34,300</td><td class="pnl tnum" style="color:var(--mut);font-weight:600">+25,700</td></tr>
+        <tr><td class="tnum">09.07</td><td class="nm">삼미금속</td><td class="tnum">10,130</td><td class="tnum">09.08</td><td><span class="chip p">익절</span></td><td class="pnl up">+6.00%</td><td class="pnl up tnum">+60,000</td><td class="pnl tnum" style="color:var(--mut);font-weight:600">+85,700</td></tr>
+        <tr><td class="tnum">09.07</td><td class="nm">필옵틱스</td><td class="tnum">33,500</td><td class="tnum">09.08</td><td><span class="chip p">익절</span></td><td class="pnl up">+6.00%</td><td class="pnl up tnum">+60,000</td><td class="pnl tnum" style="color:var(--mut);font-weight:600">+145,700</td></tr>
+        <tr><td class="tnum">09.08</td><td class="nm">빛과전자</td><td class="tnum">3,640</td><td class="tnum">09.09</td><td><span class="chip p">익절</span></td><td class="pnl up">+6.00%</td><td class="pnl up tnum">+60,000</td><td class="pnl tnum" style="color:var(--mut);font-weight:600">+205,700</td></tr>
+        <tr><td class="tnum">09.10</td><td class="nm">흥구석유</td><td class="tnum">14,450</td><td class="tnum">09.11</td><td><span class="chip p">익절</span></td><td class="pnl up">+6.00%</td><td class="pnl up tnum">+60,000</td><td class="pnl tnum" style="color:var(--mut);font-weight:600">+265,700</td></tr>
+        <tr><td class="tnum">09.10</td><td class="nm">샘표식품</td><td class="tnum">30,150</td><td class="tnum">09.11</td><td><span class="chip p">익절</span></td><td class="pnl up">+6.00%</td><td class="pnl up tnum">+60,000</td><td class="pnl tnum" style="color:var(--mut);font-weight:600">+325,700</td></tr>
+        <tr><td class="tnum">09.11</td><td class="nm">엑스게이트</td><td class="tnum">16,060</td><td class="tnum">09.14</td><td><span class="chip p">익절</span></td><td class="pnl up">+6.00%</td><td class="pnl up tnum">+60,000</td><td class="pnl tnum" style="color:var(--mut);font-weight:600">+385,700</td></tr>
+        <tr><td class="tnum">09.11</td><td class="nm">드림시큐리티</td><td class="tnum">2,605</td><td class="tnum">09.14</td><td><span class="chip p">익절</span></td><td class="pnl up">+6.00%</td><td class="pnl up tnum">+60,000</td><td class="pnl tnum" style="color:var(--mut);font-weight:600">+445,700</td></tr>
+        <tr><td class="tnum">09.14</td><td class="nm">샌즈랩</td><td class="tnum">7,000</td><td class="tnum">09.15</td><td><span class="chip p">익절</span></td><td class="pnl up">+6.00%</td><td class="pnl up tnum">+60,000</td><td class="pnl tnum" style="color:var(--mut);font-weight:600">+505,700</td></tr>
+        <tr><td class="tnum">09.14</td><td class="nm">영풍</td><td class="tnum">49,950</td><td class="tnum">09.15</td><td><span class="chip p">익절</span></td><td class="pnl up">+6.00%</td><td class="pnl up tnum">+60,000</td><td class="pnl tnum" style="color:var(--mut);font-weight:600">+565,700</td></tr>
+        <tr><td class="tnum">09.15</td><td class="nm">한국첨단소재</td><td class="tnum">3,360</td><td class="tnum">09.16</td><td><span class="chip p">익절</span></td><td class="pnl up">+6.00%</td><td class="pnl up tnum">+60,000</td><td class="pnl tnum" style="color:var(--mut);font-weight:600">+625,700</td></tr>
+        <tr><td class="tnum">09.15</td><td class="nm">한컴위드</td><td class="tnum">5,230</td><td class="tnum">09.16</td><td><span class="chip p">익절</span></td><td class="pnl up">+6.00%</td><td class="pnl up tnum">+60,000</td><td class="pnl tnum" style="color:var(--mut);font-weight:600">+685,700</td></tr>
+        <tr><td class="tnum">09.15</td><td class="nm">아톤</td><td class="tnum">6,310</td><td class="tnum">09.16</td><td><span class="chip l">로스컷</span></td><td class="pnl dn">−4.00%</td><td class="pnl dn tnum">−40,000</td><td class="pnl tnum" style="color:var(--mut);font-weight:600">+645,700</td></tr>
+        <tr><td class="tnum">09.16</td><td class="nm">비나텍</td><td class="tnum">75,200</td><td class="tnum">09.17</td><td><span class="chip p">익절</span></td><td class="pnl up">+6.00%</td><td class="pnl up tnum">+60,000</td><td class="pnl tnum" style="color:var(--mut);font-weight:600">+705,700</td></tr>
+        <tr><td class="tnum">09.17</td><td class="nm">미투온</td><td class="tnum">4,570</td><td class="tnum">09.18</td><td><span class="chip l">로스컷</span></td><td class="pnl dn">−4.00%</td><td class="pnl dn tnum">−40,000</td><td class="pnl tnum" style="color:var(--mut);font-weight:600">+665,700</td></tr>
+        <tr><td class="tnum">09.17</td><td class="nm">한화엔진</td><td class="tnum">53,000</td><td class="tnum">09.18</td><td><span class="chip n">종가청산</span></td><td class="pnl dn">−2.64%</td><td class="pnl dn tnum">−26,400</td><td class="pnl tnum" style="color:var(--mut);font-weight:600">+639,300</td></tr>
+        <tr><td class="tnum">09.17</td><td class="nm">스피어</td><td class="tnum">23,750</td><td class="tnum">09.18</td><td><span class="chip n">종가청산</span></td><td class="pnl up">+2.32%</td><td class="pnl up tnum">+23,200</td><td class="pnl tnum" style="color:var(--mut);font-weight:600">+662,500</td></tr>
+        <tr><td class="tnum">09.22</td><td class="nm">코리아써키트</td><td class="tnum">66,000</td><td class="tnum">09.23</td><td><span class="chip l">로스컷</span></td><td class="pnl dn">−4.00%</td><td class="pnl dn tnum">−40,000</td><td class="pnl tnum" style="color:var(--mut);font-weight:600">+622,500</td></tr>
+        <tr><td class="tnum">09.22</td><td class="nm">대덕전자</td><td class="tnum">112,400</td><td class="tnum">09.23</td><td><span class="chip p">익절</span></td><td class="pnl up">+6.00%</td><td class="pnl up tnum">+60,000</td><td class="pnl tnum" style="color:var(--mut);font-weight:600">+682,500</td></tr>
+        <tr><td class="tnum">09.22</td><td class="nm">티엘비</td><td class="tnum">44,350</td><td class="tnum">09.23</td><td><span class="chip n">종가청산</span></td><td class="pnl up">+0.34%</td><td class="pnl up tnum">+3,400</td><td class="pnl tnum" style="color:var(--mut);font-weight:600">+685,900</td></tr>
+        <tr><td class="tnum">09.23</td><td class="nm">쓰리빌리언</td><td class="tnum">5,770</td><td class="tnum">09.28</td><td><span class="chip p">익절</span></td><td class="pnl up">+6.00%</td><td class="pnl up tnum">+60,000</td><td class="pnl tnum" style="color:var(--mut);font-weight:600">+745,900</td></tr>
+        <tr><td class="tnum">09.28</td><td class="nm">루닛</td><td class="tnum">11,650</td><td class="tnum">09.29</td><td><span class="chip l">로스컷</span></td><td class="pnl dn">−4.00%</td><td class="pnl dn tnum">−40,000</td><td class="pnl tnum" style="color:var(--mut);font-weight:600">+705,900</td></tr>
+        <tr><td class="tnum">09.30</td><td class="nm">TCC스틸</td><td class="tnum">14,030</td><td class="tnum">10.01</td><td><span class="chip p">익절</span></td><td class="pnl up">+6.00%</td><td class="pnl up tnum">+60,000</td><td class="pnl tnum" style="color:var(--mut);font-weight:600">+765,900</td></tr>
       </tbody>
     </table>
     </div>
+    <p style="font-size:.78rem;color:var(--mut);margin-top:10px">손익(원)은 종목당 100만원 가정(손익률 × 100만원). 실제 기록된 정수 주식 수량 기준 합계는 +751,253원. 로스컷 4건 모두 장중 −4% 체결이며 갭다운 시가 체결은 없었다.</p>
 
-    <div class="note"><b>로스컷은 아직 한 번도 발동하지 않았다.</b> 유일한 손실은 익절·손절 둘 다 안 걸린 초기 종가청산(한화투자증권) 한 건. 4연속 익절 중이며 백테스트 기대치(D+1 평균 +1~2%)를 상회하나, 표본 5건 · 하락장 미검증 단계다.</div>
+    <div class="logic" style="margin-top:26px">
+      <h3>운영 이슈 · 수정</h3>
+      <div class="lh">// 2026-10-01 정정 · trader.py / backtest.py</div>
+      <div class="steps">
+        <div class="step">
+          <div class="snum">!</div>
+          <div class="stxt"><b>추석 연휴 가짜 진입</b><span class="cond">09.24 · 09.25 휴장</span>
+            <p>launchd가 요일만 보고 실행되고 키움 API가 전 거래일 데이터를 그대로 돌려줘, 엑스게이트가 2일 연속 가짜 진입된 뒤 즉시 '로스컷(동시충족)'으로 기록됐다(4행). 09.28(월)은 정상 거래일.</p></div>
+        </div>
+        <div class="step">
+          <div class="snum">!</div>
+          <div class="stxt"><b>관리 루프 중복 실행</b><span class="cond">09.23</span>
+            <p>관리 루프 2개가 동시에 돌아 티엘비 종가청산이 두 번 기록됐다(1행). 두 사고의 가짜 5행을 trades.csv에서 제거했고, 위 통계는 정정 후 기준이다.</p></div>
+        </div>
+        <div class="step">
+          <div class="snum">✓</div>
+          <div class="stxt"><b>수정 사항</b><span class="cond">trader.py</span>
+            <p>휴장일 가드(삼성전자 최신 일봉 == 오늘일 때만 스캔·관리) · 익일봉 판정 엄격화(진입일 이후 봉만 청산 판단) · manage.lock 동시실행 잠금 + 매도 직전 포지션 재확인.</p></div>
+        </div>
+        <div class="step">
+          <div class="snum">✓</div>
+          <div class="stxt"><b>데이터 갱신 모드</b><span class="cond">backtest.py --refresh</span>
+            <p>전 종목 최신 600봉 재수집(INSERT OR REPLACE). 2026-10-01 2,512종목 재수집 후 아래 백테스트를 재실행했다.</p></div>
+        </div>
+      </div>
+    </div>
   </section>
 
   <!-- ===== 백테스트 A ===== -->
   <section>
     <div class="shead"><span class="n">03</span><h2>일봉 종가베팅 백테스트</h2></div>
-    <p class="sdesc">필터를 더할수록 성과가 단조 개선된다 — 원작자의 재량 판단(재료·시황·수급)이 알파의 본체라는 방증. 아래는 D+1 시가 매도 기준 평균 수익률.</p>
+    <p class="sdesc">필터를 더할수록 성과가 단조 개선된다 — 원작자의 재량 판단(재료·시황·수급)이 알파의 본체라는 방증. 단, 재수집 후 개선 폭은 전보다 좁다. 2025.09.08~2026.10.01 · 상한가 잠김(매수 체결 불가) 291건 제외(전체 신호 1,873건 중) · D+1 시가 매도 기준 평균 수익률.</p>
 
     <div class="grid2">
       <div class="panel">
         <h3>변형별 D+1 시가 성과</h3>
         <div class="ph">신호 수 · 평균 수익률 · 승률</div>
         <div class="vrow">
-          <div class="vn">A. 원조건<small>1,743 신호 · 승 52%</small></div>
-          <div class="bar"><i style="width:47%;background:var(--dn)"></i></div>
-          <div class="vval up">+1.68%</div>
+          <div class="vn">A. 원조건<small>1,582 신호 · 승 47.2%</small></div>
+          <div class="bar"><i style="width:75%;background:var(--dn)"></i></div>
+          <div class="vval up">+0.77%</div>
         </div>
         <div class="vrow">
-          <div class="vn">B. +양봉<small>1,071 신호 · 승 56%</small></div>
-          <div class="bar"><i style="width:66%;background:var(--up)"></i></div>
-          <div class="vval up">+2.37%</div>
+          <div class="vn">B. +양봉<small>859 신호 · 승 48.3%</small></div>
+          <div class="bar"><i style="width:90%;background:var(--up)"></i></div>
+          <div class="vval up">+0.92%</div>
         </div>
         <div class="vrow">
-          <div class="vn">C. +거래대금 300억<small>482 신호 · 승 57%</small></div>
-          <div class="bar"><i style="width:58%;background:var(--gold)"></i></div>
-          <div class="vval gold">+2.07%</div>
+          <div class="vn">C. +거래대금 300억<small>379 신호 · 승 50.7%</small></div>
+          <div class="bar"><i style="width:100%;background:var(--gold)"></i></div>
+          <div class="vval gold">+1.02%</div>
         </div>
       </div>
 
@@ -219,28 +315,74 @@
         <h3>청산 방식이 전부</h3>
         <div class="ph">변형 C · 매도 시점별</div>
         <div class="vrow">
-          <div class="vn">D+1 고가 (지정가)<small>86%가 종가 위 터치</small></div>
+          <div class="vn">D+1 고가 (지정가)<small>중앙값 +5.11% · 83% 터치</small></div>
           <div class="bar"><i style="width:100%;background:var(--up)"></i></div>
-          <div class="vval up">+9.09%</div>
+          <div class="vval up">+7.01%</div>
         </div>
         <div class="vrow">
-          <div class="vn">D+1 시가<small>익일 시초 청산</small></div>
-          <div class="bar"><i style="width:23%;background:var(--up)"></i></div>
-          <div class="vval up">+2.07%</div>
-        </div>
-        <div class="vrow">
-          <div class="vn">D+1 종가<small>홀드</small></div>
+          <div class="vn">D+1 시가<small>시초 청산 · 승 50.7%</small></div>
           <div class="bar"><i style="width:15%;background:var(--up)"></i></div>
-          <div class="vval up">+1.31%</div>
+          <div class="vval up">+1.02%</div>
         </div>
         <div class="vrow">
-          <div class="vn">D+10 홀드<small>중앙값</small></div>
-          <div class="bar"><i style="width:42%;right:0;background:var(--dn)"></i></div>
-          <div class="vval dn">−3.8%</div>
+          <div class="vn">D+1 종가<small>홀드 · 승 46.7%</small></div>
+          <div class="bar"><i style="width:6%;background:var(--up)"></i></div>
+          <div class="vval up">+0.41%</div>
+        </div>
+        <div class="vrow">
+          <div class="vn">D+10 홀드<small>중앙값 · 승 40.7%</small></div>
+          <div class="bar"><i style="width:47%;right:0;background:var(--dn)"></i></div>
+          <div class="vval dn">−3.29%</div>
         </div>
       </div>
     </div>
-    <div class="note">권장 운용형은 <b>C조건 종가 매수 → 익일 +5~6% 지정가 매도</b>(고가 중앙값 +6.75% 활용). 홀드할수록 급등 재료의 되돌림으로 악화된다.</div>
+    <div class="note">권장 운용형은 여전히 <b>C조건 종가 매수 → 익일 +5~6% 지정가 매도</b>이나, 고가 중앙값이 +5.11%로 내려와 +6% 익절은 신호의 45%만 도달한다(+5%면 절반 남짓). 익일 저가(l1)는 평균 −4.34% · 중앙값 −4.02%로 절반(50.4%)이 −4% 로스컷선을 건드린다. 홀드할수록 중앙값은 악화된다(D+3 −1.68% → D+10 −3.29%).</div>
+
+    <h3 style="font-size:1rem;font-weight:700;margin:26px 0 10px">변경 전 → 후 (2026-09-04 기준 → 2026-10-01 재수집)</h3>
+    <div style="overflow-x:auto">
+    <table class="tbl">
+      <thead><tr><th>지표 (변형 C)</th><th>이전</th><th>현재</th><th>변화</th></tr></thead>
+      <tbody>
+        <tr><td class="nm">신호 수</td><td class="tnum">482</td><td class="tnum">379</td><td class="pnl dn tnum">−103</td></tr>
+        <tr><td class="nm">D+1 시가 (o1) 평균 · 승률</td><td class="tnum">+2.07% · 57%</td><td class="tnum">+1.02% · 50.7%</td><td class="pnl dn tnum">−1.05%p</td></tr>
+        <tr><td class="nm">D+1 종가 (c1) 평균 · 승률</td><td class="tnum">+1.31%</td><td class="tnum">+0.41% · 46.7%</td><td class="pnl dn tnum">−0.90%p</td></tr>
+        <tr><td class="nm">D+1 고가 (h1) 평균 · 중앙값</td><td class="tnum">+9.09% · +6.75%</td><td class="tnum">+7.01% · +5.11%</td><td class="pnl dn tnum">−2.08%p</td></tr>
+        <tr><td class="nm">D+10 중앙값</td><td class="tnum">−3.8%</td><td class="tnum">−3.29%</td><td class="pnl up tnum">+0.5%p</td></tr>
+        <tr><td class="nm">A. 원조건 o1</td><td class="tnum">1,743 · +1.68% · 52%</td><td class="tnum">1,582 · +0.77% · 47.2%</td><td class="pnl dn tnum">−0.91%p</td></tr>
+        <tr><td class="nm">B. +양봉 o1</td><td class="tnum">1,071 · +2.37% · 56%</td><td class="tnum">859 · +0.92% · 48.3%</td><td class="pnl dn tnum">−1.45%p</td></tr>
+      </tbody>
+    </table>
+    </div>
+    <p style="font-size:.78rem;color:var(--mut);margin-top:10px">변화 요인: 전 종목 2,512 최신 600봉 재수집(수정주가 갱신), 종가 상한가 잠김 291건 제외(진입 체결 불가 가정), 검증기간 1개월 연장(~2026.10.01). 신호가 줄면서 기대 수익률도 절반 수준으로 낮아졌다 — 이전 수치는 과대평가였다고 보는 것이 맞다.</p>
+
+    <div class="grid2" style="margin-top:26px">
+      <div class="panel">
+        <h3>시간외(장전 보호매도) 모델</h3>
+        <div class="ph">변형 C · 379신호 · 익일 +6% / −4% / 종가청산 · 평균 손익률</div>
+        <div class="vrow">
+          <div class="vn">기본<small>갭다운 시가 로스컷 · 최악 −21.2%</small></div>
+          <div class="bar"><i style="width:47%;right:0;background:var(--dn)"></i></div>
+          <div class="vval dn">−0.15%</div>
+        </div>
+        <div class="vrow">
+          <div class="vn">장전 시간외 탈출 100%<small>갭다운 0% 매도 · 최악 −4.0%</small></div>
+          <div class="bar"><i style="width:100%;background:var(--up)"></i></div>
+          <div class="vval up">+0.32%</div>
+        </div>
+        <div class="vrow">
+          <div class="vn">장전 시간외 탈출 50%<small>절반만 성공 · 최악 −10.6%</small></div>
+          <div class="bar"><i style="width:27%;background:var(--up)"></i></div>
+          <div class="vval up">+0.08%</div>
+        </div>
+      </div>
+      <div class="panel" style="display:flex;flex-direction:column;justify-content:center">
+        <h3 class="gold">갭다운 30건이 전부를 가른다</h3>
+        <p style="font-size:.87rem;color:#c8d0da;line-height:1.62;margin-top:8px">
+          379신호 중 익일 시가가 −4% 아래로 뜬 갭다운은 <b style="color:var(--fg)">30건(7.9%) · 평균 시가 −5.9%</b>. 이 꼬리를 장전 시간외(08:30~08:40)에서 전일 종가(=진입가)로 털 수 있다고 가정하면 최악 손실이 −21%→−4%로 잘리고 평균이 양(+)으로 돌아선다. 승률(42.5%)은 변하지 않는다 — 시간외는 승률이 아니라 꼬리를 깎는 장치.<br><br>
+          단, '시간외에 매수자가 있다'는 낙관 가정이라 성공률 100%/50%를 병기했다. 09.16 1차 계산(360신호) −0.21% / +0.28%에서 재수집 후 −0.15% / +0.32%로 소폭 이동.
+        </p>
+      </div>
+    </div>
   </section>
 
   <!-- ===== 백테스트 B ===== -->
@@ -285,11 +427,13 @@
       <span class="param">진입 <b>당일 종가</b></span>
       <span class="param">스캔 <b>매일 15:05</b></span>
       <span class="param">모드 <b>PAPER</b></span>
+      <span class="param">휴장일 가드 <b>삼성전자 당일봉</b></span>
+      <span class="param">관리 루프 <b>manage.lock</b></span>
     </div>
   </section>
 
   <footer>
-    똥밭·황금똥 검색식 기반 자체 백테스트 · 페이퍼 운용 (키움 수정주가 일봉·3분봉). 검증기간 2025.09–2026.09.
+    똥밭·황금똥 검색식 기반 자체 백테스트 · 페이퍼 운용 (키움 수정주가 일봉·3분봉). 검증기간 2025.09.08–2026.10.01 · 페이퍼 2026.09.04–10.01 · 기준일 2026-10-01 갱신.
     <div class="disc">본 자료는 전략 검증 기록이며 투자 권유가 아님. 표본이 작고 하락장 미검증 상태이므로 실전 전환 전 추가 관찰 필요.</div>
   </footer>
 
