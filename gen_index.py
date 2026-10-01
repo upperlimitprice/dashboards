@@ -37,6 +37,7 @@ ITEMS = [
     ("cost.html", "🧮 비용구조 모델", "비용의 성격별 분류 전수 파싱 — 기업 검색 · 분기 flow·연간 매트릭스 · 엑셀 다운로드", True),
     ("vs.html", "📊 VS 재무·비용 리포트", "기업 검색 → 손익·비용 세부(%of Sales)·판관비·세그먼트 섹션 리포트 · VS 엑셀 출력", True),
     ("flows", "💰 수급 주체별 시총대비 Top20", "", True),
+    ("trendforce.html", "📈 트렌드포스 가격 전망 트래커", "TrendForce 분기 계약가 QoQ 전망 — DRAM 7개·NAND 6개 품목 범위·수정 이력·누적 지수 + 패널·HBM·NOR·MLCC·파운드리 (4Q23~4Q26)", True),
     ("dram.html", "💾 DRAM·NAND 현물가", "DRAMeXchange 현물 세션 평균 — DDR5/DDR4/NAND 일일 추적 (2022~)", True),
     ("gpu-rent.html", "🖥 AI 가속기 렌탈 시세", "vast.ai 스팟 + Silicon Data H100 지수 — H100·H200·B200·A100 $/hr 일일 추적", True),
     ("llm-tokens.html", "🤖 LLM 토큰 사용량", "OpenRouter 주간 모델별 토큰 + Silicon Data Token Expenditure Index — AI 수요 프록시", True),

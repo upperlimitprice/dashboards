@@ -1,0 +1,469 @@
+<!doctype html><html lang="ko"><head><meta charset='utf-8'><meta name='viewport' content='width=device-width,initial-scale=1'>
+<title>트렌드포스 가격 전망 트래커</title>
+<meta name="description" content="TrendForce 분기 계약가(Contract Price) 전망치를 품목별·발표일별로 추적 — DRAM 7개·NAND 6개 세부 품목, 전망 수정 이력, 누적 지수, 패널·HBM·NOR·MLCC·파운드리 보조 품목">
+<style>
+:root{color-scheme:light;
+ --bg:#eceff3;--box:#f9fafc;--box2:#f2f5f8;--line:#c9d2dc;--line2:#dee4ea;--grid:#e2e7ed;
+ --ink:#232b34;--mut:#75818e;--mut2:#8a94a0;--th:#3d5a80;--thfg:#fff;
+ --up:#cf4f45;--up2:#e9a39d;--dn:#3f6bab;--dn2:#9fb8dc;--flat:#9aa4ad;
+ --s1:#2a78d6;--s2:#eb6834;--s3:#1baf7a;--s4:#eda100;
+ --tip:#232b34;--tipfg:#fff;--chart:#f6f8fb;--chartline:#d9e0e8}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;
+ --bg:#14181d;--box:#1c2229;--box2:#222a33;--line:#33404d;--line2:#2b3540;--grid:#2a333d;
+ --ink:#e8edf2;--mut:#9aa6b2;--mut2:#8591a0;--th:#2d4766;--thfg:#e8edf2;
+ --up:#e66767;--up2:#8a4a4a;--dn:#5a93e0;--dn2:#3a5680;--flat:#7b8794;
+ --s1:#3987e5;--s2:#d95926;--s3:#199e70;--s4:#c98500;
+ --tip:#e8edf2;--tipfg:#14181d;--chart:#1a2027;--chartline:#2f3b47}}
+:root[data-theme="dark"]{color-scheme:dark;
+ --bg:#14181d;--box:#1c2229;--box2:#222a33;--line:#33404d;--line2:#2b3540;--grid:#2a333d;
+ --ink:#e8edf2;--mut:#9aa6b2;--mut2:#8591a0;--th:#2d4766;--thfg:#e8edf2;
+ --up:#e66767;--up2:#8a4a4a;--dn:#5a93e0;--dn2:#3a5680;--flat:#7b8794;
+ --s1:#3987e5;--s2:#d95926;--s3:#199e70;--s4:#c98500;
+ --tip:#e8edf2;--tipfg:#14181d;--chart:#1a2027;--chartline:#2f3b47}
+*{box-sizing:border-box}
+body{font-family:'Apple SD Gothic Neo','Noto Sans KR',sans-serif;background:var(--bg);color:var(--ink);margin:0}
+.wrap{max-width:1080px;margin:0 auto;padding:18px 16px 40px}
+h1{font-size:1.3rem;margin:6px 0 2px}
+h2{font-size:1rem;margin:0}
+.sub{color:var(--mut);font-size:.8rem;margin:0 0 12px;line-height:1.6}
+.box{background:var(--box);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:10px 0}
+.hd{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:8px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:0 0 12px}
+.kpi{background:var(--box2);border:1px solid var(--line);border-radius:11px;padding:10px 13px}
+.kpi small{color:var(--mut);font-size:.68rem;display:block}
+.kpi b{font-size:1.05rem;font-variant-numeric:tabular-nums}
+.kpi .n{font-size:.68rem;color:var(--mut);display:block;margin-top:2px}
+.up{color:var(--up)}.dn{color:var(--dn)}.fl{color:var(--flat)}
+button.tab{background:var(--box2);border:1px solid var(--line);border-radius:8px;padding:6px 13px;font-size:.84rem;cursor:pointer;margin:0 6px 8px 0;color:var(--ink)}
+button.tab.on{background:var(--th);color:#fff;border-color:var(--th)}
+button.tab.sm{padding:4px 10px;font-size:.78rem;margin:0 4px 4px 0}
+.tabs{display:flex;flex-wrap:wrap}
+table{border-collapse:collapse;width:100%;font-size:.8rem}
+th{background:var(--th);color:var(--thfg);padding:7px 10px;font-weight:600;text-align:right;white-space:nowrap;position:sticky;top:0;z-index:1}
+th:first-child,td:first-child{text-align:left}
+td{padding:6px 10px;border-bottom:1px solid var(--line2);text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+td.l{text-align:left;white-space:normal}
+.tblwrap{overflow-x:auto;max-height:72vh;overflow-y:auto;border-radius:8px}
+.tblwrap th:first-child,.tblwrap td:first-child{position:sticky;left:0;background:var(--box);z-index:2}
+.tblwrap th:first-child{background:var(--th);z-index:3}
+.cell{display:inline-block;min-width:64px;padding:2px 6px;border-radius:6px;font-weight:600}
+.cell.u{outline:1px dashed var(--mut2);outline-offset:-1px}
+#tftip{position:absolute;display:none;background:var(--tip);color:var(--tipfg);font-size:.74rem;line-height:1.55;padding:7px 10px;border-radius:8px;pointer-events:none;z-index:99;max-width:320px}
+.lg{font-size:.74rem;color:var(--mut);margin:6px 0 0;line-height:1.8}
+.lg .sw{display:inline-block;width:10px;height:10px;border-radius:3px;vertical-align:-1px;margin-right:4px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px}
+.panel{background:var(--box2);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.panel h3{font-size:.88rem;margin:0 0 6px;display:flex;justify-content:space-between;align-items:baseline}
+.panel h3 small{font-weight:400;color:var(--mut);font-size:.7rem}
+svg{display:block;width:100%}
+.scrollx{overflow-x:auto}.scrollx svg{min-width:720px}
+svg text{font-family:'Apple SD Gothic Neo','Noto Sans KR',sans-serif}
+.note{background:var(--box2);border-left:4px solid var(--th);border-radius:8px;padding:8px 14px;font-size:.84rem;line-height:1.7;margin:10px 0}
+.tl{list-style:none;padding:0;margin:0}
+.tl li{display:grid;grid-template-columns:92px 1fr;gap:10px;padding:8px 0;border-bottom:1px solid var(--line2);font-size:.83rem;line-height:1.55}
+.tl li:last-child{border-bottom:0}
+.tl .d{color:var(--mut);font-variant-numeric:tabular-nums;white-space:nowrap}
+.tl a{color:var(--th);text-decoration:none}
+.tl .q{display:inline-block;background:var(--box2);border:1px solid var(--line);border-radius:6px;padding:0 6px;font-size:.72rem;margin-right:4px;color:var(--mut)}
+.tag{display:inline-block;border-radius:6px;padding:1px 7px;font-size:.7rem;font-weight:700;margin-left:4px;vertical-align:1px}
+.tag.rev{background:var(--up2);color:var(--ink)}.tag.act{background:var(--dn2);color:var(--ink)}.tag.u{border:1px dashed var(--mut2);color:var(--mut)}
+.hide{display:none}
+@media(max-width:640px){.tl li{grid-template-columns:1fr}th,td{padding:6px 7px}}
+</style></head><body>
+<div class='wrap'>
+<h1>📈 트렌드포스 가격 전망 트래커</h1>
+<p class='sub'>기준 2026-10-01 · TrendForce 분기 보도자료의 <b>계약가(Contract Price) QoQ 전망 범위</b>를 품목별로 수집 — DRAM 7개 · NAND Flash 6개 세부 품목 + 패널·HBM·NOR/SLC NAND·MLCC·파운드리 보조 품목<br>
+※ 범위 막대 = 전망 하한~상한, 점 = 중앙값 · 같은 분기에 발표가 여러 번이면 최신 발표를 표시(수정 이력 탭에서 비교) · <span class='tag u'>2차</span>는 2차 출처(미디어·요약) 기반으로 원문 재확인 권장</p>
+<div class='kpis' id='kpis'></div>
+<div class='tabs' id='mainTabs'>
+<button class='tab on' data-v='latest'>최신 전망 (4Q26)</button>
+<button class='tab' data-v='trend'>품목별 분기 추이</button>
+<button class='tab' data-v='rev'>전망 수정 이력</button>
+<button class='tab' data-v='idx'>누적 전망 지수</button>
+<button class='tab' data-v='table'>전체 표</button>
+<button class='tab' data-v='other'>패널·HBM·기타 품목</button>
+<button class='tab' data-v='log'>발표 로그·출처</button>
+</div>
+<div id='view'></div>
+<div class='note' id='insight'></div>
+<p class='lg'>출처: TrendForce 보도자료(presscenter) 및 2차 보도(EE Times Asia·Tom's Hardware·evertiq·TechPowerUp·StorageNewsletter·X @jukan05 등). 전망치는 발표 시점의 추정치이며 실적치(act)는 이후 분기 매출 보도자료에서 역산된 가격 상승률. 데이터는 이 파일의 <code>&lt;script id='tfd'&gt;</code> JSON에 내장 — 신규 발표 시 항목 추가.</p>
+</div>
+
+<script id='tfd' type='application/json'>
+{
+"items":[
+ {"id":"dram_conv","cat":"DRAM","ko":"범용 DRAM (HBM 제외)","en":"Conventional DRAM"},
+ {"id":"dram_all","cat":"DRAM","ko":"DRAM 전체 (HBM 포함)","en":"DRAM incl. HBM"},
+ {"id":"pc","cat":"DRAM","ko":"PC DRAM","en":"PC DRAM"},
+ {"id":"server","cat":"DRAM","ko":"서버 DRAM","en":"Server DRAM"},
+ {"id":"mobile","cat":"DRAM","ko":"모바일 DRAM","en":"Mobile DRAM"},
+ {"id":"gfx","cat":"DRAM","ko":"그래픽 DRAM","en":"Graphics DRAM"},
+ {"id":"cons","cat":"DRAM","ko":"컨슈머 DRAM","en":"Consumer DRAM"},
+ {"id":"nand","cat":"NAND","ko":"NAND Flash 전체","en":"NAND Flash"},
+ {"id":"essd","cat":"NAND","ko":"엔터프라이즈 SSD","en":"Enterprise SSD"},
+ {"id":"cssd","cat":"NAND","ko":"클라이언트 SSD","en":"Client SSD"},
+ {"id":"emmc","cat":"NAND","ko":"eMMC","en":"eMMC"},
+ {"id":"ufs","cat":"NAND","ko":"UFS","en":"UFS"},
+ {"id":"wafer","cat":"NAND","ko":"NAND 웨이퍼","en":"NAND Wafer"}
+],
+"quarters":["4Q23","1Q24","2Q24","3Q24","4Q24","1Q25","2Q25","3Q25","4Q25","1Q26","2Q26","3Q26","4Q26"],
+"src":{
+ "231013":["2023-10-13","Q4 DRAM Contract Prices Set to Rise, Estimated Quarterly Increase of 3-8%","https://www.trendforce.com/presscenter/news/20231013-11880.html"],
+ "231017":["2023-10-17","Suppliers Scale Back Production, Q4 NAND Flash Contract Prices Projected to Climb 8~13%","https://www.trendforce.com/presscenter/news/20231017-11883.html"],
+ "231026":["2023-10-26","Q4 Mobile DRAM and NAND Flash Contract Prices Forecast to Rise","https://www.trendforce.com/presscenter/news/20231026-11897.html"],
+ "231219":["2023-12-19","Mobile DRAM and eMMC/UFS Prices to Surge 18–23% in 1Q24","https://www.trendforce.com/presscenter/news/20231219-11961.html"],
+ "240108":["2024-01-08","DRAM Contract Prices Projected to Increase 13–18% in 1Q24","https://www.trendforce.com/presscenter/news/20240108-11988.html"],
+ "240109":["2024-01-09","NAND Flash Contract Prices Forecast to Rise 15–20% in 1Q24","https://www.trendforce.com/presscenter/news/20240109-11991.html"],
+ "240326":["2024-03-26","2Q24 DRAM Price Increase Expected to Narrow to 3–8%","https://www.trendforce.com/presscenter/news/20240326-12093.html"],
+ "240328":["2024-03-28","Q2 NAND Flash Contract Prices Expected to Rise by 13–18%, Enterprise SSDs Highest","https://www.trendforce.com/presscenter/news/20240328-12096.html"],
+ "240507":["2024-05-07","DRAM Contract Prices for Q2 Adjusted to 13–18% Increase; NAND Flash 15–20%","https://www.trendforce.com/presscenter/news/20240507-12128.html"],
+ "240627":["2024-06-27","DRAM Prices Expected to Increase by 8–13% in Q3","https://www.trendforce.com/presscenter/news/20240627-12207.html"],
+ "240628":["2024-06-28","Q3 NAND Flash Contract Prices Estimated to Rise by 5–10%","https://www.trendforce.com/presscenter/news/20240628-12210.html"],
+ "241009":["2024-10-09","Buyers Focus on Inventory Reduction; Slowing Demand Constrains Q4 Memory Price Increases","https://www.trendforce.com/presscenter/news/20241009-12325.html"],
+ "241015":["2024-10-15","Increased Production and Weakened Demand to Drive NAND Flash Prices Down 3–8% in 4Q24","https://www.trendforce.com/presscenter/news/20241015-12327.html"],
+ "241230":["2024-12-30","Passive Buyer Strategies Drive DRAM Contract Prices Down Across the Board in 1Q25","https://www.trendforce.com/presscenter/news/20241230-12424.html"],
+ "241231":["2024-12-31","Rising Inventories May Push 1Q25 NAND Flash Prices Down by Over 10%","https://www.trendforce.com/presscenter/news/20241231-12427.html"],
+ "250325":["2025-03-25","Downstream Inventory Reduction Eases DRAM Price Decline in 2Q25","https://www.trendforce.com/presscenter/news/20250325-12528.html"],
+ "250326":["2025-03-26","NAND Flash Prices Begin to Recover in 2Q25","https://www.trendforce.com/presscenter/news/20250326-12530.html"],
+ "250417":["2025-04-17","U.S. Tariffs Spur Stockpiling, 2Q25 Memory Contract Prices Set to Rise Further","https://www.trendforce.com/presscenter/news/20250417-12551.html"],
+ "250605":["2025-06-05","EOL Plans Drive Strong DDR4 Contract Price Hikes in 2Q25 for Server and PC","https://www.trendforce.com/presscenter/news/20250605-12608.html"],
+ "250707":["2025-07-07","Diverging 3Q25 Price Trends; Consumer DDR4 Prices Expected to Surge Over 40%","https://www.trendforce.com/presscenter/news/20250707-12633.html"],
+ "250709":["2025-07-09","3Q25 NAND Flash Contract Prices Projected to Rise 5–10%","https://www.trendforce.com/presscenter/news/20250709-12638.html"],
+ "250811":["2025-08-11","DDR4 and LPDDR4 Supply Tightens Sharply in 2H25","https://www.trendforce.com/presscenter/news/20250811-12667.html"],
+ "250924":["2025-09-24","DRAM Prices to Continue Rising in 4Q25, Legacy Products See Steeper Increases","https://www.trendforce.com/presscenter/news/20250924-12733.html"],
+ "250925":["2025-09-25","NAND Flash Prices to Rise 5–10% in 4Q25, Driven by QLC Spillover Demand","https://www.trendforce.com/presscenter/news/20250925-12736.html"],
+ "251029":["2025-10-29","Tight DRAM Supply to Boost DDR5 Contract Prices (4Q25 범용 DRAM 18–23%로 상향)","https://www.trendforce.com/presscenter/news/20251029-12758.html"],
+ "251110":["2025-11-10","4Q25 세부 품목 추가 상향 (PC 25–30% · 서버 28–33% · 모바일 38–43%) — GS 메모리 가격 트래커 인용","https://x.com/Jukanlosreve/status/1987660455909953589"],
+ "251201":["2025-12-01","NAND Flash Wafer Supply Tightens, Some Products See Over 60% Contract Price Hikes in Nov.","https://www.trendforce.com/presscenter/news/20251201-12807.html"],
+ "260105":["2026-01-05","Memory Makers Prioritize Server Applications, Across-the-Board Price Increases in 1Q26","https://www.trendforce.com/presscenter/news/20260105-12860.html"],
+ "260202":["2026-02-02","Memory Price Outlook for 1Q26 Sharply Upgraded; All Categories to Hit Record Highs","https://www.trendforce.com/presscenter/news/20260202-12911.html"],
+ "260325":["2026-03-25","1Q26 실적 추정 상향 (PC 110–115% · 서버 93–98% · 모바일 58–63%) — @jukan05","https://x.com/jukan05/status/2037769643629396194"],
+ "260331":["2026-03-31","AI Server Demand to Drive Memory Contract Price Increases in 2Q26 (LTA)","https://www.trendforce.com/presscenter/news/20260331-12995.html"],
+ "260514":["2026-05-14","Mobile DRAM Contract Prices Continue Rising in 2Q26","https://www.trendforce.com/presscenter/news/20260514-13044.html"],
+ "260520":["2026-05-20","2Q26 서버 DRAM 45–50% → 50–55% 상향 — @jukan05","https://x.com/jukan05/status/2063486413304475930"],
+ "260601":["2026-06-01","Rapid Contract Price Surge Drives 1Q26 DRAM Industry Up 81% QoQ (범용 DRAM 1Q26 실적 93–98%)","https://www.trendforce.com/presscenter/news/20260601-13070.html"],
+ "260622":["2026-06-22","Consumer DRAM Shortages Extend to DDR2 Products, Prices Continue Rising in 3Q26","https://www.trendforce.com/presscenter/news/20260622-13112.html"],
+ "260625":["2026-06-25","3Q26 PC DRAM 8–13% → 15–20% 상향, 4Q26 0–5% → 3–8% — @jukan05","https://x.com/jukan05/status/2071875242365157763"],
+ "260703":["2026-07-03","AI Server Demand Continues to Support Memory Prices in 3Q26, but Gains Moderate","https://www.trendforce.com/presscenter/news/20260703-13134.html"],
+ "260709":["2026-07-09","LTAs Cap Price Increases; Server DRAM Contract Prices to Rise 13–18% QoQ in 3Q26","https://www.trendforce.com/presscenter/news/20260709-13140.html"],
+ "260818":["2026-08-18","Top Five NAND Flash Brands Revenue +77% QoQ in 2Q26 (NAND 2Q26 실적 70–75%)","https://www.trendforce.com/presscenter/news/20260818-13186.html"],
+ "260907":["2026-09-07","DRAM Industry Revenue Rises 59.5% QoQ in 2Q26 (서버 DRAM 2Q26 실적 53–58%)","https://www.trendforce.com/presscenter/news/20260907-13219.html"],
+ "260921":["2026-09-21","Stronger North American Demand to Keep Enterprise SSD Prices on an Upward Trend in 4Q26","https://www.trendforce.com/presscenter/news/20260921-13246.html"],
+ "260930":["2026-09-30","AI Server Demand Sustains Memory Contract Price Increases in 4Q26, Consumer-Side Pressure Persists","https://www.trendforce.com/presscenter/news/20260930-13258.html"]
+},
+"f":[
+ ["dram_conv","4Q23",3,8,"f","231013","8분기 연속 하락 종료, 감산 효과로 반등 (당시 HBM 미분리)"],
+ ["pc","4Q23",3,8,"f","231013",""],["server","4Q23",3,8,"f","231013",""],["gfx","4Q23",3,8,"f","231013",""],["cons","4Q23",3,8,"f","231013",""],
+ ["mobile","4Q23",13,18,"f","231026","스마트폰 브랜드 재고 축적"],
+ ["nand","4Q23",8,13,"f","231017","공급사 감산"],["cssd","4Q23",8,13,"f","231017",""],["wafer","4Q23",13,18,"f","231017",""],
+ ["emmc","4Q23",10,15,"f","231026",""],["ufs","4Q23",10,15,"f","231026",""],
+
+ ["dram_conv","1Q24",13,18,"f","240108","모바일 DRAM이 상승 주도"],
+ ["pc","1Q24",10,15,"f","240108","DDR5가 DDR4 앞서"],["server","1Q24",10,15,"f","240108",""],["gfx","1Q24",10,15,"f","240108",""],
+ ["cons","1Q24",10,15,"f","240108","DDR4 10–15% · DDR3 8–13%"],["mobile","1Q24",18,23,"f","231219",""],
+ ["nand","1Q24",15,20,"f","240109","공급자 주도 가격 인상 (1/19 리뷰에서 18–23%로 확인)"],
+ ["cssd","1Q24",15,20,"f","240109",""],["essd","1Q24",18,23,"f","240109",""],["emmc","1Q24",18,23,"f","231219",""],["ufs","1Q24",18,23,"f","231219",""],["wafer","1Q24",8,13,"f","240109",""],
+
+ ["dram_conv","2Q24",3,8,"f","240326","수요 불확실, 상승폭 축소 전망"],
+ ["pc","2Q24",3,8,"f","240326","DDR4·DDR5 모두 3–8%"],["server","2Q24",3,8,"f","240326","DDR4 5–10% · DDR5 3–8%"],["mobile","2Q24",3,8,"f","240326",""],["gfx","2Q24",3,8,"f","240326",""],["cons","2Q24",3,8,"f","240326","DDR3 8–13% · DDR4 10–15%"],
+ ["nand","2Q24",13,18,"f","240328",""],["essd","2Q24",20,25,"f","240328","AI 서버 수요로 최고 상승"],["cssd","2Q24",10,15,"f","240328",""],["emmc","2Q24",10,15,"f","240328",""],["ufs","2Q24",10,15,"f","240328",""],
+ ["dram_conv","2Q24",13,18,"r","240507","지진·공급사 감산 지속으로 상향"],["nand","2Q24",15,20,"r","240507",""],
+
+ ["dram_conv","3Q24",8,13,"f","240627","서버 수요가 하반기 지지"],
+ ["pc","3Q24",3,8,"f","240627",""],["server","3Q24",8,13,"f","240627",""],["mobile","3Q24",3,8,"f","240627","LPDDR4X 3–8%"],["gfx","3Q24",3,8,"f","240627",""],["cons","3Q24",5,10,"f","240627","",1],
+ ["nand","3Q24",5,10,"f","240628","증산+소비자 수요 부진이 상승 제약"],["cssd","3Q24",3,8,"f","240628",""],["emmc","3Q24",0,0,"f","240628","보합 전망"],
+
+ ["dram_conv","4Q24",0,5,"f","241009","재고 소진 집중, 수요 둔화"],["dram_all","4Q24",8,13,"f","241009","HBM 비중 확대 효과"],
+ ["pc","4Q24",0,0,"f","241009","블렌디드 보합"],["server","4Q24",0,5,"f","241009",""],["mobile","4Q24",-10,0,"f","241009","LPDDR4X −5~−10% · LPDDR5X 보합",1],["gfx","4Q24",0,0,"f","241009","보합"],["cons","4Q24",-5,0,"f","241009","DDR3 −0~5% · DDR4 보합"],
+ ["nand","4Q24",-8,-3,"f","241015","증산·수요 약화"],["essd","4Q24",0,5,"f","241015",""],["cssd","4Q24",-10,-5,"f","241015",""],["emmc","4Q24",-13,-8,"f","241015",""],["ufs","4Q24",-13,-8,"f","241015",""],["wafer","4Q24",-15,-10,"f","241015","10% 이상 하락"],
+
+ ["dram_conv","1Q25",-13,-8,"f","241230","수동적 구매 전략, 전 품목 하락"],["dram_all","1Q25",-5,0,"f","241230","HBM 포함 시 0~−5%"],
+ ["pc","1Q25",-13,-8,"f","241230","DDR4 하락폭 > DDR5"],["server","1Q25",-10,-5,"f","241230",""],["mobile","1Q25",-13,-3,"f","241230","LPDDR4X −8~−13% · LPDDR5X −3~−8%"],["gfx","1Q25",-10,-5,"f","241230",""],
+ ["nand","1Q25",-15,-10,"f","241231","재고 증가·비수기"],["cssd","1Q25",-18,-13,"f","241231",""],["essd","1Q25",-10,-5,"f","241231",""],["emmc","1Q25",-18,-13,"f","241231",""],["ufs","1Q25",-18,-13,"f","241231",""],["wafer","1Q25",-18,-13,"f","241231","추가 하락 가능"],
+
+ ["dram_conv","2Q25",-5,0,"f","250325","다운스트림 재고 소진으로 하락폭 축소"],["dram_all","2Q25",3,8,"f","250325","HBM3e 12hi 출하 확대"],
+ ["pc","2Q25",0,0,"f","250325","보합"],["mobile","2Q25",0,5,"f","250325","LPDDR5X 0–5%",1],["gfx","2Q25",-8,-3,"f","250325","GDDR6 −3~−8%"],
+ ["nand","2Q25",0,0,"f","250326","감산·재고 재축적으로 안정화"],["essd","2Q25",0,0,"f","250326","보합"],["cssd","2Q25",3,8,"f","250326",""],["emmc","2Q25",0,0,"f","250326","보합"],["ufs","2Q25",0,0,"f","250326","보합"],["wafer","2Q25",10,15,"f","250326",""],
+
+ ["dram_conv","3Q25",10,15,"f","250707","세대 전환으로 DDR4·LPDDR4X 급등"],["dram_all","3Q25",15,20,"f","250707",""],
+ ["pc","3Q25",8,13,"f","250707",""],["server","3Q25",3,8,"f","250707",""],["mobile","3Q25",10,15,"f","250707","LPDDR5X 10–15% · LPDDR4X 23–28%",1],["cons","3Q25",40,45,"f","250707","컨슈머 DDR4"],
+ ["cons","3Q25",85,90,"r","250811","7월 컨슈머 DDR4 계약가 60–85% 선반영으로 상향"],
+ ["nand","3Q25",5,10,"f","250709","AI·Blackwell 출하 지지, 스마트폰 약세"],["essd","3Q25",5,10,"f","250709",""],["cssd","3Q25",3,8,"f","250709",""],["emmc","3Q25",0,5,"f","250709",""],["ufs","3Q25",0,5,"f","250709",""],["wafer","3Q25",8,13,"f","250709",""],
+
+ ["dram_conv","4Q25",8,13,"f","250924","서버 우선 배분, 레거시 제품 상승폭 확대"],["dram_all","4Q25",13,18,"f","250924",""],
+ ["mobile","4Q25",18,23,"f","250924","LPDDR4X 10%↑ · LPDDR5X 상승 지속 (LPD4 18–23 / LPD5 20–25)",1],
+ ["nand","4Q25",5,10,"f","250925","HDD 부족 → QLC eSSD 수요 이전"],
+ ["dram_conv","4Q25",18,23,"r","251029","추가 상향 가능성 언급"],
+ ["pc","4Q25",25,30,"r","251110","초기 딜 20–25%에 체결",1],["server","4Q25",28,33,"r","251110","",1],["mobile","4Q25",38,43,"r","251110","LPD4/5 공히 38–43%로 상향",1],
+ ["pc","4Q25",38,43,"a","260202","2/2 보도자료에서 4Q25 PC DRAM 실적 38–43% 언급"],
+ ["cssd","4Q25",5,10,"a","251201","",1],["emmc","4Q25",5,10,"a","251201","공급 병목으로 전면 인상",1],["ufs","4Q25",5,10,"a","251201","",1],["essd","4Q25",25,25,"a","251201","평균 +25%, 소용량 최대 40%",1],
+
+ ["dram_conv","1Q26",55,60,"f","260105","서버 우선 배분, 전 품목 상승"],["pc","1Q26",50,55,"f","260105","",1],["server","1Q26",60,65,"f","260105","60% 이상"],["mobile","1Q26",45,50,"f","260105","",1],
+ ["nand","1Q26",33,38,"f","260105",""],
+ ["dram_conv","1Q26",90,95,"r","260202","전 품목 사상 최대 상승률"],["pc","1Q26",105,110,"r","260202","100% 이상"],["server","1Q26",88,93,"r","260202","약 90%"],["mobile","1Q26",88,93,"r","260202","LPDDR4X·5X 약 90%"],
+ ["nand","1Q26",55,60,"r","260202",""],["essd","1Q26",53,58,"r","260202",""],
+ ["dram_conv","1Q26",93,98,"a","260601","1Q26 DRAM 매출 +81% QoQ"],["pc","1Q26",110,115,"a","260325","",1],["server","1Q26",93,98,"a","260325","",1],["mobile","1Q26",58,63,"a","260325","",1],
+
+ ["dram_conv","2Q26",58,63,"f","260331","CSP LTA로 공급 확보"],["server","2Q26",45,50,"f","260331","",1],["cons","2Q26",45,50,"f","260331",""],["mobile","2Q26",70,75,"f","260514","LPDDR4X 70–75% · LPDDR5X 78–83%"],
+ ["nand","2Q26",70,75,"f","260331","eSSD 우선 배분, 소비자용 축소"],["essd","2Q26",48,53,"f","260331",""],["cssd","2Q26",40,45,"f","260331","최소 40% 이상",1],
+ ["server","2Q26",50,55,"r","260520","",1],
+ ["server","2Q26",53,58,"a","260907","2Q26 DRAM 매출 +59.5% QoQ"],["nand","2Q26",70,75,"a","260818","2Q26 NAND 상위5사 매출 +77%"],["ufs","2Q26",89,89,"a","260818","UFS 평균 +89.1%",1],["emmc","2Q26",100,100,"a","260818","MLC·레거시 TLC eMMC 2배",1],
+
+ ["dram_conv","3Q26",13,18,"f","260703","소비자 수요 약화·높은 기저로 상승폭 둔화"],["server","3Q26",13,18,"f","260709","LTA가 상승폭 제한"],["mobile","3Q26",8,13,"f","260703",""],["pc","3Q26",8,13,"f","260625","",1],
+ ["pc","3Q26",15,20,"r","260625","",1],
+ ["cons","3Q26",35,40,"f","260622","DDR2 기준 (2Q26 55–60% → 3Q26 35–40%); 컨슈머 전체는 서버 대비 큰 폭 상승",1],
+ ["nand","3Q26",10,15,"f","260703","eSSD 두 자릿수 유지 · 웨이퍼·모바일 한 자릿수"],
+
+ ["dram_conv","4Q26",10,15,"f","260930","서버 우선 배분 지속, 소비자 압박"],["dram_all","4Q26",15,20,"f","260930",""],
+ ["pc","4Q26",0,5,"f","260625","",1],["pc","4Q26",3,8,"r","260625","",1],["pc","4Q26",13,18,"r","260930","4Q26 메모리 가격 전망 요약 기준",1],
+ ["server","4Q26",10,15,"f","260930","",1],["mobile","4Q26",0,5,"f","260930","",1],
+ ["nand","4Q26",15,20,"f","260930",""],["essd","4Q26",23,28,"f","260921","북미 CSP 수요 상향, QLC·KV 캐시 — 전 분기보다 상승폭 커지는 유일 품목"]
+],
+"other":{
+ "hbm":[
+  ["2025-10-29","2026 HBM3e","ASP 소폭 상승으로 전환 (기존 하락 전망 철회) · 서버 DDR5 대비 프리미엄 4~5배 → 2026말 1~2배로 축소","251029"],
+  ["2026-09-29","2027 HBM 블렌디드","ASP +121% YoY 전망(상향) · 8-Hi가 12-Hi 대비 Gb당 10–20% 프리미엄","https://www.trendforce.com/presscenter/news/20260929-13255.html"]
+ ],
+ "nor":[
+  ["2026-06-16","NOR Flash·SLC NAND 1H26","계약가 100% 이상 상승 · 2H26 구조적 부족 지속","https://www.trendforce.com/presscenter/news/20260616-13102.html"],
+  ["2026-07-13","SLC NAND 2H26","1H26 대비 +120~170% (추가 상승 여지)","https://www.trendforce.com/presscenter/news/20260713-13142.html"],
+  ["2026-09-14","NOR Flash 2H26","고용량(≥256Mb) +90~110% · 저용량(≤128Mb) 4Q26 +10~20%","https://www.trendforce.com/presscenter/news/20260914-13235.html"],
+  ["2026-06-22","DDR2 (컨슈머 레거시)","2Q26 +55~60% → 3Q26 +35~40%","260622"]
+ ],
+ "panel":[
+  ["2026-01","TV","↑ 32/43/55/65″ +$1","MNT","→ 보합 (오픈셀 +$0.1~0.2)","NB","↓ 하락 지속","https://www.trendforce.com/news/2026/01/21/insights-late-january-panel-prices-tv-panels-poised-to-rise-notebook-continue-to-fall/"],
+  ["2026-03","TV","→ 수요 안정","MNT","↑ 상승 전환","NB","↓ 약세 완화",""],
+  ["2026-04","TV","↑ 대형 상승","MNT","↑ IC 비용 상승 반영","NB","→",""],
+  ["2026-05","TV","↑ 상승폭 둔화","MNT","↑ 상승 모멘텀 둔화","NB","→",""],
+  ["2026-06","TV","→ 재고 축적 종료, 수요 약화","MNT","→","NB","→",""],
+  ["2026-07","TV","↓ 32″ −$1 · 43/50/55″ −$2 · 65/75″ −$3","MNT","→ 보합 (수요 −6.7% QoQ)","NB","→ 보합 (수요 급감에도 유지)","https://www.trendforce.com/news/2026/07/07/insights-early-july-panel-prices-tv-prices-decline-mnt-and-nb-prices-stay-flat/"],
+  ["2026-09","TV","→ 전 사이즈 보합 (3Q 브랜드 구매 +15% QoQ)","MNT","→ 보합","NB","→ 보합 (3Q 구매 −15~20%, 4Q 추가 약화)","https://www.trendforce.com/news/2026/09/08/insights-early-september-panel-prices-tv-mnt-nb-prices-seen-flat-nb-demand-may-weaken-further-in-4q/"]
+ ],
+ "misc":[
+  ["MLCC","2Q26 보합(고용량 특수품 소폭 조정) → 3Q26 AI 서버 수요로 공급 타이트·리드타임 연장 → 2026-08 삼성전기 소비자·AI용 직접 인상(업사이클 시작) · 자동차·산업용은 안정","https://www.trendforce.com/research/download/RP260825MP"],
+  ["파운드리","2026 글로벌 파운드리 매출 +24.8% YoY (US$218.8B) · TSMC 5/4nm 이하 전 노드 2026 가격 인상, 2027 추가 인상 배제 못함 · 선별적 가격 인상 확산","https://www.trendforce.com/presscenter/news/20260319-12979.html"],
+  ["2027 메모리 전망","DRAM: 2026 공급충족률 −1~−2%, 2027 격차 확대·가격 상승 지속 · NAND: 2H27 신규 캐파 가동+소비자 수요 약세로 공급 완화·하락 압력 (2026-07-30) · 메모리 시장 2026 $551.6B → 2027 $842.7B (2026-08-25)","https://www.trendforce.com/presscenter/news/20260730-13158.html"]
+ ]
+}
+}
+</script>
+<script>
+const D=JSON.parse(document.getElementById('tfd').textContent);
+const ITEMS=D.items, Q=D.quarters, SRC=D.src;
+const IT=Object.fromEntries(ITEMS.map(i=>[i.id,i]));
+const KIND={f:'전망',r:'수정',a:'실적'};
+// 레코드 정규화
+const F=D.f.map(r=>({item:r[0],q:r[1],lo:r[2],hi:r[3],k:r[4],src:r[5],note:r[6]||'',u:!!r[7],date:SRC[r[5]]?SRC[r[5]][0]:''}));
+F.sort((a,b)=>a.date<b.date?-1:a.date>b.date?1:0);
+const mid=r=>(r.lo+r.hi)/2;
+const fmt=r=>r.lo===r.hi?(r.lo>0?'+':'')+r.lo+'%':(r.lo>0?'+':'')+r.lo+'~'+(r.hi>0?'+':'')+r.hi+'%';
+const pol=v=>v>0?'up':v<0?'dn':'fl';
+const col=v=>v>0?'var(--up)':v<0?'var(--dn)':'var(--flat)';
+function latest(item,q,kinds){const rs=F.filter(r=>r.item===item&&r.q===q&&(!kinds||kinds.includes(r.k)));return rs.length?rs[rs.length-1]:null;}
+function hist(item,q){return F.filter(r=>r.item===item&&r.q===q);}
+let TIP=null;
+function tShow(h,ev){if(!TIP){TIP=document.createElement('div');TIP.id='tftip';document.body.appendChild(TIP);}
+ TIP.innerHTML=h;TIP.style.display='block';
+ TIP.style.left=Math.min(window.innerWidth-330,ev.clientX+14)+'px';TIP.style.top=(ev.clientY+window.scrollY+10)+'px';}
+const tHide=()=>{if(TIP)TIP.style.display='none';};
+function tipHtml(r){const s=SRC[r.src]||[];return `<b>${IT[r.item].ko}</b> · ${r.q}<br>${KIND[r.k]} ${fmt(r)}${r.u?' <i>(2차 출처)</i>':''}<br>${r.date} 발표${r.note?'<br>'+r.note:''}${s[1]?'<br><span style="opacity:.7">'+s[1]+'</span>':''}`;}
+// KPI
+(function(){
+ const cur='4Q26';
+ const keys=['dram_conv','dram_all','nand','essd','server','pc'];
+ let h='';
+ keys.forEach(k=>{const r=latest(k,cur);if(!r)return;const p=latest(k,'3Q26');
+  h+=`<div class='kpi'><small>${IT[k].ko} · ${cur}</small><b class='${pol(mid(r))}'>${fmt(r)}</b><span class='n'>${p?'3Q26 '+fmt(p)+' → ':''}${KIND[r.k]} ${r.date}${r.u?' · 2차':''}</span></div>`;});
+ document.getElementById('kpis').innerHTML=h;
+})();
+// ── 뷰 ──
+let V='latest';
+document.querySelectorAll('#mainTabs .tab').forEach(b=>b.onclick=()=>{V=b.dataset.v;document.querySelectorAll('#mainTabs .tab').forEach(x=>x.classList.toggle('on',x===b));render();});
+const view=document.getElementById('view'), ins=document.getElementById('insight');
+function render(){tHide();({latest:vLatest,trend:vTrend,rev:vRev,idx:vIdx,table:vTable,other:vOther,log:vLog})[V]();}
+
+// 1) 최신 전망: 분기 선택 → 전 품목 범위 막대
+let LQ='4Q26';
+function vLatest(){
+ let h=`<div class='box'><div class='hd'><h2>품목별 계약가 QoQ 전망 범위</h2><div class='tabs'>${Q.slice().reverse().map(q=>`<button class='tab sm ${q===LQ?'on':''}' onclick='LQ="${q}";render()'>${q}</button>`).join('')}</div></div><div id='lc' class='scrollx'></div>
+ <p class='lg'><span class='sw' style='background:var(--up)'></span>상승 <span class='sw' style='background:var(--dn)'></span>하락 <span class='sw' style='background:var(--flat)'></span>보합 · 점선 테두리 = 2차 출처 · 막대 위 ●=중앙값 · 마우스 올리면 발표일·근거</p></div>`;
+ view.innerHTML=h;
+ const rows=ITEMS.map(i=>({i,r:latest(i.id,LQ)}));
+ const vals=rows.filter(x=>x.r).flatMap(x=>[x.r.lo,x.r.hi]);
+ const mn=Math.min(-5,...vals), mx=Math.max(10,...vals);
+ const W=980,RH=26,L=170,R=70,T=28,B=8,H=T+B+RH*rows.length;
+ const X=v=>L+(W-L-R)*((v-mn)/(mx-mn));
+ let s=`<svg id='lsvg' viewBox='0 0 ${W} ${H}' style='background:var(--chart);border:1px solid var(--chartline);border-radius:8px'>`;
+ // 축 눈금
+ const step=mx-mn>120?25:mx-mn>60?10:5;
+ for(let v=Math.ceil(mn/step)*step;v<=mx;v+=step){const x=X(v);
+  s+=`<line x1='${x}' y1='${T-6}' x2='${x}' y2='${H-B}' stroke='var(--grid)' ${v===0?"stroke-width='1.5' stroke-dasharray='0'":"stroke-dasharray='2 3'"}/>`;
+  s+=`<text x='${x}' y='${T-10}' font-size='9' fill='var(--mut2)' text-anchor='middle'>${v>0?'+':''}${v}%</text>`;}
+ let lastCat='';
+ rows.forEach((x,k)=>{const y=T+RH*k+RH/2;
+  if(x.i.cat!==lastCat){lastCat=x.i.cat;s+=`<text x='8' y='${y+3.5}' font-size='9.5' fill='var(--mut2)' font-weight='700'>${lastCat}</text>`;}
+  s+=`<text x='${L-8}' y='${y+3.5}' font-size='11' fill='var(--ink)' text-anchor='end'>${x.i.ko}</text>`;
+  if(!x.r){s+=`<text x='${X(0)+6}' y='${y+3.5}' font-size='9.5' fill='var(--mut2)'>수치 미공개 / 미수집</text>`;return;}
+  const r=x.r,m=mid(r),c=col(m);
+  const x1=X(Math.min(r.lo,r.hi)),x2=X(Math.max(r.lo,r.hi));
+  s+=`<g class='bar' data-k='${k}' style='cursor:default'><rect x='${x1-1}' y='${y-7}' width='${Math.max(2,x2-x1+2)}' height='14' rx='4' fill='${c}' fill-opacity='.85' ${r.u?"stroke='var(--mut2)' stroke-dasharray='3 2'":''}/>`;
+  s+=`<circle cx='${X(m)}' cy='${y}' r='3.2' fill='var(--box)' stroke='${c}' stroke-width='2'/>`;
+  s+=`<text x='${x2+8}' y='${y+3.5}' font-size='10.5' fill='var(--ink)' font-weight='700'>${fmt(r)}</text>`;
+  if(r.k!=='f')s+=`<text x='${x1-6}' y='${y+3.5}' font-size='9' fill='var(--mut)' text-anchor='end'>${KIND[r.k]}</text>`;
+  s+=`<rect x='${L}' y='${y-RH/2}' width='${W-L-R}' height='${RH}' fill='transparent'/></g>`;});
+ s+='</svg>';
+ document.getElementById('lc').innerHTML=s;
+ document.querySelectorAll('#lsvg .bar').forEach(g=>{const r=rows[+g.dataset.k].r;
+  g.addEventListener('mousemove',ev=>tShow(tipHtml(r),ev));g.addEventListener('mouseleave',tHide);});
+ const dc=latest('dram_conv',LQ),nn=latest('nand',LQ),es=latest('essd',LQ);
+ ins.innerHTML=`<b>${LQ} 읽기</b> — 범용 DRAM ${dc?fmt(dc):'-'} · NAND ${nn?fmt(nn):'-'}${es?' · eSSD '+fmt(es):''}. `+(LQ==='4Q26'
+  ?'4Q26은 5분기 연속 상승이지만 상승폭은 1Q26 정점(90–95%) 이후 분기마다 축소. 엔터프라이즈 SSD(23–28%)만 전 분기보다 상승폭이 커진 유일한 품목 — 북미 CSP가 KV 캐시용 QLC eSSD 발주를 늘린 영향. PC·모바일 등 소비자용은 비용 전가 한계로 한 자릿수~10%대로 둔화.'
+  :'분기 버튼으로 과거 전망을 비교하세요. 2024년 상승 → 4Q24~2Q25 조정 → 3Q25부터 AI 서버 중심 초강세 사이클.');
+}
+
+// 2) 품목별 분기 추이 (소형 다중 패널)
+let TC='DRAM';
+function vTrend(){
+ const cats=['DRAM','NAND'];
+ let h=`<div class='box'><div class='hd'><h2>품목별 분기 전망 추이 (QoQ %)</h2><div class='tabs'>${cats.map(c=>`<button class='tab sm ${c===TC?'on':''}' onclick='TC="${c}";render()'>${c}</button>`).join('')}</div></div><div class='grid' id='tg'></div>
+ <p class='lg'>각 패널: 분기별 최신 발표 기준 범위(막대)와 중앙값(●) · 회색 ○ = 같은 분기의 이전 발표(수정 전) 중앙값 · 세로 점선 = 수치 미공개 분기 · 점선 테두리 = 2차 출처</p></div>`;
+ view.innerHTML=h;
+ const its=ITEMS.filter(i=>i.cat===TC);
+ const W=480,H=190,L=40,R=10,T=16,B=26;
+ let g='';
+ its.forEach(it=>{
+  const recs=Q.map(q=>({q,r:latest(it.id,q),h:hist(it.id,q)}));
+  const vals=recs.filter(x=>x.r).flatMap(x=>[x.r.lo,x.r.hi]);if(!vals.length)return;
+  const mn=Math.min(-10,...vals),mx=Math.max(15,...vals);
+  const Y=v=>T+(H-T-B)*(1-(v-mn)/(mx-mn));
+  const cw=(W-L-R)/Q.length, X=i=>L+cw*i+cw/2;
+  let s=`<svg viewBox='0 0 ${W} ${H}' style='background:var(--chart);border:1px solid var(--chartline);border-radius:8px'>`;
+  const step=mx-mn>120?50:mx-mn>50?20:10;
+  for(let v=Math.ceil(mn/step)*step;v<=mx;v+=step){const y=Y(v);
+   s+=`<line x1='${L}' y1='${y}' x2='${W-R}' y2='${y}' stroke='var(--grid)' ${v===0?"stroke-width='1.5'":''}/>`;
+   s+=`<text x='${L-4}' y='${y+3}' font-size='8.5' fill='var(--mut2)' text-anchor='end'>${v>0?'+':''}${v}</text>`;}
+  recs.forEach((x,i)=>{const cx=X(i);
+   if(i%2===0)s+=`<text x='${cx}' y='${H-8}' font-size='8.5' fill='var(--mut2)' text-anchor='middle'>${x.q}</text>`;
+   if(!x.r){s+=`<line x1='${cx}' y1='${Y(0)-10}' x2='${cx}' y2='${Y(0)+10}' stroke='var(--mut2)' stroke-dasharray='2 2'/>`;return;}
+   const r=x.r,m=mid(r),c=col(m);
+   x.h.slice(0,-1).forEach(p=>{s+=`<circle cx='${cx}' cy='${Y(mid(p))}' r='3' fill='none' stroke='var(--mut2)' stroke-width='1.2'/>`;});
+   const y1=Y(Math.max(r.lo,r.hi)),y2=Y(Math.min(r.lo,r.hi));
+   s+=`<g class='bar' data-i='${it.id}' data-q='${x.q}'><rect x='${cx-7}' y='${y1-1}' width='14' height='${Math.max(3,y2-y1+2)}' rx='3' fill='${c}' fill-opacity='.85' ${r.u?"stroke='var(--mut2)' stroke-dasharray='3 2'":''}/>`;
+   s+=`<circle cx='${cx}' cy='${Y(m)}' r='2.6' fill='var(--box)' stroke='${c}' stroke-width='1.8'/>`;
+   s+=`<rect x='${cx-cw/2}' y='${T}' width='${cw}' height='${H-T-B}' fill='transparent'/></g>`;});
+  s+='</svg>';
+  const last=recs.filter(x=>x.r).slice(-1)[0];
+  g+=`<div class='panel'><h3>${it.ko}<small>${last?last.q+' '+fmt(last.r):''}</small></h3>${s}</div>`;});
+ document.getElementById('tg').innerHTML=g;
+ document.querySelectorAll('#tg .bar').forEach(el=>{const r=latest(el.dataset.i,el.dataset.q);
+  el.addEventListener('mousemove',ev=>{const hs=hist(el.dataset.i,el.dataset.q);let t=tipHtml(r);if(hs.length>1)t+='<br><span style="opacity:.75">이전 발표: '+hs.slice(0,-1).map(p=>p.date.slice(2)+' '+KIND[p.k]+' '+fmt(p)).join(' · ')+'</span>';tShow(t,ev);});
+  el.addEventListener('mouseleave',tHide);});
+ ins.innerHTML=TC==='DRAM'
+  ?'<b>DRAM</b> — 2024년 상승은 3~18%대 완만한 회복, 4Q24~2Q25에 재고 조정으로 보합·하락. 3Q25부터 서버 우선 배분이 레거시(DDR4·LPDDR4X·컨슈머) 가격을 먼저 폭등시키고, 1Q26에 전 품목 사상 최대(범용 90–95%, PC 100%+)를 기록한 뒤 2Q26 58–63% → 3Q26 13–18% → 4Q26 10–15%로 둔화. 4Q26 모바일(0–5%)과 PC는 비용 전가 한계가 뚜렷.'
+  :'<b>NAND</b> — 2024 상반기 상승 후 4Q24~1Q25 두 자릿수 하락, 2Q25 보합(웨이퍼만 선행 반등) → 4Q25 QLC eSSD 수요로 반등 → 1Q26 55–60%, 2Q26 70–75% 폭등. 3Q26 10–15%로 둔화됐지만 4Q26은 15–20%로 재가속 — eSSD(23–28%)가 끌고 소비자용(eMMC·UFS·cSSD)은 최소 보전 수준.';
+}
+
+// 3) 전망 수정 이력 (덤벨)
+function vRev(){
+ const groups={};F.forEach(r=>{const k=r.item+'|'+r.q;(groups[k]=groups[k]||[]).push(r);});
+ const list=Object.values(groups).filter(g=>g.length>1).sort((a,b)=>Q.indexOf(b[0].q)-Q.indexOf(a[0].q)||ITEMS.findIndex(i=>i.id===a[0].item)-ITEMS.findIndex(i=>i.id===b[0].item));
+ let h=`<div class='box'><div class='hd'><h2>같은 분기 전망의 발표별 변화 (최초 전망 → 수정 → 실적)</h2></div><div id='rc' class='scrollx'></div>
+ <p class='lg'>○ 최초 전망 · ● 수정 전망 · ◆ 실적(이후 매출 보도자료 역산) · 선 색: 상향=상승색, 하향=하락색 · 시장이 전망보다 앞서 간 분기(1Q26, 4Q25)에 상향 폭이 가장 컸음</p></div>`;
+ view.innerHTML=h;
+ const vals=list.flatMap(g=>g.map(mid));const mn=Math.min(-10,...vals),mx=Math.max(20,...vals);
+ const W=980,RH=30,L=250,R=175,T=26,B=8,H=T+B+RH*list.length;
+ const X=v=>L+(W-L-R)*((v-mn)/(mx-mn));
+ let s=`<svg id='rsvg' viewBox='0 0 ${W} ${H}' style='background:var(--chart);border:1px solid var(--chartline);border-radius:8px'>`;
+ for(let v=Math.ceil(mn/25)*25;v<=mx;v+=25){const x=X(v);s+=`<line x1='${x}' y1='${T-6}' x2='${x}' y2='${H-B}' stroke='var(--grid)' ${v===0?"stroke-width='1.5'":"stroke-dasharray='2 3'"}/><text x='${x}' y='${T-10}' font-size='9' fill='var(--mut2)' text-anchor='middle'>${v>0?'+':''}${v}%</text>`;}
+ list.forEach((g,k)=>{const y=T+RH*k+RH/2;const first=g[0],last=g[g.length-1];
+  const dir=mid(last)-mid(first);const c=dir>0?'var(--up)':dir<0?'var(--dn)':'var(--flat)';
+  s+=`<text x='${L-10}' y='${y+3.5}' font-size='11' fill='var(--ink)' text-anchor='end'>${IT[first.item].ko} <tspan fill='var(--mut)' font-size='9.5'>${first.q}</tspan></text>`;
+  s+=`<line x1='${X(mid(first))}' y1='${y}' x2='${X(mid(last))}' y2='${y}' stroke='${c}' stroke-width='2.5'/>`;
+  g.forEach((r,j)=>{const x=X(mid(r));
+   const shape=r.k==='f'?`<circle cx='${x}' cy='${y}' r='5' fill='var(--box)' stroke='${c}' stroke-width='2'/>`:r.k==='r'?`<circle cx='${x}' cy='${y}' r='5' fill='${c}'/>`:`<rect x='${x-5}' y='${y-5}' width='10' height='10' fill='${c}' transform='rotate(45 ${x} ${y})'/>`;
+   s+=`<g class='pt' data-k='${k}' data-j='${j}'>${shape}<circle cx='${x}' cy='${y}' r='11' fill='transparent'/></g>`;});
+  s+=`<text x='${X(mid(last))+10}' y='${y+3.5}' font-size='10' fill='var(--ink)' font-weight='700'>${fmt(first)} → ${fmt(last)}</text>`;});
+ s+='</svg>';document.getElementById('rc').innerHTML=s;
+ document.querySelectorAll('#rsvg .pt').forEach(el=>{const r=list[+el.dataset.k][+el.dataset.j];el.addEventListener('mousemove',ev=>tShow(tipHtml(r),ev));el.addEventListener('mouseleave',tHide);});
+ ins.innerHTML='<b>수정 패턴</b> — 트렌드포스는 분기 시작 직전(전 분기 말) 1차 전망을 내고, 월별 계약가 집계 후 상향·하향. 이번 사이클에서는 <b>모든 수정이 상향</b>이었고(4Q25 8–13→18–23, 1Q26 55–60→90–95, PC DRAM 50–55→105–110→실적 110–115), 실적이 수정치마저 상회. 전망치는 보수적 하한으로 읽는 것이 적절. 반대로 2024년 2Q24 상향(3–8→13–18)은 지진·감산 요인이었고 이후 4Q24에 하향 사이클로 반전.';
+}
+
+// 4) 누적 전망 지수 (3Q23=100, 분기별 최신 발표 중앙값 복리)
+let IC='DRAM';
+function vIdx(){
+ const sets={DRAM:['dram_conv','pc','server','mobile'],NAND:['nand','essd','cssd','wafer']};
+ let h=`<div class='box'><div class='hd'><h2>누적 전망 지수 (3Q23 = 100, 분기별 최신 발표 중앙값 복리)</h2><div class='tabs'>${Object.keys(sets).map(c=>`<button class='tab sm ${c===IC?'on':''}' onclick='IC="${c}";render()'>${c}</button>`).join('')}</div></div><div id='ic' class='scrollx'></div>
+ <p class='lg' id='il'></p></div>`;
+ view.innerHTML=h;
+ const ids=sets[IC];const cols=['var(--s1)','var(--s2)','var(--s3)','var(--s4)'];
+ const series=ids.map((id,n)=>{let v=100;const pts=[{q:'3Q23',v:100,gap:false}];
+  Q.forEach(q=>{const r=latest(id,q);if(r)v*=1+mid(r)/100;pts.push({q,v:+v.toFixed(1),gap:!r,r});});return {id,pts,c:cols[n]};});
+ const W=980,H=360,L=56,R=190,T=16,B=30;
+ const allv=series.flatMap(s=>s.pts.map(p=>p.v));const mx=Math.max(...allv)*1.06,mn=Math.min(80,...allv)*0.95;
+ const xs=['3Q23',...Q];const X=i=>L+(W-L-R)*(i/(xs.length-1));const Y=v=>T+(H-T-B)*(1-(v-mn)/(mx-mn));
+ let s=`<svg id='isvg' viewBox='0 0 ${W} ${H}' style='background:var(--chart);border:1px solid var(--chartline);border-radius:8px'>`;
+ const step=mx>600?200:mx>300?100:50;
+ for(let v=Math.ceil(mn/step)*step;v<=mx;v+=step){const y=Y(v);s+=`<line x1='${L}' y1='${y}' x2='${W-R}' y2='${y}' stroke='var(--grid)' ${v===100?"stroke-width='1.5'":''}/><text x='${L-6}' y='${y+3}' font-size='9' fill='var(--mut2)' text-anchor='end'>${v}</text>`;}
+ xs.forEach((q,i)=>{s+=`<text x='${X(i)}' y='${H-10}' font-size='8.5' fill='var(--mut2)' text-anchor='middle'>${q}</text>`;});
+ const ends=[];
+ series.forEach(sr=>{let d='';sr.pts.forEach((p,i)=>{d+=(i?'L':'M')+X(i).toFixed(1)+','+Y(p.v).toFixed(1)+' ';});
+  s+=`<path d='${d}' fill='none' stroke='${sr.c}' stroke-width='2'/>`;
+  sr.pts.forEach((p,i)=>{if(i&&p.gap)s+=`<circle cx='${X(i)}' cy='${Y(p.v)}' r='3' fill='var(--chart)' stroke='${sr.c}' stroke-width='1.5' stroke-dasharray='2 1.5'/>`;});
+  const e=sr.pts[sr.pts.length-1];s+=`<circle cx='${X(xs.length-1)}' cy='${Y(e.v)}' r='3.4' fill='${sr.c}'/>`;ends.push([Y(e.v),sr,e.v]);});
+ ends.sort((a,b)=>a[0]-b[0]);for(let i=1;i<ends.length;i++)if(ends[i][0]-ends[i-1][0]<14)ends[i][0]=ends[i-1][0]+14;
+ ends.forEach(([y,sr,v])=>{s+=`<rect x='${W-R+8}' y='${y-5}' width='10' height='10' rx='2' fill='${sr.c}'/><text x='${W-R+22}' y='${y+4}' font-size='11' fill='var(--ink)' font-weight='700'>${IT[sr.id].ko} ${v}</text>`;});
+ s+=`<rect id='ihit' x='${L}' y='${T}' width='${W-L-R}' height='${H-T-B}' fill='transparent'/></svg>`;
+ document.getElementById('ic').innerHTML=s;
+ document.getElementById('il').innerHTML=series.map(sr=>`<span class='sw' style='background:${sr.c}'></span>${IT[sr.id].ko} `).join(' ')+' · 빈 원 = 해당 분기 수치 미공개(변동 0으로 처리) · 실제 ASP 추이가 아닌 <b>전망치 중앙값을 그대로 복리한 가상 지수</b>';
+ const svg=document.getElementById('isvg'),hit=document.getElementById('ihit');
+ hit.addEventListener('mousemove',ev=>{const rc=svg.getBoundingClientRect();const vx=(ev.clientX-rc.left)*W/rc.width;
+  let bi=0,bd=1e9;xs.forEach((q,i)=>{const d=Math.abs(X(i)-vx);if(d<bd){bd=d;bi=i;}});
+  let t=`<b>${xs[bi]}</b>`;series.forEach(sr=>{const p=sr.pts[bi];t+=`<br><span style='color:${sr.c}'>●</span> ${IT[sr.id].ko}: ${p.v}${p.r?' ('+KIND[p.r.k]+' '+fmt(p.r)+')':bi?' (미공개)':''}`;});tShow(t,ev);});
+ hit.addEventListener('mouseleave',tHide);
+ ins.innerHTML=IC==='DRAM'
+  ?'<b>누적 해석</b> — 전망치 중앙값만 복리해도 범용 DRAM은 3Q23 대비 4Q26까지 약 5~6배, PC DRAM은 7배 안팎(수치 미공개 분기는 0으로 두어 과소 추정). 서버 DRAM은 LTA로 분기 상승폭이 작아 보이지만 1Q26 90%대 상승 이후에도 매 분기 두 자릿수 상승이 이어지는 유일한 범용 품목.'
+  :'<b>누적 해석</b> — eSSD는 2024년부터 거의 매 분기 상승(4Q24·1Q25 조정은 한 자릿수)해 누적 상승 폭이 가장 크고, 웨이퍼는 2Q25에 가장 먼저 반등한 선행 품목. 클라이언트 SSD는 1Q25 −13~−18% 조정 뒤 2Q26 40%+ 급등으로 따라붙었으나 3Q26 이후 상승폭 급축소.';
+}
+
+// 5) 전체 표
+function vTable(){
+ let h=`<div class='box'><div class='hd'><h2>품목 × 분기 매트릭스 (최신 발표 기준)</h2></div><div class='tblwrap'><table><tr><th>품목</th>${Q.map(q=>`<th>${q}</th>`).join('')}</tr>`;
+ ITEMS.forEach((it,i)=>{if(i===0||ITEMS[i-1].cat!==it.cat)h+=`<tr><td colspan='${Q.length+1}' style='background:var(--box2);font-weight:700;color:var(--mut);font-size:.74rem'>${it.cat}</td></tr>`;
+  h+=`<tr><td>${it.ko}</td>`;Q.forEach(q=>{const r=latest(it.id,q);const hs=hist(it.id,q);
+   if(!r){h+="<td style='color:var(--mut2)'>–</td>";return;}
+   const m=mid(r);const bg=m>0?`color-mix(in srgb,var(--up) ${Math.min(45,8+Math.abs(m)*0.6)}%,transparent)`:m<0?`color-mix(in srgb,var(--dn) ${Math.min(45,8+Math.abs(m)*1.2)}%,transparent)`:'var(--box2)';
+   h+=`<td title='${KIND[r.k]} · ${r.date}${r.note?' · '+r.note.replace(/'/g,'')+"":''}'><span class='cell ${r.u?'u':''}' style='background:${bg}'>${fmt(r)}</span>${r.k!=='f'?`<span class='tag ${r.k==='r'?'rev':'act'}'>${KIND[r.k]}</span>`:''}${hs.length>1?`<small style='color:var(--mut2)'> ${hs.length}건</small>`:''}</td>`;});h+='</tr>';});
+ h+=`</table></div><p class='lg'>셀 색 농도 = 중앙값 크기 · <span class='tag rev'>수정</span> 최초 전망 후 상향/하향 · <span class='tag act'>실적</span> 이후 매출 보도자료에서 역산된 실제 상승률 · 점선 셀 = 2차 출처 · 'n건' = 같은 분기에 여러 발표(수정 이력 탭) · 셀에 마우스를 올리면 발표일·근거</p></div>`;
+ view.innerHTML=h;
+ ins.innerHTML='<b>표 읽기</b> — 공란(–)은 트렌드포스가 해당 분기 보도자료에서 수치 범위를 명시하지 않았거나(방향만 서술) 이번 수집에서 확인하지 못한 항목. 특히 그래픽 DRAM은 2025년 이후, 컨슈머 DRAM은 4Q25·4Q26 수치가 서술형. 원문 PDF(Memory Price Forecast 리포트)는 유료로 세부 표가 있음.';
+}
+
+// 6) 패널·HBM·기타
+function vOther(){
+ const o=D.other;const link=(u)=>u?(SRC[u]?SRC[u][2]:u):'';
+ let h=`<div class='box'><div class='hd'><h2>LCD 패널 월별 가격 방향 (2026, TrendForce Insights)</h2></div><div class='tblwrap'><table><tr><th>월</th><th>TV 패널</th><th>모니터(MNT) 패널</th><th>노트북(NB) 패널</th><th>출처</th></tr>`;
+ o.panel.forEach(p=>{const cls=t=>t.startsWith('↑')?'up':t.startsWith('↓')?'dn':'fl';
+  h+=`<tr><td>${p[0]}</td><td class='l ${cls(p[2])}'>${p[2]}</td><td class='l ${cls(p[4])}'>${p[4]}</td><td class='l ${cls(p[6])}'>${p[6]}</td><td>${p[7]?`<a href='${p[7]}' target='_blank' style='color:var(--th)'>Insights</a>`:'<span style="color:var(--mut2)">요약</span>'}</td></tr>`;});
+ h+=`</table></div><p class='lg'>패널은 분기 QoQ가 아닌 <b>월별 US$ 변동</b>으로 발표(상·하반월 2회). 2026-02·08은 수집 누락. 2026 TV 패널: 1Q 상승 → 2Q 둔화 → 7월 하락 → 9월 보합(연말 성수기 구매 +15% QoQ) · NB는 4Q 수요 추가 약화 경고.</p></div>`;
+ h+=`<div class='grid'><div class='box' style='margin:0'><div class='hd'><h2>HBM 가격 전망</h2></div><ul class='tl'>${o.hbm.map(x=>`<li><span class='d'>${x[0]}</span><span><b>${x[1]}</b> — ${x[2]} ${link(x[3])?`<a href='${link(x[3])}' target='_blank'>↗</a>`:''}</span></li>`).join('')}</ul>
+ <p class='lg'>HBM은 연간 계약 구조라 분기 QoQ 전망이 아닌 <b>연간 ASP 변화</b>로 발표. DRAM 전체(HBM 포함) 전망치와 범용 DRAM 전망치의 차이가 HBM 믹스 효과.</p></div>
+ <div class='box' style='margin:0'><div class='hd'><h2>NOR Flash · SLC NAND · 레거시 DRAM</h2></div><ul class='tl'>${o.nor.map(x=>`<li><span class='d'>${x[0]}</span><span><b>${x[1]}</b> — ${x[2]} ${link(x[3])?`<a href='${link(x[3])}' target='_blank'>↗</a>`:''}</span></li>`).join('')}</ul>
+ <p class='lg'>니치·레거시 품목은 공급사 캐파 증설 계획이 없어 범용 메모리보다 상승률이 훨씬 큼(반기 기준 100%+).</p></div></div>`;
+ h+=`<div class='box'><div class='hd'><h2>MLCC · 파운드리 · 2027 전망</h2></div><ul class='tl'>${o.misc.map(x=>`<li><span class='d'><b>${x[0]}</b></span><span>${x[1]} <a href='${x[2]}' target='_blank'>↗</a></span></li>`).join('')}</ul></div>`;
+ view.innerHTML=h;
+ ins.innerHTML='<b>보조 품목 메모</b> — 트렌드포스가 <b>정기 분기 QoQ 범위</b>를 발표하는 품목은 DRAM·NAND 세부 품목이 전부. 패널은 월별 US$ 변동, HBM·NOR·SLC NAND는 연간/반기 변화율, MLCC·파운드리는 방향성 서술이 중심이라 같은 축에 놓지 않고 별도 탭으로 분리.';
+}
+
+// 7) 발표 로그
+function vLog(){
+ const keys=Object.keys(SRC).sort().reverse();
+ let h=`<div class='box'><div class='hd'><h2>발표 로그 (최신순) — 보도자료별 수집 수치</h2></div><ul class='tl'>`;
+ keys.forEach(k=>{const s=SRC[k];const rs=F.filter(r=>r.src===k);
+  const isX=s[2].includes('x.com');
+  h+=`<li><span class='d'>${s[0]}</span><span><a href='${s[2]}' target='_blank'>${s[1]}</a>${isX?' <span class="tag u">2차</span>':''}<br><span style='color:var(--mut);font-size:.78rem'>${rs.map(r=>`<span class='q'>${r.q}</span>${IT[r.item].ko} ${KIND[r.k]!=='전망'?KIND[r.k]+' ':''}<b class='${pol(mid(r))}'>${fmt(r)}</b>`).join(' · ')||'수치 범위 없음(방향 서술)'}</span></span></li>`;});
+ h+='</ul></div>';view.innerHTML=h;
+ ins.innerHTML='<b>수집 메모</b> — trendforce.com 원문은 이 세션의 네트워크 정책상 직접 열 수 없어 검색 결과 요약과 2차 보도로 수치를 확보했습니다. X(@jukan05) 인용 항목과 요약 기반 항목은 <span class="tag u">2차</span>로 표시했으니 중요 의사결정 전 원문 대조를 권합니다. 신규 보도자료가 나오면 <code>tfd</code> JSON의 <code>src</code>와 <code>f</code> 배열에 한 줄씩 추가하면 전 탭에 반영됩니다.';
+}
+render();
+</script>
+</body></html>
