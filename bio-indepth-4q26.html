@@ -202,7 +202,7 @@ footer ul{margin:6px 0;padding-left:1.2em}
 <li>보조: 이해진 바이오투자 유튜브, nodaji 컨콜·탐방노트, 미래에셋 김승민 · 한양 오병용 · 키움 허혜민 텔레그램</li>
 </ul></div>
 <div>작성일 2026-10-01 · 섹터 애널리스트 봇 · 차트 색상은 dataviz 팔레트 검증(light/dark) 통과값 · 아카이브에 없는 수치는 "확인 불가/미기재"로 표기</div>
-<div><a class="notion" href="__NOTION_URL__">📄 노션 전문 보고서 보기</a></div>
+<div><a class="notion" href="https://app.notion.com/p/4Q26-5-2026-10-01-3ec8e39b22a18138b8f1c43b98902cff">📄 노션 전문 보고서 보기</a></div>
 <div class="note" style="margin-top:12px">⚠️ 본 페이지는 공개 자료·개인 아카이브를 정리한 투자 참고 자료이며 특정 종목의 매수·매도 추천이 아닙니다. 스코어는 작성자의 주관적 가중치(5축)와 세 소스의 톤에 의존하고, 촉매 일정은 학회·회사 발표에 따라 바뀔 수 있으며 "미확정(?)" 표시 항목은 아카이브 추정입니다. 투자 판단과 책임은 이용자 본인에게 있습니다.</div>
 </footer>
 </div>
@@ -262,8 +262,8 @@ document.getElementById('sum3').innerHTML=D.summary3.map(s=>`<li>${esc(s).replac
   const per=(k,l)=>({l:`섹터 ${l} 동일가중`,v:pct(S['ew_'+k]),vc:cls(S['ew_'+k]),kv:[['시총가중',S['cw_'+k]],['KOSPI',S['kospi_'+k]],['KOSDAQ',S['kosdaq_'+k]]]});
   const t=[per('1w','1W'),per('1m','1M'),per('3m','3M'),per('6m','6M'),
     {l:'MA60 상회 종목 비율',v:S.breadth_ma60+'<small>%</small>',kv:[['MA20 상회',S.breadth_ma20+'%'],['MA120 상회',S.breadth_ma120+'%'],['52주고 −20% 이내',S.pct_within20_of_high52+'%']]},
-    {l:'후보 · 탑픽',v:`${D.candidates.length}<small>후보</small> · 5<small>탑픽</small>`,kv:[['유니버스',S.universe_n+'종목'],['시총 합',S.universe_mcap_tn+'조'],['≥1조 / ≥3,000억',S.n_over_1tn+' / '+S.n_over_3000bn]]},
-    {l:'기준일',v:D.asof.replace(/-/g,'.'),kv:[['1M 수익률 중앙값',pct(S.median_1m)],['3M 수익률 중앙값',pct(S.median_3m)],['데이터','키움 REST · DART']]}];
+    {l:'후보 · 탑픽',v:`${D.candidates.length}<small>후보</small> · 5<small>탑픽</small>`,kv:[['유니버스',S.universe_n+'종목'],['시총 합',S.universe_mcap_tn+'조'],['≥1조 / 3천억',S.n_over_1tn+' / '+S.n_over_3000bn]]},
+    {l:'기준일',v:D.asof.replace(/-/g,'.'),kv:[['1M 중앙값',pct(S.median_1m)],['3M 중앙값',pct(S.median_3m)],['소스','키움·DART']]}];
   document.getElementById('tiles').innerHTML=t.map(x=>`<div class="tile"><div class="lbl">${x.l}</div><div class="val ${x.vc||''}">${x.v}</div>`+
     x.kv.map(([k,v])=>`<div class="kv"><span>${k}</span><b class="${typeof v==='number'?cls(v):''}">${typeof v==='number'?pct(v):v}</b></div>`).join('')+'</div>').join('');
 })();
