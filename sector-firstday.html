@@ -8,17 +8,20 @@
  --grid:#e1e0d9;--axis:#c3c2b7;--border:rgba(11,11,11,.10);--accent:#2a78d6;--accent-soft:rgba(42,120,214,.10);
  --s1:#2a78d6;--s2:#eb6834;--s3:#1baf7a;--s4:#eda100;--s5:#e87ba4;--s6:#008300;--s7:#4a3aa7;--s8:#e34948;
  --o1:#86b6ef;--o2:#5598e7;--o3:#2a78d6;--o4:#184f95;--dim:#b5b3ab;
- --good:#006300;--bad:#d03b3b;--tech-soft:rgba(42,120,214,.09);--bio-soft:rgba(235,104,52,.10)}
+ --good:#006300;--bad:#d03b3b;--tech-soft:rgba(42,120,214,.09);--bio-soft:rgba(235,104,52,.10);
+ --hm1:#86b6ef;--hm2:#5598e7;--hm3:#2a78d6;--hm4:#184f95;--hmi1:#0b0b0b;--hmi2:#0b0b0b;--hmi3:#ffffff;--hmi4:#ffffff}
 @media (prefers-color-scheme:dark){:root:where(:not([data-theme="light"])){color-scheme:dark;
  --page:#0d0d0d;--surface-1:#1a1a19;--surface-2:#222221;--text-primary:#ffffff;--text-secondary:#c3c2b7;--muted:#898781;
  --grid:#2c2c2a;--axis:#383835;--border:rgba(255,255,255,.10);--accent:#3987e5;--accent-soft:rgba(57,135,229,.16);
  --s1:#3987e5;--s2:#d95926;--s3:#199e70;--s4:#c98500;--s5:#d55181;--s6:#008300;--s7:#9085e9;--s8:#e66767;
- --o1:#6da7ec;--o2:#3987e5;--o3:#256abf;--o4:#184f95;--dim:#5a5955;--good:#0ca30c;--bad:#e66767;--tech-soft:rgba(57,135,229,.16);--bio-soft:rgba(217,89,38,.16)}}
+ --o1:#6da7ec;--o2:#3987e5;--o3:#256abf;--o4:#184f95;--dim:#5a5955;--good:#0ca30c;--bad:#e66767;--tech-soft:rgba(57,135,229,.16);--bio-soft:rgba(217,89,38,.16);
+ --hm1:#184f95;--hm2:#256abf;--hm3:#3987e5;--hm4:#6da7ec;--hmi1:#ffffff;--hmi2:#ffffff;--hmi3:#0b0b0b;--hmi4:#0b0b0b}}
 :root[data-theme="dark"]{color-scheme:dark;
  --page:#0d0d0d;--surface-1:#1a1a19;--surface-2:#222221;--text-primary:#ffffff;--text-secondary:#c3c2b7;--muted:#898781;
  --grid:#2c2c2a;--axis:#383835;--border:rgba(255,255,255,.10);--accent:#3987e5;--accent-soft:rgba(57,135,229,.16);
  --s1:#3987e5;--s2:#d95926;--s3:#199e70;--s4:#c98500;--s5:#d55181;--s6:#008300;--s7:#9085e9;--s8:#e66767;
- --o1:#6da7ec;--o2:#3987e5;--o3:#256abf;--o4:#184f95;--dim:#5a5955;--good:#0ca30c;--bad:#e66767;--tech-soft:rgba(57,135,229,.16);--bio-soft:rgba(217,89,38,.16)}
+ --o1:#6da7ec;--o2:#3987e5;--o3:#256abf;--o4:#184f95;--dim:#5a5955;--good:#0ca30c;--bad:#e66767;--tech-soft:rgba(57,135,229,.16);--bio-soft:rgba(217,89,38,.16);
+ --hm1:#184f95;--hm2:#256abf;--hm3:#3987e5;--hm4:#6da7ec;--hmi1:#ffffff;--hmi2:#ffffff;--hmi3:#0b0b0b;--hmi4:#0b0b0b}
 *{box-sizing:border-box}
 html,body{margin:0;padding:0;overflow-x:hidden}
 body{background:var(--page);color:var(--text-primary);font-family:system-ui,-apple-system,"Apple SD Gothic Neo","Segoe UI","Noto Sans KR",sans-serif;line-height:1.6;font-size:15px}
@@ -79,6 +82,26 @@ tr.sep td{border-top:2px solid var(--axis)}
 .quad{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .quad>.card{min-width:0}
 @media(max-width:800px){.two,.quad{grid-template-columns:1fr}}
+.three{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.three>.card{min-width:0}
+@media(max-width:900px){.three{grid-template-columns:1fr}}
+.chart.mini{height:260px}
+#t-win th:first-child,#t-win td:first-child{position:sticky;left:0;z-index:2;background:var(--surface-1);white-space:normal;min-width:150px;line-height:1.35}
+#t-win th:first-child{z-index:3;background:var(--surface-2)}
+#t-win td.hm{text-align:right;font-variant-numeric:tabular-nums;min-width:110px}
+#t-win td.hm small{display:block;font-size:.68rem;font-weight:400;line-height:1.3;opacity:.86}
+#t-win td.hm1{background:var(--hm1);color:var(--hmi1)}#t-win td.hm2{background:var(--hm2);color:var(--hmi2)}
+#t-win td.hm3{background:var(--hm3);color:var(--hmi3)}#t-win td.hm4{background:var(--hm4);color:var(--hmi4)}
+#t-win td.hm1,#t-win td.hm2,#t-win td.hm3,#t-win td.hm4{border-bottom-color:var(--surface-1)}
+#t-win td.hm b{font-weight:700}
+.hmkey{display:inline-flex;align-items:center;gap:3px;vertical-align:middle;margin:0 4px}
+.hmkey i{display:inline-block;width:14px;height:10px;border-radius:2px;border:1px solid var(--border)}
+.tile .kv{display:flex;justify-content:space-between;gap:10px;font-size:.8rem;border-top:1px solid var(--grid);padding:5px 0 3px;color:var(--text-secondary)}
+.tile .kv b{color:var(--text-primary);font-variant-numeric:tabular-nums}
+.verdict2{background:var(--surface-1);border:1px solid var(--border);border-left:5px solid var(--s8);border-radius:14px;padding:14px 18px;margin:16px 0 8px;font-size:.92rem;line-height:1.75}
+.verdict2 ol{margin:6px 0 0;padding-left:1.3em}
+.verdict2 li{margin:4px 0}
+.verdict2 a{color:var(--accent)}
 footer{margin-top:48px;color:var(--text-secondary);font-size:.8rem;border-top:1px solid var(--grid);padding-top:14px;line-height:1.7}
 footer a{color:var(--accent)}
 footer ul{margin:6px 0;padding-left:1.2em}
@@ -90,7 +113,7 @@ footer ul{margin:6px 0;padding-left:1.2em}
 <p class="sub">KOSPI 업종 23 + KOSDAQ 업종 21 (2025년부터 44업종) · 2021Q4~2026Q4 · <b>“분기 첫 거래일에 강했던 섹터가 남은 분기에도 강한가?”</b> — 첫날 수익률 순위 vs 첫날 종가→분기말 순위의 스피어만 ρ, Top5/Bot5 초과수익, 테크·바이오 사례, 2026Q4(10/1) 첫날 순위표 · 기준일 2026-10-01</p>
 </header>
 <div class="lead" id="verdict"><span class="tag">가설 판정</span><br></div>
-<nav class="toc"><a href="#s1">핵심 지표</a><a href="#s2">분기별 ρ</a><a href="#s3">순위 산점도</a><a href="#s4">테크·바이오 추적</a><a href="#s5">2026Q3 사례</a><a href="#s6">2026Q4 첫날 순위</a><a href="#s7">섹터별 적중률</a><a href="#s8">분기별 요약표</a></nav>
+<nav class="toc"><a href="#s1">핵심 지표</a><a href="#s2">분기별 ρ</a><a href="#s3">순위 산점도</a><a href="#s4">테크·바이오 추적</a><a href="#s5">2026Q3 사례</a><a href="#s6">2026Q4 첫날 순위</a><a href="#s7">섹터별 적중률</a><a href="#s8">기간별 비교</a><a href="#s9">분기별 요약표</a></nav>
 
 <h2 id="s1">1. 핵심 지표</h2>
 <p class="desc">완료 분기 20개(2021Q4~2026Q3) 기준. <b>첫날</b>=분기 첫 거래일 수익률(전일 종가→첫날 종가), <b>잔여</b>=첫날 종가→분기말 종가 수익률. ρ는 업종 간 순위 상관(스피어만).</p>
@@ -134,7 +157,46 @@ footer ul{margin:6px 0;padding-left:1.2em}
 <div class="tblwrap"><table id="t-sec"></table></div>
 <p class="note">44업종 일치율 중앙값 <b id="n-secmed"></b>, 60% 이상 <b id="n-sec60"></b>개, 40% 이하 <b id="n-sec40"></b>개 — 50%를 중심으로 양쪽에 퍼져 있고 20회 동전 던지기의 자연 산포(표준편차 ≈11%p)와 구분하기 어렵다. 시계열 ρ는 분기 수가 7~20개라 참고치.</p></div>
 
-<h2 id="s8">8. 분기별 요약표</h2>
+<h2 id="s8">8. 기간별 비교 (1~5개년 · 최근 4분기 · 2026년 · 연도별 · 분기유형별 · 국면별 · 롤링 8분기)</h2>
+<p class="desc">위 20분기 결론을 창(window)별로 다시 잘라 본다. 4분기·3분기 창의 ρ 평균은 2σ 표본오차가 ±0.20·±0.23이라 <b>방향 참고용</b>이고, 적중률 지표는 섹터당 3~4건이어서 1건이 바뀌면 25~33%p가 움직인다. 각 열의 n은 포함 분기 수.</p>
+<div class="card"><h3>창 비교 — 지표 × 기간 (셀 색 = 행 안에서 |값|이 클수록 진함)</h3><p class="en">같은 행 안에서만 비교 · 작은 글씨 = 표본(건수 또는 분기 승률) · 열 제목에 올리면 포함 분기 · 색 단계 <span class="hmkey"><i style="background:var(--surface-1)"></i><i style="background:var(--hm1)"></i><i style="background:var(--hm2)"></i><i style="background:var(--hm3)"></i><i style="background:var(--hm4)"></i></span> 연함→진함</p>
+<div class="tblwrap"><table id="t-win"></table></div>
+<p class="note"><b>읽는 법</b> 창에 따라 뒤집히는 지표는 신뢰하지 않는다 (Top5 초과·테크 적중), 창에 무관한 결론은 확정 (ρ≈0, 4분기 반전, 큰하락 60%대).</p></div>
+
+<div class="card"><h3>롤링 8분기 ρ(첫날↔잔여) 평균 — 창 끝 2023Q3~2026Q3</h3><p class="en">점 = 직전 8분기 ρ 단순평균 · 회색 띠 = 8분기 창의 2σ 표본오차 ±0.14 · 휠/드래그로 확대</p>
+<div id="c-roll" class="chart short"></div>
+<p class="note">전 구간 범위 <b id="n-roll"></b>로 2σ 띠 안에 머문다. 2023Q1(+0.53)이 창에서 빠진 2025Q1부터 −0.08 이하로 내려갔고 2025Q2·Q3(−0.25, −0.35)가 들어오며 −0.14까지 하락, 2026Q2(+0.21)가 들어와도 −0.11이다.</p></div>
+
+<h3>연도별 (2022~2025 각 4분기 · 2026은 3분기, 점선 테두리)</h3>
+<div class="three">
+<div class="card"><h3>ρ(첫날↔잔여) 평균</h3><p class="en">위 파랑 = 순위 유지, 아래 빨강 = 역전</p><div id="c-y-rho" class="chart mini"></div></div>
+<div class="card"><h3>첫날 Top5 잔여 초과수익 (%p)</h3><p class="en">첫날 Top5 잔여 평균 − 전체 평균</p><div id="c-y-top5" class="chart mini"></div></div>
+<div class="card"><h3>테크·바이오 첫날 신호 적중률 (%)</h3><p class="en">첫날 상·하위 절반 = 잔여 상·하위 절반 · 50% = 동전</p><div id="c-y-hit" class="chart mini"></div></div>
+</div>
+<p class="note">1년 단위로 보면 ρ 부호가 해마다 바뀐다(−0.01 → +0.12 → −0.11 → −0.18 → +0.03). 2025년은 가장 뚜렷한 ‘반전의 해’(Bot5 4/4 EW 상회, 바이오 적중 3/16), 2026년은 그 반대로 뛰었다 — 2026년 수치를 새 레짐으로 읽을 근거가 되지 못한다.</p>
+
+<h3>분기유형별 (Q1~Q4 각 5개 · <b>Q4 강조</b>)</h3>
+<div class="three">
+<div class="card"><h3>ρ(첫날↔잔여) 평균</h3><p class="en">Q4만 진하게 · 나머지는 흐리게</p><div id="c-q-rho" class="chart mini"></div></div>
+<div class="card"><h3>첫날 Bot5 잔여 초과수익 (%p)</h3><p class="en">Q4만 양(+) — 첫날 패자가 연말까지 EW를 이김</p><div id="c-q-bot5" class="chart mini"></div></div>
+<div class="card"><h3>Bot5→상위절반 역전율 · 큰 하락(−2%p↓) 지속률 (%)</h3><p class="en">50% = 동전 · Q4 강조</p><div id="c-q-rev" class="chart mini"></div></div>
+</div>
+<p class="note">Q4는 Bot5 초과·승률·역전율·Top5 잔류·1분위 백분위·큰 하락 지속률 여섯 지표가 한 방향(반전)을 가리키는 유일한 분기유형이다. Q4 Bot5 초과는 2021Q4 +0.31 → 2022Q4 +1.47 → 2023Q4 −0.41 → 2024Q4 +3.63 → 2025Q4 +8.08%p. 단 Q4의 ‘큰 하락 지속 30%’는 표본 10건.</p>
+
+<h3>국면별 (잔여 평균수익 상·하위 10분기 · 잔여 표준편차 상·하위 10분기)</h3>
+<p class="desc">국면은 그 분기의 잔여 수익률(사후 정보)로 나눈 것이라 실시간 전략이 아니라 사후 진단이다. <b>1분위 잔여 백분위</b>는 첫날 최상위 20% 업종의 잔여 순위 백분위(50 = 중립, 50보다 크면 평균보다 나쁨).</p>
+<div class="tiles" id="rg"></div>
+<p class="note">강세장에서 첫날 신호는 더 나쁘다(ρ 양 3/10, 1분위 백분위 55, Top5 누적 +73 vs EW +72). 약세·고산포 분기에서 Top5가 조금 낫지만(+2.3 / +2.8%p) 승률은 5/10이고, 저산포 10분기에서는 Top5 초과 −0.20%p — 산포(테마 쏠림)가 없으면 첫날 Top5의 초과수익은 0이다.</p>
+
+<div class="verdict2" id="verdict2"><span class="tag" style="display:inline-block;font-size:.72rem;font-weight:700;color:var(--text-secondary);background:var(--surface-2);border-radius:999px;padding:2px 10px;letter-spacing:.02em">기간별 비교 — 세 줄 요약</span>
+<ol>
+<li><b>“첫날 순위 ≈ 동전”이라는 결론은 어떤 창에서도 뒤집히지 않는다.</b> 1·2·3·4·5년 누적, 연도별, 분기유형별, 국면별 19개 창의 ρ 평균은 모두 <b>−0.18 ~ +0.12</b> 안에 있고, 각 창의 2σ 표본오차(4분기 ±0.20·8분기 ±0.14·20분기 ±0.09)를 넘는 창은 하나도 없다. 롤링 8분기 ρ는 2024년 0.00 → 2025Q4 −0.14 → 2026Q3 −0.11로, 2025~26년에 ‘지속성이 생긴’ 흔적은 없고 오히려 약한 반전 쪽이다.</li>
+<li><b>최근 4분기 창은 10/1 가설의 “테크” 절반만 지지하고 “바이오” 절반은 반박한다.</b> 테크(KP·KQ 전기/전자) 적중 <b>7/8 (87.5%)</b>(5년 52.5%), 특히 KOSPI 전기/전자 4/4. 반면 바이오 4지수는 <b>6/16 (37.5%)</b>로 5년(47.5%)보다 나빠졌고 KOSDAQ 의료/정밀기기는 최근 2년 0/8. 단 테크 7/8은 n=8이며 2025년 창에서는 3/8이었다 — 같은 섹터가 1년 전엔 정반대였다.</li>
+<li><b>“4분기 반전”은 창을 바꿔도 가장 견고한 발견이다.</b> Q4 5개의 첫날 Bot5 잔여 초과 <b>+2.62%p</b>(4/5 양), Bot5→상위절반 역전 <b>64%</b>, 첫날 큰 하락의 지속률 <b>30%</b>(다른 분기 64~79%). 가장 최근 두 4분기(2024Q4 +3.63%p·역전 5/5, 2025Q4 +8.08%p)가 가장 강했다. 그래도 n=5이므로 “4분기엔 첫날 패자를 버리지 말라” 정도가 데이터가 허용하는 최대 진술이다.</li>
+</ol>
+<div style="margin-top:8px;font-size:.86rem">📄 추가편 노션: <a href="https://app.notion.com/p/1-5-4-2026-2026-10-01-3ec8e39b22a18196a9b3da630039dbb7">https://app.notion.com/p/1-5-4-2026-2026-10-01-3ec8e39b22a18196a9b3da630039dbb7</a></div></div>
+
+<h2 id="s9">9. 분기별 요약표</h2>
 <div class="card"><h3>분기별 ρ·Top5/Bot5 잔여수익·첫날 Top5/Bot5 (stats.md 요약표)</h3><p class="en">헤더 클릭 정렬 · 2026Q4는 진행 중이라 잔여 지표 없음</p>
 <div class="tblwrap"><table id="t-sum"></table></div></div>
 
@@ -361,7 +423,101 @@ const SEC = (function(){ // per-sector hit stats
   document.getElementById('n-sec40').textContent=ps.filter(v=>v<=40).length;
 })();
 
-/* ---------- 8. summary table ---------- */
+/* ---------- 8. windows comparison ---------- */
+const W = {"windows":[{"key":"y1","label":"최근 1년(4분기)","quarters":["2025Q4","2026Q1","2026Q2","2026Q3"],"n":4,"rho_mean":0.027,"rho_median":0.017,"rho_pos_share":0.75,"rho_w1_mean":0.018,"top5_excess_pp":5.75,"top5_win_share":0.75,"bot5_excess_pp":-0.61,"bot5_win_share":0.5,"top5_stay_half_pct":50.0,"bot5_reverse_pct":40.0,"quintile_rest_pct":[52.8,47.4,47.4,52.2,50.1],"big_drop_persist_pct":72.7,"big_drop_n":22,"big_rise_persist_pct":50.0,"big_rise_n":14,"tech_hit_pct":87.5,"tech_hit_n":8,"bio_hit_pct":37.5,"bio_hit_n":16,"kospi_top3_excess_pp":13.02,"kosdaq_top3_excess_pp":-0.45,"top5_cum_ret":25.7,"ew_cum_ret":-0.1},{"key":"y2","label":"최근 2년(8분기)","quarters":["2024Q4","2025Q1","2025Q2","2025Q3","2025Q4","2026Q1","2026Q2","2026Q3"],"n":8,"rho_mean":-0.106,"rho_median":-0.127,"rho_pos_share":0.38,"rho_w1_mean":-0.123,"top5_excess_pp":0.23,"top5_win_share":0.38,"bot5_excess_pp":0.61,"bot5_win_share":0.75,"top5_stay_half_pct":40.0,"bot5_reverse_pct":52.5,"quintile_rest_pct":[57.7,51.3,44.4,49.4,46.9],"big_drop_persist_pct":63.9,"big_drop_n":36,"big_rise_persist_pct":47.6,"big_rise_n":21,"tech_hit_pct":56.2,"tech_hit_n":16,"bio_hit_pct":28.1,"bio_hit_n":32,"kospi_top3_excess_pp":2.62,"kosdaq_top3_excess_pp":-1.91,"top5_cum_ret":17.1,"ew_cum_ret":14.4},{"key":"y3","label":"최근 3년(12분기)","quarters":["2023Q4","2024Q1","2024Q2","2024Q3","2024Q4","2025Q1","2025Q2","2025Q3","2025Q4","2026Q1","2026Q2","2026Q3"],"n":12,"rho_mean":-0.078,"rho_median":-0.054,"rho_pos_share":0.5,"rho_w1_mean":-0.063,"top5_excess_pp":1.47,"top5_win_share":0.58,"bot5_excess_pp":-0.08,"bot5_win_share":0.5,"top5_stay_half_pct":46.7,"bot5_reverse_pct":48.3,"quintile_rest_pct":[53.7,54.2,45.4,48.9,47.5],"big_drop_persist_pct":62.2,"big_drop_n":45,"big_rise_persist_pct":53.3,"big_rise_n":30,"tech_hit_pct":54.2,"tech_hit_n":24,"bio_hit_pct":41.7,"bio_hit_n":48,"kospi_top3_excess_pp":2.78,"kosdaq_top3_excess_pp":0.32,"top5_cum_ret":30.4,"ew_cum_ret":8.7},{"key":"y4","label":"최근 4년(16분기)","quarters":["2022Q4","2023Q1","2023Q2","2023Q3","2023Q4","2024Q1","2024Q2","2024Q3","2024Q4","2025Q1","2025Q2","2025Q3","2025Q4","2026Q1","2026Q2","2026Q3"],"n":16,"rho_mean":-0.054,"rho_median":-0.063,"rho_pos_share":0.44,"rho_w1_mean":-0.076,"top5_excess_pp":1.81,"top5_win_share":0.5,"bot5_excess_pp":-0.94,"bot5_win_share":0.5,"top5_stay_half_pct":48.8,"bot5_reverse_pct":45.0,"quintile_rest_pct":[52.8,52.4,48.0,48.3,48.2],"big_drop_persist_pct":61.8,"big_drop_n":55,"big_rise_persist_pct":52.6,"big_rise_n":38,"tech_hit_pct":50.0,"tech_hit_n":32,"bio_hit_pct":45.3,"bio_hit_n":64,"kospi_top3_excess_pp":3.04,"kosdaq_top3_excess_pp":0.94,"top5_cum_ret":54.3,"ew_cum_ret":20.6},{"key":"y5","label":"전체 5년(20분기)","quarters":["2021Q4","2022Q1","2022Q2","2022Q3","2022Q4","2023Q1","2023Q2","2023Q3","2023Q4","2024Q1","2024Q2","2024Q3","2024Q4","2025Q1","2025Q2","2025Q3","2025Q4","2026Q1","2026Q2","2026Q3"],"n":20,"rho_mean":-0.039,"rho_median":-0.033,"rho_pos_share":0.45,"rho_w1_mean":-0.069,"top5_excess_pp":1.31,"top5_win_share":0.45,"bot5_excess_pp":-1.19,"bot5_win_share":0.5,"top5_stay_half_pct":48.0,"bot5_reverse_pct":45.0,"quintile_rest_pct":[51.6,52.8,48.9,47.4,49.3],"big_drop_persist_pct":62.1,"big_drop_n":58,"big_rise_persist_pct":52.5,"big_rise_n":40,"tech_hit_pct":52.5,"tech_hit_n":40,"bio_hit_pct":47.5,"bio_hit_n":80,"kospi_top3_excess_pp":3.24,"kosdaq_top3_excess_pp":0.64,"top5_cum_ret":12.9,"ew_cum_ret":-9.0},{"key":"y2026","label":"2026년(3분기)","quarters":["2026Q1","2026Q2","2026Q3"],"n":3,"rho_mean":0.033,"rho_median":0.022,"rho_pos_share":0.67,"rho_w1_mean":-0.004,"top5_excess_pp":6.94,"top5_win_share":0.67,"bot5_excess_pp":-3.51,"bot5_win_share":0.33,"top5_stay_half_pct":53.3,"bot5_reverse_pct":33.3,"quintile_rest_pct":[52.7,47.0,48.9,49.5,52.1],"big_drop_persist_pct":72.7,"big_drop_n":22,"big_rise_persist_pct":50.0,"big_rise_n":14,"tech_hit_pct":83.3,"tech_hit_n":6,"bio_hit_pct":41.7,"bio_hit_n":12,"kospi_top3_excess_pp":14.02,"kosdaq_top3_excess_pp":0.58,"top5_cum_ret":16.4,"ew_cum_ret":-5.5}],"rolling8":[{"end_q":"2023Q3","rho_mean":0.019,"top5_excess_pp":1.06,"top5_stay_half_pct":50.0,"rho_pos":3},{"end_q":"2023Q4","rho_mean":0.051,"top5_excess_pp":0.93,"top5_stay_half_pct":50.0,"rho_pos":4},{"end_q":"2024Q1","rho_mean":-0.005,"top5_excess_pp":1.53,"top5_stay_half_pct":55.0,"rho_pos":3},{"end_q":"2024Q2","rho_mean":-0.014,"top5_excess_pp":2.53,"top5_stay_half_pct":60.0,"rho_pos":3},{"end_q":"2024Q3","rho_mean":-0.002,"top5_excess_pp":3.38,"top5_stay_half_pct":57.5,"rho_pos":4},{"end_q":"2024Q4","rho_mean":0.003,"top5_excess_pp":2.73,"top5_stay_half_pct":55.0,"rho_pos":4},{"end_q":"2025Q1","rho_mean":-0.078,"top5_excess_pp":0.11,"top5_stay_half_pct":47.5,"rho_pos":3},{"end_q":"2025Q2","rho_mean":-0.109,"top5_excess_pp":-0.9,"top5_stay_half_pct":45.0,"rho_pos":3},{"end_q":"2025Q3","rho_mean":-0.131,"top5_excess_pp":-0.67,"top5_stay_half_pct":45.0,"rho_pos":3},{"end_q":"2025Q4","rho_mean":-0.143,"top5_excess_pp":-0.53,"top5_stay_half_pct":45.0,"rho_pos":3},{"end_q":"2026Q1","rho_mean":-0.13,"top5_excess_pp":-1.26,"top5_stay_half_pct":42.5,"rho_pos":3},{"end_q":"2026Q2","rho_mean":-0.105,"top5_excess_pp":0.85,"top5_stay_half_pct":40.0,"rho_pos":3},{"end_q":"2026Q3","rho_mean":-0.106,"top5_excess_pp":0.23,"top5_stay_half_pct":40.0,"rho_pos":3}],"by_year":[{"key":"Y2022","label":"2022","quarters":["2022Q1","2022Q2","2022Q3","2022Q4"],"n":4,"rho_mean":-0.012,"rho_median":0.011,"rho_pos_share":0.5,"rho_w1_mean":-0.093,"top5_excess_pp":-1.64,"top5_win_share":0.0,"bot5_excess_pp":-1.9,"bot5_win_share":0.5,"top5_stay_half_pct":45.0,"bot5_reverse_pct":35.0,"quintile_rest_pct":[47.8,53.3,52.0,45.0,52.2],"big_drop_persist_pct":42.9,"big_drop_n":7,"big_rise_persist_pct":33.3,"big_rise_n":3,"tech_hit_pct":50.0,"tech_hit_n":8,"bio_hit_pct":68.8,"bio_hit_n":16,"kospi_top3_excess_pp":3.75,"kosdaq_top3_excess_pp":-2.35,"top5_cum_ret":-26.9,"ew_cum_ret":-21.7},{"key":"Y2023","label":"2023","quarters":["2023Q1","2023Q2","2023Q3","2023Q4"],"n":4,"rho_mean":0.115,"rho_median":0.05,"rho_pos_share":0.5,"rho_w1_mean":-0.013,"top5_excess_pp":3.5,"top5_win_share":0.5,"bot5_excess_pp":-3.98,"bot5_win_share":0.25,"top5_stay_half_pct":55.0,"bot5_reverse_pct":35.0,"quintile_rest_pct":[46.5,49.0,48.8,51.8,54.6],"big_drop_persist_pct":77.8,"big_drop_n":9,"big_rise_persist_pct":50.0,"big_rise_n":8,"tech_hit_pct":50.0,"tech_hit_n":8,"bio_hit_pct":43.8,"bio_hit_n":16,"kospi_top3_excess_pp":3.85,"kosdaq_top3_excess_pp":3.52,"top5_cum_ret":24.4,"ew_cum_ret":13.5},{"key":"Y2024","label":"2024","quarters":["2024Q1","2024Q2","2024Q3","2024Q4"],"n":4,"rho_mean":-0.108,"rho_median":-0.112,"rho_pos_share":0.5,"rho_w1_mean":-0.014,"top5_excess_pp":1.97,"top5_win_share":0.75,"bot5_excess_pp":-0.45,"bot5_win_share":0.25,"top5_stay_half_pct":55.0,"bot5_reverse_pct":55.0,"quintile_rest_pct":[48.7,57.9,51.9,47.9,42.7],"big_drop_persist_pct":33.3,"big_drop_n":9,"big_rise_persist_pct":62.5,"big_rise_n":8,"tech_hit_pct":50.0,"tech_hit_n":8,"bio_hit_pct":62.5,"bio_hit_n":16,"kospi_top3_excess_pp":2.3,"kosdaq_top3_excess_pp":2.53,"top5_cum_ret":-7.9,"ew_cum_ret":-14.4},{"key":"Y2025","label":"2025","quarters":["2025Q1","2025Q2","2025Q3","2025Q4"],"n":4,"rho_mean":-0.178,"rho_median":-0.187,"rho_pos_share":0.25,"rho_w1_mean":-0.194,"top5_excess_pp":-3.03,"top5_win_share":0.25,"bot5_excess_pp":2.94,"bot5_win_share":1.0,"top5_stay_half_pct":35.0,"bot5_reverse_pct":55.0,"quintile_rest_pct":[60.0,55.2,41.4,47.8,45.1],"big_drop_persist_pct":63.6,"big_drop_n":11,"big_rise_persist_pct":50.0,"big_rise_n":6,"tech_hit_pct":37.5,"tech_hit_n":8,"bio_hit_pct":18.8,"bio_hit_n":16,"kospi_top3_excess_pp":-4.6,"kosdaq_top3_excess_pp":-2.11,"top5_cum_ret":16.2,"ew_cum_ret":29.6},{"key":"Y2026","label":"2026(부분)","quarters":["2026Q1","2026Q2","2026Q3"],"n":3,"rho_mean":0.033,"rho_median":0.022,"rho_pos_share":0.67,"rho_w1_mean":-0.004,"top5_excess_pp":6.94,"top5_win_share":0.67,"bot5_excess_pp":-3.51,"bot5_win_share":0.33,"top5_stay_half_pct":53.3,"bot5_reverse_pct":33.3,"quintile_rest_pct":[52.7,47.0,48.9,49.5,52.1],"big_drop_persist_pct":72.7,"big_drop_n":22,"big_rise_persist_pct":50.0,"big_rise_n":14,"tech_hit_pct":83.3,"tech_hit_n":6,"bio_hit_pct":41.7,"bio_hit_n":12,"kospi_top3_excess_pp":14.02,"kosdaq_top3_excess_pp":0.58,"top5_cum_ret":16.4,"ew_cum_ret":-5.5}],"by_qtype":[{"key":"Q1","label":"Q1","quarters":["2022Q1","2023Q1","2024Q1","2025Q1","2026Q1"],"n":5,"rho_mean":0.048,"rho_median":-0.119,"rho_pos_share":0.4,"rho_w1_mean":-0.099,"top5_excess_pp":2.97,"top5_win_share":0.4,"bot5_excess_pp":-2.18,"bot5_win_share":0.4,"top5_stay_half_pct":52.0,"bot5_reverse_pct":36.0,"quintile_rest_pct":[48.9,50.4,51.4,47.3,52.3],"big_drop_persist_pct":65.0,"big_drop_n":20,"big_rise_persist_pct":57.1,"big_rise_n":14,"tech_hit_pct":80.0,"tech_hit_n":10,"bio_hit_pct":40.0,"bio_hit_n":20,"kospi_top3_excess_pp":7.23,"kosdaq_top3_excess_pp":1.89,"top5_cum_ret":39.2,"ew_cum_ret":25.0},{"key":"Q2","label":"Q2","quarters":["2022Q2","2023Q2","2024Q2","2025Q2","2026Q2"],"n":5,"rho_mean":0.008,"rho_median":0.011,"rho_pos_share":0.6,"rho_w1_mean":0.057,"top5_excess_pp":3.47,"top5_win_share":0.4,"bot5_excess_pp":-3.58,"bot5_win_share":0.2,"top5_stay_half_pct":48.0,"bot5_reverse_pct":40.0,"quintile_rest_pct":[46.2,55.3,49.8,48.2,50.5],"big_drop_persist_pct":78.6,"big_drop_n":14,"big_rise_persist_pct":33.3,"big_rise_n":12,"tech_hit_pct":60.0,"tech_hit_n":10,"bio_hit_pct":55.0,"bio_hit_n":20,"kospi_top3_excess_pp":2.2,"kosdaq_top3_excess_pp":2.07,"top5_cum_ret":7.1,"ew_cum_ret":-10.6},{"key":"Q3","label":"Q3","quarters":["2022Q3","2023Q3","2024Q3","2025Q3","2026Q3"],"n":5,"rho_mean":-0.105,"rho_median":-0.057,"rho_pos_share":0.4,"rho_w1_mean":-0.142,"top5_excess_pp":-0.59,"top5_win_share":0.4,"bot5_excess_pp":-1.61,"bot5_win_share":0.6,"top5_stay_half_pct":56.0,"bot5_reverse_pct":40.0,"quintile_rest_pct":[54.4,53.3,49.4,46.5,45.9],"big_drop_persist_pct":64.3,"big_drop_n":14,"big_rise_persist_pct":75.0,"big_rise_n":8,"tech_hit_pct":20.0,"tech_hit_n":10,"bio_hit_pct":45.0,"bio_hit_n":20,"kospi_top3_excess_pp":1.57,"kosdaq_top3_excess_pp":0.48,"top5_cum_ret":-22.2,"ew_cum_ret":-19.7},{"key":"Q4","label":"Q4","quarters":["2021Q4","2022Q4","2023Q4","2024Q4","2025Q4"],"n":5,"rho_mean":-0.108,"rho_median":-0.149,"rho_pos_share":0.4,"rho_w1_mean":-0.094,"top5_excess_pp":-0.62,"top5_win_share":0.6,"bot5_excess_pp":2.62,"bot5_win_share":0.8,"top5_stay_half_pct":36.0,"bot5_reverse_pct":64.0,"quintile_rest_pct":[57.0,52.0,44.7,47.7,48.4],"big_drop_persist_pct":30.0,"big_drop_n":10,"big_rise_persist_pct":50.0,"big_rise_n":6,"tech_hit_pct":50.0,"tech_hit_n":10,"bio_hit_pct":50.0,"bio_hit_n":20,"kospi_top3_excess_pp":1.97,"kosdaq_top3_excess_pp":-1.86,"top5_cum_ret":-2.6,"ew_cum_ret":1.4}],"regimes":[{"key":"bull","label":"강세(잔여 평균수익 상위10)","quarters":["2022Q4","2023Q1","2023Q2","2023Q4","2024Q1","2025Q1","2025Q2","2025Q3","2025Q4","2026Q1"],"n":10,"rho_mean":-0.074,"rho_median":-0.127,"rho_pos_share":0.3,"rho_w1_mean":-0.136,"top5_excess_pp":0.35,"top5_win_share":0.4,"bot5_excess_pp":0.33,"bot5_win_share":0.6,"top5_stay_half_pct":46.0,"bot5_reverse_pct":42.0,"quintile_rest_pct":[54.5,53.2,46.8,46.6,48.8],"big_drop_persist_pct":59.4,"big_drop_n":32,"big_rise_persist_pct":52.2,"big_rise_n":23,"tech_hit_pct":55.0,"tech_hit_n":20,"bio_hit_pct":42.5,"bio_hit_n":40,"kospi_top3_excess_pp":1.48,"kosdaq_top3_excess_pp":-0.02,"top5_cum_ret":73.3,"ew_cum_ret":72.3},{"key":"bear","label":"약세(잔여 평균수익 하위10)","quarters":["2021Q4","2022Q1","2022Q2","2022Q3","2023Q3","2024Q2","2024Q3","2024Q4","2026Q2","2026Q3"],"n":10,"rho_mean":-0.005,"rho_median":0.016,"rho_pos_share":0.6,"rho_w1_mean":-0.003,"top5_excess_pp":2.27,"top5_win_share":0.5,"bot5_excess_pp":-2.71,"bot5_win_share":0.4,"top5_stay_half_pct":50.0,"bot5_reverse_pct":48.0,"quintile_rest_pct":[48.6,52.3,51.0,48.3,49.8],"big_drop_persist_pct":65.4,"big_drop_n":26,"big_rise_persist_pct":52.9,"big_rise_n":17,"tech_hit_pct":50.0,"tech_hit_n":20,"bio_hit_pct":52.5,"bio_hit_n":40,"kospi_top3_excess_pp":5.0,"kosdaq_top3_excess_pp":1.31,"top5_cum_ret":-34.8,"ew_cum_ret":-47.2},{"key":"hisd","label":"고산포(잔여 표준편차 상위10)","quarters":["2023Q1","2023Q2","2023Q3","2023Q4","2024Q2","2025Q2","2025Q3","2025Q4","2026Q1","2026Q2"],"n":10,"rho_mean":-0.005,"rho_median":0.001,"rho_pos_share":0.5,"rho_w1_mean":0.026,"top5_excess_pp":2.82,"top5_win_share":0.5,"bot5_excess_pp":-0.94,"bot5_win_share":0.5,"top5_stay_half_pct":50.0,"bot5_reverse_pct":44.0,"quintile_rest_pct":[50.6,52.0,47.9,50.3,49.1],"big_drop_persist_pct":68.8,"big_drop_n":32,"big_rise_persist_pct":42.9,"big_rise_n":21,"tech_hit_pct":60.0,"tech_hit_n":20,"bio_hit_pct":40.0,"bio_hit_n":40,"kospi_top3_excess_pp":4.88,"kosdaq_top3_excess_pp":1.48,"top5_cum_ret":81.9,"ew_cum_ret":42.4},{"key":"losd","label":"저산포(잔여 표준편차 하위10)","quarters":["2021Q4","2022Q1","2022Q2","2022Q3","2022Q4","2024Q1","2024Q3","2024Q4","2025Q1","2026Q3"],"n":10,"rho_mean":-0.074,"rho_median":-0.088,"rho_pos_share":0.4,"rho_w1_mean":-0.165,"top5_excess_pp":-0.2,"top5_win_share":0.4,"bot5_excess_pp":-1.44,"bot5_win_share":0.5,"top5_stay_half_pct":46.0,"bot5_reverse_pct":46.0,"quintile_rest_pct":[52.6,53.6,49.8,44.5,49.5],"big_drop_persist_pct":53.8,"big_drop_n":26,"big_rise_persist_pct":63.2,"big_rise_n":19,"tech_hit_pct":45.0,"tech_hit_n":20,"bio_hit_pct":55.0,"bio_hit_n":40,"kospi_top3_excess_pp":1.61,"kosdaq_top3_excess_pp":-0.19,"top5_cum_ret":-37.9,"ew_cum_ret":-36.1}]};
+const Y5Q = W.windows.find(w=>w.key==='y5').quarters;
+const qShort = q => q.replace('20','').replace('Q','Q');
+(function(){
+  const wins=W.windows, tbl=document.getElementById('t-win');
+  const sm=s=>`<small>${s}</small>`;
+  const share=(s,n)=>`<b>${Math.round(s*100)}%</b>`+sm(`${Math.round(s*n)}/${n}`);
+  const hitp=(p,n)=>`<b>${p.toFixed(1).replace('.0','')}%</b>`+sm(`${Math.round(p*n/100)}/${n}`);
+  const rows=[
+    {l:'ρ(첫날↔잔여) 평균', v:w=>w.rho_mean, f:w=>`<b>${sgn(w.rho_mean,2)}</b>`+sm(`중앙 ${sgn(w.rho_median,2)} · 첫주 ${sgn(w.rho_w1_mean,2)}`)},
+    {l:'ρ 양(+) 비율', v:w=>w.rho_pos_share, f:w=>share(w.rho_pos_share,w.n)},
+    {l:'첫날 Top5 잔여 초과(%p) · 승률', v:w=>w.top5_excess_pp, f:w=>`<b>${sgn(w.top5_excess_pp,2)}</b>`+sm(`승률 ${Math.round(w.top5_win_share*w.n)}/${w.n}`)},
+    {l:'첫날 Bot5 잔여 초과(%p) · 승률', v:w=>w.bot5_excess_pp, f:w=>`<b>${sgn(w.bot5_excess_pp,2)}</b>`+sm(`승률 ${Math.round(w.bot5_win_share*w.n)}/${w.n}`)},
+    {l:'Top5 → 상위절반 잔류', v:w=>w.top5_stay_half_pct, f:w=>hitp(w.top5_stay_half_pct,5*w.n)},
+    {l:'Bot5 → 상위절반 역전', v:w=>w.bot5_reverse_pct, f:w=>hitp(w.bot5_reverse_pct,5*w.n)},
+    {l:'큰 하락(−2%p↓) 지속', v:w=>w.big_drop_persist_pct, f:w=>hitp(w.big_drop_persist_pct,w.big_drop_n)},
+    {l:'큰 상승(+3%p↑) 지속', v:w=>w.big_rise_persist_pct, f:w=>hitp(w.big_rise_persist_pct,w.big_rise_n)},
+    {l:'테크 적중 (전기/전자 KP·KQ)', v:w=>w.tech_hit_pct, f:w=>hitp(w.tech_hit_pct,w.tech_hit_n)},
+    {l:'바이오 적중 (제약·의료/정밀 KP·KQ)', v:w=>w.bio_hit_pct, f:w=>hitp(w.bio_hit_pct,w.bio_hit_n)},
+    {l:'KOSPI 내부 Top3 초과(%p)', v:w=>w.kospi_top3_excess_pp, f:w=>`<b>${sgn(w.kospi_top3_excess_pp,1)}</b>`},
+    {l:'KOSDAQ 내부 Top3 초과(%p)', v:w=>w.kosdaq_top3_excess_pp, f:w=>`<b>${sgn(w.kosdaq_top3_excess_pp,1)}</b>`},
+    {l:'첫날 Top5 누적 vs EW 누적', v:w=>w.top5_cum_ret-w.ew_cum_ret, f:w=>`<b>${pct(w.top5_cum_ret)}</b> vs ${pct(w.ew_cum_ret)}`+sm(`차 ${sgn(w.top5_cum_ret-w.ew_cum_ret,1)}%p`)}
+  ];
+  let h=`<thead><tr><th>지표</th>${wins.map(w=>`<th class="num" title="${w.quarters[0]}~${w.quarters[w.quarters.length-1]}">${esc(w.label.replace(/\(.*\)/,''))}<br><span class="na">n=${w.n}</span></th>`).join('')}</tr></thead><tbody>`;
+  rows.forEach(r=>{ const vs=wins.map(w=>Math.abs(r.v(w))); const mn=Math.min(...vs), mx=Math.max(...vs);
+    h+=`<tr><td>${esc(r.l)}</td>${wins.map((w,i)=>{const lv=mx>mn?Math.min(4,Math.floor((vs[i]-mn)/(mx-mn)*5)):0;
+      return `<td class="hm${lv?' hm'+lv:''}" title="${esc(w.label)} · ${w.quarters[0]}~${w.quarters[w.quarters.length-1]}">${r.f(w)}</td>`;}).join('')}</tr>`;});
+  tbl.innerHTML=h+'</tbody>';
+  const rs=W.rolling8.map(r=>r.rho_mean);
+  document.getElementById('n-roll').textContent=sgn(Math.min(...rs),2)+' ~ '+sgn(Math.max(...rs),2);
+})();
+function drawRoll(){
+  const t=T(), c=mk('c-roll'), o=base(t), R=W.rolling8;
+  const vals=R.map(r=>r.rho_mean), mi=vals.indexOf(Math.min(...vals)), ma=vals.indexOf(Math.max(...vals));
+  o.grid={left:8,right:28,top:36,bottom:isMobile()?44:30,containLabel:true};
+  o.xAxis={...o.xAxis,type:'category',data:R.map(r=>r.end_q),boundaryGap:false,axisLabel:{...o.xAxis.axisLabel,rotate:isMobile()?45:0,interval:isMobile()?1:0,formatter:v=>isMobile()?v.replace('20',''):v}};
+  o.yAxis={...o.yAxis,type:'value',min:-0.3,max:0.3,interval:0.1,name:'ρ 평균(8분기)',nameTextStyle:{color:t.mut,fontSize:11},axisLabel:{...o.yAxis.axisLabel,formatter:v=>v.toFixed(1)}};
+  o.dataZoom=[{type:'inside',xAxisIndex:0,filterMode:'none'}];
+  o.tooltip.axisPointer={type:'line',lineStyle:{color:t.axis}};
+  o.tooltip.formatter=ps=>{const i=ps[0].dataIndex, r=R[i], k=Y5Q.indexOf(r.end_q);
+    return `<b>창 끝 ${r.end_q}</b> <span style="color:${t.mut}">${Y5Q[k-7]}~${r.end_q} · 8분기</span><br>${lineKey(t.s[0])}<b>ρ 평균 ${sgn(r.rho_mean,3)}</b> · <span style="color:${t.sec}">ρ 양(+) ${r.rho_pos}/8</span><br><span style="color:${t.sec}">첫날 Top5 잔여 초과</span> <b>${sgn(r.top5_excess_pp,2)}%p</b> · <span style="color:${t.sec}">Top5 잔류</span> <b>${r.top5_stay_half_pct.toFixed(1)}%</b>`;};
+  o.legend={show:false};
+  o.series=[{name:'롤링 8분기 ρ 평균',type:'line',data:vals.map((v,i)=>({value:v,label:{show:i===0||i===mi||i===ma||i===vals.length-1}})),symbol:'circle',symbolSize:8,
+    lineStyle:{width:2,color:t.s[0]},itemStyle:{color:t.s[0],borderColor:t.surf,borderWidth:1.5},z:3,
+    label:{show:false,position:'top',color:t.sec,fontSize:11,formatter:p=>sgn(p.value,2)},
+    markLine:{silent:true,symbol:'none',lineStyle:{color:t.axis,width:1.5},label:{formatter:'ρ = 0',color:t.mut,fontSize:11,position:'insideEndTop'},data:[{yAxis:0}]},
+    markArea:{silent:true,itemStyle:{color:t.grid,opacity:.45},label:{show:true,position:'insideTopLeft',formatter:'8분기 2σ ±0.14',color:t.mut,fontSize:10},data:[[{yAxis:-0.14},{yAxis:0.14}]]}}];
+  c.setOption(o);
+}
+function smallBar(id,cfg){
+  const t=T(), c=mk(id), o=base(t), multi=cfg.series.length>1;
+  o.grid={left:8,right:16,top:multi?40:20,bottom:8,containLabel:true};
+  o.xAxis={...o.xAxis,type:'category',data:cfg.cats,axisLabel:{...o.xAxis.axisLabel,interval:0}};
+  o.yAxis={...o.yAxis,type:'value',...cfg.y,axisLabel:{...o.yAxis.axisLabel,formatter:cfg.yfmt||(v=>v)}};
+  o.tooltip.formatter=ps=>{const i=ps[0].dataIndex;
+    return `<b>${esc(cfg.cats[i])}</b>${cfg.sub?` <span style="color:${t.mut}">${cfg.sub[i]}</span>`:''}<br>`+ps.map(p=>`${dotKey(p.color)}${p.seriesName} <b>${cfg.fmt(p.value)}</b>${cfg.extra?cfg.extra(p.seriesIndex,i):''}`).join('<br>');};
+  o.series=cfg.series.map((s,si)=>({name:s.name,type:'bar',barMaxWidth:28,barGap:'12%',z:2,itemStyle:{color:s.color(1,0)},
+    data:s.data.map((v,i)=>({value:v,itemStyle:{color:s.color(v,i),opacity:cfg.dim&&!cfg.dim(i)?.38:1,borderRadius:v>=0?[4,4,0,0]:[0,0,4,4],
+        ...(cfg.partial&&cfg.partial(i)?{borderType:'dashed',borderColor:t.sec,borderWidth:1}:{})},
+      label:{show:cfg.label?cfg.label(i,v,s.data):false,position:v>=0?'top':'bottom',color:t.sec,fontSize:11,formatter:p=>cfg.fmt(p.value)}})),
+    ...(si===0&&cfg.ref!=null?{markLine:{silent:true,symbol:'none',lineStyle:{color:t.axis,width:1.5},label:{formatter:cfg.refLabel||'',color:t.mut,fontSize:10,position:'insideEndTop'},data:[{yAxis:cfg.ref}]}}:{})}));
+  if(multi) o.legend.data=cfg.series.map(s=>s.name); else o.legend={show:false};
+  c.setOption(o);
+}
+function drawSmalls(){
+  const t=T(), pn=v=>v>=0?t.s[0]:t.s[7];
+  const ext=(i,v,arr)=>v===Math.max(...arr)||v===Math.min(...arr);
+  const Y=W.by_year, yc=Y.map(y=>y.label), ysub=Y.map(y=>`${y.quarters[0]}~${y.quarters[y.quarters.length-1]} · n=${y.n}`), part=i=>Y[i].n<4;
+  smallBar('c-y-rho',{cats:yc,sub:ysub,partial:part,label:ext,y:{min:-0.3,max:0.3,interval:0.1},yfmt:v=>v.toFixed(1),fmt:v=>sgn(v,3),ref:0,
+    series:[{name:'ρ(첫날↔잔여) 평균',data:Y.map(y=>y.rho_mean),color:pn}],extra:(s,i)=>` <span style="color:${t.sec}">· ρ 양(+) ${Math.round(Y[i].rho_pos_share*Y[i].n)}/${Y[i].n} · 중앙 ${sgn(Y[i].rho_median,2)}</span>`});
+  smallBar('c-y-top5',{cats:yc,sub:ysub,partial:part,label:ext,y:{min:-8,max:8,interval:4},yfmt:v=>(v>0?'+':'')+v,fmt:v=>sgn(v,2)+'%p',ref:0,
+    series:[{name:'첫날 Top5 잔여 초과',data:Y.map(y=>y.top5_excess_pp),color:pn}],extra:(s,i)=>` <span style="color:${t.sec}">· 승률 ${Math.round(Y[i].top5_win_share*Y[i].n)}/${Y[i].n} · Bot5 ${sgn(Y[i].bot5_excess_pp,2)}%p</span>`});
+  smallBar('c-y-hit',{cats:yc,sub:ysub,partial:part,y:{min:0,max:100,interval:25},yfmt:v=>v+'%',fmt:v=>v.toFixed(1)+'%',ref:50,refLabel:'50%',
+    series:[{name:'테크 적중',data:Y.map(y=>y.tech_hit_pct),color:()=>t.s[0]},{name:'바이오 적중',data:Y.map(y=>y.bio_hit_pct),color:()=>t.s[1]}],
+    extra:(s,i)=>{const y=Y[i]; return s===0?` <span style="color:${t.sec}">(${Math.round(y.tech_hit_pct*y.tech_hit_n/100)}/${y.tech_hit_n})</span>`:` <span style="color:${t.sec}">(${Math.round(y.bio_hit_pct*y.bio_hit_n/100)}/${y.bio_hit_n})</span>`;}});
+  const G=W.by_qtype, gc=G.map(g=>g.label), gsub=G.map(g=>`${g.quarters.join(' ')} · n=${g.n}`), q4=i=>G[i].key==='Q4';
+  smallBar('c-q-rho',{cats:gc,sub:gsub,dim:q4,label:q4,y:{min:-0.3,max:0.3,interval:0.1},yfmt:v=>v.toFixed(1),fmt:v=>sgn(v,3),ref:0,
+    series:[{name:'ρ(첫날↔잔여) 평균',data:G.map(g=>g.rho_mean),color:pn}],extra:(s,i)=>` <span style="color:${t.sec}">· ρ 양(+) ${Math.round(G[i].rho_pos_share*5)}/5 · 중앙 ${sgn(G[i].rho_median,2)}</span>`});
+  smallBar('c-q-bot5',{cats:gc,sub:gsub,dim:q4,label:q4,y:{min:-4,max:4,interval:2},yfmt:v=>(v>0?'+':'')+v,fmt:v=>sgn(v,2)+'%p',ref:0,
+    series:[{name:'첫날 Bot5 잔여 초과',data:G.map(g=>g.bot5_excess_pp),color:pn}],extra:(s,i)=>` <span style="color:${t.sec}">· 승률 ${Math.round(G[i].bot5_win_share*5)}/5 · Top5 ${sgn(G[i].top5_excess_pp,2)}%p</span>`});
+  smallBar('c-q-rev',{cats:gc,sub:gsub,dim:q4,label:q4,y:{min:0,max:100,interval:25},yfmt:v=>v+'%',fmt:v=>v.toFixed(0)+'%',ref:50,refLabel:'50%',
+    series:[{name:'Bot5→상위절반 역전율',data:G.map(g=>g.bot5_reverse_pct),color:()=>t.s[0]},{name:'큰 하락 지속률',data:G.map(g=>g.big_drop_persist_pct),color:()=>t.s[1]}],
+    extra:(s,i)=>{const g=G[i]; return s===0?` <span style="color:${t.sec}">(${Math.round(g.bot5_reverse_pct*25/100)}/25)</span>`:` <span style="color:${t.sec}">(${Math.round(g.big_drop_persist_pct*g.big_drop_n/100)}/${g.big_drop_n})</span>`;}});
+}
+(function(){
+  document.getElementById('rg').innerHTML=W.regimes.map(r=>{const k=Math.round(r.rho_pos_share*r.n), q1=r.quintile_rest_pct[0];
+    return `<div class="tile" title="${r.quarters.join(' ')}"><div class="lbl">${esc(r.label)}</div><div class="val">${k}/${r.n}<small>ρ 양(+)</small></div>`+
+      `<div class="kv"><span>1분위 잔여 백분위</span><b class="${q1>50?'dn':q1<50?'up':''}">${q1.toFixed(1)}</b></div>`+
+      `<div class="kv"><span>첫날 Top5 잔여 초과</span><b class="${cls(r.top5_excess_pp)}">${sgn(r.top5_excess_pp,2)}%p</b></div>`+
+      `<div class="kv"><span>표본</span><b>n=${r.n}분기</b></div>`+
+      `<div class="cap">${r.quarters.map(qShort).join(' · ')}</div></div>`;}).join('');
+})();
+
+/* ---------- 9. summary table ---------- */
 (function(){
   const tbl=document.getElementById('t-sum');
   let h=`<thead><tr>${th('분기',false)}${th('첫날',false)}${th('n',true)}${th('ρ(첫날↔잔여)',true)}${th('ρ(첫주↔잔여)',true)}${th('첫날 Top5 잔여평균%',true)}${th('첫날 Bot5 잔여평균%',true)}${th('전체 잔여평균%',true)}${th('첫날 Top5',false,false)}${th('첫날 Bot5',false,false)}</tr></thead><tbody>`;
@@ -371,7 +527,7 @@ const SEC = (function(){ // per-sector hit stats
 })();
 
 /* ---------- render / theme / resize ---------- */
-function drawAll(){ drawRho(); drawScatter(); drawTB(); }
+function drawAll(){ drawRho(); drawScatter(); drawTB(); drawRoll(); drawSmalls(); }
 drawAll();
 let rt; window.addEventListener('resize',()=>{clearTimeout(rt); rt=setTimeout(drawAll,150);});
 window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',drawAll);
