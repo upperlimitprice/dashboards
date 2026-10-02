@@ -124,7 +124,7 @@ const REG=__REG__;
 const JOB={"signals.html":"signals","kr-breadth.html":"breadth","funds.html":"breadth","valuation.html":"breadth",
 "kospi-ff.html":"kospiff","cds.html":"cds","tanker.html":"tanker","us-liq.html":"usliq","tval.html":"tval",
 "etf.html":"tval","osc.html":"osc","leaders.html":"leaders","taiwan-revenue.html":"taiwan","flows":"flows",
-"orders.html":"orders","cost.html":"cost","util.html":"util","hs.html":"hs","vs.html":"vsr","gpu-rent.html":"gpurent","dram.html":"dram"};
+"orders.html":"orders","cost.html":"cost","util.html":"util","hs.html":"hs","vs.html":"vsr","gpu-rent.html":"gpurent","dram.html":"dram","trendforce.html":"trendforce"};
 let EP=null;
 async function ep(){if(EP!==null)return EP;try{EP=(await fetch('endpoint.json?'+Date.now()).then(r=>r.json())).url;}catch(e){EP='';}return EP;}
 async function refresh(e,k){

@@ -72,7 +72,7 @@ svg text{font-family:'Apple SD Gothic Neo','Noto Sans KR',sans-serif}
 </style></head><body>
 <div class='wrap'>
 <h1>📈 트렌드포스 가격 전망 트래커</h1>
-<p class='sub'>기준 2026-10-01 · TrendForce 분기 보도자료의 <b>계약가(Contract Price) QoQ 전망 범위</b>를 품목별로 수집 — DRAM 7개 · NAND Flash 6개 세부 품목 + 패널·HBM·NOR/SLC NAND·MLCC·파운드리 보조 품목<br>
+<p class='sub'>기준 2026-10-01 <span id='meta'></span>· TrendForce 분기 보도자료의 <b>계약가(Contract Price) QoQ 전망 범위</b>를 품목별로 수집 — DRAM 7개 · NAND Flash 6개 세부 품목 + 패널·HBM·NOR/SLC NAND·MLCC·파운드리 보조 품목<br>
 ※ 범위 막대 = 전망 하한~상한, 점 = 중앙값 · 같은 분기에 발표가 여러 번이면 최신 발표를 표시(수정 이력 탭에서 비교) · <span class='tag u'>2차</span>는 2차 출처(미디어·요약) 기반으로 원문 재확인 권장</p>
 <div class='kpis' id='kpis'></div>
 <div class='tabs' id='mainTabs'>
@@ -249,6 +249,7 @@ svg text{font-family:'Apple SD Gothic Neo','Noto Sans KR',sans-serif}
 </script>
 <script>
 const D=JSON.parse(document.getElementById('tfd').textContent);
+if(D.meta&&D.meta.updated)document.getElementById('meta').textContent='(수집 스크립트 마지막 실행 '+D.meta.updated+') ';
 const ITEMS=D.items, Q=D.quarters, SRC=D.src;
 const IT=Object.fromEntries(ITEMS.map(i=>[i.id,i]));
 const KIND={f:'전망',r:'수정',a:'실적'};
