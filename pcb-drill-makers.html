@@ -49,7 +49,7 @@ ul.pts{padding-left:18px;font-size:13.5px;line-height:1.7}ul.pts li{margin-botto
 
 <div class="card"><h2>⑤ 해석</h2><ul class="pts">
 <li><b>인상 순서: Topoint(2025.10) → 유니온툴(2026.1) → 네오티스(2026.1) → 유니온툴 2차(2026.7)·Topoint 2차(2Q26 +15~20%).</b> 텅스텐강 가격 급등이 트리거였고, 2026년 3월 텅스텐 1월 대비 +82%가 2차 인상의 배경.</li>
-<li><b>2026년 하반기부터 '가격'에서 '믹스·물량'으로 전환.</b> Topoint는 9/21 "하반기 전면 인상 계획 없음"을 밝히고 고급 코팅 비중(59%)·신공장으로 이익을 방어. 유니온툴은 7월 출하분 2차 개정 후 10월 엔드밀 +15%로 공구 전반 인상 지속.</li>
+<li><b>2026년 하반기부터 '가격'에서 '믹스·물량'으로 전환.</b> Topoint는 8/14 2Q 법설회에서 "하반기 추가 인상 계획 없음"(9/21 鉅亨網 재확인)을 밝히고 고급 코팅 비중(59%)·신공장으로 이익을 방어. 유니온툴은 7월 출하분 2차 개정 후 10월 엔드밀 +15%로 공구 전반 인상 지속.</li>
 <li><b>네오티스는 후발·내수 구조라 인상 폭보다 전가 '속도'가 관건.</b> 1월 전 품목 인상 후 2Q 고객사(기판)의 최종고객 판가 인상 성공으로 가격 저항이 완화됐다는 평가(메리츠 8/28). 주문이 공급 가능 물량을 50% 이상 초과(7/13).</li>
 <li><b>캐파 경쟁: Topoint가 가장 공격적(2년 내 2배).</b> 3사 모두 AI 서버·고다층·패키지 기판용 고급 드릴에 증설을 집중. 2027년 Topoint 7,000만支 가동률과 텅스텐 가격 안정화가 가격 사이클 지속 여부를 결정.</li>
 <li><b>국내 시장은 네오티스 점유율 확대 국면.</b> 해외 2사가 국내 배정을 줄이며 2025 38% → 2026E 45%. 라우터는 60~70%로 독점적, SoCAMM용 고부가 라우터가 하반기 믹스 개선 요인.</li>
@@ -75,7 +75,7 @@ const EV=[
  ['2026-08-25','기타','plan','凱崴 하반기 적정 추가 인상','鑽針 캐파 만재, 4Q 증설','2H26','미공개','富聯網 2026-08-25'],
  ['2026-08-28','네오티스','plan','고객사 판가 인상 성공 → 가격 저항 완화','2Q 마이크로비트 매출 +99% YoY, ASP↑·믹스 개선','—','—','메리츠·키움 보도 2026-08-28'],
  ['2026-09-01','유니온툴','hike','초경 엔드밀 φ8↑ +15% (10/1 주문분~)','드릴·엔드밀 원재료비 급등','2026-10-01 주문분','+15%','유니온툴 공지 2026-09-01'],
- ['2026-09-21','Topoint','stop','하반기 전면 인상 계획 없음','고급 코팅 비중 59%·신공장으로 이익 방어, "가격→믹스" 전환','2H26','—','鉅亨網 2026-09-21']
+ ['2026-08-14','Topoint','stop','하반기 추가 인상 계획 없음 (2Q 법설회)','林若萍 총경리: 텅스텐 분말 상승에 상반기 가격 조정 완료, "目前暫時沒有" 하반기 인상 계획. 9/21 鉅亨網도 "하반기 전면 조정 계획 없음" 재확인','2H26','—','BigGo 財經 법설회 정리 2026-08-14 · 鉅亨網/優分析 2026-09-21']
 ];
 const lanes=['유니온툴','Topoint','네오티스','기타'];const col={'유니온툴':css('--ut'),'Topoint':css('--tp'),'네오티스':css('--neo'),'기타':css('--etc')};
 const sym={hike:'circle',plan:'diamond',stop:'triangle',ref:'rect'};
@@ -109,6 +109,6 @@ function draw(){const t=theme();const base={backgroundColor:'transparent',textSt
   series:[{name:'Topoint',type:'bar',data:tp,itemStyle:{color:col['Topoint'],borderRadius:[3,3,0,0]},label:{show:true,position:'top',color:t.mut,fontSize:11,formatter:p=>p.value?p.value.toLocaleString():''}},{name:'네오티스',type:'bar',data:neo,itemStyle:{color:col['네오티스'],borderRadius:[3,3,0,0]},label:{show:true,position:'top',color:t.mut,fontSize:11,formatter:p=>p.value?p.value.toLocaleString():''}}]});
 }
 $('#tbl').innerHTML=EV.map(e=>`<tr><td class="h">${e[0]}</td><td><span style="color:${col[e[1]]};font-weight:700">${e[1]}</span></td><td><b>${e[3]}</b><br><span style="color:var(--mut);font-size:12px">${e[4]}</span></td><td>${e[5]}</td><td>${e[6]}</td><td style="font-size:12px;color:var(--mut)">${e[7]}</td></tr>`).join('');
-$('#src').innerHTML=['유니온툴 제65기 유가증권보고서(2025.12) · 결산설명자료 · 製品ニュース 価格改定のご案内(2025-10-30, 2025-11-21, 2026-06-17, 2026-09-01) uniontool.co.jp','鉅亨網/優分析 2026-09-21 「尖點毛利率衝41.8%，卻先收起漲價牌？」 · 非凡新聞 2026-08-14 (林若萍 총경리 캐파 코멘트) · Yahoo股市 2026-05-19 · MoneyDJ 2025-09-16 · DIGITIMES 2026-02-10 · FTNN 2026-07-27','네오티스 반기보고서(2026.08.13) 생산능력·가동률·업체별 국내 비트 매출 및 M/S 표 · 서울경제 2026-05-12(Weiss 180억) · 데일리인베스트 2026-03-03/04-21/08-28 · 뉴스핌 2026-07-13(메리츠) · 아시아경제 2026-08-12','财联社 2026-05-17/07-01 (중국 鑽針 업계) · 富聯網 2026-08-25 (凱崴)'].map(s=>`<li>${s}</li>`).join('');
+$('#src').innerHTML=['유니온툴 제65기 유가증권보고서(2025.12) · 결산설명자료 · 製品ニュース 価格改定のご案内(2025-10-30, 2025-11-21, 2026-06-17, 2026-09-01) uniontool.co.jp','BigGo 財經 2026-08-14 尖點 FY2026 Q2 법설회 정리(finance.biggo.com.tw/news/TW_8021.TW_2026-08-14) · 鉅亨網/優分析 2026-09-21 「尖點毛利率衝41.8%，卻先收起漲價牌？」(news.cnyes.com/news/id/6611873) · 非凡新聞 2026-08-14 (林若萍 총경리 캐파 코멘트) · Yahoo股市 2026-05-19 · MoneyDJ 2025-09-16 · DIGITIMES 2026-02-10 · FTNN 2026-07-27','네오티스 반기보고서(2026.08.13) 생산능력·가동률·업체별 국내 비트 매출 및 M/S 표 · 서울경제 2026-05-12(Weiss 180억) · 데일리인베스트 2026-03-03/04-21/08-28 · 뉴스핌 2026-07-13(메리츠) · 아시아경제 2026-08-12','财联社 2026-05-17/07-01 (중국 鑽針 업계) · 富聯網 2026-08-25 (凱崴)'].map(s=>`<li>${s}</li>`).join('');
 draw();addEventListener('resize',()=>{Object.values(C).forEach(c=>c.dispose());C={};draw()});matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{Object.values(C).forEach(c=>c.dispose());C={};draw()});
 </script></body></html>
