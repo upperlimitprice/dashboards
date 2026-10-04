@@ -1,0 +1,114 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>🪛 PCB 드릴비트 3사 비교</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
+<style>
+:root{--bg:#eef1f5;--card:#fff;--ink:#16202c;--mut:#67727f;--line:#e4e8ee;--ut:#2a78d6;--tp:#eb6834;--neo:#1f9d75;--etc:#8b5cf6;--up:#c53030;--dn:#2b6cb0;--hov:#f7f9fc;--band:rgba(235,104,52,.12);color-scheme:light}
+:root[data-theme=dark]{--bg:#0f141b;--card:#171d27;--ink:#e6e9ef;--mut:#97a1ae;--line:#2a323f;--ut:#3987e5;--tp:#f07a48;--neo:#2fb98b;--etc:#a78bfa;--up:#fc8181;--dn:#63b3ed;--hov:#1c2430;--band:rgba(240,122,72,.2);color-scheme:dark}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#0f141b;--card:#171d27;--ink:#e6e9ef;--mut:#97a1ae;--line:#2a323f;--ut:#3987e5;--tp:#f07a48;--neo:#2fb98b;--etc:#a78bfa;--up:#fc8181;--dn:#63b3ed;--hov:#1c2430;--band:rgba(240,122,72,.2);color-scheme:dark}}
+*{box-sizing:border-box;margin:0;padding:0}body{background:var(--bg);color:var(--ink);font:14px/1.55 -apple-system,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;padding:18px 16px 60px}
+.wrap{max-width:1120px;margin:0 auto}.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:14px}
+h1{font-size:19px;margin-bottom:4px}.sub{font-size:12.5px;color:var(--mut);line-height:1.65}h2{font-size:15px;margin-bottom:8px}h3{font-size:13.5px;margin:6px 0 4px}
+.cos{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px;margin-bottom:14px}.co{background:var(--card);border:1px solid var(--line);border-top:4px solid var(--c);border-radius:12px;padding:14px 16px}
+.co .nm{font-size:16px;font-weight:700}.co .tk{font-size:12px;color:var(--mut);margin-bottom:8px}.co .big{font-size:22px;font-weight:700;color:var(--c)}.co .k{font-size:11.5px;color:var(--mut)}
+.co ul{padding-left:16px;font-size:13px;line-height:1.65}.co li{margin-bottom:3px}
+.legend{display:flex;gap:14px;font-size:12px;color:var(--mut);margin-bottom:6px;flex-wrap:wrap}.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+.chart{width:100%;height:380px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}@media(max-width:760px){.grid2{grid-template-columns:1fr}}
+.tblwrap{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:13px}th{color:var(--mut);font-weight:600;text-align:left;border-bottom:1px solid var(--line);padding:9px 12px;white-space:nowrap;vertical-align:top}
+td{border-bottom:1px solid var(--line);padding:9px 12px;vertical-align:top;line-height:1.5}th:last-child,td:last-child{padding-right:28px}tr:hover td{background:var(--hov)}td.h{font-weight:600;white-space:nowrap;color:var(--mut)}
+.note{font-size:12px;color:var(--mut);margin-top:8px;line-height:1.75}.pill{font-size:11px;padding:1px 7px;border-radius:9px;border:1px solid var(--line);color:var(--mut)}
+ul.pts{padding-left:18px;font-size:13.5px;line-height:1.7}ul.pts li{margin-bottom:4px}
+.tl{width:100%;height:520px}@media(max-width:640px){.tl{height:640px}}
+.src{font-size:11.5px;color:var(--mut);line-height:1.7}.src li{margin-bottom:2px}
+</style></head><body><div class="wrap">
+<div class="card"><h1>🪛 PCB 드릴비트 3사 비교 — 유니온툴 · Topoint(尖點) · 네오티스</h1>
+<div class="sub">캐파·제품군·고객사·국내 점유율 비교와 <b>기업별 가격인상 시계열</b>. 출처: 유니온툴 유가증권보고서(FY2025)·결산자료·공식 가격개정 공지, Topoint 법설·언론(鉅亨網·非凡·MoneyDJ·Yahoo), 네오티스 반기보고서(2026.06)·증권사 리포트 보도(현대차·메리츠·키움). 기준일 2026-10-04 · 환율 100엔≈930원, 1TWD≈44원(개략)</div></div>
+
+<div class="cos">
+<div class="co" style="--c:var(--ut)"><div class="nm">유니온툴 Union Tool</div><div class="tk">6278.T · 일본 니가타 나가오카 · 1960년 설립 · PCB 드릴 세계 1위(회사 표현 "리딩 컴퍼니")</div>
+<div class="big">401.7억엔</div><div class="k">FY2025 매출(+23.2%) · 아시아 230억엔(57%) · 생산액 381.7억엔(+24.6%)</div>
+<ul><li><b>생산거점</b>: 나가오카(일본) · 台灣佑能 · 上海佑能 · 東莞佑能 / 판매: 태국·홍콩·싱가포르·미국·유럽</li><li><b>캐파</b>: 수치 비공개. FY25 설비투자 57.2억엔, "대규모 설비투자·증산 체제", AI 패키지·고다층 기판용 공구 증설</li><li><b>제품</b>: PCB 드릴(ULF 코트 드릴·접합 드릴)·라우터, 초경 엔드밀, 전조공구, 센서</li><li><b>고객</b>: 대만·중국·일본·한국 PCB 메이커(아시아 매출 57%). 한국 드릴 M/S 33%(2024)→27%(2025)→21%(2026E, 네오티스 추정)</li><li><b>종업원</b> 1,517명(일본 905·아시아 583)</li></ul></div>
+<div class="co" style="--c:var(--tp)"><div class="nm">尖點 Topoint</div><div class="tk">8021.TW · 대만 中壢 · 드릴비트 + PCB 鑽孔 가공 서비스</div>
+<div class="big">4,500만支/월</div><div class="k">2026말 캐파 목표 (2026.4 3,500만 → 2027말 7,000만 → 2028말 9,000만支/월)</div>
+<ul><li><b>생산거점</b>: 대만 中壢(신공장 4Q26 양산) · 上海(증축 중)</li><li><b>제품</b>: 드릴·밀링커터, 고급 코팅 드릴 비중 32%(2024)→48%(2025)→56%(1H26)·59%(2Q26) · 鑽孔 서비스 매출 32%</li><li><b>고객</b>: 欣興(Unimicron)·臻鼎(ZDT)·金像電(GCE) — 2026년 사모 참여 전략 투자자 · 한국 M/S 16%(2025)→9%(2026E)</li><li><b>실적</b>: 8월 매출 7.71억TWD(+97.8%, 6개월 연속 신고가), 1~8월 46.7억 > 2025 연간 44.1억 · 2Q26 GPM 41.8%(+12.3%p YoY)</li><li><b>자금</b>: 9/29 CB·유상증자 21억TWD 조달(증설)</li></ul></div>
+<div class="co" style="--c:var(--neo)"><div class="nm">네오티스 NEOTIS</div><div class="tk">085910.KQ · 경기 안성 · 국내 유일 마이크로드릴 제조</div>
+<div class="big">약 330만개/월</div><div class="k">1H26 CAPA 19,732천개(설비 239대, 가동률 95.7%) · 2025 32,066천개 · 2025말 대비 +37% 증설(3Q26 완료)</div>
+<ul><li><b>생산거점</b>: 안성 본사공장 · 신공장 추진(Weiss 180억 투자 유치 5/12, CAPEX·원재료 선매입용 CPS 185억)</li><li><b>제품</b>: 마이크로드릴, 라우터·엔드밀(국내 M/S 60~70%), DLC 나노코팅 'K1', SoCAMM용 고부가 라우터(하반기)</li><li><b>고객</b>: 삼성전기·대덕전자·LG이노텍 등 국내 PCB · 국내 드릴 M/S 38%(2025)→45%(2026E), 2Q26 약 40%</li><li><b>실적</b>: 비트 매출 2025 229억(수출 0.7억, 내수 중심) · 1H26 마이크로비트 부문 187억 · 2025 ASP 723원(+11.3%)</li><li><b>경쟁</b>: 국내 시장에서 유니온툴·TCT·Topoint와 경합, 해외 공급사 국내 배정 축소 → 반사수혜</li></ul></div>
+</div>
+
+<div class="card"><h2>① 기업별 가격인상 시계열 (2025.9 ~ 2026.10)</h2>
+<div class="legend"><span><i style="background:var(--ut)"></i>유니온툴</span><span><i style="background:var(--tp)"></i>Topoint</span><span><i style="background:var(--neo)"></i>네오티스</span><span><i style="background:var(--etc)"></i>원재료·기타 업체</span><span>● 인상 시행/통지 &nbsp; ◆ 계획·협상·전가 코멘트 &nbsp; ✕ 인상 중단</span></div>
+<div id="tl" class="tl"></div>
+<div class="note">점은 공지·보도일, 라벨의 괄호는 적용 시점. 유니온툴은 자사 공지 기준(공지일→출하·주문 적용분), Topoint는 법설·언론, 네오티스는 공시·증권사 리포트 보도 기준. 텅스텐: 2026년 3월 가격이 1월 대비 약 82% 상승(데일리인베스트 4/21).</div></div>
+
+<div class="card"><h2>② 가격인상 상세 표</h2><div class="tblwrap"><table><thead><tr><th>일자</th><th>기업</th><th>내용</th><th>적용 시점</th><th>폭</th><th>출처</th></tr></thead><tbody id="tbl"></tbody></table></div></div>
+
+<div class="grid2">
+<div class="card"><h2>③ 한국 드릴비트 시장 점유율 추이 (네오티스 추정)</h2><div class="legend"><span><i style="background:var(--neo)"></i>네오티스</span><span><i style="background:var(--ut)"></i>유니온툴</span><span><i style="background:var(--tp)"></i>Topoint</span><span><i style="background:var(--etc)"></i>TCT</span><span><i style="background:#9aa3b2"></i>기타</span></div><div id="ms" class="chart"></div><div class="note">네오티스 반기보고서 '업체별 국내 비트 매출 및 시장 점유율 추이'(억원). 2026E는 회사 추정. 해외 2사의 국내 배정 축소가 네오티스 점유율 상승(38→45%)의 배경.</div></div>
+<div class="card"><h2>④ 월 생산능력 비교 (만支/월)</h2><div class="legend"><span><i style="background:var(--tp)"></i>Topoint 로드맵</span><span><i style="background:var(--neo)"></i>네오티스(연 CAPA÷12)</span></div><div id="capa" class="chart"></div><div class="note">네오티스 = 보고서 CAPA(천개)를 월 환산(2025 32,066천개/12, 1H26 19,732천개/6), 2026E는 2025말 대비 +37% 증설 가정. 유니온툴은 수량 비공개(FY25 생산액 381.7억엔으로 3사 중 최대 규모). Topoint 숫자는 鑽針 월 캐파 회사 가이던스.</div></div>
+</div>
+
+<div class="card"><h2>⑤ 해석</h2><ul class="pts">
+<li><b>인상 순서: Topoint(2025.10) → 유니온툴(2026.1) → 네오티스(2026.1) → 유니온툴 2차(2026.7)·Topoint 2차(2Q26 +15~20%).</b> 텅스텐강 가격 급등이 트리거였고, 2026년 3월 텅스텐 1월 대비 +82%가 2차 인상의 배경.</li>
+<li><b>2026년 하반기부터 '가격'에서 '믹스·물량'으로 전환.</b> Topoint는 9/21 "하반기 전면 인상 계획 없음"을 밝히고 고급 코팅 비중(59%)·신공장으로 이익을 방어. 유니온툴은 7월 출하분 2차 개정 후 10월 엔드밀 +15%로 공구 전반 인상 지속.</li>
+<li><b>네오티스는 후발·내수 구조라 인상 폭보다 전가 '속도'가 관건.</b> 1월 전 품목 인상 후 2Q 고객사(기판)의 최종고객 판가 인상 성공으로 가격 저항이 완화됐다는 평가(메리츠 8/28). 주문이 공급 가능 물량을 50% 이상 초과(7/13).</li>
+<li><b>캐파 경쟁: Topoint가 가장 공격적(2년 내 2배).</b> 3사 모두 AI 서버·고다층·패키지 기판용 고급 드릴에 증설을 집중. 2027년 Topoint 7,000만支 가동률과 텅스텐 가격 안정화가 가격 사이클 지속 여부를 결정.</li>
+<li><b>국내 시장은 네오티스 점유율 확대 국면.</b> 해외 2사가 국내 배정을 줄이며 2025 38% → 2026E 45%. 라우터는 60~70%로 독점적, SoCAMM용 고부가 라우터가 하반기 믹스 개선 요인.</li>
+</ul></div>
+<div class="card"><h2>출처</h2><ul class="src" id="src"></ul></div>
+</div>
+<script>
+const $=s=>document.querySelector(s);const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const EV=[
+ // date, company lane, type(hike/plan/stop/ref), label, detail, apply, mag, src
+ ['2025-09-16','Topoint','hike','인상 통지 (10/1 출하분~)','텅스텐강 급등으로 일부 제품(鑽針·銑刀) 음의 마진 → 고객에 가격조정 통지','2025-10-01 출하분','미공개','MoneyDJ 2025-09-16'],
+ ['2025-10-30','유니온툴','hike','전조공구 +15% (12/1 주문분~)','전조·압조공구·코팅로드 15% 이상 인상','2025-12-01 주문분','+15%↑','유니온툴 공지 2025-10-30'],
+ ['2025-11-21','유니온툴','hike','PCB공구 +15~20% (2026.1 출하분~)','PCB 드릴·라우터 15~20% 이상 인상, 원재료 고등','2026-01 출하분','+15~20%','유니온툴 공지 2025-11-21'],
+ ['2026-01-15','네오티스','hike','전 품목 단가 인상 (2026.1)','텅스텐 급등 → 1월 전 품목 단가 인상 단행 (2025 ASP 723원, +11.3%는 믹스 효과)','2026-01','미공개','데일리인베스트 2026-04-21 / 현대차증권'],
+ ['2026-02-10','Topoint','plan','1Q 2차 인상 추진','텅스텐 가격 상승으로 1분기 두 번째 인상 준비','1Q26','미공개','DIGITIMES 2026-02-10'],
+ ['2026-03-03','네오티스','plan','"글로벌 공급자 인상 진행, 네오티스도 진행 중"','현대차증권: 올해 드릴비트 전 제품 인상으로 ASP 상승폭 두드러질 것','2026','—','현대차증권 리포트 보도 2026-03-03'],
+ ['2026-04-21','기타','ref','텅스텐 3월 가격 1월比 +82%','업계 전반 판가 인상 기조 확인','—','+82%','데일리인베스트 2026-04-21'],
+ ['2026-05-19','Topoint','hike','2Q 인상 15~20%','캐파 타이트·원자재 상승, 시황 따라 추가 조정 가능 (대변인)','2Q26','+15~20%','Yahoo股市 2026-05-19'],
+ ['2026-06-17','유니온툴','hike','PCB공구 2차 개정 (2026.7 출하분~)','PCB 공구 가격 개정 안내, 폭 미공개','2026-07 출하분','미공개','유니온툴 공지 2026-06-17'],
+ ['2026-07-01','기타','ref','중국 鑽針 업계 인상 기대 고조','텅스텐강 봉재 공급 감소+수요 확대 (鼎泰高科 등)','—','—','财联社 2026-07-01'],
+ ['2026-07-13','네오티스','plan','추가 ASP 상승 반영, 판가 전가 원활','주문이 공급 가능 물량 50% 이상 초과, 텅스텐 카바이드 인상분 전가','2H26','—','메리츠증권 리포트 보도 2026-07-13'],
+ ['2026-07-27','Topoint','plan','"인상 20% + 주문 만석" 이익 급증','EPS 34.6 전망, 목표가 600TWD','—','+20%','FTNN 2026-07-27'],
+ ['2026-08-25','기타','plan','凱崴 하반기 적정 추가 인상','鑽針 캐파 만재, 4Q 증설','2H26','미공개','富聯網 2026-08-25'],
+ ['2026-08-28','네오티스','plan','고객사 판가 인상 성공 → 가격 저항 완화','2Q 마이크로비트 매출 +99% YoY, ASP↑·믹스 개선','—','—','메리츠·키움 보도 2026-08-28'],
+ ['2026-09-01','유니온툴','hike','초경 엔드밀 φ8↑ +15% (10/1 주문분~)','드릴·엔드밀 원재료비 급등','2026-10-01 주문분','+15%','유니온툴 공지 2026-09-01'],
+ ['2026-09-21','Topoint','stop','하반기 전면 인상 계획 없음','고급 코팅 비중 59%·신공장으로 이익 방어, "가격→믹스" 전환','2H26','—','鉅亨網 2026-09-21']
+];
+const lanes=['유니온툴','Topoint','네오티스','기타'];const col={'유니온툴':css('--ut'),'Topoint':css('--tp'),'네오티스':css('--neo'),'기타':css('--etc')};
+const sym={hike:'circle',plan:'diamond',stop:'triangle',ref:'rect'};
+const fmtD=d=>d.slice(2,4)+'.'+d.slice(5,7)+'.'+d.slice(8,10);
+function theme(){return {ink:css('--ink'),mut:css('--mut'),line:css('--line')}}
+let C={};
+function draw(){const t=theme();const base={backgroundColor:'transparent',textStyle:{color:t.ink,fontFamily:'inherit'},animation:false};
+ const mk=(id,opt)=>{C[id]=C[id]||echarts.init($('#'+id));C[id].setOption(opt,true)};
+ const narrow=innerWidth<640;
+ // timeline
+ const pts=EV.map((e,i)=>({value:[e[0],lanes.indexOf(e[1])],e,i}));
+ // stagger labels within lane
+ const byLane={};pts.forEach(p=>{(byLane[p.value[1]]=byLane[p.value[1]]||[]).push(p)});
+ Object.values(byLane).forEach(arr=>arr.forEach((p,k)=>{p.off=(k%2===0?-1:1)}));
+ mk('tl',{...base,grid:{left:narrow?70:90,right:30,top:20,bottom:40},tooltip:{trigger:'item',formatter:p=>{const e=p.data.e;return `<b>${e[1]} · ${e[0]}</b><br>${e[3]}<br><span style="color:#888">${e[4]}</span><br>적용: ${e[5]} · 폭: ${e[6]}<br><i>${e[7]}</i>`}},
+  xAxis:{type:'time',min:'2025-08-15',max:'2026-10-31',axisLabel:{color:t.mut,formatter:v=>{const d=new Date(v);return (d.getMonth()===0?d.getFullYear()+'.':'')+(d.getMonth()+1)+'월'},fontSize:11},splitLine:{show:true,lineStyle:{color:t.line}},axisLine:{lineStyle:{color:t.line}}},
+  yAxis:{type:'category',data:lanes,inverse:true,axisLabel:{color:t.ink,fontWeight:600,fontSize:narrow?11:13},axisTick:{show:false},axisLine:{show:false},splitLine:{show:true,lineStyle:{color:t.line}}},
+  series:[{type:'scatter',data:pts.map(p=>({...p,symbol:sym[p.e[2]],symbolSize:p.e[2]==='stop'?18:14,itemStyle:{color:col[p.e[1]],borderColor:'#fff',borderWidth:1.5},label:{show:true,position:p.off<0?'top':'bottom',distance:6,formatter:()=>(narrow?p.e[3].replace(/ \(.*?\)/,''):p.e[3]),color:t.ink,fontSize:narrow?9.5:11,backgroundColor:css('--card'),padding:[2,4],borderRadius:3}})),
+   markLine:{silent:true,symbol:'none',lineStyle:{color:t.mut,type:'dashed',width:1},label:{show:false},data:[{xAxis:'2026-01-01'},{xAxis:'2026-07-01'}]}}]});
+ // market share
+ const yrs=['2022','2023','2024','2025','2026E'];const MS={'네오티스':[195,166,161,229,289],'유니온툴':[150,150,156,160,140],'Topoint':[88,80,70,96,60],'TCT':[58,30,30,46,70],'기타':[70,40,50,70,70]};
+ const tot=yrs.map((_,i)=>Object.values(MS).reduce((a,v)=>a+v[i],0));
+ mk('ms',{...base,grid:{left:46,right:20,top:12,bottom:30},tooltip:{trigger:'axis',formatter:ps=>`<b>${ps[0].axisValue}</b> 합계 ${tot[ps[0].dataIndex]}억<br>`+ps.map(p=>`${p.marker}${p.seriesName} ${p.value}억 (${Math.round(p.value/tot[p.dataIndex]*100)}%)`).join('<br>')},
+  xAxis:{type:'category',data:yrs,axisLabel:{color:t.mut},axisLine:{lineStyle:{color:t.line}}},yAxis:{type:'value',name:'억원',nameTextStyle:{color:t.mut},axisLabel:{color:t.mut},splitLine:{lineStyle:{color:t.line}}},
+  series:Object.entries(MS).map(([k,v])=>({name:k,type:'bar',stack:'a',data:v,itemStyle:{color:{'네오티스':col['네오티스'],'유니온툴':col['유니온툴'],'Topoint':col['Topoint'],'TCT':col['기타'],'기타':'#9aa3b2'}[k],borderColor:css('--card'),borderWidth:1},label:k==='네오티스'?{show:true,color:'#fff',fontSize:11,formatter:p=>Math.round(p.value/tot[p.dataIndex]*100)+'%'}:undefined}))});
+ // capacity
+ const cx=['2025','2026.4','2026 1H','2026E 말','2027E 말','2028E 말'];
+ const tp=[null,3500,null,4500,7000,9000];const neo=[Math.round(32066/12/10),null,Math.round(19732/6/10),Math.round(32066/12*1.37/10),null,null];
+ mk('capa',{...base,grid:{left:50,right:20,top:12,bottom:30},tooltip:{trigger:'axis',formatter:ps=>`<b>${ps[0].axisValue}</b><br>`+ps.filter(p=>p.value!=null).map(p=>`${p.marker}${p.seriesName} ${p.value.toLocaleString()}만支/월`).join('<br>')},
+  xAxis:{type:'category',data:cx,axisLabel:{color:t.mut,fontSize:11},axisLine:{lineStyle:{color:t.line}}},yAxis:{type:'log',name:'만支/월 (로그)',nameTextStyle:{color:t.mut},axisLabel:{color:t.mut},splitLine:{lineStyle:{color:t.line}},min:100},
+  series:[{name:'Topoint',type:'bar',data:tp,itemStyle:{color:col['Topoint'],borderRadius:[3,3,0,0]},label:{show:true,position:'top',color:t.mut,fontSize:11,formatter:p=>p.value?p.value.toLocaleString():''}},{name:'네오티스',type:'bar',data:neo,itemStyle:{color:col['네오티스'],borderRadius:[3,3,0,0]},label:{show:true,position:'top',color:t.mut,fontSize:11,formatter:p=>p.value?p.value.toLocaleString():''}}]});
+}
+$('#tbl').innerHTML=EV.map(e=>`<tr><td class="h">${e[0]}</td><td><span style="color:${col[e[1]]};font-weight:700">${e[1]}</span></td><td><b>${e[3]}</b><br><span style="color:var(--mut);font-size:12px">${e[4]}</span></td><td>${e[5]}</td><td>${e[6]}</td><td style="font-size:12px;color:var(--mut)">${e[7]}</td></tr>`).join('');
+$('#src').innerHTML=['유니온툴 제65기 유가증권보고서(2025.12) · 결산설명자료 · 製品ニュース 価格改定のご案内(2025-10-30, 2025-11-21, 2026-06-17, 2026-09-01) uniontool.co.jp','鉅亨網/優分析 2026-09-21 「尖點毛利率衝41.8%，卻先收起漲價牌？」 · 非凡新聞 2026-08-14 (林若萍 총경리 캐파 코멘트) · Yahoo股市 2026-05-19 · MoneyDJ 2025-09-16 · DIGITIMES 2026-02-10 · FTNN 2026-07-27','네오티스 반기보고서(2026.08.13) 생산능력·가동률·업체별 국내 비트 매출 및 M/S 표 · 서울경제 2026-05-12(Weiss 180억) · 데일리인베스트 2026-03-03/04-21/08-28 · 뉴스핌 2026-07-13(메리츠) · 아시아경제 2026-08-12','财联社 2026-05-17/07-01 (중국 鑽針 업계) · 富聯網 2026-08-25 (凱崴)'].map(s=>`<li>${s}</li>`).join('');
+draw();addEventListener('resize',()=>{Object.values(C).forEach(c=>c.dispose());C={};draw()});matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{Object.values(C).forEach(c=>c.dispose());C={};draw()});
+</script></body></html>
