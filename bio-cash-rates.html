@@ -86,11 +86,11 @@ function theme(){return {ink:css('--ink'),mut:css('--mut'),line:css('--line'),s1
 let C={};
 function draw(){const t=theme();const base={backgroundColor:'transparent',textStyle:{color:t.ink,fontFamily:'inherit'},animation:false};const ax=()=>({axisLabel:{color:t.mut,fontSize:11},axisLine:{lineStyle:{color:t.line}},splitLine:{lineStyle:{color:t.line}}});
  const mk=(id,opt)=>{C[id]=C[id]||echarts.init($('#'+id));C[id].setOption(opt,true)};
- const grpBar=(id,src,labels)=>mk(id,{...base,grid:{left:44,right:16,top:12,bottom:30},tooltip:{trigger:'axis',formatter:ps=>`<b>${ps[0].axisValue}</b> (n=${src[G[ps[0].dataIndex]].ytd.n})<br>`+ps.map(p=>`${p.marker}${p.seriesName} 중앙값 ${pct(p.value)}`).join('<br>')},
+ const grpBar=(id,src,labels,pos='top')=>mk(id,{...base,grid:{left:44,right:16,top:12,bottom:30},tooltip:{trigger:'axis',formatter:ps=>`<b>${ps[0].axisValue}</b> (n=${src[G[ps[0].dataIndex]].ytd.n})<br>`+ps.map(p=>`${p.marker}${p.seriesName} 중앙값 ${pct(p.value)}`).join('<br>')},
   xAxis:{type:'category',data:labels,...ax()},yAxis:{type:'value',axisLabel:{formatter:'{value}%',color:t.mut},splitLine:{lineStyle:{color:t.line}}},
-  series:[['ytd','YTD',t.s1],['m6','6개월',t.s2],['y1','1년',t.s3]].map(([k,n,c])=>({name:n,type:'bar',data:G.map(g=>src[g]&&src[g][k]?src[g][k].median:null),itemStyle:{color:c,borderRadius:[3,3,0,0]},label:{show:true,position:'top',color:t.mut,fontSize:10,formatter:p=>p.value==null?'':pct(p.value)},barGap:'10%'})),
+  series:[['ytd','YTD',t.s1],['m6','6개월',t.s2],['y1','1년',t.s3]].map(([k,n,c])=>({name:n,type:'bar',data:G.map(g=>src[g]&&src[g][k]?src[g][k].median:null),itemStyle:{color:c,borderRadius:[3,3,0,0]},label:{show:true,position:pos,color:t.mut,fontSize:10,formatter:p=>p.value==null?'':pct(p.value)},barGap:'10%'})),
   });
- grpBar('c1',ug,GL); grpBar('c2',kg,KL);
+ grpBar('c1',ug,GL); grpBar('c2',kg,KL,'bottom');
  mk('c3',{...base,grid:{left:44,right:50,top:12,bottom:30},tooltip:{trigger:'axis'},xAxis:{type:'category',data:GL,...ax()},yAxis:[{type:'value',axisLabel:{formatter:'{value}%',color:t.mut},splitLine:{lineStyle:{color:t.line}}}],
   series:[{name:'YTD 중앙값',type:'bar',data:G.map(g=>ub[g].ytd?ub[g].ytd.median:null),itemStyle:{color:t.s1,borderRadius:[3,3,0,0]},label:{show:true,position:'top',color:t.mut,fontSize:11,formatter:p=>pct(p.value)}},{name:'상승 종목 비율',type:'line',data:G.map(g=>ub[g].ytd?ub[g].ytd.up:null),lineStyle:{color:t.s2,width:2},itemStyle:{color:t.s2},symbolSize:8,label:{show:true,position:'top',color:t.s2,fontSize:11,formatter:p=>p.value+'%'}}]});
  const sz=['large(>5B)','mid(1~5B)','small(0.3~1B)','micro(<0.3B)'],szc={'large(>5B)':t.s1,'mid(1~5B)':t.s3,'small(0.3~1B)':t.s2,'micro(<0.3B)':t.mut};
