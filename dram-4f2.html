@@ -1,0 +1,321 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>🧱 DRAM 셀 구조 4F² 해부</title>
+<style>
+:root{--bg:#eef1f5;--card:#fff;--ink:#16202c;--mut:#67727f;--line:#e4e8ee;--wl:#f28e2b;--bl:#2a78d6;--tr:#7fc8f8;--cap:#1f3b73;--peri:#9aa3b2;--red:#d63c2f;--cell:#d63c2f;--si:#e9e2d0;--ox:#f3f5f8;color-scheme:light}
+*{box-sizing:border-box;margin:0;padding:0}body{background:var(--bg);color:var(--ink);font:14px/1.6 -apple-system,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;padding:18px 16px 60px}
+.wrap{max-width:1120px;margin:0 auto}.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:16px}
+h1{font-size:19px;margin-bottom:4px}.sub{font-size:12.5px;color:var(--mut);line-height:1.65}h2{font-size:15.5px;margin-bottom:6px}h3{font-size:13.5px;margin:4px 0 6px}
+.fig{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:16px;align-items:start}@media(max-width:820px){.fig{grid-template-columns:1fr}}
+.fig svg{width:100%;height:auto;display:block;background:#fff;border:1px solid var(--line);border-radius:10px}
+.map{font-size:13px;line-height:1.65}.map li{margin-bottom:7px;list-style:none;padding-left:30px;position:relative}
+.map .n{position:absolute;left:0;top:1px;width:22px;height:22px;border-radius:50%;background:var(--ink);color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.map .n.wl{background:var(--wl)}.map .n.bl{background:var(--bl)}.map .n.tr{background:var(--tr);color:var(--ink)}.map .n.cap{background:var(--cap)}.map .n.red{background:var(--red)}.map .n.peri{background:var(--peri)}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--mut);margin:6px 0}.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:4px;vertical-align:-2px}
+.three{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}@media(max-width:820px){.three{grid-template-columns:1fr}}
+.three .box{border:1px solid var(--line);border-radius:10px;padding:10px}.three svg{width:100%;height:auto;display:block}
+.cap{font-size:12px;color:var(--mut);margin-top:6px;line-height:1.6}
+.tblwrap{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:12.5px}th{color:var(--mut);font-weight:600;text-align:left;border-bottom:1px solid var(--line);padding:8px 11px;white-space:nowrap}
+td{border-bottom:1px solid var(--line);padding:8px 11px;vertical-align:top;line-height:1.5}th:last-child,td:last-child{padding-right:28px}td.h{font-weight:600;white-space:nowrap}
+.key{border-left:4px solid var(--wl);background:rgba(242,142,43,.1);padding:10px 14px;border-radius:8px;font-size:13.5px;line-height:1.7;margin-bottom:14px}
+.tools{display:flex;gap:6px;justify-content:flex-end;margin-bottom:6px}.tools button{font:inherit;font-size:.74rem;padding:4px 10px;border:1px solid var(--line);border-radius:7px;background:#fff;cursor:pointer}
+.src{font-size:11.5px;color:var(--mut);line-height:1.6}
+</style></head><body><div class="wrap">
+<div class="card"><h1>🧱 DRAM 셀 구조 해부 — 8F² · 6F² · 4F²에서 워드라인·비트라인·트랜지스터는 어디에 있나</h1>
+<div class="sub">인포마켓 강용운 대표 「4F²는 무엇인가? 창신은 이걸 할 수 있는가?」(2026-10-13)의 그림 1~4와 본문을 바탕으로 셀 배치·단면·입체 구조를 다시 그린 해설. 색 규칙은 전 그림 공통: <span style="color:var(--wl);font-weight:700">주황 = 워드라인(WL, 스위치 켜는 선)</span> · <span style="color:var(--bl);font-weight:700">파랑 = 비트라인(BL, 데이터가 드나드는 선)</span> · <span style="color:#3a8fd0;font-weight:700">하늘 = 트랜지스터 채널</span> · <span style="color:var(--cap);font-weight:700">남색 = 커패시터</span> · <span style="color:var(--red);font-weight:700">빨강 = 셀 하나의 땅 / 접점·본딩 계면</span>. 작성 2026-10-13</div></div>
+
+<div class="key"><b>한 줄 요약.</b> 셀 하나에는 반드시 접점이 둘 있다(비트라인↔트랜지스터, 트랜지스터↔커패시터). 트랜지스터가 <u>누워 있으면</u> 두 접점이 같은 평면에 나란히 놓여 가로 3F가 필요해 6F²에서 멈추고, 트랜지스터를 <u>세우면</u> 접점이 위아래로 가면서 바닥이 기둥 하나(2F×2F)로 줄어 4F²가 된다. 4F²는 워드라인 피치 2F × 비트라인 피치 2F, 교차점마다 셀 하나인 "한 층 배치의 바닥"이다.</div>
+
+<!-- 0. F 정의 -->
+<div class="card"><div class="tools"><button onclick="copySvg('f0')">📋 이미지 복사</button></div><h2>① F(최소 선폭)와 2F 피치 — 모든 그림의 자(尺)</h2>
+<div class="fig">
+<svg id="f0" viewBox="0 0 560 190" xmlns="http://www.w3.org/2000/svg">
+<rect width="560" height="190" fill="#fff"/>
+<g font-family="inherit" font-size="12" fill="#16202c">
+<rect x="40" y="40" width="60" height="70" fill="#f28e2b"/><rect x="160" y="40" width="60" height="70" fill="#f28e2b"/><rect x="280" y="40" width="60" height="70" fill="#f28e2b"/>
+<rect x="100" y="40" width="60" height="70" fill="#fff" stroke="#e4e8ee" stroke-dasharray="3 3"/><rect x="220" y="40" width="60" height="70" fill="#fff" stroke="#e4e8ee" stroke-dasharray="3 3"/>
+<text x="70" y="80" text-anchor="middle" fill="#fff" font-weight="700">선 F</text><text x="130" y="80" text-anchor="middle" fill="#67737f">간격 F</text><text x="190" y="80" text-anchor="middle" fill="#fff" font-weight="700">선 F</text><text x="250" y="80" text-anchor="middle" fill="#67737f">간격 F</text><text x="310" y="80" text-anchor="middle" fill="#fff" font-weight="700">선 F</text>
+<path d="M40 125 H160" stroke="#d63c2f" stroke-width="2" marker-end="url(#ar)" marker-start="url(#ar2)"/><text x="100" y="145" text-anchor="middle" fill="#d63c2f" font-weight="700">피치 2F = 선 1F + 간격 1F</text>
+<circle cx="70" cy="22" r="10" fill="#16202c"/><text x="70" y="26" text-anchor="middle" fill="#fff" font-size="11" font-weight="700">1</text>
+<circle cx="100" cy="155" r="10" fill="#16202c"/><text x="100" y="159" text-anchor="middle" fill="#fff" font-size="11" font-weight="700">2</text>
+<g transform="translate(380,30)"><rect width="150" height="130" rx="8" fill="#f3f5f8"/><text x="75" y="24" text-anchor="middle" font-weight="700">F의 실제 크기</text><text x="75" y="48" text-anchor="middle" font-size="11">10나노급 D램: 15~18 nm</text><text x="75" y="66" text-anchor="middle" font-size="11">머리카락의 약 1/5,000</text><text x="75" y="92" text-anchor="middle" font-size="11" fill="#67737f">8F²→6F²→4F² = 연필 그대로</text><text x="75" y="108" text-anchor="middle" font-size="11" fill="#67737f">배치만 바꿈</text><text x="75" y="124" text-anchor="middle" font-size="11" fill="#67737f">1c→1d = 연필을 더 가늘게</text><circle cx="14" cy="14" r="10" fill="#16202c"/><text x="14" y="18" text-anchor="middle" fill="#fff" font-size="11" font-weight="700">3</text></g>
+</g>
+<defs><marker id="ar" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#d63c2f"/></marker><marker id="ar2" markerWidth="8" markerHeight="8" refX="2" refY="4" orient="auto-start-reverse"><path d="M0 0 L8 4 L0 8 z" fill="#d63c2f"/></marker></defs>
+</svg>
+<ul class="map">
+<li><span class="n">1</span><b>F = 그 공장이 그릴 수 있는 가장 가는 선의 폭</b>(feature size, 최소 선폭). 노광 장비·공정이 정하는 한계라 더 가늘게는 못 긋는다.</li>
+<li><span class="n">2</span><b>피치 2F</b>: 선과 선 사이 간격도 같은 한계를 받으므로, 가장 촘촘히 그릴 때 선 하나+간격 하나 = 2F. 워드라인도 비트라인도 한 줄이 차지하는 폭이 2F다.</li>
+<li><span class="n">3</span><b>F는 절대 크기보다 '자'로 쓰인다.</b> 셀의 가로세로를 F의 배수로 적으면 세대가 달라도 "같은 굵기 연필로 얼마나 알뜰하게 그렸나"를 비교할 수 있다. 8F²→6F²→4F²는 연필은 그대로 두고 배치를 바꾸는 일, 1c→1d는 배치를 두고 연필을 깎는 일이다.</li>
+</ul></div></div>
+
+<!-- 1. 평면도 3종 -->
+<div class="card"><div class="tools"><button onclick="copySvg('f1')">📋 이미지 복사</button></div><h2>② 위에서 본 셀 배치(평면도) — 8F² → 6F² → 4F²</h2>
+<div class="legend"><span><i style="background:var(--wl)"></i>워드라인 WL (가로, 1F 폭)</span><span><i style="background:var(--bl)"></i>비트라인 BL (세로, 1F 폭)</span><span><i style="background:#cfe7d4;border:1px solid #6aa"></i>활성영역(트랜지스터가 누운 자리)</span><span><i style="background:#3a8fd0"></i>세운 트랜지스터 기둥</span><span><i style="background:#fff;border:2px solid var(--red)"></i>셀 하나의 땅</span><span>● 접점(BL 접점 검정 / SN 접점 남색)</span></div>
+<svg id="f1" viewBox="0 0 1080 420" xmlns="http://www.w3.org/2000/svg" font-family="inherit">
+<rect width="1080" height="420" fill="#fff"/>
+<defs><pattern id="grid" width="30" height="30" patternUnits="userSpaceOnUse"><path d="M30 0 H0 V30" fill="none" stroke="#e4e8ee" stroke-width="1"/></pattern></defs>
+<!-- 8F2 -->
+<g transform="translate(30,60)">
+<text x="150" y="-34" text-anchor="middle" font-size="15" font-weight="700">8F² (2007년 이전)</text><text x="150" y="-16" text-anchor="middle" font-size="12" fill="#67737f">셀 = 4F × 2F</text>
+<rect width="300" height="300" fill="url(#grid)" stroke="#ccd5dd"/>
+<!-- WL horizontal bands: 1F wide every 2F -->
+<g fill="#f28e2b" opacity=".9"><rect x="0" y="30" width="300" height="30"/><rect x="0" y="90" width="300" height="30"/><rect x="0" y="150" width="300" height="30"/><rect x="0" y="210" width="300" height="30"/><rect x="0" y="270" width="300" height="30"/></g>
+<!-- active areas: straight vertical bars under BL, each spanning 2 cells (4F tall + contact) -->
+<g fill="#cfe7d4" stroke="#6aa" stroke-width="1"><rect x="37" y="15" width="16" height="135" rx="6"/><rect x="97" y="15" width="16" height="135" rx="6"/><rect x="157" y="15" width="16" height="135" rx="6"/><rect x="217" y="15" width="16" height="135" rx="6"/><rect x="277" y="15" width="16" height="135" rx="6"/>
+<rect x="37" y="165" width="16" height="135" rx="6"/><rect x="97" y="165" width="16" height="135" rx="6"/><rect x="157" y="165" width="16" height="135" rx="6"/><rect x="217" y="165" width="16" height="135" rx="6"/><rect x="277" y="165" width="16" height="135" rx="6"/></g>
+<!-- BL vertical bands -->
+<g fill="#2a78d6" opacity=".55"><rect x="30" y="0" width="30" height="300"/><rect x="90" y="0" width="30" height="300"/><rect x="150" y="0" width="30" height="300"/><rect x="210" y="0" width="30" height="300"/><rect x="270" y="0" width="30" height="300"/></g>
+<!-- contacts: BL contact at middle of each active (shared by 2 cells), SN contacts at ends -->
+<g><circle cx="45" cy="82" r="5" fill="#16202c"/><circle cx="105" cy="82" r="5" fill="#16202c"/><circle cx="165" cy="82" r="5" fill="#16202c"/><circle cx="225" cy="82" r="5" fill="#16202c"/><circle cx="285" cy="82" r="5" fill="#16202c"/>
+<circle cx="45" cy="232" r="5" fill="#16202c"/><circle cx="105" cy="232" r="5" fill="#16202c"/><circle cx="165" cy="232" r="5" fill="#16202c"/><circle cx="225" cy="232" r="5" fill="#16202c"/><circle cx="285" cy="232" r="5" fill="#16202c"/>
+<g fill="#1f3b73"><circle cx="45" cy="22" r="4"/><circle cx="45" cy="142" r="4"/><circle cx="105" cy="22" r="4"/><circle cx="105" cy="142" r="4"/><circle cx="165" cy="22" r="4"/><circle cx="165" cy="142" r="4"/><circle cx="225" cy="22" r="4"/><circle cx="225" cy="142" r="4"/><circle cx="285" cy="22" r="4"/><circle cx="285" cy="142" r="4"/><circle cx="45" cy="172" r="4"/><circle cx="45" cy="292" r="4"/><circle cx="105" cy="172" r="4"/><circle cx="105" cy="292" r="4"/><circle cx="165" cy="172" r="4"/><circle cx="165" cy="292" r="4"/><circle cx="225" cy="172" r="4"/><circle cx="225" cy="292" r="4"/><circle cx="285" cy="172" r="4"/><circle cx="285" cy="292" r="4"/></g></g>
+<!-- cell outline 4F x 2F -->
+<rect x="90" y="30" width="60" height="120" fill="none" stroke="#d63c2f" stroke-width="3"/>
+<text x="120" y="-2" text-anchor="middle" font-size="11" fill="#d63c2f" font-weight="700">2F</text><text x="162" y="94" font-size="11" fill="#d63c2f" font-weight="700">4F</text>
+<circle cx="20" cy="320" r="11" fill="#16202c"/><text x="20" y="324" text-anchor="middle" fill="#fff" font-size="11" font-weight="700">A</text><text x="38" y="324" font-size="11" fill="#16202c">BL 접점 하나를 셀 둘이 공유, 활성영역이 BL 아래 곧게 누움</text>
+</g>
+<!-- 6F2 -->
+<g transform="translate(390,60)">
+<text x="150" y="-34" text-anchor="middle" font-size="15" font-weight="700">6F² (지금의 주류 1c·1d)</text>
+<text x="150" y="-16" text-anchor="middle" font-size="12" fill="#67737f">셀 = 3F × 2F</text>
+<rect width="300" height="300" fill="url(#grid)" stroke="#ccd5dd"/>
+<g fill="#f28e2b" opacity=".9"><rect x="0" y="30" width="300" height="30"/><rect x="0" y="90" width="300" height="30"/><rect x="0" y="150" width="300" height="30"/><rect x="0" y="210" width="300" height="30"/><rect x="0" y="270" width="300" height="30"/></g>
+<defs><clipPath id="clip6"><rect width="300" height="300"/></clipPath></defs><g clip-path="url(#clip6)">
+<g transform="rotate(-28 45 75)"><rect x="36" y="9" width="18" height="132" rx="8" fill="#cfe7d4" stroke="#6aa"/></g>
+<g transform="rotate(-28 135 75)"><rect x="126" y="9" width="18" height="132" rx="8" fill="#cfe7d4" stroke="#6aa"/></g>
+<g transform="rotate(-28 225 75)"><rect x="216" y="9" width="18" height="132" rx="8" fill="#cfe7d4" stroke="#6aa"/></g>
+<g transform="rotate(-28 90 165)"><rect x="81" y="99" width="18" height="132" rx="8" fill="#cfe7d4" stroke="#6aa"/></g>
+<g transform="rotate(-28 180 165)"><rect x="171" y="99" width="18" height="132" rx="8" fill="#cfe7d4" stroke="#6aa"/></g>
+<g transform="rotate(-28 270 165)"><rect x="261" y="99" width="18" height="132" rx="8" fill="#cfe7d4" stroke="#6aa"/></g>
+<g transform="rotate(-28 45 255)"><rect x="36" y="189" width="18" height="132" rx="8" fill="#cfe7d4" stroke="#6aa"/></g>
+<g transform="rotate(-28 135 255)"><rect x="126" y="189" width="18" height="132" rx="8" fill="#cfe7d4" stroke="#6aa"/></g>
+<g transform="rotate(-28 225 255)"><rect x="216" y="189" width="18" height="132" rx="8" fill="#cfe7d4" stroke="#6aa"/></g>
+<g fill="#2a78d6" opacity=".55"><rect x="30" y="0" width="30" height="300"/><rect x="90" y="0" width="30" height="300"/><rect x="150" y="0" width="30" height="300"/><rect x="210" y="0" width="30" height="300"/><rect x="270" y="0" width="30" height="300"/></g>
+<circle cx="45" cy="75" r="5" fill="#16202c"/>
+<circle cx="135" cy="75" r="5" fill="#16202c"/>
+<circle cx="225" cy="75" r="5" fill="#16202c"/>
+<circle cx="90" cy="165" r="5" fill="#16202c"/>
+<circle cx="180" cy="165" r="5" fill="#16202c"/>
+<circle cx="270" cy="165" r="5" fill="#16202c"/>
+<circle cx="45" cy="255" r="5" fill="#16202c"/>
+<circle cx="135" cy="255" r="5" fill="#16202c"/>
+<circle cx="225" cy="255" r="5" fill="#16202c"/>
+<circle cx="72" cy="24" r="4" fill="#1f3b73"/><circle cx="18" cy="126" r="4" fill="#1f3b73"/>
+<circle cx="162" cy="24" r="4" fill="#1f3b73"/><circle cx="108" cy="126" r="4" fill="#1f3b73"/>
+<circle cx="252" cy="24" r="4" fill="#1f3b73"/><circle cx="198" cy="126" r="4" fill="#1f3b73"/>
+<circle cx="117" cy="114" r="4" fill="#1f3b73"/><circle cx="63" cy="216" r="4" fill="#1f3b73"/>
+<circle cx="207" cy="114" r="4" fill="#1f3b73"/><circle cx="153" cy="216" r="4" fill="#1f3b73"/>
+<circle cx="297" cy="114" r="4" fill="#1f3b73"/><circle cx="243" cy="216" r="4" fill="#1f3b73"/>
+<circle cx="72" cy="204" r="4" fill="#1f3b73"/><circle cx="18" cy="306" r="4" fill="#1f3b73"/>
+<circle cx="162" cy="204" r="4" fill="#1f3b73"/><circle cx="108" cy="306" r="4" fill="#1f3b73"/>
+<circle cx="252" cy="204" r="4" fill="#1f3b73"/><circle cx="198" cy="306" r="4" fill="#1f3b73"/>
+</g><rect x="90" y="30" width="90" height="60" fill="none" stroke="#d63c2f" stroke-width="3"/>
+<text x="135" y="-2" text-anchor="middle" font-size="11" fill="#d63c2f" font-weight="700">3F</text><text x="186" y="64" font-size="11" fill="#d63c2f" font-weight="700">2F</text>
+<circle cx="20" cy="320" r="11" fill="#16202c"/><text x="20" y="324" text-anchor="middle" fill="#fff" font-size="11" font-weight="700">B</text><text x="38" y="324" font-size="11">활성영역을 비스듬히 눕혀 BL 접점(검정) 하나를 둘이 공유</text></g>
+<!-- 4F2 -->
+<g transform="translate(750,60)">
+<text x="150" y="-34" text-anchor="middle" font-size="15" font-weight="700">4F² (이론상 바닥, 삼성 10a·창신)</text><text x="150" y="-16" text-anchor="middle" font-size="12" fill="#67737f">셀 = 2F × 2F</text>
+<rect width="300" height="300" fill="url(#grid)" stroke="#ccd5dd"/>
+<g fill="#f28e2b" opacity=".9"><rect x="0" y="30" width="300" height="30"/><rect x="0" y="90" width="300" height="30"/><rect x="0" y="150" width="300" height="30"/><rect x="0" y="210" width="300" height="30"/><rect x="0" y="270" width="300" height="30"/></g>
+<g fill="#2a78d6" opacity=".55"><rect x="30" y="0" width="30" height="300"/><rect x="90" y="0" width="30" height="300"/><rect x="150" y="0" width="30" height="300"/><rect x="210" y="0" width="30" height="300"/><rect x="270" y="0" width="30" height="300"/></g>
+<!-- pillars at every crossing -->
+<g fill="#3a8fd0" stroke="#1f3b73" stroke-width="1.2">
+<g id="pil"><rect x="36" y="36" width="18" height="18" rx="3"/></g>
+<use href="#pil" x="60"/><use href="#pil" x="120"/><use href="#pil" x="180"/><use href="#pil" x="240"/>
+<use href="#pil" y="60"/><use href="#pil" x="60" y="60"/><use href="#pil" x="120" y="60"/><use href="#pil" x="180" y="60"/><use href="#pil" x="240" y="60"/>
+<use href="#pil" y="120"/><use href="#pil" x="60" y="120"/><use href="#pil" x="120" y="120"/><use href="#pil" x="180" y="120"/><use href="#pil" x="240" y="120"/>
+<use href="#pil" y="180"/><use href="#pil" x="60" y="180"/><use href="#pil" x="120" y="180"/><use href="#pil" x="180" y="180"/><use href="#pil" x="240" y="180"/>
+<use href="#pil" y="240"/><use href="#pil" x="60" y="240"/><use href="#pil" x="120" y="240"/><use href="#pil" x="180" y="240"/><use href="#pil" x="240" y="240"/></g>
+<rect x="90" y="30" width="60" height="60" fill="none" stroke="#d63c2f" stroke-width="3"/>
+<text x="120" y="-2" text-anchor="middle" font-size="11" fill="#d63c2f" font-weight="700">2F</text><text x="156" y="64" font-size="11" fill="#d63c2f" font-weight="700">2F</text>
+<circle cx="20" cy="320" r="11" fill="#16202c"/><text x="20" y="324" text-anchor="middle" fill="#fff" font-size="11" font-weight="700">C</text><text x="38" y="324" font-size="11">WL·BL 교차점마다 세운 기둥 하나 = 셀 하나</text>
+</g>
+<text x="540" y="410" text-anchor="middle" font-size="12" fill="#67737f">모눈 한 칸 = F × F · 6F²→4F²는 셀 면적 33% 축소 = 같은 웨이퍼에서 비트 1.5배, F를 줄이지 않고 얻는 이득</text>
+</svg>
+<ul class="map" style="margin-top:10px;columns:2;column-gap:24px">
+<li><span class="n wl">WL</span><b>워드라인(가로 주황 띠)</b>: 1F 폭 선이 2F 피치로 반복. 한 줄에 전압을 주면 그 가로줄의 모든 트랜지스터가 동시에 열린다(스위치 손잡이 = 게이트).</li>
+<li><span class="n bl">BL</span><b>비트라인(세로 파랑 띠)</b>: 데이터가 드나드는 선. 열린 셀의 커패시터 전하가 이 선으로 흘러 끝의 감지증폭기가 1/0을 판정한다.</li>
+<li><span class="n">A</span><b>8F²</b>: 활성영역(연두)이 BL 아래 곧게 누워 있고, 가운데 검정 BL 접점 하나를 위아래 두 셀이 공유, 양 끝 남색 SN 접점이 각 셀의 커패시터로 간다. 셀 하나가 WL 방향 4F까지 필요.</li>
+<li><span class="n">B</span><b>6F²</b>: 활성영역을 비스듬히 눕혀 BL 접점 하나를 두 셀이 나눠 갖고 SN 접점을 옆 칸으로 밀어 낸다. 접점 둘이 같은 평면에 나란히 있어야 하므로 가로 3F가 하한. 2007년 이후 RCAT·BCAT·새들핀으로 게이트만 땅에 묻어 왔다.</li>
+<li><span class="n">C</span><b>4F²</b>: 접점을 위아래로 두려고 트랜지스터를 세운다(하늘색 기둥). 기둥 하나 = 교차점 하나 = 셀 하나. 바닥은 2F×2F, 그 안에 무엇이 어떻게 들어가는지는 단면(③)에서.</li>
+<li><span class="n red">■</span><b>빨간 테두리</b> = 셀 하나의 땅. 실제 칩은 기둥 사이 절연 여유가 들어가 "4F²급"이고, 비율은 유지되므로 33% 축소 이득은 대체로 성립.</li>
+</ul></div>
+
+<!-- 2. 단면도 3종 -->
+<div class="card"><div class="tools"><button onclick="copySvg('f2')">📋 이미지 복사</button></div><h2>③ 옆에서 자른 단면 — 누운 트랜지스터 vs 세운 트랜지스터 vs 3D D램</h2>
+<svg id="f2" viewBox="0 0 1080 470" xmlns="http://www.w3.org/2000/svg" font-family="inherit" font-size="11">
+<rect width="1080" height="470" fill="#fff"/>
+<!-- (a) 6F2 -->
+<g transform="translate(20,20)">
+<text x="165" y="14" text-anchor="middle" font-size="14" font-weight="700">(a) 6F² — 누운 트랜지스터(BCAT)</text>
+<rect x="0" y="300" width="330" height="90" fill="#e9e2d0"/><text x="165" y="352" text-anchor="middle" fill="#67737f">실리콘 기판 (한 웨이퍼) — 채널이 기판에 붙음</text>
+<!-- channel lying: active silicon mesa -->
+<rect x="60" y="262" width="210" height="38" fill="#cfe7d4" stroke="#6aa"/>
+<!-- buried gates (WL into page) -->
+<rect x="110" y="250" width="34" height="46" rx="6" fill="#f28e2b"/><rect x="186" y="250" width="34" height="46" rx="6" fill="#f28e2b"/>
+<text x="127" y="320" text-anchor="middle" fill="#b06012" font-weight="700">게이트(WL)</text><text x="203" y="320" text-anchor="middle" fill="#b06012" font-weight="700">게이트(WL)</text>
+<!-- BL contact in center -->
+<rect x="157" y="225" width="16" height="38" fill="#16202c"/><rect x="120" y="205" width="90" height="20" rx="4" fill="#2a78d6"/><text x="165" y="198" text-anchor="middle" fill="#2a78d6" font-weight="700">비트라인 (위에, 지면 안쪽으로 달림)</text>
+<!-- SN contacts and capacitors at both ends -->
+<rect x="76" y="215" width="16" height="48" fill="#1f3b73"/><rect x="238" y="215" width="16" height="48" fill="#1f3b73"/>
+<rect x="62" y="60" width="44" height="155" rx="6" fill="#1f3b73" opacity=".85"/><rect x="224" y="60" width="44" height="155" rx="6" fill="#1f3b73" opacity=".85"/>
+<text x="84" y="50" text-anchor="middle" fill="#1f3b73" font-weight="700">커패시터</text><text x="246" y="50" text-anchor="middle" fill="#1f3b73" font-weight="700">커패시터</text>
+<!-- red contact dots -->
+<circle cx="165" cy="263" r="5" fill="#d63c2f"/><circle cx="84" cy="263" r="5" fill="#d63c2f"/><circle cx="246" cy="263" r="5" fill="#d63c2f"/>
+<path d="M92 270 H120" stroke="#d63c2f" stroke-width="1.5" marker-end="url(#ar)"/><path d="M238 270 H210" stroke="#d63c2f" stroke-width="1.5" marker-end="url(#ar)"/>
+<text x="165" y="412" text-anchor="middle" font-size="12">접점 둘(BL 접점·SN 접점)이 <tspan font-weight="700">같은 평면에 나란히</tspan> → 가로 3F</text>
+<text x="165" y="430" text-anchor="middle" fill="#67737f">페리 회로도 같은 웨이퍼 옆에</text>
+<g><circle cx="14" cy="14" r="10" fill="#16202c"/><text x="14" y="18" text-anchor="middle" fill="#fff" font-weight="700">a</text></g>
+</g>
+<!-- (b) 4F2 VCT -->
+<g transform="translate(375,20)">
+<text x="165" y="14" text-anchor="middle" font-size="14" font-weight="700">(b) 4F² — 세운 트랜지스터(VCT) + 페리 본딩</text>
+<!-- peri wafer -->
+<rect x="0" y="330" width="330" height="60" fill="#9aa3b2"/><text x="165" y="365" text-anchor="middle" fill="#fff" font-weight="700">페리 웨이퍼 (따로 만들어 붙임, PUC)</text>
+<!-- bonding interface -->
+<rect x="0" y="322" width="330" height="8" fill="#d63c2f"/><text x="165" y="316" text-anchor="middle" fill="#d63c2f" font-weight="700">W2W 하이브리드 본딩 계면 (구리-구리, M2M) — 본딩은 여기만</text>
+<!-- oxide fill -->
+<rect x="0" y="60" width="330" height="262" fill="#f3f5f8"/>
+<!-- buried BL -->
+<rect x="0" y="280" width="330" height="22" fill="#2a78d6"/><text x="165" y="295" text-anchor="middle" fill="#fff" font-weight="700">매립 비트라인 (바닥, 지면 안쪽으로 달림)</text>
+<!-- pillars x3 -->
+<g>
+<rect x="60" y="150" width="30" height="130" fill="#7fc8f8" stroke="#1f3b73"/><rect x="150" y="150" width="30" height="130" fill="#7fc8f8" stroke="#1f3b73"/><rect x="240" y="150" width="30" height="130" fill="#7fc8f8" stroke="#1f3b73"/>
+<!-- WL ring at waist -->
+<rect x="0" y="200" width="330" height="26" fill="#f28e2b" opacity=".92"/><text x="165" y="218" text-anchor="middle" fill="#fff" font-weight="700">워드라인 (허리, 기둥마다 반지처럼 둘러싼 게이트)</text>
+<!-- capacitors on top -->
+<rect x="58" y="62" width="34" height="88" rx="6" fill="#1f3b73" opacity=".85"/><rect x="148" y="62" width="34" height="88" rx="6" fill="#1f3b73" opacity=".85"/><rect x="238" y="62" width="34" height="88" rx="6" fill="#1f3b73" opacity=".85"/>
+<text x="165" y="52" text-anchor="middle" fill="#1f3b73" font-weight="700">커패시터(굴뚝, 실제는 기둥보다 훨씬 높음)</text>
+<!-- M2S contacts -->
+<g fill="#d63c2f"><circle cx="75" cy="280" r="5"/><circle cx="165" cy="280" r="5"/><circle cx="255" cy="280" r="5"/><circle cx="75" cy="150" r="5"/><circle cx="165" cy="150" r="5"/><circle cx="255" cy="150" r="5"/></g>
+<text x="305" y="156" fill="#d63c2f" font-size="10">M2S 접점(위)</text><text x="305" y="276" fill="#d63c2f" font-size="10">M2S 접점(아래)</text>
+<text x="165" y="245" text-anchor="middle" fill="#1f3b73" font-size="10">세운 채널(IGZO 산화물) — 기판에 안 붙어 "플로팅 바디"</text>
+</g>
+<text x="165" y="412" text-anchor="middle" font-size="12">접점 둘이 <tspan font-weight="700">위아래로</tspan> → 바닥은 기둥 하나 2F×2F</text>
+<text x="165" y="430" text-anchor="middle" fill="#67737f">페리는 딴 웨이퍼를 셀 아래에 붙임 (PUC / CoP)</text>
+<g><circle cx="14" cy="14" r="10" fill="#16202c"/><text x="14" y="18" text-anchor="middle" fill="#fff" font-weight="700">b</text></g>
+</g>
+<!-- (c) 3D DRAM -->
+<g transform="translate(730,20)">
+<text x="165" y="14" text-anchor="middle" font-size="14" font-weight="700">(c) 3D D램 — 셀을 눕혀 층으로 쌓음</text>
+<rect x="0" y="330" width="330" height="60" fill="#9aa3b2"/><text x="165" y="365" text-anchor="middle" fill="#fff" font-weight="700">페리 (본딩, 확실시)</text><rect x="0" y="322" width="330" height="8" fill="#d63c2f"/>
+<rect x="0" y="40" width="330" height="282" fill="#f3f5f8"/>
+<!-- vertical BL -->
+<rect x="150" y="42" width="30" height="280" fill="#2a78d6"/><text x="165" y="32" text-anchor="middle" fill="#2a78d6" font-weight="700">세로 비트라인 (모든 층을 꿰뚫음)</text>
+<!-- layers: lying channel + lying capacitor on both sides -->
+<defs><g id="lay"><rect x="100" y="0" width="50" height="22" fill="#7fc8f8" stroke="#1f3b73"/><rect x="20" y="0" width="80" height="22" rx="4" fill="#1f3b73" opacity=".85"/><rect x="180" y="0" width="50" height="22" fill="#7fc8f8" stroke="#1f3b73"/><rect x="230" y="0" width="80" height="22" rx="4" fill="#1f3b73" opacity=".85"/><rect x="118" y="-6" width="14" height="34" fill="#f28e2b"/><rect x="198" y="-6" width="14" height="34" fill="#f28e2b"/></g></defs>
+<use href="#lay" y="60"/><use href="#lay" y="110"/><use href="#lay" y="160"/><use href="#lay" y="210"/><use href="#lay" y="260"/>
+<text x="60" y="54" text-anchor="middle" fill="#1f3b73" font-size="10" font-weight="700">누운 커패시터</text><text x="125" y="54" text-anchor="middle" fill="#1f3b73" font-size="10">채널</text><text x="205" y="54" text-anchor="middle" fill="#b06012" font-size="10">WL</text>
+<text x="165" y="412" text-anchor="middle" font-size="12">층수를 3D 낸드처럼 올림 (삼성 VS-CAT, <tspan font-weight="700">2030년경</tspan>)</text>
+<text x="165" y="430" text-anchor="middle" fill="#67737f">4F²는 이리로 가는 징검다리</text>
+<g><circle cx="14" cy="14" r="10" fill="#16202c"/><text x="14" y="18" text-anchor="middle" fill="#fff" font-weight="700">c</text></g>
+</g>
+</svg>
+<ul class="map" style="margin-top:10px;columns:2;column-gap:24px">
+<li><span class="n">a</span><b>6F² 단면</b>: 채널(연두)이 기판에 붙어 누워 있고, 게이트(WL, 주황)를 땅에 묻는다(BCAT). 가운데 BL 접점에서 좌우로 전류가 흘러 양 끝 SN 접점 → 커패시터 굴뚝으로 간다. 접점 둘이 한 평면에 나란히 → 가로 3F.</li>
+<li><span class="n">b</span><b>4F² 단면</b>: 그 줄을 그대로 세운 것. 비트라인은 기둥의 발바닥에 닿아야 하니 <u>바닥에 깔린다(매립 BL)</u>, 워드라인은 채널의 옆구리를 쥐어야 하니 <u>기둥 허리 높이</u>를 지나며 기둥을 반지처럼 감싸는 자리가 게이트, 커패시터는 <u>기둥 꼭대기</u>. BL(바닥, 앞뒤)과 WL(허리, 좌우)이 높이가 달라 교차해도 만나지 않는다.</li>
+<li><span class="n red">●</span><b>빨간 점 = M2S(금속-반도체) 접점</b>: 세운 채널 아래위 둘, 전공정(증착·식각)으로 만든다. <b>빨간 띠 = M2M(구리-구리) 본딩 계면</b>: 셀 웨이퍼와 페리 웨이퍼를 맞붙이는 띠 한 곳, 수백만 개 접점. 본딩은 이 띠뿐이다.</li>
+<li><span class="n tr">T</span><b>플로팅 바디</b>: 세운 기둥은 아래가 BL, 위가 커패시터라 채널이 기판에 안 붙는다. 전하가 쌓여 문턱전압이 흔들리고 누설로 기억이 빨리 샌다 → 삼성은 채널을 실리콘 대신 <b>IGZO 산화물</b>로 바꿨다(열에 약해 위의 커패시터 고온 공정 순서가 더 까다로움).</li>
+<li><span class="n peri">P</span><b>페리 언더 셀(PUC)</b>: 셀이 33% 줄면 주변회로(페리) 비중이 커져 이득이 깎이므로, 페리를 딴 웨이퍼에 만들어 셀 아래에 붙인다. 삼성 10a도 창신 발표도 이 길.</li>
+<li><span class="n">c</span><b>3D D램</b>: 4F²는 여전히 한 층(땅을 아끼는 기술)이고, 3D는 셀을 눕혀 층을 올린다. 커패시터를 옆으로 뉘어 층마다 두고 세로 BL이 전 층을 꿰뚫는다. 눕힌 커패시터·층간 균일성까지 난제가 더 많아 2030년.</li>
+</ul></div>
+
+<!-- 3. 4F² 입체도 -->
+<div class="card"><div class="tools"><button onclick="copySvg('f3')">📋 이미지 복사</button></div><h2>④ 4F² 셀을 비스듬히 본 모습 — 세운 트랜지스터 3×3과 다섯 층의 높이</h2>
+<div class="fig">
+<svg id="f3" viewBox="0 0 660 560" xmlns="http://www.w3.org/2000/svg" font-family="inherit" font-size="11"><rect width="660" height="560" fill="#fff"/><defs><marker id="ar3" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#16202c"/></marker></defs><text x="330" y="24" text-anchor="middle" font-size="14" font-weight="700">위에서 보면 파랑(BL)과 주황(WL)이 격자로 교차하고 교차점마다 기둥 하나 — ② 그림 C의 평면도</text><polygon points="111.8,466.0 330.0,592.0 330.0,566.0 111.8,440.0" fill="#8f98a5" /><polygon points="548.2,466.0 330.0,592.0 330.0,566.0 548.2,440.0" fill="#7c8591" /><polygon points="330.0,314.0 548.2,440.0 330.0,566.0 111.8,440.0" fill="#b8c0cb" /><polygon points="111.8,440.0 330.0,566.0 330.0,562.0 111.8,436.0" fill="#b22f24" /><polygon points="548.2,440.0 330.0,566.0 330.0,562.0 548.2,436.0" fill="#9c2a20" /><polygon points="330.0,310.0 548.2,436.0 330.0,562.0 111.8,436.0" fill="#d63c2f" /><polygon points="111.8,436.0 330.0,562.0 330.0,552.0 111.8,426.0" fill="#dfe4ea" /><polygon points="548.2,436.0 330.0,562.0 330.0,552.0 548.2,426.0" fill="#d2d8df" /><polygon points="330.0,300.0 548.2,426.0 330.0,552.0 111.8,426.0" fill="#f3f5f8" /><polygon points="275.4,331.5 493.7,457.5 493.7,449.5 275.4,323.5" fill="#2a78d6" /><polygon points="530.1,436.5 493.7,457.5 493.7,449.5 530.1,428.5" fill="#1f5fb0" /><polygon points="311.8,302.5 530.1,428.5 493.7,449.5 275.4,323.5" fill="#4a90e2" /><polygon points="202.7,373.5 420.9,499.5 420.9,491.5 202.7,365.5" fill="#2a78d6" /><polygon points="457.3,478.5 420.9,499.5 420.9,491.5 457.3,470.5" fill="#1f5fb0" /><polygon points="239.1,344.5 457.3,470.5 420.9,491.5 202.7,365.5" fill="#4a90e2" /><polygon points="129.9,415.5 348.2,541.5 348.2,533.5 129.9,407.5" fill="#2a78d6" /><polygon points="384.6,520.5 348.2,541.5 348.2,533.5 384.6,512.5" fill="#1f5fb0" /><polygon points="166.3,386.5 384.6,512.5 348.2,533.5 129.9,407.5" fill="#4a90e2" /><polygon points="293.6,334.0 330.0,355.0 330.0,323.0 293.6,302.0" fill="#5fb0e8" /><polygon points="366.4,334.0 330.0,355.0 330.0,323.0 366.4,302.0" fill="#3a8fd0" /><polygon points="330.0,281.0 366.4,302.0 330.0,323.0 293.6,302.0" fill="#9fd3fa" /><polygon points="220.9,376.0 257.3,397.0 257.3,365.0 220.9,344.0" fill="#5fb0e8" /><polygon points="293.6,376.0 257.3,397.0 257.3,365.0 293.6,344.0" fill="#3a8fd0" /><polygon points="257.3,323.0 293.6,344.0 257.3,365.0 220.9,344.0" fill="#9fd3fa" /><polygon points="366.4,376.0 402.7,397.0 402.7,365.0 366.4,344.0" fill="#5fb0e8" /><polygon points="439.1,376.0 402.7,397.0 402.7,365.0 439.1,344.0" fill="#3a8fd0" /><polygon points="402.7,323.0 439.1,344.0 402.7,365.0 366.4,344.0" fill="#9fd3fa" /><polygon points="148.1,418.0 184.5,439.0 184.5,407.0 148.1,386.0" fill="#5fb0e8" /><polygon points="220.9,418.0 184.5,439.0 184.5,407.0 220.9,386.0" fill="#3a8fd0" /><polygon points="184.5,365.0 220.9,386.0 184.5,407.0 148.1,386.0" fill="#9fd3fa" /><polygon points="293.6,418.0 330.0,439.0 330.0,407.0 293.6,386.0" fill="#5fb0e8" /><polygon points="366.4,418.0 330.0,439.0 330.0,407.0 366.4,386.0" fill="#3a8fd0" /><polygon points="330.0,365.0 366.4,386.0 330.0,407.0 293.6,386.0" fill="#9fd3fa" /><polygon points="439.1,418.0 475.5,439.0 475.5,407.0 439.1,386.0" fill="#5fb0e8" /><polygon points="511.9,418.0 475.5,439.0 475.5,407.0 511.9,386.0" fill="#3a8fd0" /><polygon points="475.5,365.0 511.9,386.0 475.5,407.0 439.1,386.0" fill="#9fd3fa" /><polygon points="220.9,460.0 257.3,481.0 257.3,449.0 220.9,428.0" fill="#5fb0e8" /><polygon points="293.6,460.0 257.3,481.0 257.3,449.0 293.6,428.0" fill="#3a8fd0" /><polygon points="257.3,407.0 293.6,428.0 257.3,449.0 220.9,428.0" fill="#9fd3fa" /><polygon points="366.4,460.0 402.7,481.0 402.7,449.0 366.4,428.0" fill="#5fb0e8" /><polygon points="439.1,460.0 402.7,481.0 402.7,449.0 439.1,428.0" fill="#3a8fd0" /><polygon points="402.7,407.0 439.1,428.0 402.7,449.0 366.4,428.0" fill="#9fd3fa" /><polygon points="293.6,502.0 330.0,523.0 330.0,491.0 293.6,470.0" fill="#5fb0e8" /><polygon points="366.4,502.0 330.0,523.0 330.0,491.0 366.4,470.0" fill="#3a8fd0" /><polygon points="330.0,449.0 366.4,470.0 330.0,491.0 293.6,470.0" fill="#9fd3fa" /><polygon points="124.5,393.3 171.8,420.6 171.8,398.6 124.5,371.3" fill="#f28e2b" opacity=".93"/><polygon points="390.0,294.6 171.8,420.6 171.8,398.6 390.0,272.6" fill="#d9771c" opacity=".93"/><polygon points="342.7,245.4 390.0,272.6 171.8,398.6 124.5,371.3" fill="#f7a95a" opacity=".93"/><polygon points="197.2,435.3 244.5,462.6 244.5,440.6 197.2,413.3" fill="#f28e2b" opacity=".93"/><polygon points="462.8,336.6 244.5,462.6 244.5,440.6 462.8,314.6" fill="#d9771c" opacity=".93"/><polygon points="415.5,287.4 462.8,314.6 244.5,440.6 197.2,413.3" fill="#f7a95a" opacity=".93"/><polygon points="270.0,477.3 317.3,504.6 317.3,482.6 270.0,455.3" fill="#f28e2b" opacity=".93"/><polygon points="535.5,378.6 317.3,504.6 317.3,482.6 535.5,356.6" fill="#d9771c" opacity=".93"/><polygon points="488.2,329.3 535.5,356.6 317.3,482.6 270.0,455.3" fill="#f7a95a" opacity=".93"/><polygon points="293.6,280.0 330.0,301.0 330.0,263.0 293.6,242.0" fill="#5fb0e8" /><polygon points="366.4,280.0 330.0,301.0 330.0,263.0 366.4,242.0" fill="#3a8fd0" /><polygon points="330.0,221.0 366.4,242.0 330.0,263.0 293.6,242.0" fill="#9fd3fa" /><polygon points="300.9,242.0 330.0,258.8 330.0,163.8 300.9,147.0" fill="#2b4d8f" /><polygon points="359.1,242.0 330.0,258.8 330.0,163.8 359.1,147.0" fill="#1f3b73" /><polygon points="330.0,130.2 359.1,147.0 330.0,163.8 300.9,147.0" fill="#4a69a8" /><polygon points="220.9,322.0 257.3,343.0 257.3,305.0 220.9,284.0" fill="#5fb0e8" /><polygon points="293.6,322.0 257.3,343.0 257.3,305.0 293.6,284.0" fill="#3a8fd0" /><polygon points="257.3,263.0 293.6,284.0 257.3,305.0 220.9,284.0" fill="#9fd3fa" /><polygon points="228.2,284.0 257.3,300.8 257.3,205.8 228.2,189.0" fill="#2b4d8f" /><polygon points="286.4,284.0 257.3,300.8 257.3,205.8 286.4,189.0" fill="#1f3b73" /><polygon points="257.3,172.2 286.4,189.0 257.3,205.8 228.2,189.0" fill="#4a69a8" /><polygon points="366.4,322.0 402.7,343.0 402.7,305.0 366.4,284.0" fill="#5fb0e8" /><polygon points="439.1,322.0 402.7,343.0 402.7,305.0 439.1,284.0" fill="#3a8fd0" /><polygon points="402.7,263.0 439.1,284.0 402.7,305.0 366.4,284.0" fill="#9fd3fa" /><polygon points="373.6,284.0 402.7,300.8 402.7,205.8 373.6,189.0" fill="#2b4d8f" /><polygon points="431.8,284.0 402.7,300.8 402.7,205.8 431.8,189.0" fill="#1f3b73" /><polygon points="402.7,172.2 431.8,189.0 402.7,205.8 373.6,189.0" fill="#4a69a8" /><polygon points="148.1,364.0 184.5,385.0 184.5,347.0 148.1,326.0" fill="#5fb0e8" /><polygon points="220.9,364.0 184.5,385.0 184.5,347.0 220.9,326.0" fill="#3a8fd0" /><polygon points="184.5,305.0 220.9,326.0 184.5,347.0 148.1,326.0" fill="#9fd3fa" /><polygon points="155.4,326.0 184.5,342.8 184.5,247.8 155.4,231.0" fill="#2b4d8f" /><polygon points="213.6,326.0 184.5,342.8 184.5,247.8 213.6,231.0" fill="#1f3b73" /><polygon points="184.5,214.2 213.6,231.0 184.5,247.8 155.4,231.0" fill="#4a69a8" /><polygon points="293.6,364.0 330.0,385.0 330.0,347.0 293.6,326.0" fill="#5fb0e8" /><polygon points="366.4,364.0 330.0,385.0 330.0,347.0 366.4,326.0" fill="#3a8fd0" /><polygon points="330.0,305.0 366.4,326.0 330.0,347.0 293.6,326.0" fill="#9fd3fa" /><polygon points="300.9,326.0 330.0,342.8 330.0,247.8 300.9,231.0" fill="#2b4d8f" /><polygon points="359.1,326.0 330.0,342.8 330.0,247.8 359.1,231.0" fill="#1f3b73" /><polygon points="330.0,214.2 359.1,231.0 330.0,247.8 300.9,231.0" fill="#4a69a8" /><polygon points="439.1,364.0 475.5,385.0 475.5,347.0 439.1,326.0" fill="#5fb0e8" /><polygon points="511.9,364.0 475.5,385.0 475.5,347.0 511.9,326.0" fill="#3a8fd0" /><polygon points="475.5,305.0 511.9,326.0 475.5,347.0 439.1,326.0" fill="#9fd3fa" /><polygon points="446.4,326.0 475.5,342.8 475.5,247.8 446.4,231.0" fill="#2b4d8f" /><polygon points="504.6,326.0 475.5,342.8 475.5,247.8 504.6,231.0" fill="#1f3b73" /><polygon points="475.5,214.2 504.6,231.0 475.5,247.8 446.4,231.0" fill="#4a69a8" /><polygon points="220.9,406.0 257.3,427.0 257.3,389.0 220.9,368.0" fill="#5fb0e8" /><polygon points="293.6,406.0 257.3,427.0 257.3,389.0 293.6,368.0" fill="#3a8fd0" /><polygon points="257.3,347.0 293.6,368.0 257.3,389.0 220.9,368.0" fill="#9fd3fa" /><polygon points="228.2,368.0 257.3,384.8 257.3,289.8 228.2,273.0" fill="#2b4d8f" /><polygon points="286.4,368.0 257.3,384.8 257.3,289.8 286.4,273.0" fill="#1f3b73" /><polygon points="257.3,256.2 286.4,273.0 257.3,289.8 228.2,273.0" fill="#4a69a8" /><polygon points="366.4,406.0 402.7,427.0 402.7,389.0 366.4,368.0" fill="#5fb0e8" /><polygon points="439.1,406.0 402.7,427.0 402.7,389.0 439.1,368.0" fill="#3a8fd0" /><polygon points="402.7,347.0 439.1,368.0 402.7,389.0 366.4,368.0" fill="#9fd3fa" /><polygon points="373.6,368.0 402.7,384.8 402.7,289.8 373.6,273.0" fill="#2b4d8f" /><polygon points="431.8,368.0 402.7,384.8 402.7,289.8 431.8,273.0" fill="#1f3b73" /><polygon points="402.7,256.2 431.8,273.0 402.7,289.8 373.6,273.0" fill="#4a69a8" /><polygon points="293.6,448.0 330.0,469.0 330.0,431.0 293.6,410.0" fill="#5fb0e8" /><polygon points="366.4,448.0 330.0,469.0 330.0,431.0 366.4,410.0" fill="#3a8fd0" /><polygon points="330.0,389.0 366.4,410.0 330.0,431.0 293.6,410.0" fill="#9fd3fa" /><polygon points="300.9,410.0 330.0,426.8 330.0,331.8 300.9,315.0" fill="#2b4d8f" /><polygon points="359.1,410.0 330.0,426.8 330.0,331.8 359.1,315.0" fill="#1f3b73" /><polygon points="330.0,298.2 359.1,315.0 330.0,331.8 300.9,315.0" fill="#4a69a8" /><polygon points="330.0,383.5 402.7,425.5 330.0,467.5 257.3,425.5" fill="none" stroke="#d63c2f" stroke-width="2.5"/><line x1="170" y1="476" x2="243" y2="518" stroke="#16202c" stroke-width="1.5"/><text x="200" y="513" font-size="10" font-weight="700">2F 피치 (선 F + 간격 F)</text><circle cx="60" cy="425.8" r="11" fill="#9aa3b2"/><text x="60" y="429.8" text-anchor="middle" fill="#fff" font-weight="700">1</text><path d="M72 425.8 L416.39381426862855 395.8" stroke="#16202c" stroke-width="1" marker-end="url(#ar3)"/><circle cx="600" cy="544.5" r="11" fill="#2a78d6"/><text x="600" y="548.5" text-anchor="middle" fill="#fff" font-weight="700">2</text><path d="M588 544.5 L465.3057343563125 478.5" stroke="#16202c" stroke-width="1" marker-end="url(#ar3)"/><circle cx="600" cy="490.0" r="11" fill="#3a8fd0"/><text x="600" y="494.0" text-anchor="middle" fill="#fff" font-weight="700">3</text><path d="M588 490.0 L370.3730669589464 490.0" stroke="#16202c" stroke-width="1" marker-end="url(#ar3)"/><circle cx="600" cy="421.0" r="11" fill="#f28e2b"/><text x="600" y="425.0" text-anchor="middle" fill="#fff" font-weight="700">4</text><path d="M588 421.0 L297.6269330410536 481.0" stroke="#16202c" stroke-width="1" marker-end="url(#ar3)"/><circle cx="600" cy="310.0" r="11" fill="#1f3b73"/><text x="600" y="314.0" text-anchor="middle" fill="#fff" font-weight="700">5</text><path d="M588 310.0 L370.3730669589464 350.0" stroke="#16202c" stroke-width="1" marker-end="url(#ar3)"/><circle cx="60" cy="366" r="11" fill="#d63c2f"/><text x="60" y="370" text-anchor="middle" fill="#fff" font-weight="700">6</text><path d="M72 366 L253 424" stroke="#d63c2f" stroke-width="1" stroke-dasharray="3 2"/></svg>
+<ul class="map">
+<li><span class="n peri">1</span><b>맨 아래: 페리 웨이퍼(회색)</b> — 따로 만들어 빨간 계면(구리-구리 W2W 하이브리드 본딩)으로 붙인다.</li>
+<li><span class="n bl">2</span><b>바닥: 비트라인(파랑)</b> — 앞뒤 방향으로 달리며 기둥의 발바닥에 닿는다. 그래서 "매립"이다. 땅에 묻는 게 목적이 아니라 기둥 아래 끝에 닿으려면 바닥일 수밖에 없다.</li>
+<li><span class="n tr">3</span><b>기둥: 세운 트랜지스터(하늘색)</b> — 비트라인 하나와 워드라인 하나가 만나는 자리마다 하나. 채널이 기둥 속을 수직으로 지난다.</li>
+<li><span class="n wl">4</span><b>허리: 워드라인(주황)</b> — 좌우 방향으로 달리며 기둥 허리를 감싼다 = 게이트. 공중에 뜬 것처럼 보이지만 절연체에 묻힌 띠다.</li>
+<li><span class="n cap">5</span><b>머리: 커패시터(남색 굴뚝)</b> — 기둥 꼭대기에 하나씩, 맨 마지막에 올린다. 실제는 높이 1,000nm·지름 수십 nm, 가로세로비 100:1로 그림보다 훨씬 높다.</li>
+<li><span class="n red">6</span><b>빨간 네모 = 셀 하나의 땅 2F×2F</b>. 선 1F + 간격 1F = 2F 피치가 두 방향 모두 적용된다.</li>
+<li><span class="n">→</span><b>전기의 길</b>: ② BL → 기둥 아래 접점 → 허리(④가 열면 채널 통과) → 기둥 위 접점 → ⑤ 커패시터. 이 줄을 눕히면 6F², 세우면 4F².</li>
+</ul></div></div>
+
+<!-- 4. 전기 경로 + 접점 비교 -->
+<div class="card"><div class="tools"><button onclick="copySvg('f4')">📋 이미지 복사</button></div><h2>⑤ 셀 하나의 전기 경로와 접점 — 왜 '세우면' 바닥이 2F×2F로 줄어드는가</h2>
+<div class="fig">
+<svg id="f4" viewBox="0 0 640 300" xmlns="http://www.w3.org/2000/svg" font-family="inherit" font-size="11">
+<rect width="640" height="300" fill="#fff"/>
+<g transform="translate(20,20)"><text x="140" y="12" font-size="13" font-weight="700" text-anchor="middle">누운 줄 (6F²) — 가로로 3F</text>
+<rect x="0" y="120" width="280" height="30" fill="url(#grid)" stroke="#ccd5dd"/>
+<rect x="20" y="124" width="22" height="22" fill="#2a78d6"/><text x="31" y="112" text-anchor="middle" fill="#2a78d6" font-weight="700">BL 접점</text>
+<rect x="60" y="130" width="60" height="10" fill="#cfe7d4" stroke="#6aa"/><text x="90" y="112" text-anchor="middle" fill="#3a7">채널</text>
+<rect x="120" y="122" width="26" height="26" rx="5" fill="#f28e2b"/><text x="133" y="112" text-anchor="middle" fill="#b06012" font-weight="700">게이트(WL)</text>
+<rect x="146" y="130" width="60" height="10" fill="#cfe7d4" stroke="#6aa"/>
+<rect x="206" y="124" width="22" height="22" fill="#1f3b73"/><text x="217" y="112" text-anchor="middle" fill="#1f3b73" font-weight="700">SN 접점</text>
+<rect x="236" y="90" width="30" height="56" rx="4" fill="#1f3b73" opacity=".85"/><text x="251" y="82" text-anchor="middle" fill="#1f3b73" font-weight="700">커패시터</text>
+<path d="M0 165 H280" stroke="#d63c2f" stroke-width="2"/><text x="140" y="182" text-anchor="middle" fill="#d63c2f" font-weight="700">접점 둘이 한 평면에 나란히 → 3F (셀 3F×2F = 6F²)</text>
+<circle cx="31" cy="135" r="4" fill="#d63c2f"/><circle cx="217" cy="135" r="4" fill="#d63c2f"/>
+<text x="140" y="215" text-anchor="middle" fill="#67737f" font-size="10">2007년 이후 게이트만 땅에 묻어(RCAT·BCAT·새들핀)</text><text x="140" y="230" text-anchor="middle" fill="#67737f" font-size="10">누운 채로 F를 줄여 왔다</text></g>
+<g transform="translate(400,8)"><text x="110" y="12" font-size="13" font-weight="700" text-anchor="middle">세운 줄 (4F²) — 바닥은 기둥 하나</text>
+<rect x="60" y="225" width="100" height="22" fill="#2a78d6"/><text x="110" y="240" text-anchor="middle" fill="#fff" font-weight="700">매립 BL</text>
+<rect x="96" y="80" width="28" height="145" fill="#7fc8f8" stroke="#1f3b73"/>
+<rect x="60" y="140" width="100" height="24" fill="#f28e2b" opacity=".92"/><text x="110" y="157" text-anchor="middle" fill="#fff" font-weight="700">WL = 둘러싼 게이트</text>
+<rect x="92" y="40" width="36" height="40" rx="5" fill="#1f3b73" opacity=".85"/><text x="110" y="34" text-anchor="middle" fill="#1f3b73" font-weight="700">커패시터</text>
+<circle cx="110" cy="225" r="5" fill="#d63c2f"/><circle cx="110" cy="80" r="5" fill="#d63c2f"/>
+<text x="140" y="228" fill="#d63c2f">M2S 접점(아래)</text><text x="140" y="84" fill="#d63c2f">M2S 접점(위)</text>
+<path d="M60 262 H160" stroke="#d63c2f" stroke-width="2"/><text x="110" y="278" text-anchor="middle" fill="#d63c2f" font-weight="700">바닥 2F × 2F = 4F²</text>
+<text x="40" y="110" text-anchor="end" fill="#1f3b73" font-size="10">채널이 공중에 뜸</text><text x="40" y="123" text-anchor="end" fill="#1f3b73" font-size="10">(플로팅 바디)</text></g>
+</svg>
+<ul class="map">
+<li><span class="n bl">1</span><b>읽기</b>: WL에 전압 → 그 줄의 모든 게이트가 열림 → 커패시터 전하가 채널을 지나 BL로 흘러나옴 → BL 끝 감지증폭기가 1/0 판정. <b>쓰기</b>는 반대로 BL에 전압을 걸어 커패시터를 채우거나 비운다.</li>
+<li><span class="n red">2</span><b>셀 하나에 필요한 연결은 둘</b>: WL↔게이트, BL↔트랜지스터 한쪽 끝. 그리고 트랜지스터 다른 끝↔커패시터. 누우면 두 접점이 양 끝에 나란히 놓여 3F, 세우면 위아래로 겹쳐 기둥 단면만 차지한다.</li>
+<li><span class="n">3</span><b>높이로 교차를 푼다</b>: BL은 바닥층에서 앞뒤, WL은 허리층에서 좌우 → 위에서 보면 격자로 교차하지만 실제로는 닿지 않는다.</li>
+<li><span class="n tr">4</span><b>세운 대가</b>: ① 플로팅 바디(누설·문턱전압 흔들림 → IGZO 채널) ② 기둥 위에 1,000nm 굴뚝 올리기(고온 공정 순서) ③ 접점이 기둥 단면만큼 좁아 같은 결함이 훨씬 큰 저항 변화로 나타남(응력·계면·검사 난제).</li>
+</ul></div></div>
+
+<!-- 5. 비교표 -->
+<div class="card"><h2>⑥ 세 구조 비교</h2><div class="tblwrap"><table><thead><tr><th>항목</th><th>8F²</th><th>6F² (1c·1d, 지금)</th><th>4F² VCT (삼성 10a/0a, 2028 목표 · 창신 발표)</th><th>3D D램 (2030경)</th></tr></thead><tbody>
+<tr><td class="h">셀 바닥</td><td>4F × 2F</td><td>3F × 2F</td><td>2F × 2F (한 층 배치의 바닥)</td><td>층당 2F×2F급, 수십~수백 층</td></tr>
+<tr><td class="h">트랜지스터</td><td>누움</td><td>누움, 게이트를 땅에 묻음(RCAT·BCAT·새들핀)</td><td>세움(VCT·VSG, SK하이닉스는 VG)</td><td>누움, 층마다</td></tr>
+<tr><td class="h">워드라인 위치</td><td>표면 위 게이트</td><td>기판에 묻힌 게이트(지면 안쪽으로)</td><td>기둥 허리 높이, 기둥을 반지처럼 감쌈</td><td>층마다 세로 게이트</td></tr>
+<tr><td class="h">비트라인 위치</td><td>트랜지스터 위, 활성영역 따라 곧게</td><td>트랜지스터 위, 접점 하나를 두 셀 공유</td><td>바닥에 매립(기둥 발바닥)</td><td>세로로 모든 층 관통</td></tr>
+<tr><td class="h">접점 배치</td><td>BL 접점 1 공유 + SN 접점, 한 평면</td><td>같은 평면에 나란히 → 3F 하한</td><td>위아래(M2S 둘) + 페리 본딩(M2M)</td><td>층간 수직 접점 다수</td></tr>
+<tr><td class="h">채널 재료</td><td>실리콘</td><td>실리콘</td><td>IGZO 등 산화물(누설 억제, 열에 약함)</td><td>실리콘 에피 또는 산화물, 미정</td></tr>
+<tr><td class="h">커패시터</td><td>트랜지스터 옆·위 굴뚝</td><td>트랜지스터 옆·위 굴뚝(1,000nm)</td><td>기둥 꼭대기 굴뚝</td><td>옆으로 눕힘</td></tr>
+<tr><td class="h">페리 위치</td><td>같은 웨이퍼 옆</td><td>같은 웨이퍼 옆</td><td>딴 웨이퍼, 셀 아래 W2W 본딩(PUC)</td><td>딴 웨이퍼, 본딩</td></tr>
+<tr><td class="h">면적 이득</td><td>—</td><td>8F² 대비 25%</td><td>6F² 대비 33% 축소 = 비트 1.5배</td><td>층수만큼</td></tr>
+<tr><td class="h">새 난제</td><td>—</td><td>F 축소의 한계</td><td>플로팅 바디·수직 접점·본딩 수율·계측</td><td>위 전부 + 눕힌 커패시터·층간 균일성</td></tr>
+</tbody></table></div></div>
+
+<!-- 6. 로드맵 + 20년 특허 -->
+<div class="card"><div class="tools"><button onclick="copySvg('f5')">📋 이미지 복사</button></div><h2>⑦ 20년 특허에서 2028 양산까지 — 로드맵과 '못 한 이유'</h2>
+<div class="fig">
+<svg id="f5" viewBox="0 0 640 330" xmlns="http://www.w3.org/2000/svg" font-family="inherit" font-size="11">
+<rect width="640" height="330" fill="#fff"/>
+<line x1="40" y1="70" x2="610" y2="70" stroke="#ccd5dd" stroke-width="3"/>
+<g font-weight="700" text-anchor="middle">
+<circle cx="60" cy="70" r="7" fill="#9aa3b2"/><text x="60" y="52">1980년대 말</text><text x="60" y="95" font-weight="400" font-size="10">마스오카 SGT</text><text x="60" y="108" font-weight="400" font-size="10">(세운 트랜지스터 원형)</text>
+<circle cx="150" cy="70" r="7" fill="#9aa3b2"/><text x="150" y="52">2002~03</text><text x="150" y="95" font-weight="400" font-size="10">우칭위안 트렌치 4F²</text><text x="150" y="108" font-weight="400" font-size="10">US 2003/0173593</text>
+<circle cx="235" cy="70" r="7" fill="#9aa3b2"/><text x="235" y="52">2007</text><text x="235" y="95" font-weight="400" font-size="10">업계 8F²→6F²</text><text x="235" y="108" font-weight="400" font-size="10">4F²는 "다음 과제"로</text>
+<circle cx="315" cy="70" r="7" fill="#9aa3b2"/><text x="315" y="52">2009</text><text x="315" y="95" font-weight="400" font-size="10">키몬다 파산</text><text x="315" y="108" font-weight="400" font-size="10">트렌치 방식 소멸</text>
+<circle cx="400" cy="70" r="7" fill="#f28e2b"/><text x="400" y="52">2026.2~3</text><text x="400" y="95" font-weight="400" font-size="10">삼성 ISSCC 16Gb 시연</text><text x="400" y="108" font-weight="400" font-size="10">첫 워킹 다이</text>
+<circle cx="470" cy="70" r="7" fill="#d63c2f"/><text x="470" y="52">2026.10</text><text x="470" y="95" font-weight="400" font-size="10">창신 4F² 발표</text><text x="470" y="108" font-weight="400" font-size="10">연말 DDR5 RDIMM</text>
+<circle cx="540" cy="70" r="7" fill="#1f3b73"/><text x="540" y="52">2028</text><text x="540" y="95" font-weight="400" font-size="10">삼성 10a 양산 목표</text><text x="540" y="108" font-weight="400" font-size="10">4F²+VCT+IGZO+PUC</text>
+<circle cx="605" cy="70" r="7" fill="#1f3b73"/><text x="605" y="52">2030</text><text x="605" y="95" font-weight="400" font-size="10">3D D램</text></g>
+<g transform="translate(40,140)">
+<rect width="560" height="170" rx="10" fill="#f3f5f8"/>
+<text x="16" y="24" font-size="13" font-weight="700">20년 동안 양산하지 못한 네 가지 이유</text>
+<text x="16" y="50"><tspan font-weight="700">① 급하지 않았다</tspan> — 2007년 이후 게이트를 땅에 묻어 누운 채로 F를 줄이는 게 더 쌌다. F 축소가 벽에 부딪힌 지금에야 구조 변경.</text>
+<text x="16" y="76"><tspan font-weight="700">② 세운 트랜지스터의 고질병</tspan> — 플로팅 바디(누설·문턱전압). 산화물 채널이 실용화된 것은 최근 몇 년.</text>
+<text x="16" y="102"><tspan font-weight="700">③ 트렌치가 졌다</tspan> — 초기 4F²는 구덩이 아래 커패시터. 굴뚝(스택)이 이기고 키몬다가 쓰러지며 10년 넘게 선반에.</text>
+<text x="16" y="128"><tspan font-weight="700">④ 보이지 않고 재지지 않는다</tspan> — 수직 구조는 응력이 흩어지지 않아 산포↑, 계면(M2S·M2M)이 좁아 저항 민감, 위층에 가려 계측 불가.</text>
+<text x="16" y="156" fill="#67737f">"할 수 있느냐"는 기술이 아니라 수율을 잡을 때까지 버틸 수 있느냐의 질문 — HBM 8단 본딩과 같은 숙제</text></g>
+</svg>
+<ul class="map">
+<li><span class="n">1</span><b>2003년 특허(우칭위안, 대만)</b>: 실리콘에 F×F 구덩이를 파 아래에 커패시터, 위에 세운 트랜지스터 → 4F². 무접점 어레이·자기정렬 이온주입 제안. 등록특허는 2022년경 만료, 지금은 공유 설계. 오늘의 4F²는 트렌치가 아니라 <u>스택 커패시터 + 매립 BL + 본딩</u>이라 모양은 다르지만 "트랜지스터를 세운다"는 핵심은 같다.</li>
+<li><span class="n">2</span><b>삼성 로드맵</b>: 1c(양산) → 1d → 10a/0a(4F²·VCT·IGZO·PUC 네 가지 동시 변경, 2028) → 3D D램(VS-CAT, 2030). 마이크론은 4F²를 건너뛰고 3D로, SK하이닉스는 VG(수직 게이트) 4F² 진행.</li>
+<li><span class="n red">3</span><b>창신(CXMT)</b>: 10/10 발표 — 수직 서라운드 게이트 트랜지스터, 셀/페리 분리 후 웨이퍼 레벨 하이브리드 본딩, 특허 300건+, 연말 4F² DDR5 RDIMM. 수율·물량·노드·채널 재료는 미언급. EUV 없이 F를 못 줄이는 회사에게 배치로 33%를 버는 4F²는 필수이고 국가가 수율 기간을 대 준다. 단 HBM3 8단 수율 25% 안팎으로 수직 적층 기반이 약하고 서버 D램 신뢰성 경험이 없다. 비트당 원가가 6F²보다 낮아지기 전까지 4F²는 오히려 원가를 올리는 기술.</li>
+</ul></div></div>
+
+<div class="card"><h2>출처</h2><p class="src">인포마켓 강용운 대표, 「4F²는 무엇인가? 창신은 이걸 할 수 있는가?」 내부용 리포트(2026-10-13) 그림 1~4·본문·비교표. 리포트가 인용한 자료: 트렌드포스(10-12)·창신메모리 발표 보도, 삼성 ISSCC 2026 논문 #6.3, SemiAnalysis 「The Memory Wall」, USPTO US 2003/0173593 A1 및 US 6,734,485 등, IMW 2024 삼성 발표, 인포마켓 정보노트(10-07·10-13 김무겸 박사 평가). 본 페이지의 도면은 리포트의 개념도를 재구성한 모식도이며 실제 치수·층수와 다릅니다.</p></div>
+</div>
+<script>
+async function copySvg(id){const svg=document.getElementById(id);const btn=event.target;const xml=new XMLSerializer().serializeToString(svg);const vb=svg.viewBox.baseVal;const W=vb.width*2,Hh=vb.height*2;
+ const img=new Image();const url=URL.createObjectURL(new Blob([xml],{type:'image/svg+xml;charset=utf-8'}));
+ await new Promise((res,rej)=>{img.onload=res;img.onerror=rej;img.src=url;});
+ const c=document.createElement('canvas');c.width=W;c.height=Hh;const g=c.getContext('2d');g.fillStyle='#fff';g.fillRect(0,0,W,Hh);g.drawImage(img,0,0,W,Hh);URL.revokeObjectURL(url);
+ c.toBlob(async b=>{try{await navigator.clipboard.write([new ClipboardItem({'image/png':b})]);btn.textContent='✅ 복사됨';}catch(e){const a=document.createElement('a');a.href=c.toDataURL('image/png');a.download=id+'.png';a.click();btn.textContent='⬇ 다운로드';}setTimeout(()=>btn.textContent='📋 이미지 복사',1800);},'image/png');}
+</script></body></html>
