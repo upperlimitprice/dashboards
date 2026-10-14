@@ -114,7 +114,7 @@ h2{font-size:.92rem;margin:0 0 10px;color:#6b7683}
 .sitem:last-child{border-bottom:0}
 .sitem .nm{color:#20262e}
 .add{border:1.5px solid #3d5a80;color:#3d5a80;background:#f9fafc;border-radius:8px;font-size:.95rem;width:26px;height:26px;cursor:pointer;font-weight:700;flex:none}
-.add:hover{background:#e6edf6}
+.add:hover{background:#e6edf6}.add.del{border-color:#c9d2dc;color:#9aa4ad;font-size:.8rem}.add.del:hover{border-color:#d63c2f;color:#d63c2f;background:#fdf0ef}
 .hint{font-size:.72rem;color:#9aa4ad;margin-top:10px}
 .empty{color:#9aa4ad;font-size:.82rem;padding:8px 0}
 .reset{width:100%;margin-top:10px;border:1.5px solid #c9d2dc;background:#f9fafc;color:#6b7683;border-radius:8px;padding:7px 0;font-size:.78rem;cursor:pointer;font-weight:600}
@@ -123,7 +123,7 @@ h2{font-size:.92rem;margin:0 0 10px;color:#6b7683}
 <h1>📊 쩜상리서치 대시보드</h1>
 <div class='layout'>
 <div><h2>메인 <small style='font-weight:400'>(드래그로 순서 변경 · ✕로 보관함으로 이동)</small></h2><div id='main'></div></div>
-<div id='side'><h2>🗂 전체 위젯 보관함</h2><div id='sideList'></div>
+<div id='side'><h2>🗂 전체 위젯 보관함</h2><div id='sideList'></div><div id='hidList' class='hint' style='display:none'></div>
 <button class='reset' id='pubBtn' style='border-color:#3d5a80;color:#3d5a80;font-weight:700'>📤 현재 배치를 공개 배치로 발행</button>
 <button class='reset' id='resetBtn'>쩜상 기본 배치로 초기화</button>
 <div class='hint'>＋ 추가 · ✕ 제거 · 드래그로 순서 변경 — 내 구성은 이 브라우저에만 저장됩니다. 초기화하면 쩜상리서치 기본 배치로 돌아갑니다.</div></div>
@@ -193,12 +193,25 @@ function render(){
   main.innerHTML=state.main.map(k=>{const x=item(k);const rf=JOB[x.k]?`<button class='rf' title='데이터 수동 갱신' onclick='return refresh(event,"${x.k}")'>↻</button>`:'';return `<div class='card' draggable='true' data-k='${x.k}' onclick='go(event,"${x.h}")'>${x.t}<small>${x.d}</small>${rf}<button class='x' title='보관함으로' onclick='return rm(event,"${x.k}")'>✕</button></div>`;}).join('')||"<div class='empty'>보관함에서 ＋를 눌러 위젯을 추가하세요</div>";
   const pool=ADMIN?REG:REG.filter(x=>pubMain().includes(x.k));  // 보관함 전체 목록은 관리자만 — 방문자는 공개 배치 중 자신이 뺀 위젯만 보임
   const rest=pool.filter(x=>!state.main.includes(x.k));
-  document.getElementById('sideList').innerHTML=rest.map(x=>`<div class='sitem'><span class='nm'>${x.t}</span><button class='add' onclick='addW("${x.k}")'>＋</button></div>`).join('')||"<div class='empty'>모든 위젯이 메인에 있습니다</div>";
+  document.getElementById('sideList').innerHTML=rest.map(x=>`<div class='sitem'><span class='nm'>${x.t}</span><span style='display:flex;gap:4px'>${ADMIN?`<button class='add del' title='대시보드에서 삭제(모든 사람에게서 숨김)' onclick='hideW("${x.k}")'>🗑</button>`:''}<button class='add' onclick='addW("${x.k}")'>＋</button></span></div>`).join('')||"<div class='empty'>모든 위젯이 메인에 있습니다</div>";
+  const hl=document.getElementById('hidList');if(hl){const H=HIDDEN_REG.filter(x=>HIDDEN.has(x.k));hl.style.display=ADMIN&&H.length?'':'none';
+   hl.innerHTML=`<details><summary>삭제한 위젯 ${H.length}개 (관리자만 보임)</summary>${H.map(x=>`<div class='sitem'><span class='nm' style='opacity:.6'>${x.t}</span><button class='add' title='복원' onclick='unhideW("${x.k}")'>↺</button></div>`).join('')}</details>`;}
   wireDrag();
 }
 function go(e,h){if(e.target.closest('a,.x,.rf'))return;location.href=h;}
 function rm(e,k){e.preventDefault();e.stopPropagation();state.main=state.main.filter(x=>x!==k);
   state.removed=(state.removed||[]).concat(k);save();render();return false;}
+let HIDDEN=new Set();const HIDDEN_REG=REG.slice();
+function applyHidden(){for(let i=REG.length-1;i>=0;i--)if(HIDDEN.has(REG[i].k))REG.splice(i,1);
+  HIDDEN_REG.forEach(x=>{if(!HIDDEN.has(x.k)&&!REG.some(r=>r.k===x.k))REG.push(x)});
+  if(state&&state.main)state.main=state.main.filter(k=>!HIDDEN.has(k));}
+async function hideW(k,hide=true){const x=HIDDEN_REG.find(r=>r.k===k);
+  if(hide&&!confirm(`'${x?x.t:k}' 위젯을 대시보드에서 삭제할까요?\n모든 방문자 화면과 보관함에서 사라집니다. (관리자 '삭제한 위젯'에서 복원 가능)`))return;
+  const url=await ep();if(!url){toast('갱신 서버가 꺼져 있습니다 — 맥미니 refresh_server 확인');return;}
+  try{const r=await fetch(url+'/hide-widget',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({k,hide,pass:ADMIN_PASS})}).then(x=>x.json());
+    if(r.status==='ok'){HIDDEN=new Set(r.hidden);if(PUB){PUB.hidden=r.hidden;PUB.main=(PUB.main||[]).filter(x=>x!==k)}applyHidden();save();render();toast(hide?'삭제했습니다 — 1~2분 뒤 모든 화면에 반영':'복원했습니다 — 보관함에 다시 나타납니다');}
+    else toast('실패: '+(r.error||'알 수 없음'));}catch(e){toast('실패: 서버 연결 불가');}}
+const unhideW=k=>hideW(k,false);
 function addW(k){state.main.push(k);state.removed=(state.removed||[]).filter(x=>x!==k);save();render();}
 function syncOrder(){
   state.main=[...document.querySelectorAll('#main .card[draggable]')].map(x=>x.dataset.k);
@@ -258,7 +271,7 @@ document.getElementById('resetBtn').onclick=()=>{
   state={main:pubMain()};render();toast('쩜상리서치 기본 배치로 초기화됐습니다');
 };
 render();
-fetch('layout.json?v='+Date.now()).then(r=>r.ok?r.json():null).then(j=>{PUB=j;
+fetch('layout.json?v='+Date.now()).then(r=>r.ok?r.json():null).then(j=>{PUB=j;HIDDEN=new Set((j&&j.hidden)||[]);applyHidden();
   // 발행 배치에 새로 추가된 카드는 관리자 로컬 배치에도 자동 합류
   if(PUB&&Array.isArray(PUB.main))PUB.main.forEach(k=>{if(REG.some(x=>x.k===k)&&!state.main.includes(k))state.main.push(k);});
   applyAdmin();}).catch(()=>applyAdmin());
