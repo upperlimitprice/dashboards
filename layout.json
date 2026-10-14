@@ -38,7 +38,5 @@
   "capa.html",
   "semi-chain.html"
  ],
- "hidden": [
-  "zz-test.html"
- ]
+ "hidden": []
 }
