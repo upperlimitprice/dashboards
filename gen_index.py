@@ -190,7 +190,8 @@ function item(k){return REG.find(x=>x.k===k);}
 function render(){
   const main=document.getElementById('main');
   main.innerHTML=state.main.map(k=>{const x=item(k);const rf=JOB[x.k]?`<button class='rf' title='데이터 수동 갱신' onclick='return refresh(event,"${x.k}")'>↻</button>`:'';return `<div class='card' draggable='true' data-k='${x.k}' onclick='go(event,"${x.h}")'>${x.t}<small>${x.d}</small>${rf}<button class='x' title='보관함으로' onclick='return rm(event,"${x.k}")'>✕</button></div>`;}).join('')||"<div class='empty'>보관함에서 ＋를 눌러 위젯을 추가하세요</div>";
-  const rest=REG.filter(x=>!state.main.includes(x.k));
+  const pool=ADMIN?REG:REG.filter(x=>pubMain().includes(x.k));  // 보관함 전체 목록은 관리자만 — 방문자는 공개 배치 중 자신이 뺀 위젯만 보임
+  const rest=pool.filter(x=>!state.main.includes(x.k));
   document.getElementById('sideList').innerHTML=rest.map(x=>`<div class='sitem'><span class='nm'>${x.t}</span><button class='add' onclick='addW("${x.k}")'>＋</button></div>`).join('')||"<div class='empty'>모든 위젯이 메인에 있습니다</div>";
   wireDrag();
 }
@@ -232,6 +233,7 @@ function applyAdmin(){
   }else{
     const rmv=state.removed||[];         // 커스텀: 유지 + 관리자가 새로 발행한 위젯만 뒤에 합류
     pubMain().forEach(k=>{if(!state.main.includes(k)&&!rmv.includes(k))state.main.push(k);});
+    state.main=state.main.filter(k=>pubMain().includes(k));  // 비공개 위젯이 예전 로컬 배치에 남아 있으면 제거
   }
   render();
 }
