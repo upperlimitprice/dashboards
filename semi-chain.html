@@ -35,11 +35,15 @@ tr.hl td{outline:2px solid var(--acc);outline-offset:-2px}
 .ic h3{font-size:14px;display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:6px;cursor:pointer}.ic h3:hover{color:var(--acc)}.ic .it{padding:7px 0;border-top:1px dashed var(--line)}.ic .it:first-of-type{border-top:0}
 .ic .it .t{font-size:13px;font-weight:700;line-height:1.45}.ic .it .m{font-size:11px;color:var(--mut);margin-bottom:2px}.ic .it .d{font-size:12px;color:var(--mut);line-height:1.6;margin-top:2px}.ic .mv{font-size:11.5px;color:var(--mut);margin-top:8px;line-height:1.7}
 .gobox{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px}.gobox div{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;cursor:pointer}.gobox div:hover{border-color:var(--acc)}.gobox b{font-size:16px;display:block;margin-bottom:4px}.gobox span{font-size:12.5px;color:var(--mut);line-height:1.6}
+/* 전체 보기 국가 타일: 한 줄 7칸 */
+.tiles.t7{grid-template-columns:repeat(7,minmax(0,1fr));gap:8px}.tiles.t7 .tile{padding:10px 11px}.tiles.t7 .k{font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.tiles.t7 .v{font-size:18px}.tiles.t7 .d{font-size:11px;line-height:1.5}
+@media(max-width:1000px){.tiles.t7{grid-template-columns:repeat(4,minmax(0,1fr))}.tiles.t7 .tile:first-child{grid-column:span 2}}
+@media(max-width:520px){.tiles.t7{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:900px){.ins-grid{grid-template-columns:1fr}.gobox{grid-template-columns:1fr}.issgrid{grid-template-columns:1fr}}
 @media(max-width:640px){h1{font-size:16px}#mm{height:700px}.tile .v{font-size:18px}.prod{min-width:120px}}
 </style></head><body><div class="wrap">
 <div class="card"><div class="top"><div><h1>🌐 글로벌 반도체 밸류체인</h1><div class="sub" id="sub"></div></div><button class="thm" id="thm">☀︎ 라이트</button></div></div>
-<div class="nav" id="nav"><button data-v="home">🏠 홈</button><button data-v="map">🧠 마인드맵</button><button data-v="heat">🔥 히트맵</button><button data-v="list">📋 기업목록</button></div>
+<div class="nav" id="nav"><button data-v="home">🏠 홈</button><button data-v="map">🧠 마인드맵</button><button data-v="list">📋 기업목록</button><button data-v="heat">🔥 히트맵</button></div>
 <div class="view" id="vHome">
  <div class="card" id="insCard"></div>
  <div class="tiles" id="pulse"></div>
@@ -96,13 +100,13 @@ function setDep(d){S.dep=d;document.querySelectorAll('#mmCtl [data-d]').forEach(
 function renderTiles(){let h='';
  if(S.ct==='ALL'){const a=C;h+=`<div class="tile"><div class="k">전체 시가총액</div><div class="v">${fB(sum(a))}</div><div class="d">${a.length}개사 · 시총가중 YTD ${fP(wYtd(a))}</div></div>`;
   CO.forEach(k=>{const b=C.filter(c=>c.country===k);if(!b.length)return;const best=[...b].filter(c=>c.ytd!=null).sort((x,y)=>y.ytd-x.ytd)[0];
-   h+=`<div class="tile cl" data-k="${k}"><div class="k">${CT[k].join(' ')} · ${b.length}개사</div><div class="v">${fB(sum(b))}</div><div class="d">YTD ${fP(wYtd(b))} · 최고 ${best?esc(best.name_ko)+' '+fP(best.ytd):'–'}</div></div>`})}
+   h+=`<div class="tile cl" data-k="${k}"><div class="k">${CT[k].join(' ')} · ${b.length}개사</div><div class="v">${fB(sum(b))}</div><div class="d">YTD ${fP(wYtd(b))}<br>최고 ${best?esc(best.name_ko)+' '+fP(best.ytd):'–'}</div></div>`})}
  else{const a=C.filter(inCt);const s=[...a].filter(c=>c.ytd!=null).sort((x,y)=>y.ytd-x.ytd);const top=a.slice().sort((x,y)=>(y.mcap_usd||0)-(x.mcap_usd||0))[0];
   h+=`<div class="tile"><div class="k">${CT[S.ct].join(' ')} 시가총액</div><div class="v">${fB(sum(a))}</div><div class="d">${a.length}개사 · 최대 ${top?esc(top.name_ko):'–'}</div></div>
   <div class="tile"><div class="k">시총가중 YTD</div><div class="v">${fP(wYtd(a))}</div><div class="d">상승 ${s.filter(c=>c.ytd>0).length} · 하락 ${s.filter(c=>c.ytd<0).length}</div></div>
   <div class="tile"><div class="k">YTD 상위</div><div class="d" style="font-size:12.5px">${s.slice(0,3).map(c=>`${esc(c.name_ko)} ${fP(c.ytd)}`).join('<br>')}</div></div>
   <div class="tile"><div class="k">YTD 하위</div><div class="d" style="font-size:12.5px">${s.slice(-3).reverse().map(c=>`${esc(c.name_ko)} ${fP(c.ytd)}`).join('<br>')}</div></div>`}
- $('#tiles').innerHTML=h;$('#tiles').querySelectorAll('.tile.cl').forEach(t=>t.onclick=()=>{S.ct=t.dataset.k;setDep(9);render();scrollTo({top:0})})}
+ $('#tiles').innerHTML=h;$('#tiles').classList.toggle('t7',S.ct==='ALL');$('#tiles').querySelectorAll('.tile.cl').forEach(t=>t.onclick=()=>{S.ct=t.dataset.k;setDep(9);render();scrollTo({top:0})})}
 
 /* 마인드맵 */
 let MM;
@@ -184,7 +188,7 @@ function renderHome(){const st=I.market||{};const A=st.all||{};
    ${it.length?it.map(x=>`<div class="it"><div class="m">${esc(x.date||'')} · ${CT[x.country]?CT[x.country][0]+' ':''}${esc(x.company||'')}</div><div class="t">${md(x.title||'')}</div>${x.detail?`<div class="d">${md(x.detail)}</div>`:''}</div>`).join(''):'<div class="note">최근 30일 아카이브에 관련 소식이 없습니다.</div>'}
    ${tops.length?`<div class="mv">하위 1W: ${tops.map(([l,v])=>`${esc(l)} ${fP(v)}`).join(' · ')}</div>`:''}</div>`}).join('');
  $('#iss').querySelectorAll('h3[data-l1]').forEach(h=>h.onclick=()=>{S.ct='ALL';S.l1=h.dataset.l1;S.l2=null;go_('list')});
- $('#gobox').innerHTML=[['map','🧠 밸류체인 마인드맵','국가별로 대분류 → 세부 카테고리 → 기업 구조와 YTD를 한눈에'],['heat','🔥 카테고리 × 국가 히트맵','어느 밸류체인·어느 나라가 강한지 시총가중 YTD로 비교'],['list','📋 기업 목록 '+C.length+'개사','제품·시총·YTD·분기 매출 추이·OPM·PER, 국가·카테고리별 필터']].map(([v,t,d])=>`<div data-v="${v}"><b>${t}</b><span>${d}</span></div>`).join('');
+ $('#gobox').innerHTML=[['map','🧠 밸류체인 마인드맵','국가별로 대분류 → 세부 카테고리 → 기업 구조와 YTD를 한눈에'],['list','📋 기업 목록 '+C.length+'개사','제품·시총·YTD·분기 매출 추이·OPM·PER, 국가·카테고리별 필터'],['heat','🔥 카테고리 × 국가 히트맵','어느 밸류체인·어느 나라가 강한지 시총가중 YTD로 비교']].map(([v,t,d])=>`<div data-v="${v}"><b>${t}</b><span>${d}</span></div>`).join('');
  $('#gobox').querySelectorAll('div[data-v]').forEach(b=>b.onclick=()=>go_(b.dataset.v))}
 let VIEW='home';
 function go_(v){if(location.hash.slice(1)!==v)location.hash=v;else show(v);scrollTo({top:0})}
