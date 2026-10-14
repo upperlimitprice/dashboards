@@ -43,7 +43,7 @@ tr.hl td{outline:2px solid var(--acc);outline-offset:-2px}
 @media(max-width:640px){h1{font-size:16px}#mm{height:700px}.tile .v{font-size:18px}.prod{min-width:120px}}
 </style></head><body><div class="wrap">
 <div class="card"><div class="top"><div><h1>🌐 글로벌 반도체 밸류체인</h1><div class="sub" id="sub"></div></div><button class="thm" id="thm">☀︎ 라이트</button></div></div>
-<div class="nav" id="nav"><button data-v="home">🏠 홈</button><button data-v="map">🧠 마인드맵</button><button data-v="list">📋 기업목록</button><button data-v="heat">🔥 히트맵</button></div>
+<div class="nav" id="nav"><button data-v="home">🏠 홈</button><button data-v="map">🧠 트리맵</button><button data-v="list">📋 기업목록</button><button data-v="heat">🔥 히트맵</button></div>
 <div class="view" id="vHome">
  <div class="card" id="insCard"></div>
  <div class="tiles" id="pulse"></div>
@@ -55,7 +55,7 @@ tr.hl td{outline:2px solid var(--acc);outline-offset:-2px}
 <div class="tiles" id="tiles"></div>
 </div>
 <div class="view" id="vMap">
-<div class="card"><h2>밸류체인 마인드맵<span class="s" id="mmS"></span></h2>
+<div class="card"><h2>밸류체인 트리맵<span class="s" id="mmS"></span></h2>
  <div class="ctl" id="mmCtl"><span class="lb">배치</span><button data-l="LR" class="on">가로 트리</button><button data-l="radial">방사형</button><span class="lb" style="margin-left:10px">펼침</span><button data-d="2" class="on">카테고리</button><button data-d="9">기업까지</button></div>
  <div id="mm"></div><div class="note">전체 보기는 세부 카테고리까지 펼쳐 둡니다(카테고리 노드를 누르거나 '기업까지'로 기업 표시). 기업 노드: 크기=시가총액, 색=YTD(빨강 상승·파랑 하락). 노드를 누르면 접고 펼치며, 기업을 누르면 아래 표에서 해당 행으로 이동합니다. 휠·핀치로 확대, 드래그로 이동.</div></div>
 </div>
@@ -108,7 +108,7 @@ function renderTiles(){let h='';
   <div class="tile"><div class="k">YTD 하위</div><div class="d" style="font-size:12.5px">${s.slice(-3).reverse().map(c=>`${esc(c.name_ko)} ${fP(c.ytd)}`).join('<br>')}</div></div>`}
  $('#tiles').innerHTML=h;$('#tiles').classList.toggle('t7',S.ct==='ALL');$('#tiles').querySelectorAll('.tile.cl').forEach(t=>t.onclick=()=>{S.ct=t.dataset.k;setDep(9);render();scrollTo({top:0})})}
 
-/* 마인드맵 */
+/* 트리맵 */
 let MM;
 function treeData(){const a=C.filter(inCt);const mx=Math.max(...a.map(c=>c.mcap_usd||0),1);
  const kids=L1S.map(l1=>{const ch=TAX[l1].map(l2=>{const cs=a.filter(c=>c.l1===l1&&c.l2===l2).sort((x,y)=>(y.mcap_usd||0)-(x.mcap_usd||0));if(!cs.length)return null;
@@ -188,7 +188,7 @@ function renderHome(){const st=I.market||{};const A=st.all||{};
    ${it.length?it.map(x=>`<div class="it"><div class="m">${esc(x.date||'')} · ${CT[x.country]?CT[x.country][0]+' ':''}${esc(x.company||'')}</div><div class="t">${md(x.title||'')}</div>${x.detail?`<div class="d">${md(x.detail)}</div>`:''}</div>`).join(''):'<div class="note">최근 30일 아카이브에 관련 소식이 없습니다.</div>'}
    ${tops.length?`<div class="mv">하위 1W: ${tops.map(([l,v])=>`${esc(l)} ${fP(v)}`).join(' · ')}</div>`:''}</div>`}).join('');
  $('#iss').querySelectorAll('h3[data-l1]').forEach(h=>h.onclick=()=>{S.ct='ALL';S.l1=h.dataset.l1;S.l2=null;go_('list')});
- $('#gobox').innerHTML=[['map','🧠 밸류체인 마인드맵','국가별로 대분류 → 세부 카테고리 → 기업 구조와 YTD를 한눈에'],['list','📋 기업 목록 '+C.length+'개사','제품·시총·YTD·분기 매출 추이·OPM·PER, 국가·카테고리별 필터'],['heat','🔥 카테고리 × 국가 히트맵','어느 밸류체인·어느 나라가 강한지 시총가중 YTD로 비교']].map(([v,t,d])=>`<div data-v="${v}"><b>${t}</b><span>${d}</span></div>`).join('');
+ $('#gobox').innerHTML=[['map','🧠 밸류체인 트리맵','국가별로 대분류 → 세부 카테고리 → 기업 구조와 YTD를 한눈에'],['list','📋 기업 목록 '+C.length+'개사','제품·시총·YTD·분기 매출 추이·OPM·PER, 국가·카테고리별 필터'],['heat','🔥 카테고리 × 국가 히트맵','어느 밸류체인·어느 나라가 강한지 시총가중 YTD로 비교']].map(([v,t,d])=>`<div data-v="${v}"><b>${t}</b><span>${d}</span></div>`).join('');
  $('#gobox').querySelectorAll('div[data-v]').forEach(b=>b.onclick=()=>go_(b.dataset.v))}
 let VIEW='home';
 function go_(v){if(location.hash.slice(1)!==v)location.hash=v;else show(v);scrollTo({top:0})}
