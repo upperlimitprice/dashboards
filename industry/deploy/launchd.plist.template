@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key><string>__LABEL__</string>
+  <key>ProgramArguments</key>
+  <array><string>/bin/zsh</string><string>__SCRIPT__</string></array>
+  <key>WorkingDirectory</key><string>__DIR__</string>
+  <key>StartCalendarInterval</key>
+  <dict><key>Hour</key><integer>__HOUR__</integer><key>Minute</key><integer>__MIN__</integer></dict>
+  <!-- 잠자기 중 놓친 실행은 깨어난 직후 1회 실행됨 -->
+  <key>StandardOutPath</key><string>__DIR__/logs/launchd.out</string>
+  <key>StandardErrorPath</key><string>__DIR__/logs/launchd.err</string>
+  <key>EnvironmentVariables</key>
+  <dict><key>PATH</key><string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin</string></dict>
+</dict>
+</plist>
