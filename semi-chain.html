@@ -38,7 +38,7 @@ tr.hl td{outline:2px solid var(--acc);outline-offset:-2px}
 <div class="card"><h2>카테고리 × 국가 YTD 히트맵<span class="s">시총가중 YTD · (기업 수) · 칸을 누르면 표 필터</span></h2><div class="hm" id="hm"></div></div>
 <div class="card" id="tblCard"><h2>기업 목록<span class="s" id="tS"></span></h2>
  <input class="search" id="q" placeholder="회사·티커·제품 검색 (예: HBM, 프로브카드, 식각, Tokyo)">
- <div class="ctl" id="l1Ctl"></div>
+ <div class="ctl" id="ctCtl"></div><div class="ctl" id="l1Ctl"></div>
  <div class="tblwrap"><table class="t" id="tbl"></table></div>
  <div class="note" id="tNote"></div></div>
 </div>
@@ -48,7 +48,7 @@ const $=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>"]/g,c=>(
 const CT={KR:['🇰🇷','한국'],JP:['🇯🇵','일본'],CN:['🇨🇳','중국'],TW:['🇹🇼','대만'],US:['🇺🇸','미국'],EU:['🇪🇺','유럽']};
 const CO=Object.keys(CT);const TAX=D.tax;const L1S=Object.keys(TAX);
 const C=D.companies;C.forEach((c,i)=>c.i=i);
-let S={ct:'ALL',l1:null,l2:null,q:'',sort:null,lay:'LR',dep:2,hl:null};
+let S={grp:'chain',ct:'ALL',l1:null,l2:null,q:'',sort:null,lay:'LR',dep:2,hl:null};
 const root=document.documentElement;const css=v=>getComputedStyle(root).getPropertyValue(v).trim();
 const setT=t=>{root.dataset.theme=t;$('#thm').textContent=t==='dark'?'☀︎ 라이트':'☾ 다크';try{localStorage.setItem('semi-theme',t)}catch(e){}};
 let t0='dark';try{t0=localStorage.getItem('semi-theme')||'dark'}catch(e){}setT(t0);
@@ -88,7 +88,7 @@ function treeData(){const a=C.filter(inCt);const mx=Math.max(...a.map(c=>c.mcap_
  return {name:S.ct==='ALL'?'🌐 글로벌 반도체':CT[S.ct].join(' ')+' 반도체',children:kids,symbolSize:16}}
 function renderMM(){const el=$('#mm');const td=treeData();const leaves=C.filter(inCt).length;const lr=S.lay==='LR';
  const nL2=td.children.reduce((s,x)=>s+x.children.length,0);const h=lr?(S.dep>2?Math.max(560,leaves*19+80):Math.max(480,nL2*30+60)):Math.min(Math.max(700,el.clientWidth),1300);el.style.height=h+'px';
- if(!MM)MM=echarts.init(el);else MM.resize();
+ if(MM)MM.dispose();MM=echarts.init(el);  // 트리 데이터가 바뀌면 새로 그림(기존 인스턴스 재사용 시 edge 오류)
  $('#mmS').textContent=`${S.ct==='ALL'?'전체':CT[S.ct][1]} ${leaves}개사`;
  const fs=innerWidth<640?10:11.5;
  MM.setOption({backgroundColor:'transparent',animation:false,tooltip:{trigger:'item',confine:true,formatter:p=>{const d=p.data;if(d.ci!=null){const c=C[d.ci];return `<b>${CT[c.country][0]} ${esc(c.name_ko)}</b> ${esc(c.ticker)}<br>${esc(c.products)}<br>시총 ${fB(c.mcap_usd)} · YTD ${fP(c.ytd)}<br>최근 분기 매출 ${fM(c.rev_last_usd_m)} (YoY ${c.rev_yoy==null?'–':(c.rev_yoy>0?'+':'')+c.rev_yoy+'%'})`}
@@ -125,16 +125,23 @@ function row(c){return `<tr data-i="${c.i}" class="${S.hl===c.i?'hl':''}"><td cl
  <td class="n">${fB(c.mcap_usd)}</td><td class="n">${fP(c.ytd)}</td><td class="n">${fP(c.m1)}</td><td>${spark(c.spark)}</td><td class="n">${fP(c.from_high)}</td>
  <td><div class="rv">${bars(c)}<div class="num">${fM(c.rev_last_usd_m)}<small class="mut">${c.qrev&&c.qrev.length?esc(c.qrev[c.qrev.length-1].q):''}</small></div></div></td>
  <td class="n">${fP(c.rev_yoy)}</td><td class="n">${c.opm==null?'–':c.opm.toFixed(1)+'%'}</td><td class="n">${c.per==null?'–':c.per.toFixed(1)}</td></tr>`}
-function renderTable(){renderL1();const q=S.q.trim().toLowerCase();
+function renderCt(){const n=k=>k==='ALL'?C.length:C.filter(c=>c.country===k).length;
+ $('#ctCtl').innerHTML='<span class="lb">국가</span>'+[['ALL','🌐 전체'],...CO.map(k=>[k,CT[k].join(' ')])].map(([k,l])=>`<button data-k="${k}" class="${S.ct===k?'on':''}">${l}<span class="c">${n(k)}</span></button>`).join('')
+  +'<span class="lb" style="margin-left:12px">묶음</span>'+[['chain','밸류체인별'],['ct','국가 → 밸류체인']].map(([k,l])=>`<button data-g="${k}" class="${S.grp===k?'on':''}">${l}</button>`).join('');
+ $('#ctCtl').querySelectorAll('[data-k]').forEach(b=>b.onclick=()=>{S.ct=b.dataset.k;S.l2=null;setDep(S.ct==='ALL'?2:9);render();$('#tblCard').scrollIntoView()});
+ $('#ctCtl').querySelectorAll('[data-g]').forEach(b=>b.onclick=()=>{S.grp=b.dataset.g;renderTable()})}
+function renderTable(){renderCt();renderL1();const q=S.q.trim().toLowerCase();
  let a=C.filter(inCt).filter(c=>(!S.l1||c.l1===S.l1)&&(!S.l2||c.l2===S.l2)&&(!q||[c.name_ko,c.name_en,c.ticker,c.products,c.l2].join(' ').toLowerCase().includes(q)));
  const hd='<tr>'+COLS.map((c,i)=>`<th class="${c.n?'n':''}" data-i="${i}">${c.h}<span class="ar">${S.sort&&S.sort.c===i?(S.sort.d<0?'▼':'▲'):''}</span></th>`).join('')+'</tr>';let body='';
  if(S.sort){const k=COLS[S.sort.c].k;a=a.slice().sort((x,y)=>{const u=k(x),v=k(y);if(u==null)return 1;if(v==null)return -1;return (u>v?1:u<v?-1:0)*S.sort.d});body=a.map(row).join('')}
+ else if(S.grp==='ct')CO.forEach(k=>{const b=a.filter(c=>c.country===k);if(!b.length)return;body+=`<tr class="g1"><td colspan="${COLS.length}">${CT[k].join(' ')} <span class="mut" style="font-weight:400;font-size:12px">· ${b.length}개사 · ${fB(sum(b))} · YTD ${fP(wYtd(b))}</span></td></tr>`;
+  L1S.forEach(l1=>TAX[l1].forEach(l2=>{const cs=b.filter(c=>c.l1===l1&&c.l2===l2).sort((x,y)=>(y.mcap_usd||0)-(x.mcap_usd||0));if(!cs.length)return;body+=`<tr class="g2"><td colspan="${COLS.length}">${esc(l1)} › ${esc(l2)} · ${cs.length} · YTD ${fP(wYtd(cs))}</td></tr>`+cs.map(row).join('')}))})
  else L1S.forEach(l1=>{const b=a.filter(c=>c.l1===l1);if(!b.length)return;body+=`<tr class="g1"><td colspan="${COLS.length}">${esc(l1)} <span class="mut" style="font-weight:400;font-size:12px">· ${b.length}개사 · ${fB(sum(b))} · YTD ${fP(wYtd(b))}</span></td></tr>`;
   TAX[l1].forEach(l2=>{const cs=b.filter(c=>c.l2===l2).sort((x,y)=>(y.mcap_usd||0)-(x.mcap_usd||0));if(!cs.length)return;body+=`<tr class="g2"><td colspan="${COLS.length}">${esc(l2)} · ${cs.length} · YTD ${fP(wYtd(cs))}</td></tr>`+cs.map(row).join('')})});
  $('#tbl').innerHTML=hd+body;$('#tS').textContent=`${a.length}개사${S.l2?' · '+S.l2:''}`;
  $('#tbl').querySelectorAll('th').forEach(th=>th.onclick=()=>{const i=+th.dataset.i;if(!COLS[i].k)return;S.sort=!S.sort||S.sort.c!==i?{c:i,d:-1}:S.sort.d<0?{c:i,d:1}:null;renderTable()});
  $('#tNote').innerHTML='정렬: 열 제목 1번 클릭 내림차순 · 2번 오름차순 · 3번 원래 순서(카테고리별 묶음). 분기 매출 막대는 최근 8개 분기(파란 막대=최신), 금액은 USD 환산, 막대에 마우스를 올리면 분기별 값. PER은 최근 4분기 EPS 합 기준(적자·통화 불일치 시 –).'}
 $('#q').oninput=e=>{S.q=e.target.value;renderTable()};
-function render(){renderTabs();renderTiles();renderMM();renderHM();renderTable()}
+function render(){renderTabs();renderTiles();renderHM();renderTable();try{renderMM()}catch(e){console.warn(e)}}
 render();addEventListener('resize',()=>MM&&MM.resize());
 </script></body></html>
