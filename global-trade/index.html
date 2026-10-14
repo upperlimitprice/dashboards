@@ -8,7 +8,11 @@
 <style>
 :root{--bg:#0f1318;--card:#171c23;--ink:#e6eaf0;--sub:#98a2b3;--line:#2a313b;--acc:#5b8cff;--up:#ff6b6b;--dn:#5b9cf0;--pos:#2fbf71;--neg:#ff6b6b;color-scheme:dark}  /* 다크 기본 */
 :root[data-theme=light]{--bg:#f6f7f9;--card:#fff;--ink:#1c2430;--sub:#6b7480;--line:#e3e6ea;--acc:#2563eb;--up:#d63c3c;--dn:#2f6fd6;--pos:#1a9e5c;--neg:#d63c3c;color-scheme:light}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Pretendard,"Malgun Gothic",sans-serif;padding:16px 16px 40px}
+/* 이전·다음 화면 버튼 (좌상단 고정) */
+.navbtns{position:fixed;top:10px;left:10px;z-index:60;display:flex;gap:4px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:3px;box-shadow:0 4px 14px rgba(0,0,0,.35)}
+.navbtns button{font:inherit;font-size:13px;font-weight:700;width:34px;height:30px;border:0;border-radius:7px;background:transparent;color:var(--ink);cursor:pointer;padding:0}
+.navbtns button:hover:not(:disabled){background:var(--line)}.navbtns button:disabled{opacity:.3;cursor:default}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Pretendard,"Malgun Gothic",sans-serif;padding:52px 16px 40px}
 h1{font-size:20px;margin:0 0 4px}.sub{color:var(--sub);font-size:12px;margin-bottom:14px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-bottom:14px}
 .row{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end}.row>div{display:flex;flex-direction:column;gap:4px}
@@ -35,7 +39,7 @@ tr:hover td{background:rgba(37,99,235,.05)}td.hs{font-family:ui-monospace,Menlo,
 @media (max-width:480px){body{padding:12px 16px 30px}.chart{height:300px}}
 </style>
 </head>
-<body>
+<body><div class="navbtns"><button id="navPrev" title="이전 화면 (Alt+←)" aria-label="이전 화면">◀</button><button id="navNext" title="다음 화면 (Alt+→)" aria-label="다음 화면">▶</button></div>
 <h1>🧅 Global Export Tracker</h1>
 <div class="sub" id="genInfo">데이터 로딩 중…</div>
 
@@ -213,6 +217,7 @@ async function init(){
   $('#ppiCountry').onchange=e=>loadPpi(e.target.value);
   renderHome();
   await loadOrigin(os.includes('US')?'US':os[0]);
+  history.replaceState({i:0,s:navSnap()},'');navState();
   loadCondPresets();loadSurgePresets();
 }
 async function loadOrigin(o,flow){
@@ -224,10 +229,22 @@ async function loadOrigin(o,flow){
   if(!curHs||!SER.series[curHs]){const top=SURGE.items.slice().sort((a,b)=>b.v-a.v)[0];curHs=top?top.hs:''}
   fillHmMonths();renderSeries();renderSurge();if(tmTab==='tree')renderTree();else renderHeat();renderPartner();
 }
-$('#origin').onchange=e=>loadOrigin(e.target.value,FLOW);$('#flow').onchange=e=>loadOrigin(ORIGIN,e.target.value);
+$('#origin').onchange=e=>loadOrigin(e.target.value,FLOW).then(()=>navPush());$('#flow').onchange=e=>loadOrigin(ORIGIN,e.target.value).then(()=>navPush());
 const TABS=['home','series','combined','surge','treemap','partner','hs','ppi','my'];
 function showTab(t){document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('on',x.dataset.tab===t));TABS.forEach(x=>{const el=$('#p-'+x);if(el)el.hidden=x!==t});['p-home2','p-home3'].forEach(id=>$('#'+id).hidden=t!=='home');Object.values(charts).forEach(c=>c.resize());if(t==='combined')renderCombined();if(t==='my')renderMy();if(t==='ppi'&&!PPI){const pc=Object.keys(META.ppi||{});if(pc.length)loadPpi(pc.includes('US')?'US':pc[0])}}
 document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>showTab(b.dataset.tab));
+// ── 이전·다음 화면: 탭·수집국·방향·HS코드를 브라우저 기록에 남겨 ◀▶(·Alt+←→·마우스 뒤로가기)로 복원
+let NAV={i:0,max:0},RESTORING=false;const _showTab=showTab;
+function navSnap(){const b=document.querySelector('.tabs button.on');return {tab:b?b.dataset.tab:'home',o:ORIGIN,f:FLOW,hs:curHs||''}}
+function navState(){$('#navPrev').disabled=NAV.i<=0;$('#navNext').disabled=NAV.i>=NAV.max}
+function navPush(){if(RESTORING||!ORIGIN)return;const s=navSnap(),c=history.state&&history.state.s;if(c&&JSON.stringify(c)===JSON.stringify(s))return;
+  NAV.i++;NAV.max=NAV.i;history.pushState({i:NAV.i,s},'');navState()}
+showTab=function(t){_showTab(t);navPush()};
+addEventListener('popstate',async e=>{const st=e.state;if(!st||!st.s)return;NAV.i=st.i;RESTORING=true;
+  try{const s=st.s;curHs=s.hs;if(s.o!==ORIGIN||s.f!==FLOW){$('#origin').value=s.o;$('#flow').value=s.f;await loadOrigin(s.o,s.f)}
+    if(s.hs)$('#hsq').value=s.hs;_showTab(s.tab);if(s.tab==='series'||s.tab==='partner'){renderSeries();renderPartner()}}
+  finally{RESTORING=false}navState();scrollTo({top:0})});
+$('#navPrev').onclick=()=>history.back();$('#navNext').onclick=()=>history.forward();
 
 // ── HS 검색 드롭다운(현재 국가)
 $('#hsq').oninput=()=>{const q=$('#hsq').value.trim().toLowerCase();const dd=$('#dd');if(q.length<2||!SER){dd.hidden=true;return}
