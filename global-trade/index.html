@@ -1,13 +1,13 @@
 <!doctype html>
-<html lang="ko">
+<html lang="ko" data-theme="dark">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Global Export Tracker</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
 <style>
-:root{--bg:#f6f7f9;--card:#fff;--ink:#1c2430;--sub:#6b7480;--line:#e3e6ea;--acc:#2563eb;--up:#d63c3c;--dn:#2f6fd6;--pos:#1a9e5c;--neg:#d63c3c}
-@media (prefers-color-scheme: dark){:root{--bg:#0f1318;--card:#171c23;--ink:#e6eaf0;--sub:#98a2b3;--line:#2a313b;--acc:#5b8cff}}
+:root{--bg:#0f1318;--card:#171c23;--ink:#e6eaf0;--sub:#98a2b3;--line:#2a313b;--acc:#5b8cff;--up:#ff6b6b;--dn:#5b9cf0;--pos:#2fbf71;--neg:#ff6b6b;color-scheme:dark}  /* 다크 기본 */
+:root[data-theme=light]{--bg:#f6f7f9;--card:#fff;--ink:#1c2430;--sub:#6b7480;--line:#e3e6ea;--acc:#2563eb;--up:#d63c3c;--dn:#2f6fd6;--pos:#1a9e5c;--neg:#d63c3c;color-scheme:light}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Pretendard,"Malgun Gothic",sans-serif;padding:16px 16px 40px}
 h1{font-size:20px;margin:0 0 4px}.sub{color:var(--sub);font-size:12px;margin-bottom:14px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-bottom:14px}
@@ -192,7 +192,7 @@ let META,ORIGIN='',FLOW='X',SER,NAMES,SURGE,TREE,curHs='',PPI=null;
 const charts={};
 function ch(id){if(!charts[id])charts[id]=echarts.init(document.getElementById(id),null,{renderer:'canvas'});return charts[id]}
 window.addEventListener('resize',()=>Object.values(charts).forEach(c=>c.resize()));
-const dark=matchMedia('(prefers-color-scheme: dark)').matches;const txt=dark?'#e6eaf0':'#1c2430';
+const dark=document.documentElement.dataset.theme!=='light';const txt=dark?'#e6eaf0':'#1c2430';
 const base={textStyle:{color:txt},tooltip:{trigger:'axis',axisPointer:{type:'cross'}},toolbox:{feature:{dataZoom:{yAxisIndex:'none',title:{zoom:'드래그 확대',back:'되돌리기'}},restore:{title:'초기화'},saveAsImage:{title:'저장'}}},dataZoom:[{type:'inside'},{type:'slider',height:18,bottom:6}],grid:{left:70,right:80,top:60,bottom:70}};
 const miniBase={textStyle:{color:txt},tooltip:{trigger:'axis'},grid:{left:55,right:20,top:24,bottom:28}};
 // ── 로컬 저장 (즐겨찾기·프리셋·메모)
