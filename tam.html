@@ -59,7 +59,7 @@ body{padding-top:52px}
 <div class="all" id="all"><div class="allgrid" id="allgrid"></div></div></div>
 <div id="homeTop"><div class="card" id="insCard"><div class="ins-head">💡 <b>TAM 인사이트</b><span class="ins-asof" id="insAsof"></span></div><div class="mom" id="insMom"></div><div class="ins-grid" id="insBody"></div></div>
 </div>
-<div class="card" id="home"><h2>🗺️ 전체 가지 마인드맵 — 카테고리 → 세그먼트 → 하위 (숫자 = 수집된 TAM 포인트)</h2>
+<div class="card" id="home"><h2>🗺️ 전체 가지 트리맵 — 카테고리 → 세그먼트 → 하위 (숫자 = 수집된 TAM 포인트)</h2>
 <div class="ctl"><span class="lb">배치</span><button data-mm="radial" class="on">방사형</button><button data-mm="lr">가로 트리</button><span class="lb" style="margin-left:10px">펼침</span><button data-depth="2" class="on">카테고리·세그먼트</button><button data-depth="3">하위까지 전부</button><button data-depth="1">카테고리만</button><span class="lb" style="margin-left:10px">표시</span><button data-only="1">데이터 있는 가지만</button><button data-only="0" class="on">모든 가지</button><button id="copyMM" style="margin-left:auto">📋 이미지 복사</button></div>
 <div id="mm" class="chart"></div>
 <div class="note">클릭 = 가지 펼침/접기 · <b>더블클릭</b> = 해당 TAM 페이지로 이동 · 끝 가지(하위)는 클릭하면 바로 이동. 휠·드래그로 확대·이동. 가지 색 = 카테고리, 점 크기 = 포인트 수. 회색 작은 점 = 아직 데이터 없는 가지(추출기가 채울 자리).</div></div>
@@ -111,7 +111,7 @@ $('#sugg').addEventListener('click',e=>{const d=e.target.closest('div[data-i]');
 document.addEventListener('click',e=>{if(!e.target.closest('.search'))$('#sugg').style.display='none';});
 // ---------- navigation ----------
 function go(cat,seg,sub){CAT=cat||null;SEG=seg||null;SUB=sub||null;YEAR='all';MET='all';const h=CAT?[CAT,SEG,SUB].filter(Boolean).map(encodeURIComponent).join('/'):'';if(location.hash.slice(1)!==h){NAV.i++;NAV.max=NAV.i;history.pushState({i:NAV.i},'','#'+h);}render();navState();window.scrollTo({top:0,behavior:'smooth'});}
-function crumb(){$('#crumb').innerHTML=`<span data-nav="home">🏠 홈(마인드맵)</span>`+(CAT?` <i>›</i> ${SEG?`<span data-nav="cat">${D.tax[CAT].icon} ${CAT}</span>`:`<b>${D.tax[CAT].icon} ${CAT}</b>`}`:'')+(SEG?` <i>›</i> ${SUB?`<span data-nav="seg">${SEG}</span>`:`<b>${SEG}</b>`}`:'')+(SUB?` <i>›</i> <b>${SUB}</b>`:'');}
+function crumb(){$('#crumb').innerHTML=`<span data-nav="home">🏠 홈(트리맵)</span>`+(CAT?` <i>›</i> ${SEG?`<span data-nav="cat">${D.tax[CAT].icon} ${CAT}</span>`:`<b>${D.tax[CAT].icon} ${CAT}</b>`}`:'')+(SEG?` <i>›</i> ${SUB?`<span data-nav="seg">${SEG}</span>`:`<b>${SEG}</b>`}`:'')+(SUB?` <i>›</i> <b>${SUB}</b>`:'');}
 function cats(){$('#cats').innerHTML=`<button data-cat="" class="${CAT==null?'on':''}">🏠 홈</button>`+CATS.map(c=>`<button data-cat="${c}" class="${c===CAT?'on':''}">${D.tax[c].icon} ${c}<span class="c">${cnt.cat(c)}</span></button>`).join('');
  if(!CAT){$('#segs').innerHTML='';$('#subs').innerHTML='';return;}
  $('#segs').innerHTML=`<span class="lb">세그먼트</span><button data-seg="" class="${SEG==null?'on':''}">전체</button>`+segsOf(CAT).map(s=>{const n=cnt.seg(CAT,s);return `<button data-seg="${s}" class="${s===SEG?'on':''}${n?'':' empty'}">${s}<span class="c" style="opacity:.6;font-size:.7rem;margin-left:3px">${n}</span></button>`}).join('');
@@ -235,7 +235,7 @@ document.addEventListener('click',e=>{const b=e.target.closest('button');const n
  if(b&&b.dataset.only!==undefined){MM.only=+b.dataset.only;document.querySelectorAll('[data-only]').forEach(x=>x.classList.toggle('on',x===b));mindmap();return;}
  if(b&&b.id==='allBtn'){const o=$('#all').classList.toggle('open');b.textContent=o?'📋 전체 카테고리 목록 접기':'📋 전체 카테고리 목록 펼치기';return;}
  if(b&&b.id==='copyBtn'){copyImg(C,`${[CAT,SEG,SUB].filter(Boolean).join(' › ')} TAM 궤적 (${YEAR==='all'?'전체 목표연도':YEAR})`,b,'tam.png');return;}
- if(b&&b.id==='copyMM'){copyImg(M,'산업 TAM 트래커 — 카테고리 → 세그먼트 → 하위 마인드맵',b,'tam_mindmap.png');return;}
+ if(b&&b.id==='copyMM'){copyImg(M,'산업 TAM 트래커 — 카테고리 → 세그먼트 → 하위 트리맵',b,'tam_mindmap.png');return;}
  const l=e.target.closest('.lnk,.subchips span');if(l&&l.dataset.cat){go(l.dataset.cat,l.dataset.seg||null,l.dataset.sub||null);}});
 $('#unitSel').addEventListener('change',e=>{UNIT=e.target.value;chart();});$('#metSel').addEventListener('change',e=>{MET=e.target.value;chart();});
 document.querySelectorAll('#t1 th[data-k]').forEach(th=>th.onclick=()=>{const k=th.dataset.k;if(sort1.k!==k){sort1={k,d:1}}else sort1.d=sort1.d===1?2:sort1.d===2?0:1;table1();});
