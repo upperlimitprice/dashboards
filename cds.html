@@ -131,6 +131,26 @@ BT.forEach(([lbl,dd],bi)=>{
     const cut=new Date(P(days[days.length-1])-dd*86400000).toISOString().slice(0,10);
     i0=days.findIndex(d=>d>=cut);if(i0<0)i0=0;i1=days.length-1;draw();};
   bts.appendChild(b);});
+// 이미지 복사: 현재 보이는 구간의 SVG → PNG(2배, 상단 제목 바 합성) → 클립보드, 미지원 브라우저는 다운로드
+const cb=document.createElement('button');cb.textContent='이미지 복사';cb.className='zb';cb.style.marginLeft='auto';
+cb.onclick=async()=>{
+  const svg=box.querySelector('#cdssvg');if(!svg)return;
+  const sc=2,TH=40,cl=svg.cloneNode(true);cl.setAttribute('font-family','"Noto Sans KR","Apple SD Gothic Neo",sans-serif');
+  const url=URL.createObjectURL(new Blob([new XMLSerializer().serializeToString(cl)],{type:'image/svg+xml;charset=utf-8'}));
+  const img=new Image();
+  img.onload=async()=>{
+    const cv=document.createElement('canvas');cv.width=W*sc;cv.height=(H+TH)*sc;const g=cv.getContext('2d');g.scale(sc,sc);
+    g.fillStyle='#fff';g.fillRect(0,0,W,H+TH);
+    g.fillStyle='#1f2a37';g.font='bold 16px "Noto Sans KR",sans-serif';g.fillText('빅테크 5년 CDS 프리미엄 (bp)',14,26);
+    g.fillStyle='#6b7785';g.font='12px "Noto Sans KR",sans-serif';const sub=days[i0]+' ~ '+days[i1];g.fillText(sub,W-14-g.measureText(sub).width,26);
+    g.drawImage(img,0,TH,W,H);URL.revokeObjectURL(url);
+    cv.toBlob(async blob=>{
+      const done=t=>{cb.textContent=t;setTimeout(()=>cb.textContent='이미지 복사',1500);};
+      try{await navigator.clipboard.write([new ClipboardItem({'image/png':blob})]);done('복사됨 ✓');}
+      catch(e){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='cds_'+days[i1]+'.png';a.click();done('다운로드됨');}
+    },'image/png');};
+  img.src=url;};
+bts.appendChild(cb);
 draw();
 })();
 </script></div>
