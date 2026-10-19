@@ -246,6 +246,9 @@ function applyAdmin(){
   if(ADMIN){document.body.classList.add('admin');pubBtn.style.display='';return;}
   pubBtn.style.display='none';
   document.body.classList.remove('admin');
+  // 관리자가 새로 '공개 배치 발행'을 하면(버전 변경) 커스텀 여부와 관계없이 발행 배치로 동기화 — 외부 공유 링크가 메인 서버와 같은 순서·구성
+  const pv=(PUB&&PUB.ver)||'';
+  if(pv&&localStorage.getItem('dashPubVer')!==pv){localStorage.removeItem('dashCustom');localStorage.setItem('dashPubVer',pv);state={main:pubMain()};localStorage.setItem(KEY,JSON.stringify(state));}
   if(localStorage.getItem('dashCustom')!=='1'){
     state={main:pubMain()};              // 미커스텀: 메인 계정 발행 배치 그대로
   }else{
@@ -264,7 +267,7 @@ pubBtn.onclick=async()=>{
   try{
     const r=await fetch(url+'/publish-layout',{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({main:state.main})}).then(x=>x.json());
-    if(r.status==='published'){PUB={main:state.main.slice()};
+    if(r.status==='published'){PUB={main:state.main.slice(),hidden:[...HIDDEN],ver:r.ver};
       toast(`공개 배치 발행 완료 (${r.n}개) — 외부 접속자에게 이 구성이 보입니다`);}
     else toast('발행 실패: '+(r.error||'알 수 없음'));
   }catch(e){toast('발행 실패: 서버 연결 불가');}
