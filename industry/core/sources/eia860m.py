@@ -43,7 +43,10 @@ def latest(today=None, lookback=8):
     for _ in range(lookback):
         url = URL.format(m=calendar.month_name[m].lower(), y=y)
         try:
-            return get(url, timeout=180, cache_hours=24), f"{y:04d}-{m:02d}"
+            b = get(url, timeout=180, cache_hours=24)
+            if b[:2] == b"PK":  # 미공개 월은 404 대신 200 HTML(소프트 404)을 돌려줌 → xlsx(zip)일 때만 채택
+                return b, f"{y:04d}-{m:02d}"
+            last_err = f"{url}: xlsx 아님(미공개 월)"
         except NotFound as e:
             last_err = e
         m -= 1
