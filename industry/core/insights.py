@@ -16,7 +16,7 @@ PROMPT = """너는 한국 주식 리서치 애널리스트다. 아래는 '산업
 - 구역명은 정확히 다음 키를 사용: {groups}
 - 각 구역은 그 구역 페이지들의 KPI로만 쓴다. 증감 방향(가속/둔화)과 의미를 짚고, 데이터 기준일이 오래된 지표는 '(기준 YYYY-MM)'처럼 밝혀라.
 - 문체: 모두 음슴체(~했음, ~임, ~됨, ~보임, ~필요). '~다/~습니다' 금지.
-- 핵심 숫자·결론은 **굵게**, 가장 중요한 결론 2~3개(전체에서)만 __굵게+밑줄__.
+- 핵심 숫자·결론은 **굵게**. 밑줄(__굵게+밑줄__)은 종합 bullets에서 가장 중요한 결론 2~3개, 그리고 각 구역마다 그 구역의 가장 중요한 결론 1개에 반드시 표시(남발 금지).
 - 데이터에 없는 수치·뉴스를 지어내지 말 것.
 
 [KPI]
@@ -61,29 +61,48 @@ def notify(new, old, text):
     """인사이트가 바뀌면 거니봇(본인)으로: 종합 인사이트 + 변동 지표(이전→현재) + 바뀐 구역."""
     import urllib.request
     from pathlib import Path
+    # 가독성: 구역(카테고리)·페이지마다 빈 줄로 블록을 나누고, 줄은 짧게 (2026-10-19 사용자 지시)
     L = ["📊 <b>산업 트래커 인사이트 " + ("갱신" if old.get("headline") else "최초 작성") + f"</b> · {new['at']}", "",
-         f"<b><u>{_md_tg(new['headline'])}</u></b>", "", "▪️ <b>종합</b>"]
-    L += [f"- {_md_tg(b)}" for b in new["bullets"]]
+         f"<b><u>{_md_tg(new['headline'])}</u></b>", "", "━━━━━━━━━━", "🧭 <b>종합</b>", ""]
+    for b in new["bullets"]:
+        L += [f"▫️ {_md_tg(b)}", ""]
     if old.get("kpis"):
         a, b = _kpi_map(old["kpis"]), _kpi_map(new["kpis"])
         ch = [(k, a.get(k), b[k]) for k in b if a.get(k) != b[k]]
         if ch:
-            L += ["", f"▪️ <b>🔄 변동 지표 {len(ch)}건</b>"]
-            for (pg, lab), o, n in ch[:15]:
-                L.append(f"- {pg} · {lab}: {o or '신규'} → <b>{n}</b>")
+            L += ["━━━━━━━━━━", f"🔄 <b>변동 지표 {len(ch)}건</b>", ""]
+            pages_ = []
+            for (pg, _), _, _ in ch:
+                if pg not in pages_:
+                    pages_.append(pg)
+            for pg in pages_:
+                L.append(f"▪️ <b>{pg}</b>")
+                for (p2, lab), o, n in ch:
+                    if p2 == pg:
+                        L.append(f"   {lab}: {o or '신규'} → <b>{n}</b>")
+                L.append("")
         gch = [g for g in new["groups"] if new["groups"].get(g) != old.get("groups", {}).get(g)]
-        if gch:
-            L += ["", "▪️ <b>✏️ 인사이트가 바뀐 구역</b>"]
-            for g in gch:
-                L.append(f"<b>{g}</b>")
-                L += [f"  · {_md_tg(x)}" for x in new["groups"][g]]
+        show = gch
+        title = "✏️ <b>인사이트가 바뀐 구역</b>"
     else:
-        L += [""] + sum([[f"<b>{g}</b>"] + [f"  · {_md_tg(x)}" for x in xs] for g, xs in new["groups"].items()], [])
-    L += ["", "🔗 https://upperlimitprice.github.io/dashboards/industry.html (공개본은 수동 반영)"]
+        show = list(new["groups"])
+        title = "📂 <b>구역별 인사이트</b>"
+    if show:
+        L += ["━━━━━━━━━━", title, ""]
+        for g in show:
+            L.append(f"▪️ <b>{g}</b>")
+            L += [f"   · {_md_tg(x)}" for x in new["groups"][g]]
+            L.append("")
+    L += ["🔗 https://upperlimitprice.github.io/dashboards/industry.html (공개본은 수동 반영)"]
     msg = "\n".join(L)
     tok = re.search(r'token:\s*"([^"]+)"', (Path.home() / "analyst-bot/config.yaml").read_text()).group(1)
-    for i in range(0, len(msg), 3900):  # 텔레그램 4096자 제한
-        part = msg[i:i + 3900]
+    parts, cur = [], ""
+    for blk in msg.split("\n\n"):  # 텔레그램 4096자 제한 — 빈 줄 블록 단위로 나눔
+        if len(cur) + len(blk) + 2 > 3900:
+            parts.append(cur); cur = ""
+        cur = f"{cur}\n\n{blk}" if cur else blk
+    parts.append(cur)
+    for part in parts:
         try:
             urllib.request.urlopen(urllib.request.Request(f"https://api.telegram.org/bot{tok}/sendMessage", data=json.dumps(
                 {"chat_id": 6206020319, "text": part, "parse_mode": "HTML", "disable_web_page_preview": True}).encode(),
