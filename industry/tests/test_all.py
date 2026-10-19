@@ -75,7 +75,7 @@ def fake_860m():
     return xlsx({"Operating": op, "Planned": pl, "Retired": rt})
 
 
-def fake_raw():
+def _fake_raw_base():
     today = date(2026, 10, 1)
     days = [(today - timedelta(days=d)).isoformat() for d in range(4 * 365 + 40, 0, -1)]
     demand = {code: {d: wave(i, base, .15, .0001) for i, d in enumerate(days)}
@@ -102,6 +102,86 @@ def fake_raw():
                   "kr_module": trade(5e7, "2022-01"), "kr_cell": trade(1e7, "2022-01")},
     }
 
+
+
+def fake_power_nowcast(days):
+    from pages.power_nowcast import summarize_860m as _pn_860m, PPI as _PN_PPI, HS_US as _PN_HS
+    return {
+        "errors": [], "missing": [],
+        "demand": {c: {d: wave(i, b, .15, .0001) for i, d in enumerate(days)}
+                   for c, b in (("US48", 11e6), ("PJM", 2.2e6), ("ERCO", 1.3e6), ("SOCO", .7e6), ("AZPS", .2e6), ("SRP", .1e6))},
+        "demand_sub": {c: {d: wave(i, b, .15, .0001) for i, d in enumerate(days)} for c, b in (("DOM", .4e6), ("AEP", .5e6))},
+        "retail": {f"{sec}_{f}": {s: monthly(b if f == "sales" else 9) for s, b in
+                                  (("VA", 6000), ("TX", 15000), ("GA", 5000), ("AZ", 3000), ("OH", 4000), ("US", 120000))}
+                   for sec in ("COM", "IND") for f in ("sales", "price")},
+        "supply": {"file_month": "2026-08", "regions": _pn_860m(eia860m.parse(fake_860m()), 2026)},
+        **{f"ppi_{sid}": monthly(300) for sid, _ in _PN_PPI},
+        "kr_850423_all": trade(1.2e8, "2020-01"),
+        **{f"kr_{hs}_us": trade(5e7, "2020-01") for hs, _ in _PN_HS},
+    }
+
+
+def fake_gas_lng():
+    from pages import gas_lng as G
+    today = date(2026, 10, 1)
+    sh = eia860m.parse(fake_860m())
+    days = [(today - timedelta(days=d)).isoformat() for d in range(6 * 365, 0, -1)]
+    weeks = [(date(2026, 10, 2) - timedelta(days=7 * w)).isoformat() for w in range(9 * 52, 0, -1)]
+    return {"errors": [], "missing": [],
+            "eia860m": {"file_month": "2026-08", "snapshot": G.snapshot(sh, "2026-08"),
+                        "top_plants": G.top_plants(sh["Planned"]), "additions": G.gas_additions(sh["Operating"])},
+            "gas_snapshots": {"2025-08": G.snapshot(sh, "2025-08"), "2026-08": G.snapshot(sh, "2026-08")},
+            "backfill_done": True,
+            "henry_hub": {d: wave(i, 3.0, .2, .0001) for i, d in enumerate(days)},
+            "storage": {d: wave(i, 2800, .3, .0002) for i, d in enumerate(weeks)},
+            "power_burn": monthly(1.1e6), "lng_exports": monthly(2e5), "dry_prod": monthly(3e6),
+            "lng_terminals": {n: monthly(3e4, "2021-01") for _, n in G.LNG_TERMINALS[:4]},
+            "steo": {sid: {**monthly(b, "2023-01"), **{k: b for k in months("2026-09", "2027-12")}}
+                     for sid, b in (("NGEPGEN_US", 150), ("NGEPCON", 35), ("NGEXPUS_LNG", 16),
+                                    ("NGHHUUS", 3.5), ("NGPRPUS", 110), ("NGEPCGW_US", 500))},
+            "steo_vintages": [{"asof": "2026-09-10", "vals": {"NGEXPUS_LNG": {"2026": 15.5, "2027": 18.0}}},
+                              {"asof": "2026-10-08", "vals": {"NGEXPUS_LNG": {"2026": 15.6, "2027": 18.6}}}]}
+
+
+def fake_plan_actual():
+    ms = months("2024-09", "2026-08")
+    gens, hist = {}, {}
+    for g in range(120):
+        t = "SBWN"[g % 4] if g % 10 else "S"
+        start, due = g % 12, 6 + g % 9
+        toks = []
+        for j in range(len(ms)):
+            if j < start:
+                toks.append(""); continue
+            d = start + due + (j - start) // 6 * (g % 3)
+            yy, mm = divmod(2024 * 12 + 8 + d, 12)
+            if g % 7 == 0 and j >= start + 4:
+                toks.append("C")
+            elif j >= d:
+                toks.append(f"O{yy % 100:02d}{mm + 1:02d}")
+            else:
+                toks.append(f"{yy % 100:02d}{mm + 1:02d}{['P', 'L', 'T', 'U', 'V', 'TS'][(g + j) % 6]}")
+        gens[f"{g}-1"] = [t, ["TX", "CA", "AZ", "FL"][g % 4], 50.0 + g]
+        hist[f"{g}-1"] = ",".join(toks)
+    op_mw = {m: {"B": {"US": 30000 + 800 * j, "TX": 9000 + 400 * j, "CA": 13000 + 150 * j},
+                 "S": {"US": 130000 + 1500 * j, "TX": 25000 + 500 * j}} for j, m in enumerate(ms)}
+    end = date(2026, 10, 16)
+    ds = [(end - timedelta(days=d)).isoformat() for d in range(800, -1, -1)]
+    nuc = {d: [100000.0, 3000.0 + 15000.0 * (d[5:7] in ("03", "04", "10"))] for d in ds}
+    bat = {"ERCO": {d: [20000 + i * 10, 21000 + i * 10] for i, d in enumerate(ds)},
+           "US48": {d: [40000 + i * 15, 38000 + i * 15] for i, d in enumerate(ds)}}
+    return {"h860": {"months": ms, "gens": gens, "hist": hist, "op_mw": op_mw},
+            "nuc": nuc, "nuc_fac": {"date": ds[-1], "rows": [["Palo Verde", 4003.0, 1333.0], ["Vogtle", 4530.0, 0.0]]},
+            "bat": bat, "errors": [], "missing": []}
+
+
+def fake_raw():
+    raw = _fake_raw_base()
+    days = [(date(2026, 10, 1) - timedelta(days=d)).isoformat() for d in range(4 * 365 + 40, 0, -1)]
+    raw["power_nowcast"] = fake_power_nowcast(days)
+    raw["gas_lng"] = fake_gas_lng()
+    raw["plan_actual"] = fake_plan_actual()
+    return raw
 
 class Parsers(unittest.TestCase):
     def test_sec_quarterly_from_ytd(self):

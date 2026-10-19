@@ -1,3 +1,5 @@
-# 컨테이너 스팟 운임 기록 (WCI·SCFI 등) — index 별로 선이 그려집니다. date=YYYY-MM-DD
-# 예) 2026-10-09,WCI 종합($/FEU),2150
+# 자동 누적 — feeds_sync.py (상하이해운거래소 SCFI 종합 · Drewry WCI 종합 $/FEU). 매 실행 시 최신값 추가.
 date,index,value
+2026-10-09,SCFI 종합,3664.1
+2026-10-15,WCI 종합($/FEU),4485.0
+2026-10-16,SCFI 종합,3679.6

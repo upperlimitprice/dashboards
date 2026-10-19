@@ -7,7 +7,7 @@
 """
 import importlib
 
-ORDER = ["gen_capacity", "grid", "auto", "datacenter", "freight", "mlcc_lead", "solar"]
+ORDER = ["power_nowcast", "gas_lng", "plan_actual", "gen_capacity", "grid", "auto", "datacenter", "freight", "mlcc_lead", "solar"]
 
 
 def load(key):

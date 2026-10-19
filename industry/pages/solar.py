@@ -101,7 +101,7 @@ def build(raw):
     price = manual.series_by(manual.read("solar_prices.csv"), "item")
     if price:
         pk = sorted(set().union(*price.values()))
-        P.chart(page, "price", "밸류체인 가격 (수동 입력)", pk,
+        P.chart(page, "price", "밸류체인 스팟 가격 (InfoLink 주간·SunSirs 일별, 자동)", pk,
                 [P.series(n, S.align(pk, d, 3), slot=i if i < 8 else -1) for i, (n, d) in enumerate(price.items())])
     page["notes"].append("폴리실리콘·웨이퍼·셀·모듈 주간 스팟가는 기존 '태양광 밸류체인 스팟가격'(solar-price.html)을 보세요. "
                          "직접 기록하려면 manual/solar_prices.csv 에 추가하면 됩니다.")

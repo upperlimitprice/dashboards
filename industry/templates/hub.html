@@ -17,7 +17,7 @@ h1{font-size:22px;margin:0 0 4px}.sub{color:var(--text2);margin:0 0 18px}
 a.card{display:block;text-decoration:none;color:inherit;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px}
 a.card:hover{border-color:var(--accent)}
 .card h2{font-size:15px;margin:0}.card p{color:var(--text2);font-size:12px;margin:2px 0 10px}
-.ks{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.ks{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.ks>div{min-width:0;overflow-wrap:anywhere}a.card{min-width:0}
 .k .l{color:var(--muted);font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .k .v{font-weight:650;font-variant-numeric:tabular-nums}.k .v small{font-weight:500;color:var(--text2);font-size:11px;margin-left:2px}
 .k .d{font-size:11px;font-variant-numeric:tabular-nums}.up{color:var(--up)}.down{color:var(--down)}

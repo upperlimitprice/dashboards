@@ -80,7 +80,7 @@ def build(raw):
     spot = manual.series_by(manual.read("freight_spot.csv"), "index")
     if spot:
         sk = sorted(set().union(*spot.values()))
-        P.chart(page, "spot", "컨테이너 스팟 운임 (수동 입력)", sk,
+        P.chart(page, "spot", "컨테이너 스팟 운임 (SCFI·Drewry WCI, 매일 자동 누적)", sk,
                 [P.series(n, S.align(sk, d, 0), slot=i) for i, (n, d) in enumerate(spot.items())], unit="")
     page["notes"].append("SCFI·CCFI·BDI 일별 지수는 기존 '해상 운임 지수' 대시보드(shipping.html)를 함께 보세요. "
                          "WCI 등 유료 지수를 직접 기록하려면 manual/freight_spot.csv 에 추가하면 이 페이지에 그려집니다.")
