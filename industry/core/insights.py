@@ -83,10 +83,10 @@ def notify(new, old, text):
                 L.append("")
         gch = [g for g in new["groups"] if new["groups"].get(g) != old.get("groups", {}).get(g)]
         show = gch
-        title = "✏️ <b>인사이트가 바뀐 구역</b>"
+        title = "✏️ <b>바뀐 개별 인사이트</b>"
     else:
         show = list(new["groups"])
-        title = "📂 <b>구역별 인사이트</b>"
+        title = "📂 <b>개별 인사이트</b>"
     if show:
         L += ["━━━━━━━━━━", title, ""]
         for g in show:
