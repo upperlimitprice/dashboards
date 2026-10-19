@@ -34,15 +34,13 @@
   "screening.html",
   "shipping.html",
   "power-ppi.html",
-  "trendforce.html",
   "global-trade.html",
   "stockmap.html",
   "capa.html",
+  "trendforce.html",
   "tam.html",
   "semi-chain.html",
-  "chartpack.html",
-  "feargreed.html",
-  "curiox-ir.html"
+  "chartpack.html"
  ],
  "hidden": []
 }
