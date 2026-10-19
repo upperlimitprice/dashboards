@@ -40,6 +40,9 @@ h1{font-size:22px;margin:0}
 .badge{display:inline-block;border-radius:10px;padding:1px 9px;font-size:12px;font-weight:600;color:#fff}
 .lv-bot,.lv-bot_near{background:var(--up)}.lv-top,.lv-top_near{background:var(--dn)}.lv-mid,.lv-na{background:#8a93a0}
 .ic .k{color:var(--sub)}
+.ic .dir{font-weight:700;margin-top:3px}
+.ic .gap{height:6px}
+.ic .li{padding-left:.9em;text-indent:-.9em}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(680px,100%),1fr));gap:14px}
 .ch h2{font-size:15.5px;margin:0}
 .chh{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;margin-bottom:6px}
@@ -92,12 +95,15 @@ $('#now').innerHTML=nowCard('🇰🇷','KOSPI 공포·탐욕',K.score,K.rating,O
 // 인사이트 박스
 const sg=v=>v==null?'–':(v>0?'+':'')+v;
 $('#ins').innerHTML=D.charts.map(c=>{const i=c.ins,lv=i.lv||'na';
- const body=i.bot==null?`<div class="k">${i.n}거래일 누적 — 변곡점(하단·상단 각 3회 이상)이 쌓이면 임계 산출</div><div>현재 오실레이터 <b>${sg(i.cur)}</b> (전일 대비 ${sg(i.chg)}) · F&amp;G <b>${i.fg}</b></div>`:
- `<div>현재 오실레이터 <b>${sg(i.cur)}</b> <span class="k">(전일 대비 ${sg(i.chg)})</span> · F&amp;G <b>${i.fg}</b></div>
-  <div><span class="k">하단 변곡 임계</span> <b style="color:var(--up)">${i.bot}</b> <span class="k">(F&amp;G ${i.bot_fg} · ${i.nb}회 · 이후 20일 ${c.ix} 평균 ${sg(i.bot_r20)}%, 상승 확률 ${i.bot_win}%)</span></div>
-  <div><span class="k">상단 변곡 임계</span> <b style="color:var(--dn)">${sg(i.top)}</b> <span class="k">(F&amp;G ${i.top_fg} · ${i.nt}회 · 이후 20일 ${c.ix} 평균 ${sg(i.top_r20)}%)</span></div>
-  <div class="k">최근 하단 변곡 ${i.last_bot.d} (${i.last_bot.osc}) · 최근 상단 변곡 ${i.last_top.d} (+${i.last_top.osc})</div>`;
- return `<div class="ic"><div class="t"><b>${c.ix}</b><span class="k">${c.fgname}</span><span class="badge lv-${lv}">${i.bot==null?'데이터 축적 중':i.status.split(' — ')[0]}</span></div>${i.bot!=null&&i.status.includes(' — ')?`<div class="k">${i.status.split(' — ')[1]}</div>`:''}${body}</div>`}).join('');
+ const L=t=>`<div class="li">- ${t}</div>`,dir=(i.chg||0)>0;
+ const body=i.bot==null?`<div class="k">${i.n}거래일 누적 — 변곡점(하단·상단 각 3회 이상)이 쌓이면 임계 산출</div><div class="gap"></div>`+L(`현재 오실레이터 <b>${sg(i.cur)}</b> <span class="k">(전일 대비 ${sg(i.chg)})</span> · F&amp;G <b>${i.fg}</b>`):
+  L(`현재 오실레이터 <b>${sg(i.cur)}</b> <span class="k">(전일 대비 ${sg(i.chg)})</span> · F&amp;G <b>${i.fg}</b>`)
+  +L(`하단 변곡 임계 <b style="color:var(--up)">${i.bot}</b> <span class="k">(F&amp;G ${i.bot_fg} · ${i.nb}회 · 이후 20일 ${c.ix} 평균 ${sg(i.bot_r20)}%, 상승 확률 ${i.bot_win}%)</span>`)
+  +L(`상단 변곡 임계 <b style="color:var(--dn)">${sg(i.top)}</b> <span class="k">(F&amp;G ${i.top_fg} · ${i.nt}회 · 이후 20일 ${c.ix} 평균 ${sg(i.top_r20)}%)</span>`)
+  +L(`최근 하단 변곡 <span class="k">${i.last_bot.d} (${i.last_bot.osc})</span>`)
+  +L(`최근 상단 변곡 <span class="k">${i.last_top.d} (+${i.last_top.osc})</span>`);
+ const sub=i.bot!=null&&i.status.includes(' — ')?`<div class="dir" style="color:${dir?'var(--up)':'var(--dn)'}">${dir?'🔺':'🔽'} ${i.status.split(' — ')[1]}</div><div class="gap"></div>`:'';
+ return `<div class="ic"><div class="t"><b>${c.ix}</b><span class="k">${c.fgname}</span><span class="badge lv-${lv}">${i.bot==null?'데이터 축적 중':i.status.split(' — ')[0]}</span></div>${sub}${body}</div>`}).join('');
 // 차트
 const RANGES=[['1m',21],['3m',63],['6m',126],['1y',252],['3y',756],['all',1e9]];
 const RL={'1m':'1M','3m':'3M','6m':'6M','1y':'1Y','3y':'3Y','all':'전체'};
