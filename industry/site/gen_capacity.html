@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>⚡ 미국 발전설비 파이프라인</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
+<style>
+:root{
+  color-scheme:light;
+  --bg:#f4f4f2;--surface:#fcfcfb;--border:#e4e3df;--grid:#ecebe7;
+  --text:#0b0b0b;--text2:#52514e;--muted:#7d7c77;
+  --up:#008300;--down:#d03b3b;--warn:#a86b00;
+  --s1:#2a78d6;--s2:#eb6834;--s3:#1baf7a;--s4:#eda100;--s5:#e87ba4;--s6:#008300;--s7:#6250d6;--s8:#e34948;--sx:#a3a29c;
+}
+@media (prefers-color-scheme:dark){
+  :root:where(:not([data-theme="light"])){
+    color-scheme:dark;
+    --bg:#111110;--surface:#1a1a19;--border:#2c2c2a;--grid:#262624;
+    --text:#f0efec;--text2:#c3c2b7;--muted:#8f8e86;
+    --up:#3fb950;--down:#f0716f;--warn:#e0a63a;
+    --s1:#3987e5;--s2:#d95926;--s3:#199e70;--s4:#c98500;--s5:#d55181;--s6:#008300;--s7:#9085e9;--s8:#e66767;--sx:#6b6a64;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#111110;--surface:#1a1a19;--border:#2c2c2a;--grid:#262624;
+  --text:#f0efec;--text2:#c3c2b7;--muted:#8f8e86;
+  --up:#3fb950;--down:#f0716f;--warn:#e0a63a;
+  --s1:#3987e5;--s2:#d95926;--s3:#199e70;--s4:#c98500;--s5:#d55181;--s6:#008300;--s7:#9085e9;--s8:#e66767;--sx:#6b6a64;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:14px/1.5 -apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Pretendard","Segoe UI",sans-serif}
+.wrap{max-width:1200px;margin:0 auto;padding:20px 16px 48px}
+a{color:var(--s1)}
+.top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+h1{font-size:22px;margin:0 0 4px}
+.sub{color:var(--text2);margin:0}
+.meta{color:var(--muted);font-size:12px;text-align:right}
+.meta a{color:var(--muted)}
+.banner{margin:14px 0 0;padding:10px 12px;border:1px solid var(--border);border-left:3px solid var(--warn);background:var(--surface);border-radius:8px;color:var(--text2);font-size:13px}
+.banner b{color:var(--text)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin:18px 0}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 14px}
+.kpi .l{color:var(--text2);font-size:12px}
+.kpi .v{font-size:24px;font-weight:650;letter-spacing:-.01em;margin:2px 0;font-variant-numeric:tabular-nums}
+.kpi .v small{font-size:13px;font-weight:500;color:var(--text2);margin-left:3px}
+.kpi .d{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.kpi .d .up{color:var(--up)}.kpi .d .down{color:var(--down)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,520px),1fr));gap:12px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 14px 10px;min-width:0}
+.card h2{font-size:14px;margin:0 0 2px}
+.card .note{color:var(--muted);font-size:12px;margin:0 0 6px}
+.chart{height:320px;width:100%}
+details{margin-top:6px}
+summary{cursor:pointer;color:var(--muted);font-size:12px}
+.tbl{overflow-x:auto;margin-top:6px}
+table{border-collapse:collapse;width:100%;font-size:12px;font-variant-numeric:tabular-nums}
+th,td{padding:5px 8px;border-bottom:1px solid var(--grid);text-align:right;white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+th{color:var(--text2);font-weight:600;position:sticky;top:0;background:var(--surface)}
+.section{margin-top:22px}
+.section h3{font-size:13px;color:var(--text2);margin:0 0 8px}
+ul.notes{color:var(--text2);font-size:13px;padding-left:18px;margin:0}
+.empty{padding:40px 16px;text-align:center;color:var(--muted);background:var(--surface);border:1px dashed var(--border);border-radius:10px}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<script id="page-data" type="application/json">{"key":"gen_capacity","title":"⚡ 미국 발전설비 파이프라인","subtitle":"EIA-860M 월간 발전기 인벤토리 — 기술별 가동 용량·연도별 신규·계획(공사중)·폐지","updated":"2026-10-19 11:08","status":"ok","errors":[],"kpis":[{"label":"가동 중 설비","value":1411.5,"unit":"GW","delta":null,"delta_label":"YoY","delta_unit":"%","asof":"EIA-860M 2026-08"},{"label":"향후 12개월 계획 추가","value":83.8,"unit":"GW","delta":null,"delta_label":"YoY","delta_unit":"%","asof":"2026-09~"},{"label":"공사 중(U·V)","value":79.9,"unit":"GW","delta":null,"delta_label":"YoY","delta_unit":"%","asof":null},{"label":"계획 중 태양광+ESS 비중","value":64.7,"unit":"%","delta":null,"delta_label":"YoY","delta_unit":"%","asof":null},{"label":"2026년 누적 신규 가동","value":35.7,"unit":"GW","delta":null,"delta_label":"YoY","delta_unit":"%","asof":null}],"charts":[{"id":"planned","title":"연도별 계획 신규 용량 (전체 상태)","kind":"bar","x":["2026","2027","2028","2029","2030","2031"],"series":[{"name":"태양광","data":[26.62,43.37,30.09,16.19,4.69,1.3],"slot":0},{"name":"ESS","data":[12.09,25.1,14.79,9.02,2.18,1.22],"slot":1},{"name":"풍력","data":[3.4,9.97,3.66,2.09,0.25,2.52],"slot":2},{"name":"가스","data":[3.28,12.26,17.12,14.54,18.13,2.34],"slot":3},{"name":"원전","data":[0.0,0.0,0.0,0.0,0.5,2.23],"slot":4},{"name":"수력","data":[0.01,0.66,2.18,0.08,0.07,0.04],"slot":6},{"name":"석유","data":[0.02,0.15,0.01,0.0,0.0,0.0],"slot":7},{"name":"기타","data":[0.06,0.19,0.08,0.15,0.0,0.0],"slot":-1}],"unit":"GW","stack":true,"note":"인허가 전 단계(P·L)까지 포함 — 실제 가동은 이보다 적게 나오는 경향","window":null},{"id":"planned_uc","title":"연도별 계획 신규 용량 — 공사 중(U·V)만","kind":"bar","x":["2026","2027","2028","2029","2030","2031"],"series":[{"name":"태양광","data":[15.32,15.29,2.97,0.9,0.67,0.0],"slot":0},{"name":"ESS","data":[9.33,9.79,0.89,0.35,0.25,0.0],"slot":1},{"name":"풍력","data":[2.46,7.61,0.0,0.09,0.0,1.69],"slot":2},{"name":"가스","data":[0.22,4.92,2.87,1.45,0.0,0.0],"slot":3},{"name":"수력","data":[0.0,0.01,0.0,0.0,0.0,0.0],"slot":6},{"name":"석유","data":[0.02,0.03,0.0,0.0,0.0,0.0],"slot":7},{"name":"기타","data":[0.0,0.11,0.03,0.0,0.0,0.0],"slot":-1}],"unit":"GW","stack":true,"note":"","window":null},{"id":"adds","title":"연도별 실제 신규 가동 (가동 연도 기준)","kind":"bar","x":["2011","2012","2013","2014","2015","2016","2017","2018","2019","2020","2021","2022","2023","2024","2025","2026"],"series":[{"name":"태양광","data":[0.76,1.61,3.55,3.82,3.55,8.11,5.25,4.95,5.85,10.65,13.78,11.3,19.82,31.16,29.64,14.68],"slot":0},{"name":"ESS","data":[0.0,0.06,0.0,0.02,0.09,0.17,0.12,0.22,0.2,0.58,3.13,4.31,7.23,11.06,16.35,10.84],"slot":1},{"name":"풍력","data":[6.67,13.35,0.87,5.03,8.25,8.79,6.61,7.08,8.53,14.89,13.85,9.48,6.64,5.16,6.27,6.99],"slot":2},{"name":"가스","data":[10.93,11.44,8.05,9.35,7.11,9.38,10.77,21.7,8.75,7.14,7.36,7.05,9.87,2.44,5.26,3.13],"slot":3},{"name":"원전","data":[0.0,0.0,0.0,0.0,0.0,1.27,0.0,0.0,0.0,0.0,0.0,0.0,1.11,1.11,0.0,0.0],"slot":4},{"name":"석탄","data":[4.25,3.04,1.34,0.0,0.0,0.0,0.0,0.0,0.0,0.02,0.0,0.0,0.0,0.0,0.01,0.0],"slot":5},{"name":"수력","data":[0.16,0.35,0.42,0.18,0.14,0.38,0.21,0.14,0.02,0.15,0.08,0.02,0.02,0.0,0.0,0.0],"slot":6},{"name":"석유","data":[0.39,0.27,0.27,0.08,0.1,0.09,0.07,0.05,0.06,0.09,0.05,0.06,0.06,0.05,0.06,0.03],"slot":7},{"name":"기타","data":[0.31,0.61,0.89,0.28,0.33,0.11,0.25,0.28,0.27,0.1,0.04,0.23,0.15,0.08,0.1,0.0],"slot":-1}],"unit":"GW","stack":true,"note":"","window":null},{"id":"retire","title":"연도별 폐지 (실적 + 계획)","kind":"bar","x":["2016","2017","2018","2019","2020","2021","2022","2023","2024","2025","2026","2027","2028","2029","2030","2031"],"series":[{"name":"태양광","data":[0.0,0.0,0.0,0.01,0.0,0.28,0.01,0.06,0.0,0.01,0.0,0.0,0.01,0.0,0.01,0.01],"slot":0},{"name":"ESS","data":[0.0,0.02,0.0,0.0,0.01,0.01,0.06,0.02,0.03,0.33,0.01,0.0,0.0,0.0,0.0,0.0],"slot":1},{"name":"풍력","data":[0.04,0.06,0.01,0.18,0.24,0.3,0.31,0.16,0.07,0.02,0.0,0.08,0.0,0.0,0.0,0.09],"slot":2},{"name":"가스","data":[8.02,5.69,8.0,4.69,3.15,1.87,2.32,6.57,5.96,1.16,4.58,3.58,2.68,2.48,1.6,2.59],"slot":3},{"name":"원전","data":[0.5,0.0,0.55,0.67,1.98,1.01,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.69,0.0],"slot":4},{"name":"석탄","data":[8.7,6.95,14.61,14.46,12.13,6.4,15.12,9.52,4.46,2.63,4.12,7.08,12.85,3.52,3.79,3.65],"slot":5},{"name":"수력","data":[0.11,0.12,0.05,0.16,0.01,0.03,0.01,0.05,0.19,0.03,0.0,0.0,0.0,0.0,0.01,0.0],"slot":6},{"name":"석유","data":[1.19,0.86,2.43,0.49,1.37,0.84,0.69,0.33,0.28,1.08,0.18,0.01,0.04,0.79,0.16,0.0],"slot":7},{"name":"기타","data":[0.35,0.22,0.52,0.89,0.26,0.36,0.44,0.62,0.48,0.46,0.04,0.01,0.0,0.04,0.03,0.0],"slot":-1}],"unit":"GW","stack":true,"note":"2026년 이후는 사업자 제출 계획","window":null},{"id":"op","title":"기술별 가동 용량","kind":"bar","x":["가스","석탄","태양광","풍력","원전","수력","ESS","석유","기타"],"series":[{"name":"가동 용량","data":[581.4,181.6,169.0,166.7,103.7,102.3,54.5,32.0,20.3]}],"unit":"GW","stack":false,"note":"","window":null}],"tables":[{"title":"주별 계획 용량 상위 15 (GW)","columns":["주","계획 전체","공사 중","태양광+ESS"],"rows":[["TX",94.17,19.56,64.1],["CA",20.05,6.51,17.9],["AZ",15.41,6.15,13.23],["LA",11.35,0.68,1.82],["IL",7.82,2.11,4.17],["OR",7.78,0.45,7.48],["VA",7.37,3.56,3.66],["WY",7.21,3.55,2.53],["NY",7.14,3.28,4.53],["GA",6.87,0.8,4.35],["NV",6.67,1.85,6.65],["CO",6.58,3.09,4.36],["PA",6.53,0.35,1.99],["AR",6.17,3.26,4.61],["OK",5.62,1.63,2.34]],"note":""}],"sources":[{"name":"EIA-860M Monthly Generator Inventory","url":"https://www.eia.gov/electricity/data/eia860m/"}],"notes":["계획 용량은 사업자가 EIA에 제출한 일정 기준이며, 지연·취소가 잦습니다. 공사 중(U·V) 수치가 더 보수적인 지표입니다."]}</script>
+<script>
+const P = JSON.parse(document.getElementById('page-data').textContent);
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function fmt(v, d=1){ if(v==null||isNaN(v)) return '—'; const a=Math.abs(v); return v.toLocaleString('ko-KR',{maximumFractionDigits: a>=1000?0:d}); }
+function fmtAxis(v){ const a=Math.abs(v); if(a>=1e9) return (v/1e9).toFixed(1)+'B'; if(a>=1e6) return (v/1e6).toFixed(1)+'M'; if(a>=1e4) return (v/1e3).toFixed(0)+'K'; return v.toLocaleString('ko-KR'); }
+
+function renderStatic(){
+  const app = document.getElementById('app');
+  let h = `<div class="top"><div><h1>${esc(P.title)}</h1><p class="sub">${esc(P.subtitle)}</p></div>
+    <div class="meta">갱신 ${esc(P.updated)}<br><a href="index.html">← 산업 트래커 목록</a></div></div>`;
+  if (P.errors.length) h += `<div class="banner"><b>일부 데이터를 가져오지 못했습니다</b> — ${P.errors.map(esc).join(' · ')}</div>`;
+  if (P.kpis.length) h += `<div class="kpis">${P.kpis.map(k => {
+      let d = '';
+      if (k.delta != null) { const cls = k.delta > 0 ? 'up' : k.delta < 0 ? 'down' : ''; d = `${esc(k.delta_label)} <span class="${cls}">${k.delta>0?'▲':k.delta<0?'▼':''} ${fmt(Math.abs(k.delta))}${esc(k.delta_unit)}</span>`; }
+      if (k.asof) d += `${d?' · ':''}${esc(k.asof)}`;
+      return `<div class="kpi"><div class="l">${esc(k.label)}</div><div class="v">${fmt(k.value)}<small>${esc(k.unit)}</small></div><div class="d">${d||'&nbsp;'}</div></div>`;
+    }).join('')}</div>`;
+  if (!P.charts.length && !P.tables.length) h += `<div class="empty">아직 수집된 데이터가 없습니다. 맥미니에서 <code>python run.py ${esc(P.key)}</code> 를 실행하세요.</div>`;
+  h += `<div class="grid">${P.charts.map(c => `<div class="card"><h2>${esc(c.title)}</h2>${c.note?`<p class="note">${esc(c.note)}</p>`:''}
+      <div class="chart" id="c-${esc(c.id)}" role="img" aria-label="${esc(c.title)}"></div>
+      <details><summary>표로 보기</summary><div class="tbl">${chartTable(c)}</div></details></div>`).join('')}</div>`;
+  for (const t of P.tables) h += `<div class="section card"><h2>${esc(t.title)}</h2>${t.note?`<p class="note">${esc(t.note)}</p>`:''}<div class="tbl"><table><thead><tr>${t.columns.map(c=>`<th>${esc(c)}</th>`).join('')}</tr></thead><tbody>${t.rows.map(r=>`<tr>${r.map(v=>`<td>${typeof v==='number'?fmt(v):esc(v)}</td>`).join('')}</tr>`).join('')}</tbody></table></div></div>`;
+  if (P.notes.length) h += `<div class="section"><h3>메모</h3><ul class="notes">${P.notes.map(n=>`<li>${esc(n)}</li>`).join('')}</ul></div>`;
+  if (P.sources.length) h += `<div class="section"><h3>출처</h3><ul class="notes">${P.sources.map(s=>`<li><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.name)}</a></li>`).join('')}</ul></div>`;
+  app.innerHTML = h;
+}
+function chartTable(c){
+  const rows = c.x.map((x,i)=>[x, ...c.series.map(s=>s.data[i])]).reverse();
+  return `<table><thead><tr><th></th>${c.series.map(s=>`<th>${esc(s.name)}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map((v,j)=>`<td>${j?fmt(v):esc(v)}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
+}
+
+const charts = [];
+function option(c){
+  const pal = [1,2,3,4,5,6,7,8].map(i=>css('--s'+i)), gray = css('--sx');
+  const txt2 = css('--text2'), muted = css('--muted'), grid = css('--grid'), surface = css('--surface');
+  const n = c.x.length, win = c.window && n > c.window ? c.window : (n > 60 ? 60 : n);
+  const zoom = n > win;
+  return {
+    animation:false, textStyle:{fontFamily:'inherit', color:txt2},
+    grid:{left:6, right:14, top:c.series.length>1?34:14, bottom:zoom?44:6, containLabel:true},
+    tooltip:{trigger:'axis', axisPointer:{type:c.kind==='bar'?'shadow':'line'}, confine:true,
+      valueFormatter:v=>v==null?'—':fmt(v)+(c.unit?' '+c.unit:'')},
+    legend:c.series.length>1?{type:'scroll', top:0, icon:'roundRect', itemWidth:10, itemHeight:10, textStyle:{color:txt2}}:undefined,
+    dataZoom:zoom?[{type:'inside', startValue:n-win, endValue:n-1},{type:'slider', height:16, bottom:6, startValue:n-win, endValue:n-1, borderColor:grid, textStyle:{color:muted}}]:[],
+    xAxis:{type:'category', data:c.x, axisTick:{show:false}, axisLine:{lineStyle:{color:grid}}, axisLabel:{color:muted}},
+    yAxis:{type:'value', name:c.unit, nameTextStyle:{color:muted, align:'left'}, splitLine:{lineStyle:{color:grid}}, axisLabel:{color:muted, formatter:fmtAxis}},
+    series:c.series.map((s,i)=>{
+      const k = s.kind || c.kind, color = s.slot === -1 ? gray : pal[(s.slot ?? i) % 8];
+      const o = {name:s.name, type:k==='bar'?'bar':'line', data:s.data, color, emphasis:{focus:'series'}};
+      if (k==='bar') Object.assign(o, {barMaxWidth:28, stack:c.stack?'t':undefined,
+        itemStyle:{borderRadius:c.stack?0:[4,4,0,0], borderColor:surface, borderWidth:c.stack?1:0}});
+      else Object.assign(o, {showSymbol:false, symbolSize:8, connectNulls:true, lineStyle:{width:2},
+        stack:c.stack?'t':undefined, areaStyle:k==='area'?{opacity:c.stack?.85:.18}:undefined});
+      return o;
+    }),
+  };
+}
+function drawCharts(){
+  charts.splice(0).forEach(ch=>ch.dispose());
+  if (typeof echarts === 'undefined') return;
+  for (const c of P.charts){
+    const el = document.getElementById('c-'+c.id);
+    if (!el) continue;
+    const ch = echarts.init(el, null, {renderer:'canvas'});
+    ch.setOption(option(c));
+    charts.push(ch);
+  }
+}
+renderStatic();
+drawCharts();
+addEventListener('resize', ()=>charts.forEach(c=>c.resize()));
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change', drawCharts);
+</script>
+</body>
+</html>

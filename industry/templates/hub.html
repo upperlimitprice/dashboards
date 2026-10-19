@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>산업 트래커</title>
+<style>
+:root{color-scheme:light;--bg:#f4f4f2;--surface:#fcfcfb;--border:#e4e3df;--text:#0b0b0b;--text2:#52514e;--muted:#7d7c77;--up:#008300;--down:#d03b3b;--warn:#a86b00;--accent:#2a78d6}
+@media (prefers-color-scheme:dark){:root:where(:not([data-theme="light"])){color-scheme:dark;--bg:#111110;--surface:#1a1a19;--border:#2c2c2a;--text:#f0efec;--text2:#c3c2b7;--muted:#8f8e86;--up:#3fb950;--down:#f0716f;--warn:#e0a63a;--accent:#3987e5}}
+:root[data-theme="dark"]{color-scheme:dark;--bg:#111110;--surface:#1a1a19;--border:#2c2c2a;--text:#f0efec;--text2:#c3c2b7;--muted:#8f8e86;--up:#3fb950;--down:#f0716f;--warn:#e0a63a;--accent:#3987e5}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:14px/1.5 -apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Pretendard","Segoe UI",sans-serif}
+.wrap{max-width:1200px;margin:0 auto;padding:20px 16px 48px}
+h1{font-size:22px;margin:0 0 4px}.sub{color:var(--text2);margin:0 0 18px}
+.sub a{color:var(--muted)}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,340px),1fr));gap:12px}
+a.card{display:block;text-decoration:none;color:inherit;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px}
+a.card:hover{border-color:var(--accent)}
+.card h2{font-size:15px;margin:0}.card p{color:var(--text2);font-size:12px;margin:2px 0 10px}
+.ks{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.k .l{color:var(--muted);font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.k .v{font-weight:650;font-variant-numeric:tabular-nums}.k .v small{font-weight:500;color:var(--text2);font-size:11px;margin-left:2px}
+.k .d{font-size:11px;font-variant-numeric:tabular-nums}.up{color:var(--up)}.down{color:var(--down)}
+.foot{display:flex;justify-content:space-between;color:var(--muted);font-size:11px;margin-top:10px}
+.st{font-weight:600}.st.error,.st.skipped,.st.partial{color:var(--warn)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>산업 트래커</h1>
+<p class="sub">발전설비 · 전력망 · 자동차 · 데이터센터 · 화물 · MLCC · 태양광 — 공개 데이터 자동 수집 · <a href="../../index.html">← 전체 대시보드</a></p>
+<div class="cards" id="cards"></div>
+</div>
+<script id="hub-data" type="application/json">__DATA__</script>
+<script>
+// ?t=/c/<key> 형태 링크 지원 (예: index.html?t=%2Fc%2Fgrid)
+const T = new URLSearchParams(location.search).get('t');
+const C = JSON.parse(document.getElementById('hub-data').textContent);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt = v => v==null ? '—' : v.toLocaleString('ko-KR',{maximumFractionDigits:Math.abs(v)>=1000?0:1});
+const ST = {ok:'정상', partial:'일부 실패', error:'실패', skipped:'키 필요', pending:'수집 전'};
+const hit = T && C.find(c => T.replace(/\/+$/,'') === '/c/' + c.key);
+if (hit) location.replace(hit.key + '.html');
+document.getElementById('cards').innerHTML = C.map(c => `<a class="card" href="${esc(c.key)}.html">
+  <h2>${esc(c.title)}</h2><p>${esc(c.subtitle)}</p>
+  <div class="ks">${(c.kpis||[]).slice(0,3).map(k=>`<div class="k"><div class="l">${esc(k.label)}</div><div class="v">${fmt(k.value)}<small>${esc(k.unit)}</small></div><div class="d ${k.delta>0?'up':k.delta<0?'down':''}">${k.delta==null?'&nbsp;':(k.delta>0?'▲':'▼')+' '+fmt(Math.abs(k.delta))+esc(k.delta_unit)+' '+esc(k.delta_label)}</div></div>`).join('')}</div>
+  <div class="foot"><span class="st ${esc(c.status)}">${ST[c.status]||esc(c.status)}</span><span>${esc(c.updated||'')}</span></div></a>`).join('');
+</script>
+</body>
+</html>

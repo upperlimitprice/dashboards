@@ -1,0 +1,3 @@
+# MLCC 리드타임 기록 — 한 줄에 한 건. date=확인일(YYYY-MM-DD), weeks=주 단위 범위, source=출처 메모
+# 예) 2026-10-01,Murata,고용량 0402,12,16,유통사 리포트
+date,vendor,category,weeks_min,weeks_max,source

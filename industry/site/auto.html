@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>🚗 한국 자동차 수출</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
+<style>
+:root{
+  color-scheme:light;
+  --bg:#f4f4f2;--surface:#fcfcfb;--border:#e4e3df;--grid:#ecebe7;
+  --text:#0b0b0b;--text2:#52514e;--muted:#7d7c77;
+  --up:#008300;--down:#d03b3b;--warn:#a86b00;
+  --s1:#2a78d6;--s2:#eb6834;--s3:#1baf7a;--s4:#eda100;--s5:#e87ba4;--s6:#008300;--s7:#6250d6;--s8:#e34948;--sx:#a3a29c;
+}
+@media (prefers-color-scheme:dark){
+  :root:where(:not([data-theme="light"])){
+    color-scheme:dark;
+    --bg:#111110;--surface:#1a1a19;--border:#2c2c2a;--grid:#262624;
+    --text:#f0efec;--text2:#c3c2b7;--muted:#8f8e86;
+    --up:#3fb950;--down:#f0716f;--warn:#e0a63a;
+    --s1:#3987e5;--s2:#d95926;--s3:#199e70;--s4:#c98500;--s5:#d55181;--s6:#008300;--s7:#9085e9;--s8:#e66767;--sx:#6b6a64;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#111110;--surface:#1a1a19;--border:#2c2c2a;--grid:#262624;
+  --text:#f0efec;--text2:#c3c2b7;--muted:#8f8e86;
+  --up:#3fb950;--down:#f0716f;--warn:#e0a63a;
+  --s1:#3987e5;--s2:#d95926;--s3:#199e70;--s4:#c98500;--s5:#d55181;--s6:#008300;--s7:#9085e9;--s8:#e66767;--sx:#6b6a64;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:14px/1.5 -apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Pretendard","Segoe UI",sans-serif}
+.wrap{max-width:1200px;margin:0 auto;padding:20px 16px 48px}
+a{color:var(--s1)}
+.top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+h1{font-size:22px;margin:0 0 4px}
+.sub{color:var(--text2);margin:0}
+.meta{color:var(--muted);font-size:12px;text-align:right}
+.meta a{color:var(--muted)}
+.banner{margin:14px 0 0;padding:10px 12px;border:1px solid var(--border);border-left:3px solid var(--warn);background:var(--surface);border-radius:8px;color:var(--text2);font-size:13px}
+.banner b{color:var(--text)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin:18px 0}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 14px}
+.kpi .l{color:var(--text2);font-size:12px}
+.kpi .v{font-size:24px;font-weight:650;letter-spacing:-.01em;margin:2px 0;font-variant-numeric:tabular-nums}
+.kpi .v small{font-size:13px;font-weight:500;color:var(--text2);margin-left:3px}
+.kpi .d{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.kpi .d .up{color:var(--up)}.kpi .d .down{color:var(--down)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,520px),1fr));gap:12px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 14px 10px;min-width:0}
+.card h2{font-size:14px;margin:0 0 2px}
+.card .note{color:var(--muted);font-size:12px;margin:0 0 6px}
+.chart{height:320px;width:100%}
+details{margin-top:6px}
+summary{cursor:pointer;color:var(--muted);font-size:12px}
+.tbl{overflow-x:auto;margin-top:6px}
+table{border-collapse:collapse;width:100%;font-size:12px;font-variant-numeric:tabular-nums}
+th,td{padding:5px 8px;border-bottom:1px solid var(--grid);text-align:right;white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+th{color:var(--text2);font-weight:600;position:sticky;top:0;background:var(--surface)}
+.section{margin-top:22px}
+.section h3{font-size:13px;color:var(--text2);margin:0 0 8px}
+ul.notes{color:var(--text2);font-size:13px;padding-left:18px;margin:0}
+.empty{padding:40px 16px;text-align:center;color:var(--muted);background:var(--surface);border:1px dashed var(--border);border-radius:10px}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<script id="page-data" type="application/json">{"key":"auto","title":"🚗 한국 자동차 수출","subtitle":"관세청 품목별 수출 — 승용차·전기차(BEV)·하이브리드·부품·2차전지, 월별 금액·YoY·단가($/kg)","updated":"2026-10-19 11:08","status":"ok","errors":[],"kpis":[{"label":"승용차 수출","value":57.1,"unit":"억$","delta":-5.6,"delta_label":"YoY","delta_unit":"%","asof":"2026-09"},{"label":"전기차 비중","value":16.7,"unit":"%","delta":0.5,"delta_label":"YoY","delta_unit":"%p","asof":null},{"label":"전기차 수출","value":9.5,"unit":"억$","delta":-2.8,"delta_label":"YoY","delta_unit":"%","asof":"2026-09"},{"label":"부품 수출","value":14.9,"unit":"억$","delta":-8.3,"delta_label":"YoY","delta_unit":"%","asof":"2026-09"},{"label":"배터리 수출","value":3.7,"unit":"억$","delta":1.3,"delta_label":"YoY","delta_unit":"%","asof":"2026-09"}],"charts":[{"id":"mix","title":"승용차 수출 구성 (BEV · 하이브리드 · 내연기관 등)","kind":"bar","x":["2022-01","2022-02","2022-03","2022-04","2022-05","2022-06","2022-07","2022-08","2022-09","2022-10","2022-11","2022-12","2023-01","2023-02","2023-03","2023-04","2023-05","2023-06","2023-07","2023-08","2023-09","2023-10","2023-11","2023-12","2024-01","2024-02","2024-03","2024-04","2024-05","2024-06","2024-07","2024-08","2024-09","2024-10","2024-11","2024-12","2025-01","2025-02","2025-03","2025-04","2025-05","2025-06","2025-07","2025-08","2025-09","2025-10","2025-11","2025-12","2026-01","2026-02","2026-03","2026-04","2026-05","2026-06","2026-07","2026-08","2026-09"],"series":[{"name":"전기차(BEV)","data":[6.35,6.58,6.19,5.63,5.92,5.14,7.25,5.63,6.61,7.32,8.09,11.05,10.58,12.07,13.42,11.48,11.76,13.12,11.47,10.52,10.2,10.19,14.62,13.92,12.9,9.75,11.15,9.71,9.19,6.98,7.32,4.88,8.17,7.06,7.08,6.84,6.41,7.33,6.76,7.49,7.08,7.76,7.02,8.23,9.8,6.54,7.0,5.83,7.77,6.72,8.92,9.22,7.69,8.49,8.83,6.72,9.52],"slot":0},{"name":"하이브리드+PHEV","data":[6.26,5.11,5.49,7.52,6.85,5.99,7.46,6.53,7.51,7.12,6.58,6.58,7.34,8.14,9.31,8.99,9.2,8.95,8.52,7.45,7.21,7.33,7.52,8.6,7.88,7.36,9.65,13.16,12.56,11.5,11.22,11.88,11.37,12.43,11.29,10.59,10.79,12.83,13.37,14.65,14.5,14.13,13.41,13.42,16.71,13.21,16.05,16.26,17.73,12.69,18.48,15.93,15.41,19.56,16.37,10.05,18.27],"slot":2},{"name":"내연기관 등","data":[26.64,24.63,26.15,28.76,26.31,26.14,34.36,27.39,31.63,32.73,36.93,34.39,30.05,33.49,39.78,38.59,38.78,37.81,36.8,32.69,32.46,39.53,41.27,39.45,39.08,32.15,38.15,42.85,41.17,41.71,33.14,32.0,33.49,40.55,36.13,40.9,31.08,38.33,39.99,40.84,37.82,38.06,34.49,30.48,33.92,32.72,37.39,33.78,31.93,25.63,33.37,33.26,31.71,35.5,34.15,19.66,29.26],"slot":-1}],"unit":"억$","stack":true,"note":"","window":36},{"id":"yoy","title":"수출 YoY (3개월 이동평균)","kind":"line","x":["2020-03","2020-04","2020-05","2020-06","2020-07","2020-08","2020-09","2020-10","2020-11","2020-12","2021-01","2021-02","2021-03","2021-04","2021-05","2021-06","2021-07","2021-08","2021-09","2021-10","2021-11","2021-12","2022-01","2022-02","2022-03","2022-04","2022-05","2022-06","2022-07","2022-08","2022-09","2022-10","2022-11","2022-12","2023-01","2023-02","2023-03","2023-04","2023-05","2023-06","2023-07","2023-08","2023-09","2023-10","2023-11","2023-12","2024-01","2024-02","2024-03","2024-04","2024-05","2024-06","2024-07","2024-08","2024-09","2024-10","2024-11","2024-12","2025-01","2025-02","2025-03","2025-04","2025-05","2025-06","2025-07","2025-08","2025-09","2025-10","2025-11","2025-12","2026-01","2026-02","2026-03","2026-04","2026-05","2026-06","2026-07","2026-08","2026-09"],"series":[{"name":"승용차","data":[-9.7,-14.8,-28.0,-40.7,-29.5,-15.6,3.3,6.9,10.3,1.6,10.7,24.3,32.3,40.7,50.1,74.8,45.0,26.9,6.0,0.1,-2.4,5.1,7.9,9.4,-0.5,0.5,3.3,6.1,13.4,18.8,32.4,33.6,31.6,29.6,27.3,32.4,44.8,51.0,52.6,51.1,40.7,32.9,17.1,19.0,17.9,21.0,22.2,11.3,2.4,-0.8,3.5,5.7,-0.9,-4.0,-2.5,2.7,-1.6,-5.2,-13.0,-3.5,-0.7,4.4,-2.7,-3.4,-0.3,4.0,9.1,2.0,3.4,-2.4,7.8,-4.1,-2.2,-9.6,-4.7,-3.0,2.0,-4.6,-8.7],"slot":0},{"name":"부품","data":[-1.2,-14.5,-38.8,-54.2,-45.5,-31.6,-14.3,-8.5,1.2,2.4,6.9,4.9,4.4,26.0,67.1,122.3,86.9,47.9,14.4,3.7,-1.7,0.5,5.0,5.3,5.3,-0.8,1.6,0.9,3.3,5.1,9.4,9.6,4.7,-1.5,-7.8,-4.4,-3.9,0.9,-3.1,0.4,0.3,2.1,-1.0,-2.2,-2.9,-5.4,-1.1,-3.0,-1.7,-4.3,-5.8,-8.1,-7.3,-5.9,-3.2,-2.2,-3.8,0.3,-7.4,-6.2,-8.8,-0.8,-1.3,1.6,-3.2,-4.1,-3.5,-7.0,-7.6,-10.2,-2.7,-7.1,-7.8,-10.9,-5.7,-5.8,-2.4,-3.6,-5.3],"slot":1},{"name":"배터리","data":[-4.5,-3.7,-5.8,-3.7,-1.8,0.1,9.6,16.5,25.5,15.3,14.5,9.1,17.9,22.6,28.5,35.7,42.1,34.9,16.8,3.0,1.9,5.3,10.9,14.6,17.4,18.6,20.4,17.4,18.9,28.9,42.8,46.4,30.3,31.0,29.8,40.4,25.3,16.1,2.8,6.7,-1.7,-11.2,-25.3,-26.6,-11.1,-1.7,-6.0,-23.1,-34.9,-33.3,-31.8,-29.4,-21.2,-14.7,-9.3,-11.2,-23.3,-25.9,-28.6,-20.8,-17.7,-9.6,-14.8,-21.7,-32.2,-35.1,-31.4,-27.3,-11.4,-11.9,-7.4,-9.8,16.9,12.2,27.4,13.8,21.0,7.0,4.4],"slot":2}],"unit":"%","stack":false,"note":"","window":48},{"id":"price","title":"수출 단가 프록시 ($/kg)","kind":"line","x":["2019-01","2019-02","2019-03","2019-04","2019-05","2019-06","2019-07","2019-08","2019-09","2019-10","2019-11","2019-12","2020-01","2020-02","2020-03","2020-04","2020-05","2020-06","2020-07","2020-08","2020-09","2020-10","2020-11","2020-12","2021-01","2021-02","2021-03","2021-04","2021-05","2021-06","2021-07","2021-08","2021-09","2021-10","2021-11","2021-12","2022-01","2022-02","2022-03","2022-04","2022-05","2022-06","2022-07","2022-08","2022-09","2022-10","2022-11","2022-12","2023-01","2023-02","2023-03","2023-04","2023-05","2023-06","2023-07","2023-08","2023-09","2023-10","2023-11","2023-12","2024-01","2024-02","2024-03","2024-04","2024-05","2024-06","2024-07","2024-08","2024-09","2024-10","2024-11","2024-12","2025-01","2025-02","2025-03","2025-04","2025-05","2025-06","2025-07","2025-08","2025-09","2025-10","2025-11","2025-12","2026-01","2026-02","2026-03","2026-04","2026-05","2026-06","2026-07","2026-08","2026-09"],"series":[{"name":"승용차 전체","data":[10.05,9.75,9.94,9.82,10.1,10.21,10.21,10.01,10.05,10.04,10.19,10.4,10.65,10.12,10.87,11.31,11.1,11.03,10.96,10.52,10.77,11.22,11.52,10.72,11.6,11.4,11.75,11.49,11.18,11.79,11.93,11.78,12.45,12.53,12.35,12.54,12.43,12.49,12.3,12.51,12.26,12.79,12.96,12.97,12.94,12.77,12.87,13.28,13.15,13.14,12.91,13.01,12.84,13.01,13.08,12.94,13.14,13.16,13.59,13.51,13.64,13.15,13.14,13.21,13.12,13.29,13.03,12.72,13.19,12.77,12.79,11.98,12.14,12.24,12.27,12.4,12.14,12.5,11.56,12.24,12.3,12.2,12.48,12.07,12.46,12.35,12.41,12.18,12.44,12.32,12.17,11.68,12.3],"slot":0},{"name":"전기차(BEV)","data":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,19.1,19.07,19.09,19.4,18.43,18.38,17.78,18.32,18.11,18.05,18.46,18.87,19.66,19.57,19.48,19.69,20.09,20.03,19.83,20.32,20.83,19.8,20.63,20.76,20.44,19.68,19.72,19.14,19.27,18.93,19.4,19.03,18.63,18.1,17.02,16.62,16.94,16.8,17.55,18.08,18.45,18.06,18.07,18.55,18.68,18.62,18.65,18.19,18.24,18.2,18.01,17.95,18.34,17.29,17.28,17.18,17.1],"slot":1}],"unit":"$/kg","stack":false,"note":"중량당 금액 — 대수 데이터가 없어 믹스·판가 변화를 함께 반영","window":48},{"id":"parts","title":"부품·배터리 월 수출","kind":"line","x":["2019-01","2019-02","2019-03","2019-04","2019-05","2019-06","2019-07","2019-08","2019-09","2019-10","2019-11","2019-12","2020-01","2020-02","2020-03","2020-04","2020-05","2020-06","2020-07","2020-08","2020-09","2020-10","2020-11","2020-12","2021-01","2021-02","2021-03","2021-04","2021-05","2021-06","2021-07","2021-08","2021-09","2021-10","2021-11","2021-12","2022-01","2022-02","2022-03","2022-04","2022-05","2022-06","2022-07","2022-08","2022-09","2022-10","2022-11","2022-12","2023-01","2023-02","2023-03","2023-04","2023-05","2023-06","2023-07","2023-08","2023-09","2023-10","2023-11","2023-12","2024-01","2024-02","2024-03","2024-04","2024-05","2024-06","2024-07","2024-08","2024-09","2024-10","2024-11","2024-12","2025-01","2025-02","2025-03","2025-04","2025-05","2025-06","2025-07","2025-08","2025-09","2025-10","2025-11","2025-12","2026-01","2026-02","2026-03","2026-04","2026-05","2026-06","2026-07","2026-08","2026-09"],"series":[{"name":"자동차 부품","data":[17.32,13.78,16.16,17.26,16.39,14.43,17.07,14.77,14.92,16.79,14.96,15.95,14.84,15.31,16.53,8.51,5.46,8.07,12.56,11.01,16.52,15.0,15.73,18.1,15.06,15.21,18.47,17.18,15.32,16.5,16.93,13.36,15.56,15.2,15.71,18.16,17.45,15.32,18.53,16.6,16.64,16.21,17.53,15.45,17.18,15.71,15.77,16.83,14.71,17.15,17.46,16.28,16.44,16.91,17.19,16.1,16.36,14.84,16.07,14.8,15.9,16.5,16.06,16.13,15.05,14.42,17.38,15.47,15.21,15.56,14.69,15.61,13.02,15.67,15.53,17.08,14.04,15.2,16.08,14.04,16.28,12.67,13.07,15.41,13.67,12.06,15.05,15.89,13.07,14.69,16.49,12.52,14.93],"slot":3},{"name":"리튬이온 배터리","data":[4.05,3.41,4.17,4.01,3.89,3.54,3.76,4.16,3.82,3.92,3.55,4.49,3.55,3.56,4.0,3.6,3.78,3.65,3.57,4.26,5.04,4.58,4.56,4.66,4.04,3.94,5.1,4.63,4.88,5.45,5.29,4.74,4.99,4.56,4.89,5.07,4.74,4.68,5.95,5.59,6.05,5.91,6.6,7.45,7.4,6.08,5.34,7.62,6.12,6.6,6.54,5.69,5.86,7.19,5.2,5.32,5.5,4.54,6.69,7.48,3.76,4.4,4.4,3.76,4.18,5.29,4.91,4.91,4.71,4.02,4.1,5.74,2.96,3.67,3.7,3.99,2.84,3.53,3.38,2.9,3.69,3.32,4.35,4.53,2.98,3.66,5.44,3.64,4.32,3.83,3.64,3.03,3.74],"slot":4}],"unit":"억$","stack":false,"note":"","window":48}],"tables":[{"title":"최근 13개월 (억 달러)","columns":["월","승용차","BEV","HEV","PHEV","부품","배터리"],"rows":[["2026-09",57.1,9.5,17.8,0.4,14.9,3.7],["2026-08",36.4,6.7,9.7,0.3,12.5,3.0],["2026-07",59.3,8.8,15.7,0.7,16.5,3.6],["2026-06",63.6,8.5,18.9,0.7,14.7,3.8],["2026-05",54.8,7.7,14.8,0.6,13.1,4.3],["2026-04",58.4,9.2,15.1,0.8,15.9,3.6],["2026-03",60.8,8.9,17.7,0.7,15.1,5.4],["2026-02",45.0,6.7,12.0,0.6,12.1,3.7],["2026-01",57.4,7.8,17.0,0.7,13.7,3.0],["2025-12",55.9,5.8,15.5,0.7,15.4,4.5],["2025-11",60.4,7.0,15.3,0.8,13.1,4.3],["2025-10",52.5,6.5,12.3,0.9,12.7,3.3],["2025-09",60.4,9.8,15.5,1.2,16.3,3.7]],"note":""}],"sources":[{"name":"관세청 품목별 수출입실적 (공공데이터포털)","url":"https://www.data.go.kr/data/15100475/openapi.do"}],"notes":[]}</script>
+<script>
+const P = JSON.parse(document.getElementById('page-data').textContent);
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function fmt(v, d=1){ if(v==null||isNaN(v)) return '—'; const a=Math.abs(v); return v.toLocaleString('ko-KR',{maximumFractionDigits: a>=1000?0:d}); }
+function fmtAxis(v){ const a=Math.abs(v); if(a>=1e9) return (v/1e9).toFixed(1)+'B'; if(a>=1e6) return (v/1e6).toFixed(1)+'M'; if(a>=1e4) return (v/1e3).toFixed(0)+'K'; return v.toLocaleString('ko-KR'); }
+
+function renderStatic(){
+  const app = document.getElementById('app');
+  let h = `<div class="top"><div><h1>${esc(P.title)}</h1><p class="sub">${esc(P.subtitle)}</p></div>
+    <div class="meta">갱신 ${esc(P.updated)}<br><a href="index.html">← 산업 트래커 목록</a></div></div>`;
+  if (P.errors.length) h += `<div class="banner"><b>일부 데이터를 가져오지 못했습니다</b> — ${P.errors.map(esc).join(' · ')}</div>`;
+  if (P.kpis.length) h += `<div class="kpis">${P.kpis.map(k => {
+      let d = '';
+      if (k.delta != null) { const cls = k.delta > 0 ? 'up' : k.delta < 0 ? 'down' : ''; d = `${esc(k.delta_label)} <span class="${cls}">${k.delta>0?'▲':k.delta<0?'▼':''} ${fmt(Math.abs(k.delta))}${esc(k.delta_unit)}</span>`; }
+      if (k.asof) d += `${d?' · ':''}${esc(k.asof)}`;
+      return `<div class="kpi"><div class="l">${esc(k.label)}</div><div class="v">${fmt(k.value)}<small>${esc(k.unit)}</small></div><div class="d">${d||'&nbsp;'}</div></div>`;
+    }).join('')}</div>`;
+  if (!P.charts.length && !P.tables.length) h += `<div class="empty">아직 수집된 데이터가 없습니다. 맥미니에서 <code>python run.py ${esc(P.key)}</code> 를 실행하세요.</div>`;
+  h += `<div class="grid">${P.charts.map(c => `<div class="card"><h2>${esc(c.title)}</h2>${c.note?`<p class="note">${esc(c.note)}</p>`:''}
+      <div class="chart" id="c-${esc(c.id)}" role="img" aria-label="${esc(c.title)}"></div>
+      <details><summary>표로 보기</summary><div class="tbl">${chartTable(c)}</div></details></div>`).join('')}</div>`;
+  for (const t of P.tables) h += `<div class="section card"><h2>${esc(t.title)}</h2>${t.note?`<p class="note">${esc(t.note)}</p>`:''}<div class="tbl"><table><thead><tr>${t.columns.map(c=>`<th>${esc(c)}</th>`).join('')}</tr></thead><tbody>${t.rows.map(r=>`<tr>${r.map(v=>`<td>${typeof v==='number'?fmt(v):esc(v)}</td>`).join('')}</tr>`).join('')}</tbody></table></div></div>`;
+  if (P.notes.length) h += `<div class="section"><h3>메모</h3><ul class="notes">${P.notes.map(n=>`<li>${esc(n)}</li>`).join('')}</ul></div>`;
+  if (P.sources.length) h += `<div class="section"><h3>출처</h3><ul class="notes">${P.sources.map(s=>`<li><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.name)}</a></li>`).join('')}</ul></div>`;
+  app.innerHTML = h;
+}
+function chartTable(c){
+  const rows = c.x.map((x,i)=>[x, ...c.series.map(s=>s.data[i])]).reverse();
+  return `<table><thead><tr><th></th>${c.series.map(s=>`<th>${esc(s.name)}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map((v,j)=>`<td>${j?fmt(v):esc(v)}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
+}
+
+const charts = [];
+function option(c){
+  const pal = [1,2,3,4,5,6,7,8].map(i=>css('--s'+i)), gray = css('--sx');
+  const txt2 = css('--text2'), muted = css('--muted'), grid = css('--grid'), surface = css('--surface');
+  const n = c.x.length, win = c.window && n > c.window ? c.window : (n > 60 ? 60 : n);
+  const zoom = n > win;
+  return {
+    animation:false, textStyle:{fontFamily:'inherit', color:txt2},
+    grid:{left:6, right:14, top:c.series.length>1?34:14, bottom:zoom?44:6, containLabel:true},
+    tooltip:{trigger:'axis', axisPointer:{type:c.kind==='bar'?'shadow':'line'}, confine:true,
+      valueFormatter:v=>v==null?'—':fmt(v)+(c.unit?' '+c.unit:'')},
+    legend:c.series.length>1?{type:'scroll', top:0, icon:'roundRect', itemWidth:10, itemHeight:10, textStyle:{color:txt2}}:undefined,
+    dataZoom:zoom?[{type:'inside', startValue:n-win, endValue:n-1},{type:'slider', height:16, bottom:6, startValue:n-win, endValue:n-1, borderColor:grid, textStyle:{color:muted}}]:[],
+    xAxis:{type:'category', data:c.x, axisTick:{show:false}, axisLine:{lineStyle:{color:grid}}, axisLabel:{color:muted}},
+    yAxis:{type:'value', name:c.unit, nameTextStyle:{color:muted, align:'left'}, splitLine:{lineStyle:{color:grid}}, axisLabel:{color:muted, formatter:fmtAxis}},
+    series:c.series.map((s,i)=>{
+      const k = s.kind || c.kind, color = s.slot === -1 ? gray : pal[(s.slot ?? i) % 8];
+      const o = {name:s.name, type:k==='bar'?'bar':'line', data:s.data, color, emphasis:{focus:'series'}};
+      if (k==='bar') Object.assign(o, {barMaxWidth:28, stack:c.stack?'t':undefined,
+        itemStyle:{borderRadius:c.stack?0:[4,4,0,0], borderColor:surface, borderWidth:c.stack?1:0}});
+      else Object.assign(o, {showSymbol:false, symbolSize:8, connectNulls:true, lineStyle:{width:2},
+        stack:c.stack?'t':undefined, areaStyle:k==='area'?{opacity:c.stack?.85:.18}:undefined});
+      return o;
+    }),
+  };
+}
+function drawCharts(){
+  charts.splice(0).forEach(ch=>ch.dispose());
+  if (typeof echarts === 'undefined') return;
+  for (const c of P.charts){
+    const el = document.getElementById('c-'+c.id);
+    if (!el) continue;
+    const ch = echarts.init(el, null, {renderer:'canvas'});
+    ch.setOption(option(c));
+    charts.push(ch);
+  }
+}
+renderStatic();
+drawCharts();
+addEventListener('resize', ()=>charts.forEach(c=>c.resize()));
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change', drawCharts);
+</script>
+</body>
+</html>

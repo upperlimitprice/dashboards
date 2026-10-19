@@ -1,0 +1,3 @@
+# 컨테이너 스팟 운임 기록 (WCI·SCFI 등) — index 별로 선이 그려집니다. date=YYYY-MM-DD
+# 예) 2026-10-09,WCI 종합($/FEU),2150
+date,index,value

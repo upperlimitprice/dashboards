@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>🏢 데이터센터 투자 사이클</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
+<style>
+:root{
+  color-scheme:light;
+  --bg:#f4f4f2;--surface:#fcfcfb;--border:#e4e3df;--grid:#ecebe7;
+  --text:#0b0b0b;--text2:#52514e;--muted:#7d7c77;
+  --up:#008300;--down:#d03b3b;--warn:#a86b00;
+  --s1:#2a78d6;--s2:#eb6834;--s3:#1baf7a;--s4:#eda100;--s5:#e87ba4;--s6:#008300;--s7:#6250d6;--s8:#e34948;--sx:#a3a29c;
+}
+@media (prefers-color-scheme:dark){
+  :root:where(:not([data-theme="light"])){
+    color-scheme:dark;
+    --bg:#111110;--surface:#1a1a19;--border:#2c2c2a;--grid:#262624;
+    --text:#f0efec;--text2:#c3c2b7;--muted:#8f8e86;
+    --up:#3fb950;--down:#f0716f;--warn:#e0a63a;
+    --s1:#3987e5;--s2:#d95926;--s3:#199e70;--s4:#c98500;--s5:#d55181;--s6:#008300;--s7:#9085e9;--s8:#e66767;--sx:#6b6a64;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#111110;--surface:#1a1a19;--border:#2c2c2a;--grid:#262624;
+  --text:#f0efec;--text2:#c3c2b7;--muted:#8f8e86;
+  --up:#3fb950;--down:#f0716f;--warn:#e0a63a;
+  --s1:#3987e5;--s2:#d95926;--s3:#199e70;--s4:#c98500;--s5:#d55181;--s6:#008300;--s7:#9085e9;--s8:#e66767;--sx:#6b6a64;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:14px/1.5 -apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Pretendard","Segoe UI",sans-serif}
+.wrap{max-width:1200px;margin:0 auto;padding:20px 16px 48px}
+a{color:var(--s1)}
+.top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+h1{font-size:22px;margin:0 0 4px}
+.sub{color:var(--text2);margin:0}
+.meta{color:var(--muted);font-size:12px;text-align:right}
+.meta a{color:var(--muted)}
+.banner{margin:14px 0 0;padding:10px 12px;border:1px solid var(--border);border-left:3px solid var(--warn);background:var(--surface);border-radius:8px;color:var(--text2);font-size:13px}
+.banner b{color:var(--text)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin:18px 0}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 14px}
+.kpi .l{color:var(--text2);font-size:12px}
+.kpi .v{font-size:24px;font-weight:650;letter-spacing:-.01em;margin:2px 0;font-variant-numeric:tabular-nums}
+.kpi .v small{font-size:13px;font-weight:500;color:var(--text2);margin-left:3px}
+.kpi .d{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.kpi .d .up{color:var(--up)}.kpi .d .down{color:var(--down)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,520px),1fr));gap:12px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 14px 10px;min-width:0}
+.card h2{font-size:14px;margin:0 0 2px}
+.card .note{color:var(--muted);font-size:12px;margin:0 0 6px}
+.chart{height:320px;width:100%}
+details{margin-top:6px}
+summary{cursor:pointer;color:var(--muted);font-size:12px}
+.tbl{overflow-x:auto;margin-top:6px}
+table{border-collapse:collapse;width:100%;font-size:12px;font-variant-numeric:tabular-nums}
+th,td{padding:5px 8px;border-bottom:1px solid var(--grid);text-align:right;white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+th{color:var(--text2);font-weight:600;position:sticky;top:0;background:var(--surface)}
+.section{margin-top:22px}
+.section h3{font-size:13px;color:var(--text2);margin:0 0 8px}
+ul.notes{color:var(--text2);font-size:13px;padding-left:18px;margin:0}
+.empty{padding:40px 16px;text-align:center;color:var(--muted);background:var(--surface);border:1px dashed var(--border);border-radius:10px}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<script id="page-data" type="application/json">{"key":"datacenter","title":"🏢 데이터센터 투자 사이클","subtitle":"하이퍼스케일러 분기 capex(SEC 공시) · TTM · YoY + 버지니아·텍사스 등 상업용 전력 판매(EIA)","updated":"2026-10-19 11:08","status":"ok","errors":[],"kpis":[{"label":"빅4 분기 capex","value":165.1,"unit":"$B","delta":87.0,"delta_label":"YoY","delta_unit":"%","asof":"2026Q2"},{"label":"빅4 TTM capex","value":510.7,"unit":"$B","delta":75.3,"delta_label":"YoY","delta_unit":"%","asof":"2026Q2"},{"label":"Microsoft 분기 capex","value":35.8,"unit":"$B","delta":109.6,"delta_label":"YoY","delta_unit":"%","asof":"2026Q2"},{"label":"Oracle 분기 capex","value":28.5,"unit":"$B","delta":235.2,"delta_label":"YoY","delta_unit":"%","asof":"2026Q3"},{"label":"버지니아 상업용 전력 12M","value":86.8,"unit":"TWh","delta":6.7,"delta_label":"YoY","delta_unit":"%","asof":"2026-07"}],"charts":[{"id":"capex","title":"분기 capex — 회사별 (달력 분기 기준)","kind":"bar","x":["2019Q1","2019Q2","2019Q3","2019Q4","2020Q1","2020Q2","2020Q3","2020Q4","2021Q1","2021Q2","2021Q3","2021Q4","2022Q1","2022Q2","2022Q3","2022Q4","2023Q1","2023Q2","2023Q3","2023Q4","2024Q1","2024Q2","2024Q3","2024Q4","2025Q1","2025Q2","2025Q3","2025Q4","2026Q1","2026Q2","2026Q3"],"series":[{"name":"Microsoft","data":[2.56,4.05,3.38,3.54,3.77,4.74,4.91,4.17,5.09,6.45,5.81,5.87,5.34,6.87,6.28,6.27,6.61,8.94,9.92,9.73,10.95,13.87,14.92,15.8,16.75,17.08,19.39,29.88,30.88,35.8,null],"slot":0},{"name":"Amazon","data":[3.29,3.56,4.7,5.31,6.79,7.46,11.06,14.82,12.08,14.29,15.75,18.93,14.95,15.72,16.38,16.59,14.21,11.46,12.48,14.59,14.93,17.62,22.62,27.83,25.02,32.18,35.09,39.52,44.2,54.21,null],"slot":1},{"name":"Alphabet","data":[4.64,6.13,6.73,6.05,6.0,5.39,5.41,5.48,5.94,5.5,6.82,6.38,9.79,6.83,7.28,7.59,6.29,6.89,8.05,11.02,12.01,13.19,13.06,14.28,17.2,22.45,23.95,27.85,35.67,44.92,null],"slot":2},{"name":"Meta","data":[3.84,3.63,3.53,4.1,3.56,3.25,3.69,4.66,4.3,4.64,4.35,5.4,5.44,7.57,9.38,8.8,6.82,6.13,6.5,7.59,6.4,8.17,8.26,14.43,12.94,16.54,18.83,21.38,19.0,30.12,null],"slot":3},{"name":"Oracle","data":[0.44,0.41,0.39,0.35,0.4,0.43,0.44,0.57,0.41,0.72,1.06,0.93,1.1,1.42,1.72,2.44,2.63,1.91,1.31,1.08,1.67,2.8,2.3,3.97,5.86,9.08,8.5,12.03,18.64,16.49,28.5],"slot":4},{"name":"CoreWeave","data":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,1.74,2.25,1.22,3.5,1.41,2.45,2.39,4.06,7.7,6.42,null],"slot":5}],"unit":"$B","stack":true,"note":"","window":16},{"id":"ttm","title":"TTM capex — 회사별","kind":"line","x":["2019Q1","2019Q2","2019Q3","2019Q4","2020Q1","2020Q2","2020Q3","2020Q4","2021Q1","2021Q2","2021Q3","2021Q4","2022Q1","2022Q2","2022Q3","2022Q4","2023Q1","2023Q2","2023Q3","2023Q4","2024Q1","2024Q2","2024Q3","2024Q4","2025Q1","2025Q2","2025Q3","2025Q4","2026Q1","2026Q2","2026Q3"],"series":[{"name":"Microsoft","data":[13.85,13.92,13.71,13.55,14.75,15.44,16.96,17.59,18.91,20.62,21.53,23.22,23.47,23.89,24.36,24.77,26.04,28.11,31.74,35.2,39.55,44.48,49.48,55.55,61.34,64.55,69.02,83.09,97.23,115.95,null],"slot":0},{"name":"Amazon","data":[13.62,13.94,15.28,16.86,20.37,24.26,30.63,40.14,45.43,52.26,56.94,61.05,63.92,65.36,65.99,63.64,62.9,58.63,54.73,52.73,53.45,59.61,69.75,83.0,93.09,107.66,120.13,131.82,151.0,173.03,null],"slot":1},{"name":"Alphabet","data":[22.48,23.13,24.58,23.55,24.91,24.18,22.85,22.28,22.22,22.32,23.74,24.64,28.48,29.82,30.27,31.48,27.99,28.05,28.83,32.25,37.97,44.27,49.28,52.53,57.72,66.98,77.87,91.45,109.92,132.4,null],"slot":2},{"name":"Meta","data":[14.94,15.11,15.3,15.1,14.82,14.45,14.6,15.16,15.91,17.29,17.95,18.69,19.83,22.76,27.79,31.19,32.57,31.13,28.25,27.05,26.62,28.66,30.42,37.26,43.8,52.16,62.73,69.69,75.75,89.33,null],"slot":3},{"name":"Oracle","data":[1.62,1.66,1.66,1.59,1.54,1.56,1.61,1.83,1.85,2.13,2.76,3.12,3.8,4.51,5.17,6.68,8.21,8.7,8.29,6.94,5.98,6.87,7.85,10.74,14.93,21.21,27.41,35.48,48.25,55.66,75.66],"slot":4},{"name":"CoreWeave","data":[null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,8.7,8.37,8.57,9.75,10.31,16.6,20.57,null],"slot":5}],"unit":"$B","stack":false,"note":"","window":24},{"id":"yoy","title":"빅4 합계 capex YoY","kind":"line","x":["2020Q1","2020Q2","2020Q3","2020Q4","2021Q1","2021Q2","2021Q3","2021Q4","2022Q1","2022Q2","2022Q3","2022Q4","2023Q1","2023Q2","2023Q3","2023Q4","2024Q1","2024Q2","2024Q3","2024Q4","2025Q1","2025Q2","2025Q3","2025Q4","2026Q1","2026Q2"],"series":[{"name":"분기 YoY","data":[40.4,20.0,36.6,53.3,36.2,48.1,30.6,25.6,29.6,19.8,20.1,7.3,-4.5,-9.7,-6.0,9.4,30.5,58.1,59.3,68.5,62.3,67.0,65.3,64.0,80.5,87.0],"kind":"bar","slot":0}],"unit":"%","stack":false,"note":"","window":20},{"id":"power_yoy","title":"상업용 전력 판매 12개월 합계 YoY — 데이터센터 밀집 주","kind":"line","x":["2018-01","2018-02","2018-03","2018-04","2018-05","2018-06","2018-07","2018-08","2018-09","2018-10","2018-11","2018-12","2019-01","2019-02","2019-03","2019-04","2019-05","2019-06","2019-07","2019-08","2019-09","2019-10","2019-11","2019-12","2020-01","2020-02","2020-03","2020-04","2020-05","2020-06","2020-07","2020-08","2020-09","2020-10","2020-11","2020-12","2021-01","2021-02","2021-03","2021-04","2021-05","2021-06","2021-07","2021-08","2021-09","2021-10","2021-11","2021-12","2022-01","2022-02","2022-03","2022-04","2022-05","2022-06","2022-07","2022-08","2022-09","2022-10","2022-11","2022-12","2023-01","2023-02","2023-03","2023-04","2023-05","2023-06","2023-07","2023-08","2023-09","2023-10","2023-11","2023-12","2024-01","2024-02","2024-03","2024-04","2024-05","2024-06","2024-07","2024-08","2024-09","2024-10","2024-11","2024-12","2025-01","2025-02","2025-03","2025-04","2025-05","2025-06","2025-07","2025-08","2025-09","2025-10","2025-11","2025-12","2026-01","2026-02","2026-03","2026-04","2026-05","2026-06","2026-07"],"series":[{"name":"버지니아","data":[4.0,3.4,2.2,1.9,2.5,2.5,2.3,3.1,4.0,4.9,4.5,4.1,3.9,4.4,4.1,4.7,3.9,3.4,4.2,4.1,3.0,2.2,2.4,3.3,2.5,3.0,3.2,2.5,0.8,0.8,0.5,0.3,0.4,0.6,-0.5,-0.8,-0.4,-0.9,-0.9,0.5,3.5,4.7,5.1,6.0,6.7,7.2,9.8,9.7,11.4,12.7,13.4,14.0,14.3,13.5,14.7,14.5,15.3,15.4,14.7,16.7,14.0,12.6,13.9,11.8,10.8,11.4,10.1,10.8,9.9,10.2,8.9,7.7,9.5,10.5,8.4,9.7,8.6,8.8,8.7,7.7,7.6,6.6,7.0,6.6,6.8,5.7,6.2,5.7,6.7,5.6,5.2,5.5,5.5,6.1,5.8,6.2,5.1,5.4,5.5,5.4,5.3,5.5,6.7],"slot":0},{"name":"텍사스","data":[-0.2,0.5,0.4,0.9,0.4,0.9,1.6,2.7,3.5,3.6,4.1,4.4,2.5,2.3,2.2,1.8,1.7,0.3,-0.5,-1.1,-0.9,-0.7,-0.8,-1.1,0.3,0.8,1.7,2.2,1.6,2.5,3.1,2.9,2.0,1.3,1.5,2.2,1.1,-0.4,-2.2,-1.6,0.1,0.4,-0.1,0.4,1.4,1.9,2.4,1.8,3.0,5.4,7.7,6.8,6.5,6.5,7.3,8.0,8.1,7.7,7.6,8.7,8.5,7.3,6.4,6.3,5.4,5.1,4.9,4.7,4.3,5.5,5.2,3.2,2.7,3.0,2.5,2.5,2.8,2.4,1.3,-0.0,-0.8,-1.9,-1.8,-0.9,-0.8,-0.6,-0.1,0.5,0.3,1.1,2.4,3.7,4.8,5.3,5.8,5.8,6.1,5.4,5.8,6.2,6.8,6.5,6.6],"slot":1},{"name":"조지아","data":[-2.0,-1.1,-1.0,-1.6,-1.4,-0.5,-0.2,0.5,2.2,2.2,2.4,2.3,1.1,0.6,0.8,1.4,1.5,0.7,0.9,1.1,0.2,0.4,0.1,0.2,0.4,0.8,0.5,-0.8,-2.7,-3.2,-3.3,-4.3,-5.4,-6.3,-6.6,-6.6,-6.5,-6.9,-6.6,-4.7,-2.2,-0.8,-1.3,-0.0,1.6,2.7,3.5,3.3,4.2,4.9,5.3,4.8,4.9,5.5,7.0,6.9,7.2,6.8,7.0,8.2,7.4,7.3,7.3,7.1,6.0,4.6,4.0,4.3,4.3,5.0,4.8,3.8,4.8,5.2,4.8,5.3,6.1,7.5,7.7,7.3,6.5,6.6,6.7,7.3,6.8,6.5,6.5,6.0,5.4,4.5,4.2,3.6,4.2,3.6,3.4,3.2,2.9,2.7,3.0,3.5,3.7,4.4,4.5],"slot":2},{"name":"애리조나","data":[0.4,0.7,0.4,0.7,0.6,0.3,0.6,0.6,0.6,0.3,0.2,0.0,0.1,0.4,0.5,-0.1,-0.9,-1.0,-1.2,-1.4,-1.9,-1.4,-1.0,-0.9,-1.0,-1.2,-1.3,-2.1,-1.0,-0.9,-1.0,-1.3,-1.0,-0.8,-1.0,-1.0,-1.2,-1.4,-1.0,1.0,1.1,2.4,2.7,2.9,3.0,2.4,2.7,3.0,3.5,4.2,4.7,3.8,3.9,3.1,3.5,4.1,4.3,5.3,5.1,5.1,5.0,5.1,4.2,4.1,3.8,2.9,3.2,3.4,2.9,3.1,3.5,3.5,3.7,4.2,5.0,5.4,6.0,8.4,8.3,8.6,10.0,10.1,10.3,10.7,10.7,9.7,9.9,9.4,9.0,7.4,6.4,5.6,4.7,4.1,4.1,4.0,4.1,4.9,5.6,7.1,7.8,8.9,10.7],"slot":3},{"name":"오하이오","data":[-2.6,-2.0,-2.3,-2.1,-1.4,-1.2,-0.7,1.1,1.8,2.6,2.3,2.2,1.4,1.2,1.3,1.0,-0.1,-0.7,-0.3,-1.6,-1.8,-2.8,-2.6,-2.5,-2.6,-2.0,-2.9,-3.5,-4.2,-3.9,-5.0,-4.8,-5.8,-5.6,-6.3,-6.1,-6.2,-7.0,-5.9,-4.3,-2.0,-1.1,-0.7,0.6,2.3,3.1,4.3,4.1,5.3,5.6,5.9,5.1,4.2,3.7,4.2,3.3,2.9,1.9,1.7,2.5,1.5,1.6,1.3,1.4,1.1,1.0,0.9,0.6,0.3,1.7,1.3,0.6,1.8,2.6,2.2,3.0,4.6,5.7,5.7,7.3,8.4,8.0,8.7,9.6,9.3,9.4,10.2,10.0,8.9,8.9,10.5,10.6,10.7,11.9,12.4,13.7,14.8,14.9,15.7,16.3,17.0,16.8,16.2],"slot":4},{"name":"미국 전체","data":[-0.6,-0.1,-0.1,-0.1,0.0,0.2,0.4,1.4,2.0,2.2,2.2,2.1,1.5,1.2,1.1,1.0,0.6,0.0,-0.2,-1.0,-1.2,-1.4,-1.6,-1.5,-1.5,-1.4,-1.5,-2.3,-3.4,-3.4,-3.6,-3.9,-4.6,-5.0,-5.2,-5.4,-5.6,-6.0,-5.9,-4.6,-2.6,-1.4,-1.1,0.1,1.2,2.1,2.9,3.2,4.3,5.1,5.6,5.5,5.3,4.7,5.1,4.8,4.7,4.4,4.2,4.7,3.9,3.6,3.5,3.0,2.4,2.1,1.9,1.7,1.5,2.0,2.0,1.2,1.7,2.0,1.6,2.0,2.3,2.9,2.9,2.9,2.8,2.5,2.5,3.0,3.1,3.0,3.3,3.2,3.0,2.7,2.8,2.7,2.9,2.9,3.0,2.9,2.6,2.5,2.6,2.8,2.9,3.0,3.1],"slot":-1}],"unit":"%","stack":false,"note":"데이터센터는 대부분 상업용(COM) 부문으로 집계 — 버지니아 북부가 세계 최대 밀집지","window":60},{"id":"va","title":"버지니아 상업용 전력 판매 (월)","kind":"line","x":["2015-01","2015-02","2015-03","2015-04","2015-05","2015-06","2015-07","2015-08","2015-09","2015-10","2015-11","2015-12","2016-01","2016-02","2016-03","2016-04","2016-05","2016-06","2016-07","2016-08","2016-09","2016-10","2016-11","2016-12","2017-01","2017-02","2017-03","2017-04","2017-05","2017-06","2017-07","2017-08","2017-09","2017-10","2017-11","2017-12","2018-01","2018-02","2018-03","2018-04","2018-05","2018-06","2018-07","2018-08","2018-09","2018-10","2018-11","2018-12","2019-01","2019-02","2019-03","2019-04","2019-05","2019-06","2019-07","2019-08","2019-09","2019-10","2019-11","2019-12","2020-01","2020-02","2020-03","2020-04","2020-05","2020-06","2020-07","2020-08","2020-09","2020-10","2020-11","2020-12","2021-01","2021-02","2021-03","2021-04","2021-05","2021-06","2021-07","2021-08","2021-09","2021-10","2021-11","2021-12","2022-01","2022-02","2022-03","2022-04","2022-05","2022-06","2022-07","2022-08","2022-09","2022-10","2022-11","2022-12","2023-01","2023-02","2023-03","2023-04","2023-05","2023-06","2023-07","2023-08","2023-09","2023-10","2023-11","2023-12","2024-01","2024-02","2024-03","2024-04","2024-05","2024-06","2024-07","2024-08","2024-09","2024-10","2024-11","2024-12","2025-01","2025-02","2025-03","2025-04","2025-05","2025-06","2025-07","2025-08","2025-09","2025-10","2025-11","2025-12","2026-01","2026-02","2026-03","2026-04","2026-05","2026-06","2026-07"],"series":[{"name":"버지니아","data":[4.27,4.14,3.67,3.51,4.16,4.36,4.5,4.48,4.13,3.86,3.55,3.73,4.45,3.68,3.67,3.62,3.87,4.15,4.86,4.8,4.18,3.94,3.85,4.19,3.87,3.84,4.28,3.73,4.07,4.39,4.84,4.65,4.27,3.88,4.13,4.25,4.27,3.71,4.35,3.7,4.58,4.61,4.75,4.88,4.78,4.31,4.23,4.09,4.57,3.86,4.26,3.96,4.67,4.59,5.07,5.09,4.7,4.36,4.47,4.37,4.46,4.28,4.31,3.84,3.88,4.54,5.27,5.18,4.7,4.51,4.12,4.44,4.62,4.42,4.35,4.44,4.68,5.17,5.67,5.75,5.04,4.94,5.16,4.48,5.71,5.26,4.81,5.46,5.71,5.49,6.78,6.28,5.89,5.5,5.98,5.69,5.32,5.37,6.12,5.31,6.28,6.21,7.17,7.28,6.3,6.25,6.03,6.17,6.15,6.21,6.08,6.06,6.11,7.18,7.49,7.62,6.69,6.37,6.31,6.44,7.17,6.25,6.4,6.47,6.68,7.41,7.55,8.16,7.09,6.96,6.41,7.07,7.32,6.59,6.77,6.83,7.23,7.77,8.58],"kind":"bar"}],"unit":"TWh","stack":false,"note":"","window":48}],"tables":[{"title":"회사별 최신 분기","columns":["회사","분기","capex($B)","YoY(%)","TTM($B)"],"rows":[["Microsoft","2026Q2",35.8,109.6,115.9],["Amazon","2026Q2",54.21,68.4,173.0],["Alphabet","2026Q2",44.92,100.1,132.4],["Meta","2026Q2",30.12,82.1,89.3],["Oracle","2026Q3",28.5,235.2,75.7],["CoreWeave","2026Q2",6.42,161.8,20.6]],"note":"현금흐름표 유형자산 취득액 기준 — 금융리스로 확보한 설비는 미포함 (MSFT·ORCL 등은 실제 투자 규모가 더 큼)"}],"sources":[{"name":"SEC EDGAR XBRL API","url":"https://www.sec.gov/search-filings/edgar-application-programming-interfaces"},{"name":"EIA Electricity Retail Sales","url":"https://www.eia.gov/electricity/data/browser/"}],"notes":[]}</script>
+<script>
+const P = JSON.parse(document.getElementById('page-data').textContent);
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function fmt(v, d=1){ if(v==null||isNaN(v)) return '—'; const a=Math.abs(v); return v.toLocaleString('ko-KR',{maximumFractionDigits: a>=1000?0:d}); }
+function fmtAxis(v){ const a=Math.abs(v); if(a>=1e9) return (v/1e9).toFixed(1)+'B'; if(a>=1e6) return (v/1e6).toFixed(1)+'M'; if(a>=1e4) return (v/1e3).toFixed(0)+'K'; return v.toLocaleString('ko-KR'); }
+
+function renderStatic(){
+  const app = document.getElementById('app');
+  let h = `<div class="top"><div><h1>${esc(P.title)}</h1><p class="sub">${esc(P.subtitle)}</p></div>
+    <div class="meta">갱신 ${esc(P.updated)}<br><a href="index.html">← 산업 트래커 목록</a></div></div>`;
+  if (P.errors.length) h += `<div class="banner"><b>일부 데이터를 가져오지 못했습니다</b> — ${P.errors.map(esc).join(' · ')}</div>`;
+  if (P.kpis.length) h += `<div class="kpis">${P.kpis.map(k => {
+      let d = '';
+      if (k.delta != null) { const cls = k.delta > 0 ? 'up' : k.delta < 0 ? 'down' : ''; d = `${esc(k.delta_label)} <span class="${cls}">${k.delta>0?'▲':k.delta<0?'▼':''} ${fmt(Math.abs(k.delta))}${esc(k.delta_unit)}</span>`; }
+      if (k.asof) d += `${d?' · ':''}${esc(k.asof)}`;
+      return `<div class="kpi"><div class="l">${esc(k.label)}</div><div class="v">${fmt(k.value)}<small>${esc(k.unit)}</small></div><div class="d">${d||'&nbsp;'}</div></div>`;
+    }).join('')}</div>`;
+  if (!P.charts.length && !P.tables.length) h += `<div class="empty">아직 수집된 데이터가 없습니다. 맥미니에서 <code>python run.py ${esc(P.key)}</code> 를 실행하세요.</div>`;
+  h += `<div class="grid">${P.charts.map(c => `<div class="card"><h2>${esc(c.title)}</h2>${c.note?`<p class="note">${esc(c.note)}</p>`:''}
+      <div class="chart" id="c-${esc(c.id)}" role="img" aria-label="${esc(c.title)}"></div>
+      <details><summary>표로 보기</summary><div class="tbl">${chartTable(c)}</div></details></div>`).join('')}</div>`;
+  for (const t of P.tables) h += `<div class="section card"><h2>${esc(t.title)}</h2>${t.note?`<p class="note">${esc(t.note)}</p>`:''}<div class="tbl"><table><thead><tr>${t.columns.map(c=>`<th>${esc(c)}</th>`).join('')}</tr></thead><tbody>${t.rows.map(r=>`<tr>${r.map(v=>`<td>${typeof v==='number'?fmt(v):esc(v)}</td>`).join('')}</tr>`).join('')}</tbody></table></div></div>`;
+  if (P.notes.length) h += `<div class="section"><h3>메모</h3><ul class="notes">${P.notes.map(n=>`<li>${esc(n)}</li>`).join('')}</ul></div>`;
+  if (P.sources.length) h += `<div class="section"><h3>출처</h3><ul class="notes">${P.sources.map(s=>`<li><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.name)}</a></li>`).join('')}</ul></div>`;
+  app.innerHTML = h;
+}
+function chartTable(c){
+  const rows = c.x.map((x,i)=>[x, ...c.series.map(s=>s.data[i])]).reverse();
+  return `<table><thead><tr><th></th>${c.series.map(s=>`<th>${esc(s.name)}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map((v,j)=>`<td>${j?fmt(v):esc(v)}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
+}
+
+const charts = [];
+function option(c){
+  const pal = [1,2,3,4,5,6,7,8].map(i=>css('--s'+i)), gray = css('--sx');
+  const txt2 = css('--text2'), muted = css('--muted'), grid = css('--grid'), surface = css('--surface');
+  const n = c.x.length, win = c.window && n > c.window ? c.window : (n > 60 ? 60 : n);
+  const zoom = n > win;
+  return {
+    animation:false, textStyle:{fontFamily:'inherit', color:txt2},
+    grid:{left:6, right:14, top:c.series.length>1?34:14, bottom:zoom?44:6, containLabel:true},
+    tooltip:{trigger:'axis', axisPointer:{type:c.kind==='bar'?'shadow':'line'}, confine:true,
+      valueFormatter:v=>v==null?'—':fmt(v)+(c.unit?' '+c.unit:'')},
+    legend:c.series.length>1?{type:'scroll', top:0, icon:'roundRect', itemWidth:10, itemHeight:10, textStyle:{color:txt2}}:undefined,
+    dataZoom:zoom?[{type:'inside', startValue:n-win, endValue:n-1},{type:'slider', height:16, bottom:6, startValue:n-win, endValue:n-1, borderColor:grid, textStyle:{color:muted}}]:[],
+    xAxis:{type:'category', data:c.x, axisTick:{show:false}, axisLine:{lineStyle:{color:grid}}, axisLabel:{color:muted}},
+    yAxis:{type:'value', name:c.unit, nameTextStyle:{color:muted, align:'left'}, splitLine:{lineStyle:{color:grid}}, axisLabel:{color:muted, formatter:fmtAxis}},
+    series:c.series.map((s,i)=>{
+      const k = s.kind || c.kind, color = s.slot === -1 ? gray : pal[(s.slot ?? i) % 8];
+      const o = {name:s.name, type:k==='bar'?'bar':'line', data:s.data, color, emphasis:{focus:'series'}};
+      if (k==='bar') Object.assign(o, {barMaxWidth:28, stack:c.stack?'t':undefined,
+        itemStyle:{borderRadius:c.stack?0:[4,4,0,0], borderColor:surface, borderWidth:c.stack?1:0}});
+      else Object.assign(o, {showSymbol:false, symbolSize:8, connectNulls:true, lineStyle:{width:2},
+        stack:c.stack?'t':undefined, areaStyle:k==='area'?{opacity:c.stack?.85:.18}:undefined});
+      return o;
+    }),
+  };
+}
+function drawCharts(){
+  charts.splice(0).forEach(ch=>ch.dispose());
+  if (typeof echarts === 'undefined') return;
+  for (const c of P.charts){
+    const el = document.getElementById('c-'+c.id);
+    if (!el) continue;
+    const ch = echarts.init(el, null, {renderer:'canvas'});
+    ch.setOption(option(c));
+    charts.push(ch);
+  }
+}
+renderStatic();
+drawCharts();
+addEventListener('resize', ()=>charts.forEach(c=>c.resize()));
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change', drawCharts);
+</script>
+</body>
+</html>
