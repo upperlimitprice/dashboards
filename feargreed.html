@@ -67,7 +67,11 @@ h1{font-size:22px;margin:0}
 <div class="foot">
 · <b>미국</b>: CNN Fear &amp; Greed Index(7개 지표: S&amp;P500 모멘텀·신고가/신저가·거래량 폭·풋콜·VIX·정크본드·안전자산) — 2021년~ 일별.<br>
 · <b>한국</b>: stockhub.kr KOSPI Fear &amp; Greed(코스피 125일선 모멘텀 25%·52주 신고/신저 25%·코스피+코스닥 상승/하락 종목 25%·KVIX 15%·원달러 10%). 공개 이력이 30일뿐이라 2026-09-18부터 매일 누적 — 한국 지수 하나를 코스피·코스닥 양쪽에 대조.<br>
-· 산출 시점: 두 지수 모두 한국 시간 새벽에 직전 거래일 종가 기준으로 계산되므로 직전 거래일에 매핑. 오실레이터 = 수급 오실레이터와 같은 산식 — F&amp;G/100의 MACD(12·26·9) 히스토그램: (EMA12 − EMA26) − 그 값의 EMA9. 0선 위 = 심리 개선 가속, 아래 = 둔화.<br>
+· 산출 시점: 두 지수 모두 한국 시간 새벽에 직전 거래일 종가 기준으로 계산되므로 직전 거래일에 매핑.<br>
+· <b>오실레이터 산식</b> (종목별 수급 오실레이터와 동일한 MACD 12·26·9 히스토그램):<br>
+&nbsp;&nbsp;x<sub>t</sub> = F&amp;G<sub>t</sub> ÷ 100 &nbsp;→&nbsp; MACD<sub>t</sub> = EMA<sub>12</sub>(x)<sub>t</sub> − EMA<sub>26</sub>(x)<sub>t</sub> &nbsp;→&nbsp; Signal<sub>t</sub> = EMA<sub>9</sub>(MACD)<sub>t</sub> &nbsp;→&nbsp; <b>오실레이터<sub>t</sub> = MACD<sub>t</sub> − Signal<sub>t</sub></b><br>
+&nbsp;&nbsp;EMA<sub>n</sub>(v)<sub>t</sub> = α·v<sub>t</sub> + (1−α)·EMA<sub>n</sub>(v)<sub>t−1</sub>, α = 2/(n+1) · 0선 위 = 심리 개선 가속, 아래 = 둔화.<br>
+· <b>변곡 임계</b>: 하단 = 오실레이터가 0 아래에서 앞뒤 5거래일 중 최저인 날(하락→상승 전환)들의 평균, 상단 = 0 위에서 앞뒤 5거래일 중 최고인 날(상승→하락 전환)들의 평균. 현재값이 임계의 70% 이상이면 '근접', 100% 이상이면 '도달'. '이후 20일'은 변곡일 종가 대비 20거래일 뒤 지수 수익률.<br>
 · 차트: 기간 버튼 · 좌→우 드래그 확대 · 우→좌 드래그 전체 · 휠 확대/축소 · 마우스 툴팁 · 이미지 복사
 </div>
 </div>
