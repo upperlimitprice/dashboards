@@ -1,0 +1,298 @@
+"""대시보드 index.html 자동 생성 — 위젯형 (탈부착·드래그, localStorage 저장)."""
+import json
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parent
+
+# (key, 제목, 설명, 기본 메인 포함 여부) — 특수 key(flows/calls)는 동적 처리
+ITEMS = [
+    ("signals.html", "🚦 시장 신호등 (국내·미국)", "Market Score · ADR · 모멘텀 · RSI · VIX · E-Ratio", True),
+    ("kr-breadth.html", "📉 KOSPI 이격도·신용잔고", "60일 이격도(1990~) · 3개월 수익률 · 신용잔고/시총", True),
+    ("kospi-ff.html", "🌏 KOSPI 외국인 현·선물 추이", "현물+선물 순매수 합산 20/60/120MA · 수급 방향/모멘텀 시그널", True),
+    ("funds.html", "💼 주체별 증시자금", "외국인 보유액·비중 · 국내(기관+개인) · 투자자예탁금 · 신용융자", True),
+    ("cds.html", "🏦 빅테크 5년 CDS 트래커", "MSFT·GOOGL·AMZN·META·NVDA·ORCL·CRWV 신용위험", True),
+    ("tanker.html", "🛢 탱커 운임 마켓", "VLCC·수에즈막스 WS · LPG/LNG · BCTI · 선가 · 픽스처", True),
+    ("shipping.html", "🚢 해상 운임 지수", "BDI(벌크) · SCFI·CCFI(컨테이너) · HRCI(용선) — 일일 수집·줌 차트", True),
+    ("power-ppi.html", "⚡ 전력기기 PPI", "미국 BLS 변압기·개폐장치·계전기·모터발전기 생산자물가 10년 — 월별 자동갱신", True),
+    ("us-liq.html", "💵 미국 유동성 (US Liquidity)", "연준BS−TGA−RRP · 국채금리 3M/2Y/10Y/30Y · DXY · WTI/브렌트 · 재무부 경매일정", True),
+    ("valuation.html", "🌡 밸류에이션 온도", "금리·물가·예탁금 조합 지표 vs KOSPI 밸류 (r=0.78) · 금리 12M 선행 경보", True),
+    ("tval.html", "💹 거래대금", "전체·회전율 Top30 · 섹터별 Top10 (상품 제외)", True),
+    ("etf.html", "🧺 ETF", "거래대금 순위 · 자금 순증/순유출 Top10 · 인사이트", True),
+    ("osc.html", "📊 수급 오실레이터", "종목·섹터 검색 — 시총 vs 수급 MACD · 주체별 상위 · 바닥 근접", True),
+    ("rrg.html", "🔄 RRG 업종 로테이션", "코스피 업종 상대강도 회전(JdK RS-Ratio/Momentum) — 4사분면 주도·둔화·부진·개선, KRX 주간 지수", True),
+    ("rrg-stock.html", "🔄 개별종목 RRG (일별)", "코스피 상위100+코스닥50 개별종목 일별 상대강도 회전(JdK) — 4사분면·꼬리10일, 매일 장마감 후 자동 갱신", True),
+    ("leaders.html", "🎯 주도 섹터·주도주 포착", "RS(가중)·자금·신고가·눌림·수급·펀더 스코어 — 추세추종 아카이브 기준 계량화 · 일정 캘린더", True),
+    ("taiwan-revenue.html", "🇹🇼 대만 AI 밸류체인 월매출", "MOPS 의무공시 — 26그룹 128종목 · 월별 매출·MoM·YoY (매일 갱신)", True),
+    ("sector-toppick.html", "🏆 섹터 탑픽 보고서 (2026-08-10)", "30개 섹터 모멘텀 랭킹 · 탑픽 TOP15 · 종목별 3줄 요약", True),
+    ("orders.html", "📋 수주잔고 트래커", "DART 정기보고서 수주상황 전수 파싱 — 기업 검색·분기 추이 · QoQ/YoY 증가 상위", True),
+    ("util.html", "🏭 가동률 트래커", "정기보고서 가동률 전수 파싱 — 부문별 라인차트 · YoY/QoQ 상승·고가동 랭킹", True),
+    ("screening.html", "📋 수주잔고 & 가동률 스크리닝", "2Q26 기준 — 수주 QoQ/YoY↑ · 가동률 QoQ/YoY↑ · 교집합 7개 리스트 (섹터별 · 인사이트)", True),
+    ("hs.html", "🚢 HS코드 월 수출 모니터", "관세청 품목별 수출(USD) — 제품별 실적 선행 프록시 · YoY 모멘텀", True),
+    ("exports.html", "📦 주요품목별 수출 대시보드", "264품목 일평균수출·MoM/YoY·판가·분기매출 랭킹·품목별 추이", True),
+    ("exports-auto.html", "📦 주요품목별 수출 (관세청 자동)", "관세청 무료 API — HS 10단위 월별 수출·판가·MoM/YoY 자동 수집·매일 갱신 (195품목)", True),
+    ("exports-corp.html", "🏢 기업별 수출 추적", "관세청 시군구×HS — 기업·지역별 수출 그룹 추적", True),
+    ("trade-stats.html", "🌐 수출입무역통계", "관세청 월별 수출입 — 국가×품목 무역수지", True),
+    ("stockmap.html", "🧅 종목 × 무역품목 맵 (HS 검증)", "나쁜양파 맵핑 트렌드 131종목·573품목 — 체크/추정/미충족 구분, 종목별 카드·품목 카드·표, 12개월 막대·공식통계 36개월·KPI 연동 모달", True),
+    ("global-trade.html", "🧅 글로벌 수출입 트래커", "미국·일본·브라질·캐나다·필리핀·인니·말레이시아 HS 세부코드 월별 — 시계열·합산·급등·트리맵/히트맵·상대국·HS검색·PPI (최근 36개월)", True),
+    ("cost.html", "🧮 비용구조 모델", "비용의 성격별 분류 전수 파싱 — 기업 검색 · 분기 flow·연간 매트릭스 · 엑셀 다운로드", True),
+    ("vs.html", "📊 VS 재무·비용 리포트", "기업 검색 → 손익·비용 세부(%of Sales)·판관비·세그먼트 섹션 리포트 · VS 엑셀 출력", True),
+    ("flows", "💰 수급 주체별 시총대비 Top20", "", True),
+    ("trendforce.html", "📈 트렌드포스 가격 전망 트래커", "TrendForce 분기 계약가 QoQ 전망 — DRAM 7개·NAND 6개 품목 범위·수정 이력·누적 지수 + 패널·HBM·NOR·MLCC·파운드리 (4Q23~4Q26)", True),
+    ("dram.html", "💾 DRAM·NAND 현물가", "DRAMeXchange 현물 세션 평균 — DDR5/DDR4/NAND 일일 추적 (2022~)", True),
+    ("gpu-rent.html", "🖥 AI 가속기 렌탈 시세", "vast.ai 스팟 + Silicon Data H100 지수 — H100·H200·B200·A100 $/hr 일일 추적", True),
+    ("llm-tokens.html", "🤖 LLM 토큰 사용량", "OpenRouter 주간 모델별 토큰 + Silicon Data Token Expenditure Index — AI 수요 프록시", True),
+    ("solar-price.html", "☀️ 태양광 밸류체인 스팟가격", "폴리실리콘·웨이퍼·셀·모듈 주간 스팟 — EnergyTrend+InfoLink, Wayback 과거 복원", True),
+    ("parts-trend.html", "📦 전자부품 리드타임 트렌드", "Future Electronics 월간 — 카테고리별 리드타임·가격 방향", True),
+    ("abf-substrate.html", "🧩 ABF 기판 capex·수요 전망", "글로벌 12사 capex 금액·공장 면적·생산능력 추이(FY22~28) · AI/서버/PC 전방 수요·공급갭·가격 (2026-09-29 심층보고서)", True),
+    ("earnings/index.html", "🎯 어닝 프리뷰 (티커별)", "거니봇 /earnings 티커 — 컨센서스 대비 예상·과거 발표일 주가 반응 기반 방향/폭 추정, 노션 리포트 링크", True),
+    ("curiox-ir.html", "🧪 큐리옥스 IR 레터 톤 변화", "월간 투자자 질의 답변 13개월(2025.10~) 주제별 톤 히트맵·회사 목표 이행 추적·주제별 원문 인용 타임라인, 새 레터 게재 시 자동 갱신", True),
+    ("feargreed.html", "😱 피어앤그리드 오실레이터", "한국 KOSPI 공포·탐욕(stockhub)↔코스피·코스닥, CNN 공포·탐욕↔S&P500·나스닥 — F&G·EMA20·오실레이터·지수 겹쳐보기, 구성 지표 현재값, 매일 누적", True),
+    ("chartpack.html", "🇺🇸 미국 섹터 차트팩", "Finviz 체크리스트 31개 섹션·295개 ETF·종목 — 섹터 순위(1D~YTD 중앙값·50/200일선 위 비율)·종목별 6개월 미니차트·수익률·RSI·정배열, 클릭 시 일봉/주봉 캔들차트, 매일 자동 갱신", True),
+    ("semi-chain.html", "🌐 글로벌 테크 밸류체인", "한국·일본·중국·대만·미국·유럽 반도체·광통신 440여개사 — 밸류체인 트리맵(국가별)·카테고리×국가 YTD 히트맵·회사별 제품·시총·YTD·분기 매출 추이·OPM·PER, 매일 자동 갱신", True),
+    ("industry.html", "🏭 산업 트래커 (전력기기·가스/LNG·태양광 실현율·발전·전력망·자동차·데이터센터·화물·MLCC·태양광)", "EIA·SEC·관세청·FRED·뉴욕연은·TWSE 공개 데이터 — AI 전력 병목→전력기기 나우캐스트·가스발전/LNG 사이클·태양광/ESS/원전 계획 대비 실제·미국 발전설비 파이프라인·전력 수요·한국 자동차 수출·하이퍼스케일러 capex·화물 사이클·MLCC·태양광 7개 페이지 매일 07:10 자동 수집", True),
+    ("capa.html", "🏭 글로벌 반도체 캐파 트래커 🔒", "TrendForce DRAM Platinum(2026-03) 8개사 24개 팹 분기 캐파·capex 기준선 + 이후 IB·증권사·IR·매체의 DRAM·HBM·NAND·파운드리·CoWoS·기판 캐파 전망 2,200+건, TF 대비·같은 출처 상향/하향 추적 — 매일 자동 추출·인사이트", True),
+    ("tam.html", "📐 산업 TAM 트래커", "14개 산업→111세그먼트→387하위 시장규모 전망 2,400+포인트(금액+물량), 출처별 상향/하향 변동 추적 — 매일 신규 문서 자동 추출·일간 변동·일간/주간 인사이트", True),
+    ("dram-4f2.html", "🧱 DRAM 셀 구조 4F² 해부", "8F²·6F²·4F² 워드라인·비트라인·트랜지스터 위치를 평면도·단면도·입체도로 — F 정의, VCT·매립BL·PUC, 3D D램, 20년 특허와 2028 로드맵 (인포마켓 강용운 리포트 기반, 2026-10-13)", True),
+    ("osat-memory.html", "🔧 국내 메모리 OSAT 비교", "하나마이크론·SFA반도체·에이팩트·윈팩·LB세미콘 분기 실적·OPM·가동률·재무·밸류(PSR)·촉매 타임라인 + PTI 월매출 (2026-10-05)", True),
+    ("bio-cash-rates.html", "🧬 고금리와 바이오 현금체력 — 미국 vs 한국", "미국 바이오텍 406사·한국 제약 148사를 FCF/런웨이로 나눠 YTD·6M·1Y 수익률 비교 — 미국은 현금순 단조 하락, 한국은 전부 하락(섹터 디레이팅) (2026-10-05)", True),
+    ("pcb-drill-makers.html", "🪛 PCB 드릴비트 3사 비교", "유니온툴·Topoint·네오티스 캐파·제품군·고객사·국내 M/S 비교 + 기업별 가격인상 시계열(2025.9~2026.10, 16건) (기준 2026-10-04)", True),
+    ("neotis-export-model.html", "🔩 네오티스 안성시 수출 vs 수출매출", "경기 안성시 HS 8483.10(샤프트)·8207.50/70 수출 분기합산 vs 사업보고서 수출매출(샤프트·비트·렌즈연마기) 2017~3Q26 — 비율≈1.0 검증, 3Q 진행 (기준 2026-10-04)", True),
+    ("jeju-export-model.html", "🧮 제주반도체 수출데이터 vs 매출 · 3Q26 추정", "제주도 HS8542.31/32/39 수출(원화 환산) vs 분기 매출 2017~3Q26 — 상관 0.99, 비율·회귀·YoY 3법 추정(매출 3,290억·OP 1,380억), 월별 수출·전국 대비 (기준 2026-10-04)", True),
+    ("sector-oct2d.html", "📅 10월 첫 2거래일 섹터 퍼포먼스", "10/1·10/2 KOSPI·KOSDAQ 44업종+지수 — 2일 누적 수익률 순위, 첫날 vs 둘째날 지속성, 전체 표 (기준 2026-10-02)", True),
+    ("sector-firstday.html", "📅 분기 첫날 섹터 순위 지속성", "KOSPI·KOSDAQ 44업종 2021Q4~2026Q4 — 분기 첫 거래일 수익률 순위 vs 잔여분기 순위(ρ·Top5/Bot5·테크·바이오 사례·2026Q4 첫날 순위표)", True),
+    ("bio-indepth-4q26.html", "🧬 바이오 인뎁스 4Q26 · 탑픽 5", "리써처TV·엄민용·김민정 가중 — 4Q26 촉매 캘린더·모멘텀·시총·오버행 스코어링, 탑픽 5(올릭스·알테오젠·한미약품·앱클론·한올) (2026-10-01)", True),
+    ("fx-flow.html", "💱 환율×외국인 수급 공식", "원화 1% 절하당 외국인 순매도 효과", True),
+    ("fx-flow-5y.html", "💱 환율×수급 5개년 백테스트", "연도별·환율구간별 민감도 매트릭스", True),
+    ("gunny-score.html", "🏅 기업분석 채점 리스트", "gunny_bot 종합의견 10점 기준 — 전수조사+질의 채점 (국내)", False),
+    ("kci.html", "📈 고려신용정보 급등 분석", "장중 +10% 이상 25회 전후 수익률 히트맵", False),
+    ("lpddr.html", "🧠 LPDDR 백서 (Micron×Meta)", "AI 서버 LPDDR 채택 기술 분석", False),
+    ("hbm4-mix.html", "🧠 HBM4 단수 믹스 × SKH 단가 검증", "가설 검증 보고서 — Rubin 12단 확정·타결가 예상 상회·Rubin Ultra 다운스펙 리스크 (2026-08-13)", False),
+    ("calls", "📞 어닝콜 분기 변화분석", "", False),
+]
+
+
+def main():
+    registry = []
+    for key, title, desc, on in ITEMS:
+        href = key
+        if key == "flows":
+            flows = sorted(ROOT.glob("flows/*.html"), reverse=True)
+            if not flows:
+                continue
+            href = f"flows/{flows[0].name}?v={int(flows[0].stat().st_mtime)}"
+            title += f" ({flows[0].stem})"
+            desc = ("사모·투신·연기금·외국인·프로그램 순매수/순매도 · 과거: "
+                    + " · ".join(f"<a href='flows/{p.name}'>{p.stem}</a>" for p in flows[1:6]))
+        elif key == "calls":
+            calls = sorted(ROOT.glob("calls/*.html"), key=lambda p: p.stem.split("-", 1)[1], reverse=True)
+            if not calls:
+                continue
+            href = f"calls/{calls[0].name}"
+            desc = f"총 {len(calls)}건 · 최신: " + " · ".join(
+                f"<a href='calls/{p.name}'>{p.stem.split('-',1)[0]}</a>" for p in calls[:6])
+        elif not (ROOT / key).exists():
+            continue
+        registry.append({"k": key, "t": title, "d": desc, "h": href, "on": on})
+
+    reg_json = json.dumps(registry, ensure_ascii=False)
+    page = """<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>대시보드</title>
+<style>
+body{font-family:'Apple SD Gothic Neo','Noto Sans KR',sans-serif;max-width:1080px;margin:40px auto;padding:0 20px;color:#20262e;background:#eceff3}
+h1{font-size:1.35rem}
+.layout{display:grid;grid-template-columns:1fr 290px;gap:22px;align-items:start}
+@media(max-width:860px){.layout{grid-template-columns:1fr}}
+h2{font-size:.92rem;margin:0 0 10px;color:#6b7683}
+.card{position:relative;display:block;padding:10px 40px 10px 16px;border:1.5px solid #c9d2dc;border-radius:10px;margin:8px 0;color:#20262e;font-weight:600;font-size:.88rem;line-height:1.35;background:#f9fafc;cursor:pointer}
+.card:hover{border-color:#3d5a80;background:#f9fafcbf0}
+.card small{color:#6b7683;font-weight:400;display:block;margin-top:2px;font-size:.72rem;line-height:1.4}
+.card small a{color:#3d5a80;text-decoration:none}
+.x{position:absolute;top:6px;right:10px;border:0;background:none;color:#c2cad2;font-size:1.05rem;cursor:pointer;line-height:1}
+.x:hover{color:#d63c2f}
+.rf{position:absolute;bottom:6px;right:10px;border:1px solid #c9d2dc;background:#f9fafc;color:#6b7683;font-size:.66rem;border-radius:7px;padding:1px 6px;cursor:pointer;font-weight:600}
+.rf:hover{border-color:#3d5a80;color:#3d5a80}
+.rf:disabled{opacity:.6;cursor:default}
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1c2530;color:#fff;font-size:.82rem;padding:9px 16px;border-radius:9px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:99}
+#toast.show{opacity:.95}
+#side{background:#f9fafc;border:1.5px solid #c9d2dc;border-radius:12px;padding:14px 16px;position:sticky;top:16px}
+.sitem{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:9px 2px;border-bottom:1px solid #e6ebf1;font-size:.85rem}
+.sitem:last-child{border-bottom:0}
+.sitem .nm{color:#20262e}
+.add{border:1.5px solid #3d5a80;color:#3d5a80;background:#f9fafc;border-radius:8px;font-size:.95rem;width:26px;height:26px;cursor:pointer;font-weight:700;flex:none}
+.add:hover{background:#e6edf6}.add.del{border-color:#c9d2dc;color:#9aa4ad;font-size:.8rem}.add.del:hover{border-color:#d63c2f;color:#d63c2f;background:#fdf0ef}
+.hint{font-size:.72rem;color:#9aa4ad;margin-top:10px}
+.empty{color:#9aa4ad;font-size:.82rem;padding:8px 0}
+.reset{width:100%;margin-top:10px;border:1.5px solid #c9d2dc;background:#f9fafc;color:#6b7683;border-radius:8px;padding:7px 0;font-size:.78rem;cursor:pointer;font-weight:600}
+.reset:hover{border-color:#3d5a80;color:#3d5a80}
+</style></head><body>
+<h1>📊 쩜상리서치 대시보드</h1>
+<div class='layout'>
+<div><h2>메인 <small style='font-weight:400'>(드래그로 순서 변경 · ✕로 보관함으로 이동)</small></h2><div id='main'></div></div>
+<div id='side'><h2>🗂 전체 위젯 보관함</h2><div id='sideList'></div><div id='hidList' class='hint' style='display:none'></div>
+<button class='reset' id='pubBtn' style='border-color:#3d5a80;color:#3d5a80;font-weight:700'>📤 현재 배치를 공개 배치로 발행</button>
+<button class='reset' id='resetBtn'>쩜상 기본 배치로 초기화</button>
+<div class='hint'>＋ 추가 · ✕ 제거 · 드래그로 순서 변경 — 내 구성은 이 브라우저에만 저장됩니다. 초기화하면 쩜상리서치 기본 배치로 돌아갑니다.</div></div>
+</div>
+<script>
+const REG=__REG__;
+// 카드 → 갱신 서버 잡 매핑 (수동 갱신 버튼)
+const JOB={"signals.html":"signals","kr-breadth.html":"breadth","funds.html":"breadth","valuation.html":"breadth",
+"kospi-ff.html":"kospiff","cds.html":"cds","tanker.html":"tanker","us-liq.html":"usliq","tval.html":"tval",
+"etf.html":"tval","osc.html":"osc","leaders.html":"leaders","taiwan-revenue.html":"taiwan","flows":"flows",
+"orders.html":"orders","cost.html":"cost","util.html":"util","hs.html":"hs","vs.html":"vsr","gpu-rent.html":"gpurent","dram.html":"dram","trendforce.html":"trendforce"};
+let EP=null;
+async function ep(){if(EP!==null)return EP;try{EP=(await fetch('endpoint.json?'+Date.now()).then(r=>r.json())).url;}catch(e){EP='';}return EP;}
+async function refresh(e,k){
+  e.preventDefault();e.stopPropagation();
+  const btn=e.target;const job=JOB[k];if(!job)return false;
+  const url=await ep();
+  if(!url){btn.textContent='서버꺼짐';setTimeout(()=>btn.textContent='↻',2500);return false;}
+  btn.textContent='…';btn.disabled=true;
+  try{
+    const r=await fetch(url+'/refresh',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({job})}).then(x=>x.json());
+    if(r.status==='started'){btn.textContent='갱신중';setTimeout(()=>{btn.textContent='↻';btn.disabled=false;},120000);
+      toast(`${job} 갱신 시작 — 1~3분 후 해당 페이지를 새로고침하세요`);}
+    else if(r.status==='cooldown'){btn.textContent='↻';btn.disabled=false;toast(`쿨다운: ${r.wait}초 후 다시 시도`);}
+    else if(r.status==='busy'){btn.textContent='↻';btn.disabled=false;toast('이미 갱신 중입니다');}
+    else{btn.textContent='↻';btn.disabled=false;}
+  }catch(err){btn.textContent='실패';setTimeout(()=>{btn.textContent='↻';btn.disabled=false;},2500);}
+  return false;
+}
+function toast(msg){
+  let t=document.getElementById('toast');
+  if(!t){t=document.createElement('div');t.id='toast';document.body.appendChild(t);}
+  t.textContent=msg;t.className='show';setTimeout(()=>t.className='',4000);
+}
+const KEY='dashLayout2';
+const ADMIN_IPS=['222.108.214.107'];
+const ADMIN_PASS='jjeomsang-only';
+let ADMIN=localStorage.getItem('dashAdmin')==='1';
+const q=new URLSearchParams(location.search);
+if(q.get('admin')===ADMIN_PASS){ADMIN=true;localStorage.setItem('dashAdmin','1');}
+if(q.get('admin')==='off'){ADMIN=false;localStorage.removeItem('dashAdmin');}
+let PUB=null;   // 관리자가 발행한 공개 배치 (layout.json)
+let GH=localStorage.getItem('dashGH')||'';
+if(q.get('ghtoken')){GH=q.get('ghtoken');localStorage.setItem('dashGH',GH);history.replaceState(null,'',location.pathname);}
+let state=JSON.parse(localStorage.getItem(KEY)||'null');
+if(!state||!Array.isArray(state.main)) state={main:REG.filter(x=>x.on).map(x=>x.k)};
+state.main=state.main.filter(k=>REG.some(x=>x.k===k));
+async function publish(){
+  if(!GH)return;
+  try{
+    const api='https://api.github.com/repos/upperlimitprice/dashboards/contents/layout.json';
+    const h={'Authorization':'Bearer '+GH,'Accept':'application/vnd.github+json'};
+    const cur=await fetch(api,{headers:h}).then(r=>r.ok?r.json():null);
+    await fetch(api,{method:'PUT',headers:h,body:JSON.stringify({
+      message:'layout update',
+      content:btoa(unescape(encodeURIComponent(JSON.stringify({main:state.main})))),
+      sha:cur?cur.sha:undefined})});
+  }catch(e){}
+}
+let pubT=null;
+function save(){localStorage.setItem(KEY,JSON.stringify(state));
+  if(!ADMIN)localStorage.setItem('dashCustom','1');
+  if(GH){clearTimeout(pubT);pubT=setTimeout(publish,2500);}}
+function item(k){return REG.find(x=>x.k===k);}
+function render(){
+  const main=document.getElementById('main');
+  main.innerHTML=state.main.map(k=>{const x=item(k);const rf=JOB[x.k]?`<button class='rf' title='데이터 수동 갱신' onclick='return refresh(event,"${x.k}")'>↻</button>`:'';return `<div class='card' draggable='true' data-k='${x.k}' onclick='go(event,"${x.h}")'>${x.t}<small>${x.d}</small>${rf}<button class='x' title='보관함으로' onclick='return rm(event,"${x.k}")'>✕</button></div>`;}).join('')||"<div class='empty'>보관함에서 ＋를 눌러 위젯을 추가하세요</div>";
+  const pool=ADMIN?REG:REG.filter(x=>pubMain().includes(x.k));  // 보관함 전체 목록은 관리자만 — 방문자는 공개 배치 중 자신이 뺀 위젯만 보임
+  const rest=pool.filter(x=>!state.main.includes(x.k));
+  document.getElementById('sideList').innerHTML=rest.map(x=>`<div class='sitem'><span class='nm'>${x.t}</span><span style='display:flex;gap:4px'>${ADMIN?`<button class='add del' title='대시보드에서 삭제(모든 사람에게서 숨김)' onclick='hideW("${x.k}")'>🗑</button>`:''}<button class='add' onclick='addW("${x.k}")'>＋</button></span></div>`).join('')||"<div class='empty'>모든 위젯이 메인에 있습니다</div>";
+  const hl=document.getElementById('hidList');if(hl){const H=HIDDEN_REG.filter(x=>HIDDEN.has(x.k));hl.style.display=ADMIN&&H.length?'':'none';
+   hl.innerHTML=`<details><summary>삭제한 위젯 ${H.length}개 (관리자만 보임)</summary>${H.map(x=>`<div class='sitem'><span class='nm' style='opacity:.6'>${x.t}</span><button class='add' title='복원' onclick='unhideW("${x.k}")'>↺</button></div>`).join('')}</details>`;}
+  wireDrag();
+}
+function go(e,h){if(e.target.closest('a,.x,.rf'))return;location.href=h;}
+function rm(e,k){e.preventDefault();e.stopPropagation();state.main=state.main.filter(x=>x!==k);
+  state.removed=(state.removed||[]).concat(k);save();render();return false;}
+let HIDDEN=new Set();const HIDDEN_REG=REG.slice();
+function applyHidden(){for(let i=REG.length-1;i>=0;i--)if(HIDDEN.has(REG[i].k))REG.splice(i,1);
+  HIDDEN_REG.forEach(x=>{if(!HIDDEN.has(x.k)&&!REG.some(r=>r.k===x.k))REG.push(x)});
+  if(state&&state.main)state.main=state.main.filter(k=>!HIDDEN.has(k));}
+async function hideW(k,hide=true){const x=HIDDEN_REG.find(r=>r.k===k);
+  if(hide&&!confirm(`'${x?x.t:k}' 위젯을 대시보드에서 삭제할까요?\n모든 방문자 화면과 보관함에서 사라집니다. (관리자 '삭제한 위젯'에서 복원 가능)`))return;
+  const url=await ep();if(!url){toast('갱신 서버가 꺼져 있습니다 — 맥미니 refresh_server 확인');return;}
+  try{const r=await fetch(url+'/hide-widget',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({k,hide,pass:ADMIN_PASS})}).then(x=>x.json());
+    if(r.status==='ok'){HIDDEN=new Set(r.hidden);if(PUB){PUB.hidden=r.hidden;PUB.main=(PUB.main||[]).filter(x=>x!==k)}applyHidden();save();render();toast(hide?'삭제했습니다 — 1~2분 뒤 모든 화면에 반영':'복원했습니다 — 보관함에 다시 나타납니다');}
+    else toast('실패: '+(r.error||'알 수 없음'));}catch(e){toast('실패: 서버 연결 불가');}}
+const unhideW=k=>hideW(k,false);
+function addW(k){state.main.push(k);state.removed=(state.removed||[]).filter(x=>x!==k);save();render();}
+function syncOrder(){
+  state.main=[...document.querySelectorAll('#main .card[draggable]')].map(x=>x.dataset.k);
+  save();  // 드래그 순간마다 즉시 저장 — 새로고침해도 마지막 배치 유지
+}
+function wireDrag(){
+  const box=document.getElementById('main');let drag=null;
+  box.addEventListener('dragover',e=>e.preventDefault());
+  box.addEventListener('drop',e=>{e.preventDefault();syncOrder();});
+  box.querySelectorAll('.card[draggable]').forEach(el=>{
+    el.addEventListener('dragstart',()=>{drag=el;el.style.opacity=.4;});
+    el.addEventListener('dragend',()=>{if(drag)drag.style.opacity=1;drag=null;syncOrder();});
+    el.addEventListener('dragover',e=>{e.preventDefault();
+      if(!drag||drag===el)return;
+      const r=el.getBoundingClientRect();
+      box.insertBefore(drag, e.clientY<r.top+r.height/2?el:el.nextSibling);
+      syncOrder();});
+  });
+}
+window.addEventListener('pageshow',()=>{ /* 뒤로가기 복원 시에도 저장된 배치 재적용 */
+  const s2=JSON.parse(localStorage.getItem(KEY)||'null');
+  if(s2&&Array.isArray(s2.main)){state=s2;state.main=state.main.filter(k=>REG.some(x=>x.k===k));render();}
+});
+function pubMain(){
+  return (PUB&&Array.isArray(PUB.main))?PUB.main.filter(k=>REG.some(x=>x.k===k)):REG.filter(x=>x.on).map(x=>x.k);
+}
+function applyAdmin(){
+  if(ADMIN){document.body.classList.add('admin');pubBtn.style.display='';return;}
+  pubBtn.style.display='none';
+  document.body.classList.remove('admin');
+  if(localStorage.getItem('dashCustom')!=='1'){
+    state={main:pubMain()};              // 미커스텀: 메인 계정 발행 배치 그대로
+  }else{
+    const rmv=state.removed||[];         // 커스텀: 유지 + 관리자가 새로 발행한 위젯만 뒤에 합류
+    pubMain().forEach(k=>{if(!state.main.includes(k)&&!rmv.includes(k))state.main.push(k);});
+    state.main=state.main.filter(k=>pubMain().includes(k));  // 비공개 위젯이 예전 로컬 배치에 남아 있으면 제거
+  }
+  render();
+}
+const pubBtn=document.getElementById('pubBtn');
+pubBtn.style.display='none';   // 관리자에게만 노출
+pubBtn.onclick=async()=>{
+  const url=await ep();
+  if(!url){toast('갱신 서버가 꺼져 있습니다 — 맥미니 refresh_server 확인');return;}
+  pubBtn.textContent='발행 중...';pubBtn.disabled=true;
+  try{
+    const r=await fetch(url+'/publish-layout',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({main:state.main})}).then(x=>x.json());
+    if(r.status==='published'){PUB={main:state.main.slice()};
+      toast(`공개 배치 발행 완료 (${r.n}개) — 외부 접속자에게 이 구성이 보입니다`);}
+    else toast('발행 실패: '+(r.error||'알 수 없음'));
+  }catch(e){toast('발행 실패: 서버 연결 불가');}
+  pubBtn.textContent='📤 현재 배치를 공개 배치로 발행';pubBtn.disabled=false;
+};
+document.getElementById('resetBtn').onclick=()=>{
+  localStorage.removeItem(KEY);localStorage.removeItem('dashCustom');
+  state={main:pubMain()};render();toast('쩜상리서치 기본 배치로 초기화됐습니다');
+};
+render();
+fetch('layout.json?v='+Date.now()).then(r=>r.ok?r.json():null).then(j=>{PUB=j;HIDDEN=new Set((j&&j.hidden)||[]);applyHidden();
+  // 발행 배치에 새로 추가된 카드는 관리자 로컬 배치에도 자동 합류
+  if(PUB&&Array.isArray(PUB.main))PUB.main.forEach(k=>{if(REG.some(x=>x.k===k)&&!state.main.includes(k))state.main.push(k);});
+  applyAdmin();}).catch(()=>applyAdmin());
+if(!ADMIN){
+  fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(d=>{
+    if(ADMIN_IPS.includes(d.ip)){ADMIN=true;localStorage.setItem('dashAdmin','1');pubBtn.style.display='';
+      state=JSON.parse(localStorage.getItem(KEY)||'null')||{main:REG.filter(x=>x.on).map(x=>x.k)};
+      state.main=(state.main||[]).filter(k=>REG.some(x=>x.k===k));
+      document.body.classList.add('admin');render();}
+  }).catch(()=>{});
+}
+</script>
+</body></html>"""
+    page = page.replace("__REG__", reg_json)
+    (ROOT / "index.html").write_text(page, encoding="utf-8")
+    print(f"index.html 생성 — 위젯 {len(registry)}개")
+
+
+if __name__ == "__main__":
+    main()
