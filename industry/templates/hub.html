@@ -13,6 +13,8 @@ body{margin:0;background:var(--bg);color:var(--text);font:14px/1.5 -apple-system
 .wrap{max-width:1200px;margin:0 auto;padding:20px 16px 48px}
 h1{font-size:22px;margin:0 0 4px}.sub{color:var(--text2);margin:0 0 18px}
 .sub a{color:var(--muted)}
+.ins{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 18px;margin:0 0 22px}.ins h2{font-size:15px;margin:0 0 6px}.ins h2 small{color:var(--muted);font-weight:400;font-size:11.5px;margin-left:6px}.ins .hl{font-size:16px;font-weight:700;margin:2px 0 6px}.ins ul{margin:0;padding-left:20px;line-height:1.7}
+.gi{margin:0 0 10px;padding-left:20px;color:var(--text2);font-size:13px;line-height:1.65}
 .grp{margin:0 0 22px}.grp h3{font-size:14px;color:var(--text2);margin:0 0 8px;padding:0 0 6px;border-bottom:1px solid var(--border);font-weight:650}.grp h3 small{color:var(--muted);font-weight:400;margin-left:6px}
 .cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 @media (max-width:700px){.cards{grid-template-columns:minmax(0,1fr)}}
@@ -31,32 +33,33 @@ a.card:hover{border-color:var(--accent)}
 <div class="wrap">
 <h1>산업 트래커</h1>
 <p class="sub">데이터센터 · 전력망·발전·태양광 · 가스·LNG · 화물 · 전자부품 · 자동차 — 공개 데이터 자동 수집 · <a href="../../index.html">← 전체 대시보드</a></p>
+<div class="ins" id="ins"></div>
 <div id="cards"></div>
 </div>
 <script id="hub-data" type="application/json">__DATA__</script>
 <script>
 // ?t=/c/<key> 형태 링크 지원 (예: index.html?t=%2Fc%2Fgrid)
 const T = new URLSearchParams(location.search).get('t');
-const C = JSON.parse(document.getElementById('hub-data').textContent);
+const H = JSON.parse(document.getElementById('hub-data').textContent);
+const C = Array.isArray(H) ? H : H.cards; const INS = (H && H.ins) || {};
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmt = v => v==null ? '—' : v.toLocaleString('ko-KR',{maximumFractionDigits:Math.abs(v)>=1000?0:1});
 const ST = {ok:'정상', partial:'일부 실패', error:'실패', skipped:'키 필요', pending:'수집 전'};
 const hit = T && C.find(c => T.replace(/\/+$/,'') === '/c/' + c.key);
 if (hit) location.replace(hit.key + '.html');
 // 동종 페이지끼리 구역화 — 구역마다 2열(2개=좌우, 3개=좌우+아래, 4개=2×2)
-const GROUPS = [['🖥 데이터센터', ['power_nowcast','datacenter']],
-  ['☀️ 전력망 · 발전 · 태양광', ['grid','gen_capacity','solar','plan_actual']],
-  ['🔥 가스 · LNG', ['gas_lng']], ['🚢 화물 · 물류', ['freight']], ['🧩 전자부품 (MLCC)', ['mlcc_lead']], ['🚗 자동차', ['auto']]];
-const used = new Set(GROUPS.flatMap(g => g[1]));
-const rest = C.filter(c => !used.has(c.key)).map(c => c.key);
-if (rest.length) GROUPS.push(['기타', rest]);
+const GROUPS = (H && H.groups) || [['전체', C.map(c => c.key)]];
+const md = t => esc(t).replace(/__(.+?)__/g,'<b><u>$1</u></b>').replace(/\*\*(.+?)\*\*/g,'<b>$1</b>');
 const card = c => `<a class="card" href="${esc(c.key)}.html">
   <h2>${esc(c.title)}</h2><p>${esc(c.subtitle)}</p>
   <div class="ks">${(c.kpis||[]).slice(0,3).map(k=>`<div class="k"><div class="l">${esc(k.label)}</div><div class="v">${fmt(k.value)}<small>${esc(k.unit)}</small></div><div class="d ${k.delta>0?'up':k.delta<0?'down':''}">${k.delta==null?'&nbsp;':(k.delta>0?'▲':'▼')+' '+fmt(Math.abs(k.delta))+esc(k.delta_unit)+' '+esc(k.delta_label)}</div></div>`).join('')}</div>
   <div class="foot"><span class="st ${esc(c.status)}">${ST[c.status]||esc(c.status)}</span><span>${esc(c.updated||'')}</span></div></a>`;
 const byKey = Object.fromEntries(C.map(c => [c.key, c]));
+const gi = n => ((INS.groups || {})[n] || []);
+document.getElementById('ins').innerHTML = INS.headline ? `<h2>🧭 종합 인사이트 <small>${esc(INS.at || '')} 갱신 · 페이지 KPI 기준</small></h2><div class="hl">${md(INS.headline)}</div><ul>${(INS.bullets||[]).map(b => `<li>${md(b)}</li>`).join('')}</ul>` : '';
+document.getElementById('ins').style.display = INS.headline ? '' : 'none';
 document.getElementById('cards').innerHTML = GROUPS.map(([name, keys]) => { const cs = keys.map(k => byKey[k]).filter(Boolean);
-  return cs.length ? `<section class="grp"><h3>${esc(name)}<small>${cs.length}</small></h3><div class="cards">${cs.map(card).join('')}</div></section>` : ''; }).join('');
+  return cs.length ? `<section class="grp"><h3>${esc(name)}<small>${cs.length}</small></h3>${gi(name).length ? `<ul class="gi">${gi(name).map(x => `<li>${md(x)}</li>`).join('')}</ul>` : ''}<div class="cards">${cs.map(card).join('')}</div></section>` : ''; }).join('');
 </script>
 </body>
 </html>

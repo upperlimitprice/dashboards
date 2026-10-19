@@ -106,6 +106,7 @@ def main():
     ap.add_argument("--render-only", action="store_true")
     ap.add_argument("--push", action="store_true")
     ap.add_argument("--check", action="store_true")
+    ap.add_argument("--no-insights", action="store_true", help="목록 인사이트 갱신 생략(이전 값 사용 안 함)")
     a = ap.parse_args()
     load_env()
     if a.check:
@@ -114,7 +115,11 @@ def main():
         for key in a.keys or pages.ORDER:
             collect(pages.load(key))
     cards = [render(m) for m in pages.all_modules()]
-    (SITE / "index.html").write_text(P.render_hub(cards), encoding="utf-8")
+    from core import insights
+    used = {k for _, ks in pages.GROUPS for k in ks}
+    groups = list(pages.GROUPS) + ([("기타", [c["key"] for c in cards if c["key"] not in used])] if any(c["key"] not in used for c in cards) else [])
+    ins = {} if a.no_insights else insights.make(cards, groups)
+    (SITE / "index.html").write_text(P.render_hub({"cards": cards, "groups": groups, "ins": ins}), encoding="utf-8")
     print("  " + " · ".join(f"{c['key']}:{c['status']}" for c in cards))
     if a.push:
         push()
