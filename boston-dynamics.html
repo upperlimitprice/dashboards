@@ -1,0 +1,629 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>🤖 보스턴다이내믹스 생산·공급망</title>
+<meta name="description" content="보스턴다이내믹스 Atlas 양산 계획(2026~2030)·3만대 캐파 구조·원가 곡선·BOM·부품별 공급사·한국 수혜주·지분구조·재무·밸류 추정 — 2026-10-21 심층보고서 인포그래픽">
+<style>
+:root{color-scheme:light;
+ --page:#f9f9f7;--surface-1:#fcfcfb;--surface-2:#f3f2ee;--text-primary:#0b0b0b;--text-secondary:#52514e;--muted:#898781;
+ --grid:#e1e0d9;--axis:#c3c2b7;--border:rgba(11,11,11,.10);--accent:#2a78d6;--accent-soft:rgba(42,120,214,.10);
+ --s1:#2a78d6;--s2:#eb6834;--s3:#1baf7a;--s4:#eda100;--s5:#e87ba4;--s6:#008300;--s7:#4a3aa7;--s8:#e34948;
+ --decal:rgba(0,0,0,.30);--up:#d03b3b;--down:#2a64c8;
+ --b-ok:#006300;--b-ok-bg:rgba(0,99,0,.09);--b-rep:#9a6700;--b-rep-bg:rgba(237,161,0,.14);--b-est:#6b6a66;--b-est-bg:rgba(137,135,129,.13);--b-thm:#7a3fa0;--b-thm-bg:rgba(122,63,160,.10)}
+@media (prefers-color-scheme:dark){:root:where(:not([data-theme="light"])){color-scheme:dark;
+ --page:#0d0d0d;--surface-1:#1a1a19;--surface-2:#222221;--text-primary:#ffffff;--text-secondary:#c3c2b7;--muted:#898781;
+ --grid:#2c2c2a;--axis:#383835;--border:rgba(255,255,255,.10);--accent:#3987e5;--accent-soft:rgba(57,135,229,.16);
+ --s1:#3987e5;--s2:#d95926;--s3:#199e70;--s4:#c98500;--s5:#d55181;--s6:#008300;--s7:#9085e9;--s8:#e66767;
+ --decal:rgba(0,0,0,.38);--up:#ff6b5c;--down:#5d93ff;
+ --b-ok:#3fc03f;--b-ok-bg:rgba(12,163,12,.16);--b-rep:#e6b820;--b-rep-bg:rgba(201,133,0,.20);--b-est:#b5b3ab;--b-est-bg:rgba(137,135,129,.20);--b-thm:#c59ae8;--b-thm-bg:rgba(185,138,230,.16)}}
+:root[data-theme="dark"]{color-scheme:dark;
+ --page:#0d0d0d;--surface-1:#1a1a19;--surface-2:#222221;--text-primary:#ffffff;--text-secondary:#c3c2b7;--muted:#898781;
+ --grid:#2c2c2a;--axis:#383835;--border:rgba(255,255,255,.10);--accent:#3987e5;--accent-soft:rgba(57,135,229,.16);
+ --s1:#3987e5;--s2:#d95926;--s3:#199e70;--s4:#c98500;--s5:#d55181;--s6:#008300;--s7:#9085e9;--s8:#e66767;
+ --decal:rgba(0,0,0,.38);--up:#ff6b5c;--down:#5d93ff;
+ --b-ok:#3fc03f;--b-ok-bg:rgba(12,163,12,.16);--b-rep:#e6b820;--b-rep-bg:rgba(201,133,0,.20);--b-est:#b5b3ab;--b-est-bg:rgba(137,135,129,.20);--b-thm:#c59ae8;--b-thm-bg:rgba(185,138,230,.16)}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;overflow-x:hidden}
+body{background:var(--page);color:var(--text-primary);font-family:system-ui,-apple-system,"Apple SD Gothic Neo","Segoe UI","Noto Sans KR",sans-serif;line-height:1.6;font-size:15px;-webkit-text-size-adjust:100%}
+.wrap{max-width:1100px;margin:0 auto;padding:28px 16px 64px}
+header.top{margin-bottom:18px}
+h1{font-size:1.5rem;margin:0 0 6px;letter-spacing:-.01em;font-weight:800}
+.sub{color:var(--text-secondary);font-size:.86rem;margin:0}
+.lead{background:var(--surface-1);border:1px solid var(--border);border-radius:14px;padding:16px 18px;margin:16px 0 8px;font-size:.93rem;line-height:1.75}
+.lead b{font-weight:700}
+nav.toc{display:flex;gap:6px;flex-wrap:wrap;margin:14px 0 4px;font-size:.8rem}
+nav.toc a{color:var(--text-secondary);text-decoration:none;border:1px solid var(--border);background:var(--surface-1);border-radius:999px;padding:4px 11px}
+nav.toc a:hover{border-color:var(--accent);color:var(--accent)}
+h2{font-size:1.12rem;margin:40px 0 4px;padding-left:10px;border-left:4px solid var(--accent);font-weight:800;scroll-margin-top:12px}
+h3{font-size:.95rem;margin:22px 0 6px;font-weight:700}
+.desc{color:var(--text-secondary);font-size:.84rem;margin:0 0 12px}
+.card{background:var(--surface-1);border:1px solid var(--border);border-radius:14px;padding:16px 16px 12px;margin:0 0 14px;min-width:0}
+.card h3{margin:0 0 2px}
+.card .en{color:var(--muted);font-size:.74rem;margin:0 0 10px}
+.chart{width:100%;height:380px}
+.chart.tall{height:480px}
+.chart.short{height:320px}
+.note{color:var(--muted);font-size:.76rem;margin:8px 0 0;line-height:1.6}
+.note b{color:var(--text-secondary);font-weight:600}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:14px 0 6px}
+.tile{background:var(--surface-1);border:1px solid var(--border);border-radius:14px;padding:14px 16px 12px;min-width:0}
+.tile .lbl{font-size:.78rem;color:var(--text-secondary);margin-bottom:6px}
+.tile .val{font-size:1.65rem;font-weight:800;letter-spacing:-.02em;line-height:1.15}
+.tile .val small{font-size:.92rem;font-weight:600;color:var(--text-secondary);margin-left:2px}
+.tile .cap{font-size:.72rem;color:var(--muted);margin-top:6px;line-height:1.5}
+.tblwrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin-top:8px;max-width:100%}
+table{border-collapse:collapse;width:100%;font-size:.82rem}
+th,td{padding:9px 14px;border-bottom:1px solid var(--grid);text-align:left;vertical-align:top;white-space:nowrap}
+th{background:var(--surface-2);color:var(--text-secondary);font-weight:600;position:sticky;top:0}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+th:last-child,td:last-child{padding-right:32px}
+td.wc{white-space:normal;min-width:200px;max-width:420px}
+td.src{white-space:normal;min-width:180px;max-width:320px;color:var(--text-secondary);font-size:.76rem}
+.na{color:var(--muted);font-weight:400}
+.up{color:var(--up);font-weight:600}.dn{color:var(--down);font-weight:600}
+th.sortable{cursor:pointer;user-select:none}
+th.sortable .arr{display:inline-block;margin-left:4px;font-size:inherit;color:inherit;opacity:.35}
+th.sortable.on .arr{opacity:1}
+.bdg{display:inline-block;font-size:.7rem;font-weight:700;line-height:1.5;padding:0 7px;border-radius:999px;border:1px solid currentColor;white-space:nowrap;vertical-align:1px}
+.bdg.ok{color:var(--b-ok);background:var(--b-ok-bg)}
+.bdg.rep{color:var(--b-rep);background:var(--b-rep-bg)}
+.bdg.est{color:var(--b-est);background:var(--b-est-bg);border-style:dashed}
+.bdg.thm{color:var(--b-thm);background:var(--b-thm-bg)}
+.ctrl{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:0 0 8px}
+.ctrl button{border:1px solid var(--border);background:var(--surface-2);color:var(--text-secondary);border-radius:8px;font-size:.76rem;padding:4px 11px;cursor:pointer;font-family:inherit}
+.ctrl button.on{background:var(--accent-soft);color:var(--accent);border-color:var(--accent)}
+.ctrl .hint{font-size:.72rem;color:var(--muted);margin-left:auto}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px}
+@media(max-width:820px){.two{grid-template-columns:minmax(0,1fr)}}
+.two.tlw{align-items:start}
+.sticky{position:sticky;top:12px}
+@media(max-width:820px){.sticky{position:static}}
+/* timeline */
+.tl{list-style:none;margin:6px 0 0;padding:0 0 0 4px;position:relative}
+.tl:before{content:"";position:absolute;left:10px;top:6px;bottom:6px;width:2px;background:var(--grid)}
+.tl li{position:relative;padding:6px 0 10px 30px}
+.tl li:before{content:"";position:absolute;left:5px;top:12px;width:12px;height:12px;border-radius:50%;background:var(--surface-1);border:2px solid var(--accent)}
+.tl li.done:before{background:var(--accent)}
+.tl li.yr{padding:14px 0 4px 30px;font-weight:800;font-size:.95rem}
+.tl li.yr:before{display:none}
+.tl .d{font-variant-numeric:tabular-nums;font-weight:700;font-size:.82rem;margin-right:8px}
+.tl .st{font-size:.72rem;color:var(--muted);margin-left:6px}
+.tl .ev{font-size:.88rem;display:block;margin-top:1px}
+.tl .s{font-size:.72rem;color:var(--muted)}
+.gap{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:8px 0 12px}
+.gap .tile .val{font-size:1.4rem}
+ol.bul{padding-left:1.2em;margin:8px 0}
+ol.bul li{margin:10px 0;font-size:.9rem;line-height:1.7}
+footer{margin-top:48px;color:var(--text-secondary);font-size:.8rem;border-top:1px solid var(--grid);padding-top:14px;line-height:1.7}
+footer a{color:var(--accent);word-break:break-all}
+.srcs{columns:2;column-gap:28px;font-size:.74rem;color:var(--muted);margin:8px 0 14px}
+.srcs div{break-inside:avoid;margin-bottom:2px}
+.dday{font-size:.72rem;font-weight:700;color:var(--accent)}
+.dday.past{color:var(--muted)}
+@media(max-width:640px){.srcs{columns:1}.chart{height:340px}.chart.tall{height:520px}h1{font-size:1.28rem}.tile .val{font-size:1.4rem}.ctrl .hint{margin-left:0;width:100%}}
+</style></head><body><div class="wrap">
+<header class="top">
+<h1>🤖 보스턴다이내믹스 생산·공급망</h1>
+<p class="sub">Atlas 양산 계획(2026~2030) · 3만대 캐파 구조 · 원가 곡선 · BOM · 부품별 공급사 · 한국 수혜주 · 지분·재무·밸류 — <b>기준일 2026-10-21</b> 심층보고서 인포그래픽 · 쩜상리서치</p>
+</header>
+<div class="lead"><b>현대차그룹, 3만대 캐파로 Atlas 양산판 짠다.</b> 구조는 "BD는 설계, 현대차그룹은 양산"이다. 2026년 물량은 현대차 RMAC과 Google DeepMind에 전량 배정됐고, 대량 생산은 2028년 가동 목표인 미국 신공장(신설 법인 <b>로보틱스 아메리카, RA</b>)이 맡는다. 생산능력 <b>연 3만대</b>는 Atlas·Spot·Stretch 합산 <b>"캐파"</b>이지 생산량이 아니다. 공식 확인된 외부 1차 벤더는 <b>현대모비스(액추에이터)·NVIDIA(Jetson Thor)·LG이노텍(비전, 공동개발)</b> 셋뿐이고, 액추에이터가 원가의 약 60%라 한국 실질 매출 수혜는 모비스에 집중된다. 소프트뱅크 풋옵션 거래가 함의하는 BD 가치는 <b>약 5.2조원</b>으로, 한화 SOTP 가정(145조원)의 약 1/28이다.</div>
+<nav class="toc"><a href="#s1">핵심 요약</a><a href="#s2">생산 타임라인</a><a href="#s3">캐파 구조</a><a href="#s4">원가 곡선</a><a href="#s5">BOM 비중</a><a href="#s6">공급사 맵</a><a href="#s7">한국 수혜주</a><a href="#s8">지분구조</a><a href="#s9">재무</a><a href="#s10">밸류 추정</a><a href="#s11">SOTP</a><a href="#s12">경쟁사</a><a href="#s13">상충 수치</a><a href="#s14">체크포인트</a><a href="#s15">출처·면책</a></nav>
+
+<h2 id="s1">1. 핵심 요약</h2>
+<div class="tiles" id="tiles"></div>
+<p class="note">근거 등급: <span class="bdg ok">확인</span> 회사 보도자료·공시·IR 발언 · <span class="bdg rep">보도</span> 언론 보도(회사 미확인) · <span class="bdg est">추정</span> 증권사·제3자 추정 또는 본 보고서 계산 · <span class="bdg thm">테마</span> BD 고객 확인 없음. IR 발언 중 일부는 IR 담당자 발언 받아쓰기 노트로 공식 공시가 아니다.</p>
+
+<h2 id="s2">2. 생산 계획 타임라인</h2>
+<p class="desc">2026~27년은 수백 대 규모의 <b>훈련 플릿</b>(RMAC·DeepMind), 2028년이 미국 신공장 <b>캐파 가동</b>, 2029년 하반기 기아 조지아, 2030년 컴포넌트 조립·글로벌 거점 순서다. 연도별 공식 램프는 없고 아래 차트의 대수는 셀사이드 추정이다.</p>
+<div class="two tlw">
+<div class="card"><h3>마일스톤 (2026~2030)</h3><p class="en">● 채움 = 완료 · ○ = 예정/목표 · 배지 = 근거 등급</p>
+<div class="ctrl" id="tl-ctrl"><button data-m="focus" class="on">2026~2030</button><button data-m="all">전체 (2021~)</button></div>
+<ul class="tl" id="tl"></ul></div>
+<div class="card sticky"><h3>연도별 램프: 판매 추정 vs 캐파 (대, 로그축)</h3><p class="en">교보 BD 판매 추정(2026E 100 → 2028E 1만) · 다올 2029년까지 누적 2.9만 · RA 캐파 3만(로봇 합산) · 드래그로 구간 확대, 역방향 드래그로 원복</p>
+<div id="c-ramp" class="chart"></div>
+<p class="note">로그축: 100대와 3만대가 300배 차이라 선형축에서는 2026~27년이 보이지 않는다. 다올 2.9만대는 <b>누적</b>이라 연간 막대와 직접 비교하면 안 된다. 2.5만대+ 그룹 배치 목표는 "수년간 누적"(본 보고서 해석)이라 연도에 배치하지 않았다.</p></div>
+</div>
+
+<h2 id="s3">3. 캐파 구조</h2>
+<p class="desc">RA 신공장 <b>연 3만대</b>(캐파) · 현대차·기아 공장 배치 목표 <b>2.5만대+</b>(초기 확정 물량, 수년간 누적) · 모비스 미국 액추에이터 공장 <b>연 35만개</b>. Atlas 1대 = 액추에이터 <b>31개</b>(그리퍼 제외, 2종 표준화)로 환산하면 35만개는 약 1만대분이다.</p>
+<div class="gap" id="gap-tiles"></div>
+<div class="card"><h3>액추에이터 공급 캐파 vs 필요 수량 (개/년)</h3><p class="en">필요 수량 = 대수 × 31개 (본 보고서 계산) · 점선 = 모비스 35만개 캐파 · 드래그로 확대/역드래그 원복</p>
+<div id="c-gap" class="chart short"></div>
+<p class="note">35만개는 모비스 설명대로 "1만대 물량 기준 + 안전마진"과 정합(31×1만=31만). 3만대 캐파 전체를 Atlas로 채우면 93만개가 필요해 <b>58만개(약 2.7배) 부족</b> — 램프 단계 증설이나 품목 분담이 필요하다. 다만 3만대는 Spot·Stretch 포함 합산이어서 Atlas 비중만큼 실제 필요량은 작아진다. mdtoday의 "초기 3만 유닛→35만 유닛"은 단일 보도.</p></div>
+
+<h2 id="s4">4. 원가 곡선</h2>
+<p class="desc">회사 IR: 초기 양산 원가 대당 <b>약 $14만</b> → 5만대 이상에서 <b>약 $3만</b> 목표 <span class="bdg ok">확인</span>. 삼성증권 곡선(1만대 $5만·3만대 $3.5만)은 가이던스와 사실상 같다 <span class="bdg est">추정</span>. 판매가는 공개되지 않았다.</p>
+<div class="card"><h3>Atlas 대당 원가 곡선 vs Goldman BOM·판가 (US$)</h3><p class="en">실선 = 원가(회사·삼성증권) · 점선 = Goldman <b>판가</b> 추정 · 수평선 = Goldman <b>BOM</b> $74,850(원가와 정의가 다름, 별도 표기) · 드래그 확대</p>
+<div id="c-cost" class="chart"></div>
+<p class="note"><b>Goldman BOM $74,850 ≠ 회사 원가 $14만.</b> 저물량 원가에는 BOM 외 조립·간접비와 수율 손실이 들어가므로 정의가 다르다. Goldman 판가($12만→$7만)는 수량 축이 아니라 "현재→양산" 두 시점이라 가장 왼쪽·오른쪽 지점에 놓았다. 판가 추정 Robozaps $13~32만·신한 $50만+는 축 밖이라 표로만 둔다. 시간당 비용은 $9.4 → 3만대+ $1.2(삼성증권).</p></div>
+
+<h2 id="s5">5. BOM 비중</h2>
+<p class="desc">추정치는 <b>액추에이터 50~60%</b>로 모인다. 다만 Atlas 전용 부품별 분해(티어다운)는 없다. Atlas는 회전형 관절이라 Optimus식 롤러스크류 비중은 0에 가깝다 <span class="bdg est">추정</span>.</p>
+<div class="two">
+<div class="card"><h3>(a) 상위 구성 — 출처별 (%)</h3><p class="en">현대차 IR은 Atlas, 나머지는 휴머노이드 일반 · 기타·미공개 = 100 − 공개 비중</p>
+<div id="c-bom1" class="chart short"></div></div>
+<div class="card"><h3>(b) 액추에이터·부품 세부 — 출처별 (%)</h3><p class="en">교보 = 유성감속기 액추에이터 원가 내 · X.PIN = 중국 공급망 전체 BOM</p>
+<div id="c-bom2" class="chart short"></div></div>
+</div>
+<div class="card"><h3>BOM 추정 원표</h3><div class="tblwrap"><table id="t-bom"></table></div>
+<p class="note">Goldman BOM $74,850에 액추에이터 50~60%를 적용하면 대당 액추에이터 $3.7만~4.5만, 31개로 나누면 <b>개당 약 $1,200~1,450</b>(본 보고서 계산) — 모비스가 언급한 중국산 개당 $500~600보다 비싸다는 IR 발언과 정합.</p></div>
+
+<h2 id="s6">6. 부품별 공급사 맵</h2>
+<p class="desc">확인된 1차 외부 벤더는 셋뿐이다. BD는 감속기·모터·통신제어기의 내재화를 요청했고, 모비스는 BD 도면을 받아 일부 아웃소싱 후 최종 조립한다 → 감속기·베어링 업체는 <b>모비스 경유 2차 벤더</b>로 들어갈 개연성이 높다 <span class="bdg est">추정</span>.</p>
+<div class="card"><div class="ctrl" id="sup-ctrl"><button data-f="all" class="on">전체</button><button data-f="확인">확인</button><button data-f="보도">보도</button><button data-f="추정">추정</button><span class="hint">헤더 클릭 정렬: 1회 내림차순 · 2회 오름차순 · 3회 원래 순서</span></div>
+<div class="tblwrap"><table id="t-sup"></table></div>
+<p class="note">감속기·베어링·모터 코어·엔코더·배터리 셀·소재·커넥터·PCB 공급사는 공개되지 않았다. 희토류 NdFeB 자석(중국 소결자석 점유율 약 94%)은 업계 공통 병목이며 Atlas 자석·감속기 원산지는 미공개.</p></div>
+
+<h2 id="s7">7. 한국 수혜주</h2>
+<p class="desc">수혜 경로는 둘이다 — 실제 매출이 생기는 <b>부품 공급</b>(모비스 독보적, 비계열은 에스엘만 공시 확인)과 IPO·재평가 때 드러나는 <b>지분가치</b>(현대차·기아·모비스·글로비스). 나머지 로봇 바스켓 대부분은 BD 고객 확인이 없어 <b>테마</b>다.</p>
+<div class="card"><h3>수익률 비교 (%)</h3><p class="en">빨강 = 상승 · 파랑 = 하락 · 기간 선택 · 드래그 확대/역드래그 원복</p>
+<div class="ctrl" id="ret-ctrl"><button data-k="ret_1m" class="on">1M</button><button data-k="ret_3m">3M</button><button data-k="ret_ytd">YTD</button><button data-k="from_52w_high">52주 고점 대비</button></div>
+<div id="c-ret" class="chart tall"></div></div>
+<div class="card"><h3>수혜주 표</h3>
+<div class="ctrl" id="kb-ctrl"><button data-f="all" class="on">전체</button><button data-f="확인">확인</button><button data-f="보도">보도</button><button data-f="추정">추정</button><button data-f="테마">테마</button><button data-f="미확인">미확인</button><span class="hint">헤더 클릭: 1회 내림차순 · 2회 오름차순 · 3회 원래 순서</span></div>
+<div class="tblwrap"><table id="t-kb"></table></div>
+<p class="note">시총·수익률: 네이버증권, 2026-10-21 종가 기준. 주가는 6월 초 고점(현대차 72.9만원·모비스 75.9만원·LG이노텍 125.2만원)에서 크게 되돌렸고, 1M 기준 플러스는 에스엘·LG에너지솔루션·삼성SDI뿐 — "샘플 vs 반복 양산 발주를 구분하는 선별 장세"(LS증권). 모비스는 2026년 11월 Atlas 바디 액추에이터 첫 공급(RMAC 훈련 플릿용 소량), 의미 있는 물량은 2028년 RA 가동부터.</p></div>
+
+<h2 id="s8">8. 지분구조</h2>
+<p class="desc">소프트뱅크가 2026-07-16 풋옵션을 행사(9.65%, 약 $3.25억 추정)해 그룹이 100%를 쥔다. 지분은 기존 지분율대로 나눠 인수한다. HMG글로벌(델라웨어 LLC)은 현대차 49.5%·기아 30.5%·모비스 20% 보유. <b>2026-10-21 현재 종결 공시는 없다.</b></p>
+<div class="two">
+<div class="card"><h3>주주별 지분율 변화 (%)</h3><p class="en">2025-07 → 2026-07(행사 전) → 인수 후(계획) · 드래그 확대</p>
+<div id="c-own" class="chart short"></div></div>
+<div class="card"><h3>풋옵션 전/후 구성 (%)</h3><p class="en">안쪽 = 행사 전 · 바깥 = 인수 후</p>
+<div id="c-donut" class="chart short"></div></div>
+</div>
+<div class="card"><h3>지분 원표 (간접지분 포함)</h3><div class="tblwrap"><table id="t-own"></table></div>
+<p class="note">인수 후 간접지분은 본 보고서 계산(HMG글로벌 62.5% × 보유비율), 괄호는 한화 SOTP 적용치. 소프트뱅크 지분율 표기 9.9%·10.01%·10%·9.6%는 반올림·시점 차이로 보고 9.65%로 통일. 글로비스 연대책임 추가부담액 최대 $2억8,351만(반기보고서). 3Q 분기보고서(11월 중순)에서 글로비스 지분율이 12.5% 안팎으로 바뀌는지가 결정적 검증 포인트.</p></div>
+
+<h2 id="s9">9. 재무</h2>
+<p class="desc">순손실은 2022년 2,551억 → 2025년 5,284억원으로 확대, 2021~2025 누적 <b>1조7,558억원</b>. 1H25 말 자본 −503억원(완전자본잠식)을 2025년 8월 약 1.24조원 증자로 해소했다. 연 5천억원대 손실 → IPO·외부 지분투자가 필요한 구조.</p>
+<div class="card"><h3>매출 · 순손실 · 증자 (억원)</h3><p class="en">1H26은 반기 · 2023 매출 미공개 · 2025 증자 = BD 전체 규모(약 9.69억달러) · 드래그 확대/역드래그 원복</p>
+<div id="c-fin" class="chart"></div>
+<p class="note">2025 매출은 글로비스 공시 1,501억원 우선(robotics.press $1.3억 추정·딜사이트 1~3Q 1,054억원과 상충). 1H26 증자 3,789억원 = HMG글로벌 3,159억(현대차 1,563·기아 963·모비스 634) + 글로비스 630억, 증자 총액 약 1.2조원의 잔여분. 2021년은 연도값이 없어 누적에만 포함.</p></div>
+<div class="card"><h3>재무 원표 (억원)</h3><div class="tblwrap"><table id="t-fin"></table></div></div>
+
+<h2 id="s10">10. 밸류 추정 비교</h2>
+<p class="desc">추정치가 <b>30배 가까이</b> 벌어져 있다. 실제 거래가(소프트뱅크 역산 5.2조원)는 사전 계약 산식으로 정해졌을 가능성이 높지만, 소프트뱅크가 상장 이익을 포기하고 나갔다는 사실 자체가 단기 IPO 확률이 낮다는 신호다. 회사 IPO 입장은 2026년 내내 "미정".</p>
+<div class="card"><h3>BD 기업가치 추정 (조원)</h3><div class="ctrl" id="val-ctrl"><button data-m="log" class="on">로그축</button><button data-m="lin">선형축</button><span class="hint">색 = 거래 기반 / 증권사 / 매체·기타 · 빗금 = 범위값</span></div>
+<div id="c-val" class="chart tall"></div>
+<p class="note">2021 인수 시 기업가치 약 11억달러는 원화값이 없어 당시 환율 약 1,130원/$로 <b>약 1.2조원 환산(본 페이지 계산)</b>. 삼성증권 50~100조원은 범위 상단(100조)까지 빗금 막대로 그리고 하단은 라벨로 표기. 블로그·네이트·위런치는 출처 신뢰도가 낮은 매체 수치.</p></div>
+
+<h2 id="s11">11. SOTP</h2>
+<p class="desc">한화투자증권은 BD 기업가치 <b>993억달러(145조원)</b> × 각 사 간접지분으로 SOTP를 짰다. 현재 주가와 비교하면 BD 주당가치가 현대차 주가의 71%, 기아의 64%이고, 모비스는 BD+로봇부품 가치가 주가의 97% — 시장이 145조원 가정을 거의 인정하지 않거나 본업을 깊게 할인한다는 뜻이다.</p>
+<div class="card"><h3>주당가치 분해 vs 현재가 (원)</h3><p class="en">한화 SOTP · 모비스 BD 몫은 BD 지분 + 로봇부품사업가치 · 드래그 확대</p>
+<div id="c-sotp" class="chart short"></div></div>
+<div class="card"><h3>SOTP 표</h3><div class="tblwrap"><table id="t-sotp"></table></div>
+<p class="note">KB증권(2026-01-21)은 현대차 SOTP에 BD 간접지분 35조원(≈128조원 × 약 28%)을 넣어 목표가 80만원. KB 글로비스 목표가 36만원은 BD 지분가치 반영. 현재가 = 한화 리포트 기준가.</p></div>
+
+<h2 id="s12">12. 경쟁사 비교</h2>
+<p class="desc">Atlas는 <b>수요는 가장 확실하지만 출하는 가장 늦다.</b> 3만대 캐파는 그룹 확정 물량 2.5만대가 받치지만, 원가 곡선은 비교군 중 가장 높은 지점에서 출발하고 공장 투입(2028)도 Tesla·Figure보다 1~2년 늦다. 실제로 팔린 휴머노이드는 중국산이 압도적이다.</p>
+<div class="card"><h3>캐파 목표 vs 실제 출하 (대, 로그축)</h3><p class="en">캐파 목표·출하 기준 시점이 회사마다 다름(툴팁 참조) · Apptronik 수치 미공개 · 드래그 확대</p>
+<div id="c-comp" class="chart"></div>
+<p class="note">Tesla 100만대는 프리몬트 셀사이드 캐파(텍사스 1,000만대 별도), 출하는 2025년 500대 이하(교보 추정). BD 출하는 2026E 약 100대(교보 추정, 회사 미공개). Figure 1,000대는 누적 생산(2026-07-23). Unitree 7.5만대는 "5년 내" 목표. Tesla 3Q26 실적콜(2026-10-21 장 마감 후) 미반영.</p></div>
+<div class="card"><h3>경쟁사 표</h3><div class="tblwrap"><table id="t-comp"></table></div></div>
+
+<h2 id="s13">13. 상충 수치 정리</h2>
+<div class="card"><div class="tblwrap"><table id="t-conf"></table></div></div>
+
+<h2 id="s14">14. 체크포인트 일정</h2>
+<p class="desc">가까운 확인 포인트: <b>10/30</b> 현대차 실적·이사회의 RA 설립·출자 결의(예상) · <b>11월</b> 모비스 공급 개시 · <b>11월 중순</b> 3Q 분기보고서 지분율 변동. RA 출자비율은 생산 이익이 어느 계열사에 귀속되는지를 정하므로 SOTP의 BD 지분율보다 중요하다.</p>
+<div class="card"><div class="tblwrap"><table id="t-chk"></table></div></div>
+<div class="card"><h3>시사점</h3><ol class="bul">
+<li><b>BD는 "IPO 대박을 기다리는 지분"보다 "그룹 캡티브 수요가 받쳐 주는 액추에이터 제조 사업"에 가깝다.</b> 실제 돈의 흐름은 모비스 11월 첫 납품 → 2028년 35만개 공장 → RA 출자 구조로 옮겨 가고 있다.</li>
+<li><b>3만대 캐파는 2028년 실제 생산 목표라기보다 램프의 상한이다.</b> 모비스 공장 한 곳의 35만개는 약 1만대분.</li>
+<li><b>공급망 수혜는 넓지 않고 위계적이다.</b> 중소형 감속기·모터 업체의 기회는 "BD 공급사 선정"이 아니라 모비스 2차 벤더 선정에서 생긴다. 비계열 공식 확인 상장사는 에스엘 한 곳.</li>
+<li><b>물량과 단가를 함께 추적해야 한다.</b> 원가가 5만대에서 $3만까지 내려가면 대당 31개 액추에이터의 단가 하락이 모비스 매출 성장을 상쇄할 수 있다.</li>
+</ol></div>
+
+<footer id="s15">
+<div><b>출처</b> (보고서 본문 인용 링크)</div>
+<div class="srcs" id="srcs"></div>
+<div>작성일 2026-10-21 · 쩜상리서치 · 근거 등급 [확인]/[보도]/[추정] · 증권사 리포트·IR 컨콜 노트는 기관·일자로만 표기</div>
+<div class="note" style="margin-top:12px">⚠️ 면책: 본 페이지는 공개 자료와 증권사 추정을 정리한 참고용 리서치이며 투자 권유가 아니다. 회사가 공식 발표하지 않은 수치(판매가·연도별 램프·부품 공급사·지분 인수 종결 등)는 추정·보도 단계이고 사실과 다를 수 있다. 시세는 2026-10-21 기준이며 이후 변동을 반영하지 않는다. 투자 판단과 책임은 본인에게 있다.</div>
+</footer>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
+<script>
+const D = {"meta":{"title":"보스턴다이내믹스 생산과 공급망","as_of":"2026-10-21","evidence_levels":["확인","보도","추정"],"notes":"수치는 research_notes 원문 그대로. 계산치는 source에 '본 보고서 계산' 표기"},"timeline":[{"date":"2021-06-21","event":"현대차그룹·정의선, BD 지분 80% 인수 종결(9,963억원)","status":"완료","evidence":"확인","source":"비즈워치 2025-07-28"},{"date":"2025-03-18","event":"BD–NVIDIA 협력 확대(Jetson Thor)","status":"완료","evidence":"확인","source":"BD 보도자료"},{"date":"2025-05","event":"BD–LG이노텍 비전센싱 공동개발 협약","status":"완료","evidence":"확인","source":"BD 보도자료"},{"date":"2025-05-13","event":"DHL Stretch 1,000대+ 추가 배치 MOU","status":"완료","evidence":"확인","source":"DHL Group"},{"date":"2025-06-20","event":"4년 내 IPO 기한 경과 → 소프트뱅크 풋옵션 행사 가능","status":"완료","evidence":"보도","source":"다음/연합 2025-06-20"},{"date":"2025-08","event":"BD 증자 약 9.69억달러(약 1.24조원) 1차 납입, 자본잠식 해소","status":"완료","evidence":"보도","source":"비즈워치 2025-07-28"},{"date":"2025-08-26","event":"대미 투자 $260억(4년) 발표, 연 3만대 로봇공장 포함","status":"완료","evidence":"확인","source":"한국경제 2025-08-26"},{"date":"2026-01-05","event":"CES 2026 양산형 Atlas 공개, 보스턴 생산 개시, 모비스 액추에이터·DeepMind 파트너십 발표","status":"완료","evidence":"확인","source":"BD 보도자료"},{"date":"2026-02","event":"Robert Playter CEO 퇴임","status":"완료","evidence":"확인","source":"Bloomberg 2026-10-06"},{"date":"2026-06","event":"RMAC 파일럿 운영 개시","status":"완료","evidence":"확인","source":"Manufacturing Dive 2026-09-22"},{"date":"2026-06","event":"BD 임직원, 모비스·화신정공·에스오에스랩 등 10여 곳 양산성 실사","status":"완료","evidence":"보도","source":"한국경제 2026-06-28"},{"date":"2026-07","event":"에스엘 Spot 레그 모듈 양산 개시","status":"완료","evidence":"확인","source":"에스엘 컨콜 2026-09-29 / 반기보고서"},{"date":"2026-07-16","event":"소프트뱅크 풋옵션 행사 공식 확인(9.65%, 약 $3.25억 추정)","status":"완료(종결 미확인)","evidence":"확인","source":"Korea Times 2026-07-16"},{"date":"2026-08-26","event":"인베스터데이: 2028 연 3만대 캐파, 부지 연내 발표, IPO 미정","status":"완료","evidence":"확인","source":"뉴스핌 2026-08-26"},{"date":"2026-09-21","event":"RMAC 공식 개소(HMGMA)","status":"완료","evidence":"확인","source":"Axios / Manufacturing Dive"},{"date":"2026-10-07","event":"Rohit Prasad BD CEO 취임","status":"완료","evidence":"확인","source":"Bloomberg 2026-10-06"},{"date":"2026-10-21","event":"Tesla 3Q26 실적콜(Optimus)","status":"예정","evidence":"확인","source":"competitors.md"},{"date":"2026-10-30","event":"현대차 3Q 실적·이사회: 로보틱스 아메리카(RA) 설립 결의 예상","status":"예상","evidence":"추정","source":"메리츠 2026-10-07"},{"date":"2026-11","event":"현대모비스 Atlas 바디 액추에이터 첫 공급","status":"예정","evidence":"확인","source":"모비스 2Q 컨콜 2026-09-01 / 메리츠 2026-10-07"},{"date":"2026-11 중순","event":"3Q 분기보고서: 글로비스 BD 지분율 변동(11.39%→약 12.5%)","status":"예정","evidence":"추정","source":"ownership_ipo.md"},{"date":"2026-11-24","event":"현대모비스 임시주총(램프사업 매각)","status":"예정","evidence":"추정","source":"한화 2026-10-13"},{"date":"2026 4Q","event":"미국 로봇공장 부지 발표, BD 비계열 공급사 선정","status":"예정","evidence":"보도","source":"이데일리 2026-07-28 / 팍스경제TV 2026-08-19"},{"date":"2026 말","event":"RMAC 10배 확장","status":"예정","evidence":"확인","source":"뉴스핌 2026-08-26"},{"date":"2027 초","event":"Atlas 그룹 외 추가 고객","status":"예정","evidence":"확인","source":"BD 보도자료"},{"date":"2027","event":"BD 미국 NDR(빠르면), 모비스 액추에이터 최종 모델 확정·미국 공장 부지·건물 투자","status":"예정","evidence":"확인","source":"현대차 컨콜 2026-09-23 / 모비스 컨콜 2026-09-01"},{"date":"2027-04-01","event":"모비스 램프사업(OP모빌리티) 매각 완료 예정(약 6,000억원)","status":"예정","evidence":"추정","source":"한화 2026-10-13"},{"date":"2028","event":"RA 연 3만대 캐파 가동, 모비스 35만개 액추에이터 공장, HMGMA 부품 시퀀싱 투입","status":"목표","evidence":"확인","source":"뉴스핌 2026-05-19 / BD"},{"date":"2029 하반기","event":"기아 조지아 공장 Atlas 투입","status":"목표","evidence":"확인","source":"economy.ac 2026-09-29"},{"date":"2030","event":"컴포넌트 조립 확장, 글로벌 거점 배치","status":"목표","evidence":"확인","source":"교보 2026-06-29 / iM 2026-08-27"}],"capacity_targets":[{"item":"미국 로봇공장(RA) 연간 생산능력","value":30000,"unit":"대/년","year":2028,"scope":"Atlas·Spot·Stretch 합산, 캐파(생산량 아님)","evidence":"확인","source":"뉴스핌 2026-08-26 / 현대차 IR 2026-06-01"},{"item":"현대차·기아 공장 배치 목표(초기 확정 물량)","value":25000,"unit":"대","year":"수년간","scope":"그룹 내 배치","evidence":"확인","source":"뉴스핌 2026-05-19"},{"item":"현대모비스 미국 액추에이터 공장","value":350000,"unit":"개/년","year":2028,"scope":"약 1만대분+안전마진","evidence":"확인","source":"모비스 컨콜 2026-06-09, 2026-09-01"},{"item":"모비스 액추에이터 공장 초기 캐파","value":30000,"unit":"유닛/년","year":2028,"scope":"초기→35만 유닛","evidence":"보도","source":"mdtoday"},{"item":"Atlas 대당 액추에이터","value":31,"unit":"개","scope":"그리퍼 제외, 2종 표준화","evidence":"확인","source":"모비스 컨콜 2026-06-09"},{"item":"BD 판매 추정 2026E","value":100,"unit":"대","year":2026,"evidence":"추정","source":"교보 2026-06-29"},{"item":"BD 판매 추정 2027E","value":700,"unit":"대","year":2027,"evidence":"추정","source":"교보 2026-06-29"},{"item":"BD 판매 추정 2028E","value":10000,"unit":"대","year":2028,"evidence":"추정","source":"교보 2026-06-29"},{"item":"Atlas 누적 양산 목표(2029년까지)","value":29000,"unit":"대","year":2029,"evidence":"추정","source":"다올 / telegram 2026-05"},{"item":"Atlas 원가 초기","value":140000,"unit":"USD/대","evidence":"확인","source":"뉴스핌 2026-05-19"},{"item":"Atlas 원가 1만대","value":50000,"unit":"USD/대","evidence":"추정","source":"삼성증권"},{"item":"Atlas 원가 3만대","value":35000,"unit":"USD/대","evidence":"추정","source":"삼성증권"},{"item":"Atlas 원가 5만대+","value":30000,"unit":"USD/대","evidence":"확인","source":"뉴스핌 2026-05-19 / 삼성증권"},{"item":"Goldman Atlas BOM","value":74850,"unit":"USD/대","evidence":"추정","source":"이데일리 2026-06-18"},{"item":"Goldman Atlas 판가(현재→양산)","value":"120000→70000","unit":"USD/대","evidence":"추정","source":"이데일리 2026-06-18"},{"item":"Atlas 판가(신한/Robozaps)","value":"500000+","unit":"USD/대","evidence":"추정","source":"신한 2026-06-10"}],"bom_breakdown":[{"component":"액추에이터","share_pct":60,"scope":"Atlas","source":"현대차 IR 2026-06-01","evidence":"확인"},{"component":"그리퍼","share_pct":20,"scope":"Atlas","source":"현대차 IR 2026-06-01","evidence":"확인"},{"component":"액추에이터","share_pct":"60+","scope":"휴머노이드 재료비","source":"현대모비스(Barchart)","evidence":"확인"},{"component":"액추에이터(합계)","share_pct":50,"scope":"휴머노이드","source":"교보 2026-06-29","evidence":"추정"},{"component":"└ 6축 토크센서","share_pct":17.5,"scope":"휴머노이드","source":"교보 2026-06-29","evidence":"추정"},{"component":"└ 감속기","share_pct":12.2,"scope":"휴머노이드","source":"교보 2026-06-29","evidence":"추정"},{"component":"└ 모터","share_pct":9.8,"scope":"휴머노이드","source":"교보 2026-06-29","evidence":"추정"},{"component":"└ 베어링","share_pct":4.1,"scope":"휴머노이드","source":"교보 2026-06-29","evidence":"추정"},{"component":"└ 엔코더","share_pct":2.4,"scope":"휴머노이드","source":"교보 2026-06-29","evidence":"추정"},{"component":"└ 기타","share_pct":4.1,"scope":"휴머노이드","source":"교보 2026-06-29","evidence":"추정"},{"component":"로보틱스 핸드","share_pct":27,"scope":"휴머노이드","source":"교보 2026-06-29","evidence":"추정"},{"component":"기타(배터리·연산 등)","share_pct":23,"scope":"휴머노이드","source":"교보 2026-06-29","evidence":"추정"},{"component":"액추에이터","share_pct":56,"scope":"Optimus Gen2급 BOM ~$55k","source":"Morgan Stanley(humanoid.guide)","evidence":"추정"},{"component":"하체","share_pct":38.6,"scope":"Optimus Gen2급","source":"Morgan Stanley(humanoid.guide)","evidence":"추정"},{"component":"핸드","share_pct":17.2,"scope":"Optimus Gen2급","source":"Morgan Stanley(humanoid.guide)","evidence":"추정"},{"component":"허리·골반","share_pct":14.2,"scope":"Optimus Gen2급","source":"Morgan Stanley(humanoid.guide)","evidence":"추정"},{"component":"머리","share_pct":3.8,"scope":"Optimus Gen2급","source":"Morgan Stanley(humanoid.guide)","evidence":"추정"},{"component":"정밀 감속기","share_pct":21,"scope":"중국 공급망","source":"X.PIN(humanoid.guide)","evidence":"추정"},{"component":"모터","share_pct":19,"scope":"중국 공급망","source":"X.PIN","evidence":"추정"},{"component":"리드/롤러스크류","share_pct":19,"scope":"중국 공급망","source":"X.PIN","evidence":"추정"},{"component":"센서","share_pct":14,"scope":"중국 공급망","source":"X.PIN","evidence":"추정"},{"component":"제어기","share_pct":12,"scope":"중국 공급망","source":"X.PIN","evidence":"추정"},{"component":"구조재","share_pct":10,"scope":"중국 공급망","source":"X.PIN","evidence":"추정"},{"component":"기타","share_pct":5,"scope":"중국 공급망","source":"X.PIN","evidence":"추정"},{"component":"[액추에이터 내] 프레임리스 모터","share_pct":29,"scope":"유성감속기 기준 액추에이터 원가","source":"교보 2026-06-29","evidence":"추정"},{"component":"[액추에이터 내] 유성감속기","share_pct":28,"scope":"유성감속기 기준 액추에이터 원가","source":"교보 2026-06-29","evidence":"추정"},{"component":"[액추에이터 내] 엔코더 등 센서","share_pct":19,"scope":"유성감속기 기준 액추에이터 원가","source":"교보 2026-06-29","evidence":"추정"},{"component":"[액추에이터 내] 베어링","share_pct":12,"scope":"유성감속기 기준 액추에이터 원가","source":"교보 2026-06-29","evidence":"추정"},{"component":"[액추에이터 내] 기타","share_pct":12,"scope":"유성감속기 기준 액추에이터 원가","source":"교보 2026-06-29","evidence":"추정"}],"supplier_map":[{"component":"관절 액추에이터 모듈","supplier":"현대모비스","country":"KR","evidence":"확인","ticker":"012330","source":"Barchart/모비스 PR"},{"component":"그리퍼","supplier":"현대모비스(BD 공동개발)","country":"KR","evidence":"확인","ticker":"012330","source":"모비스 컨콜 2026-09-01"},{"component":"퍼셉션 모듈","supplier":"현대모비스(입찰 중)","country":"KR","evidence":"확인","ticker":"012330","source":"모비스 컨콜 2026-09-01"},{"component":"온보드 컴퓨트(AI칩)","supplier":"NVIDIA Jetson Thor","country":"US","evidence":"확인","ticker":"NVDA","source":"BD 2025-03-18"},{"component":"시뮬·학습 SW","supplier":"NVIDIA Isaac/Omniverse/GR00T","country":"US","evidence":"확인","ticker":"NVDA","source":"BD 2025-03-18"},{"component":"AI 파운데이션 모델","supplier":"Google DeepMind","country":"US","evidence":"확인","ticker":"GOOGL","source":"BD CES 2026"},{"component":"비전센싱(RGB+3D)","supplier":"LG이노텍","country":"KR","evidence":"확인(개발)/보도(공급)","ticker":"011070","source":"BD 2025-05 / Daum 2026-03-31"},{"component":"핸드·촉각센서","supplier":"BD 자체 설계(제조사 미공개)","country":"US","evidence":"확인(설계)","ticker":null,"source":"The Robot Report"},{"component":"배터리 셀","supplier":"LG에너지솔루션","country":"KR","evidence":"보도","ticker":"373220","source":"뉴스스페이스 2026-07"},{"component":"배터리 셀","supplier":"삼성SDI","country":"KR","evidence":"보도","ticker":"006400","source":"뉴스토마토"},{"component":"하모닉 감속기","supplier":"Harmonic Drive Systems","country":"JP","evidence":"추정","ticker":"6324","source":"humanoid.guide(근거 약함)"},{"component":"하모닉 감속기","supplier":"Nabtesco","country":"JP","evidence":"추정","ticker":"6268","source":"humanoid.guide(근거 약함)"},{"component":"베어링","supplier":"SKF·NSK·THK·Timken(업계 일반)","country":"SE/JP/US","evidence":"추정","ticker":null,"source":"humanoid.guide"},{"component":"구조물(알루미늄)","supplier":"화신정공(실사 대상)","country":"KR","evidence":"보도","ticker":"126640","source":"한국경제 2026-06-28"},{"component":"라이다","supplier":"에스오에스랩(실사 대상)","country":"KR","evidence":"보도","ticker":"464080","source":"한국경제 2026-06-28"},{"component":"Spot 레그 모듈","supplier":"에스엘","country":"KR","evidence":"확인","ticker":"005850","source":"에스엘 반기보고서 2026.06"},{"component":"Spot 관제 SW","supplier":"현대오토에버","country":"KR","evidence":"확인","ticker":"307950","source":"현대차 컨콜 2026-06-01"},{"component":"사족로봇 액추에이터(고객 미명시)","supplier":"HL만도","country":"KR","evidence":"추정","ticker":"204320","source":"이데일리/Goldman 2026-06-18"},{"component":"공급망 관리·배치","supplier":"현대글로비스","country":"KR","evidence":"확인","ticker":"086280","source":"현대차 컨콜 2026-06-01"}],"korea_beneficiaries":[{"name":"현대차","code":"005380","role":"지분 28%(→약 31%), 배치처, RA 출자","evidence":"확인","mcap_krw_trillion":62.8,"ret_1m":-14.6,"ret_3m":-22.6,"ret_ytd":4.1,"from_52w_high":-60.8,"source":"naver_api_2026-10-21","date":"2026-10-21"},{"name":"기아","code":"000270","role":"지분 17.2%, 배치처, RA 출자","evidence":"확인","mcap_krw_trillion":42.9,"ret_1m":-8.7,"ret_3m":-24.0,"ret_ytd":-9.8,"from_52w_high":-48.3,"source":"naver_api_2026-10-21","date":"2026-10-21"},{"name":"현대모비스","code":"012330","role":"액추에이터 31개 11월~, 지분 11.3%","evidence":"확인","mcap_krw_trillion":31.0,"ret_1m":-7.9,"ret_3m":-28.1,"ret_ytd":-7.5,"from_52w_high":-58.0,"source":"naver_api_2026-10-21","date":"2026-10-21"},{"name":"현대글로비스","code":"086280","role":"지분 11.25%, SCM","evidence":"확인/보도","mcap_krw_trillion":13.7,"ret_1m":-10.2,"ret_3m":-3.4,"ret_ytd":1.4,"from_52w_high":-39.6,"source":"naver_api_2026-10-21","date":"2026-10-21"},{"name":"현대오토에버","code":"307950","role":"로봇 IT·관제","evidence":"추정","mcap_krw_trillion":9.2,"ret_1m":-7.7,"ret_3m":-11.0,"ret_ytd":0.9,"from_52w_high":-68.6,"source":"naver_api_2026-10-21","date":"2026-10-21"},{"name":"현대위아","code":"011210","role":"미확인","evidence":"미확인","mcap_krw_trillion":1.35,"ret_1m":-7.8,"ret_3m":-10.9,"ret_ytd":-34.3,"from_52w_high":-57.1,"source":"naver_api_2026-10-21","date":"2026-10-21"},{"name":"현대로템","code":"064350","role":"Spot 군납 가능성","evidence":"추정","mcap_krw_trillion":9.6,"ret_1m":-26.7,"ret_3m":-42.3,"ret_ytd":-53.0,"from_52w_high":-68.7,"source":"naver_api_2026-10-21","date":"2026-10-21"},{"name":"현대제철","code":"004020","role":"Spot 고객","evidence":"추정","mcap_krw_trillion":3.8,"ret_1m":-20.1,"ret_3m":11.9,"ret_ytd":-8.9,"from_52w_high":-43.8,"source":"naver_api_2026-10-21","date":"2026-10-21"},{"name":"에스엘","code":"005850","role":"Spot 레그모듈 양산(7월~)","evidence":"확인","mcap_krw_trillion":2.32,"ret_1m":0.8,"ret_3m":-5.2,"ret_ytd":16.6,"from_52w_high":-38.2,"source":"naver_api_2026-10-21","date":"2026-10-21"},{"name":"LG이노텍","code":"011070","role":"Atlas 비전센싱 공동개발(샘플)","evidence":"확인/보도","mcap_krw_trillion":9.6,"ret_1m":-22.8,"ret_3m":-35.5,"ret_ytd":49.6,"from_52w_high":-77.6,"source":"naver_api_2026-10-21","date":"2026-10-21"},{"name":"LG에너지솔루션","code":"373220","role":"배터리 공급 보도","evidence":"보도","mcap_krw_trillion":95.8,"ret_1m":15.2,"ret_3m":29.2,"ret_ytd":11.1,"from_52w_high":-22.3,"source":"naver_api_2026-10-21","date":"2026-10-21"},{"name":"삼성SDI","code":"006400","role":"Atlas 배터리 유력설·전고체 공동개발","evidence":"보도","mcap_krw_trillion":44.3,"ret_1m":2.6,"ret_3m":32.1,"ret_ytd":104.1,"from_52w_high":-32.9,"source":"naver_api_2026-10-21","date":"2026-10-21"},{"name":"HL만도","code":"204320","role":"액추에이터 후보","evidence":"추정","mcap_krw_trillion":1.83,"ret_1m":-17.9,"ret_3m":-10.0,"ret_ytd":-33.7,"from_52w_high":-50.8,"source":"naver_api_2026-10-21","date":"2026-10-21"},{"name":"화신정공","code":"126640","role":"구조물 후보(BD 실사)","evidence":"보도","mcap_krw_trillion":0.1113,"ret_1m":-19.7,"ret_3m":-10.2,"ret_ytd":146.5,"from_52w_high":-59.7,"source":"naver_api_2026-10-21","date":"2026-10-21"},{"name":"에스오에스랩","code":"464080","role":"라이다 후보(BD 실사)","evidence":"보도","mcap_krw_trillion":0.1636,"ret_1m":-8.9,"ret_3m":15.5,"ret_ytd":-36.1,"from_52w_high":-68.4,"source":"naver_api_2026-10-21","date":"2026-10-21"},{"name":"에스피지","code":"058610","role":"감속기·액추에이터(고객 비공개)","evidence":"테마","mcap_krw_trillion":1.84,"ret_1m":-17.6,"ret_3m":25.5,"ret_ytd":1.8,"from_52w_high":-50.0,"source":"naver_api_2026-10-21","date":"2026-10-21"},{"name":"에스비비테크","code":"389500","role":"감속기(미국 고객 비공개)","evidence":"테마","mcap_krw_trillion":0.2259,"ret_1m":-20.9,"ret_3m":10.4,"ret_ytd":-6.2,"from_52w_high":-70.5,"source":"naver_api_2026-10-21","date":"2026-10-21"},{"name":"하이젠알앤엠","code":"160190","role":"액추에이터(BD 연결 없음)","evidence":"테마","mcap_krw_trillion":0.6517,"ret_1m":-29.9,"ret_3m":41.6,"ret_ytd":-64.5,"from_52w_high":-76.9,"source":"naver_api_2026-10-21","date":"2026-10-21"},{"name":"삼현","code":"437730","role":"액추에이터(빅테크 비공개)","evidence":"테마","mcap_krw_trillion":1.37,"ret_1m":-22.4,"ret_3m":53.6,"ret_ytd":-21.8,"from_52w_high":-44.2,"source":"naver_api_2026-10-21","date":"2026-10-21"},{"name":"로보티즈","code":"108490","role":"액추에이터(BD 아님)","evidence":"테마","mcap_krw_trillion":3.55,"ret_1m":-21.4,"ret_3m":22.8,"ret_ytd":-7.3,"from_52w_high":-50.8,"source":"naver_api_2026-10-21","date":"2026-10-21"},{"name":"네오오토","code":"212560","role":"감속기 개발","evidence":"테마","mcap_krw_trillion":0.1258,"ret_1m":-11.7,"ret_3m":-11.6,"ret_ytd":5.4,"from_52w_high":-42.0,"source":"naver_api_2026-10-21","date":"2026-10-21"},{"name":"SNT모티브","code":"064960","role":"로봇 모터 예정","evidence":"추정","mcap_krw_trillion":0.5959,"ret_1m":-2.7,"ret_3m":-1.8,"ret_ytd":-27.5,"from_52w_high":-44.1,"source":"naver_api_2026-10-21","date":"2026-10-21"},{"name":"계양전기","code":"012200","role":"모베드 DnL(BD 아님)","evidence":"추정","mcap_krw_trillion":0.0969,"ret_1m":-29.3,"ret_3m":-33.0,"ret_ytd":-58.7,"from_52w_high":-80.8,"source":"naver_api_2026-10-21","date":"2026-10-21"},{"name":"클로봇","code":"466100","role":"Spot 국내 SI","evidence":"보도","mcap_krw_trillion":0.6089,"ret_1m":-16.5,"ret_3m":-15.4,"ret_ytd":-68.8,"from_52w_high":-76.1,"source":"naver_api_2026-10-21","date":"2026-10-21"},{"name":"현대무벡스","code":"319400","role":"그룹 물류자동화(BD 미확인)","evidence":"테마","mcap_krw_trillion":2.03,"ret_1m":-16.9,"ret_3m":-3.8,"ret_ytd":-3.2,"from_52w_high":-63.9,"source":"naver_api_2026-10-21","date":"2026-10-21"}],"ownership":[{"holder":"HMG글로벌(LLC)","stake_2025_07":54.72,"stake_before":56.4,"stake_after":62.5,"type":"직접","source":"비즈워치 2025-07-28 / Korea Times 2026-07-19 / 경향 2026-07-19"},{"holder":"└ 현대차(HMG글로벌 49.5%)","stake_before":28.0,"stake_after":30.9,"stake_after_hanwha":30.7,"type":"간접","source":"다음/연합 2026-07-17; after=본 보고서 계산(62.5×49.5%)"},{"holder":"└ 기아(HMG글로벌 30.5%)","stake_before":17.2,"stake_after":19.1,"stake_after_hanwha":18.9,"type":"간접","source":"다음/연합 2026-07-17; after=본 보고서 계산"},{"holder":"└ 현대모비스(HMG글로벌 20%)","stake_before":11.3,"stake_after":12.5,"stake_after_hanwha":12.4,"type":"간접","source":"다음/연합 2026-07-17; after=본 보고서 계산"},{"holder":"정의선","stake_2025_07":21.89,"stake_before":22.6,"stake_after":25.0,"type":"직접","source":"Korea Times 2026-07-19 / 경향 2026-07-19"},{"holder":"현대글로비스","stake_2025_07":10.94,"stake_before":11.25,"stake_before_note":"2026.6말 공시 11.39%","stake_after":12.5,"type":"직접","source":"글로비스 반기보고서 2026.06 / 경향 2026-07-19"},{"holder":"소프트뱅크","stake_2025_07":12.45,"stake_before":9.65,"stake_before_alt":"9.9% / 10.01% / 10% / 9.6%","stake_after":0,"type":"직접","source":"Korea Times 2026-07-16; 종결 미확인"}],"softbank_exit":{"date":"2026-07-16","stake_pct":9.65,"price_usd_m":325,"price_alt":["약 3.2억달러(경향)","약 5,000억원/3.35억달러(텔레그램)"],"chung_share_usd_m":80,"chung_share_krw_100m":1200,"implied_ev_usd_b":3.37,"implied_ev_krw_trillion":5.2,"globis_joint_liability_usd":283510000,"close_status":"미확인(90일 기한 ~10월 중순)"},"financials":[{"year":"2022","revenue":782,"net_loss":-2551,"capital_injection":2400,"unit":"억원","source":"딜사이트 2025-12-12 / 비즈워치 2025-07-28"},{"year":"2023","revenue":null,"net_loss":-3348,"capital_injection":2040,"unit":"억원","source":"딜사이트 / 비즈워치"},{"year":"2024","revenue":1161,"net_loss":-4405,"capital_injection":5380,"unit":"억원","source":"딜사이트 / 비즈워치"},{"year":"1H25","revenue":669,"net_loss":-2419,"assets":4053,"liabilities":4556,"equity":-503,"unit":"억원","source":"비즈워치 2025-08-21 / 딜사이트"},{"year":"1~3Q25","revenue":1054,"net_loss":-3541,"assets":8315,"unit":"억원","source":"딜사이트 2025-12-12"},{"year":"2025","revenue":1501,"net_loss":-5284,"assets":7774,"liabilities":3652,"capital_injection":12400,"capital_injection_note":"2025-08 증자 약 9.69억달러(약 1.24조원) BD 전체 규모, 모비스 1,461억·현대차 HMG글로벌 2,189억·글로비스 891.3억","unit":"억원","source":"글로비스 사업보고서 2025.12 / 비즈워치"},{"year":"1H26","revenue":813,"net_loss":-3888,"assets":9858,"liabilities":4179,"capital_injection":3789,"capital_injection_note":"HMG글로벌 3,159억(현대차 1,563·기아 963·모비스 634) + 글로비스 630억(공시 631.2억); 증자 총액 약 1.2조원의 잔여분","unit":"억원","source":"글로비스 반기보고서 2026.06 / MTN 2026-08-26"},{"year":"2021~2025 누적","net_loss":-17558,"unit":"억원","source":"글로벌이코노믹 2026-09-14"}],"valuation_estimates":[{"source":"2021 인수 시 기업가치","value":"약 11억달러","value_krw_trillion":null,"date":"2021-06","evidence":"보도"},{"source":"소프트뱅크 풋 거래가 역산","value":"약 33.7억달러","value_krw_trillion":5.2,"date":"2026-07","evidence":"추정"},{"source":"Asiabits","value":"130~140억달러","value_krw_trillion":13.6,"date":"2026-05","evidence":"추정"},{"source":"Korea Herald(글로비스 증자 역산)","value":"약 200억달러","value_krw_trillion":30,"date":"2026-03-19","evidence":"추정"},{"source":"삼성증권(시장 추정)","value":"50~100조원","value_krw_trillion":"50~100","date":"2026-09","evidence":"추정"},{"source":"블로그 시나리오","value":"최대 60조원","value_krw_trillion":60,"date":"2026-04","evidence":"추정"},{"source":"네이트","value":"최대 100조원","value_krw_trillion":100,"date":"2026-01-14","evidence":"보도"},{"source":"KB증권","value":"약 128조원","value_krw_trillion":128,"date":"2026-01~03","evidence":"추정"},{"source":"IBK투자증권(2030 매출 11조 가정)","value":"141조원","value_krw_trillion":141,"date":"2026-09","evidence":"추정"},{"source":"한화투자증권 SOTP","value":"993억달러","value_krw_trillion":145,"date":"2026-10-08","evidence":"추정"},{"source":"위런치","value":"최대 145.8조원","value_krw_trillion":145.8,"date":"2026","evidence":"보도"},{"source":"한화투자증권(최대)","value":"최대 150조원","value_krw_trillion":150,"date":"2026-03","evidence":"추정"}],"sotp":[{"company":"현대차","source":"한화 2026-10-08","bd_stake_pct":30.7,"bd_value_krw_trillion":44.6,"bd_per_share_krw":219272,"op_per_share_krw":452045,"tp_krw":670000,"price_krw":308750},{"company":"기아","source":"한화 2026-10-08","bd_stake_pct":18.9,"bd_value_krw_trillion":27.47,"bd_per_share_krw":70352,"op_per_share_krw":191265,"tp_krw":260000,"price_krw":109900},{"company":"현대모비스","source":"한화 2026-10-13","bd_stake_pct":12.4,"bd_value_krw_trillion":18.01,"robot_parts_value_krw_trillion":12.09,"robot_per_share_krw":335184,"op_per_share_krw":465418,"tp_krw":800000,"price_krw":345000},{"company":"현대차","source":"KB 2026-01-21","bd_value_krw_trillion":35,"fair_mcap_krw_trillion":164,"tp_krw":800000},{"company":"현대글로비스","source":"KB 2026-01-28","tp_krw":360000,"note":"BD 지분가치 반영, 80% 상향"}],"competitors":[{"company":"Boston Dynamics Atlas","capacity_target":"2028 미국 신공장 연 3만대(Spot·Stretch·Atlas 합산)","actual_shipments":"2026분 전량 현대 RMAC·DeepMind 배정, 대수 미공개","price_cost":"원가 $14만→5만대 $3만(IR); 판가 미공개(추정 $12만~$50만+)","factory":"미국 매사추세츠(현재), 조지아 RMAC, 신공장 부지 미정","funding_valuation":"현대차그룹 자회사(비상장)","source":"BD/뉴스핌/Venture Atlas","date":"2026-08-26"},{"company":"Tesla Optimus","capacity_target":"프리몬트 연 100만대, 텍사스 연 1,000만대(셀사이드)","actual_shipments":"2025 500대 이하(교보 추정); 2Q26 라인 설치 중, 외부판매 2H27","price_cost":"목표 $2~3만","factory":"미국 프리몬트(Gen3), 오스틴(Gen4)","funding_valuation":"TSLA 상장","source":"Motley Fool 2Q26 콜 / 메리츠 / 교보","date":"2026-07-22"},{"company":"Figure (03/BotQ)","capacity_target":"BotQ 1세대 연 1.2만대, 장기 5만대","actual_shipments":"1,000번째 Figure 03(2026-07-23), 시간당 1대(2026-04)","price_cost":"$3~15만(신한 추정)","factory":"미국 캘리포니아 BotQ","funding_valuation":"$39B post(Series C 2025-09)","source":"The Robotics Media / The AI Insider / Bloomberg Tax","date":"2026-07-23"},{"company":"Agility (Digit)","capacity_target":"RoboFab 최대 연 1만대","actual_shipments":"유료 약 100대(2차), 6.5만 운영시간","price_cost":"~$25만(신한), RaaS","factory":"미국 오리건 세일럼","funding_valuation":"SPAC $2.5B pre-money, 나스닥 AGLT 연내","source":"GeekWire / Robotics & Automation News","date":"2026-07"},{"company":"Unitree (G1/H2)","capacity_target":"5년 내 휴머노이드 연 7.5만대·사족 11.5만대; 2026 1~2만대 출하 계획","actual_shipments":"2025 휴머노이드 5,500대+","price_cost":"G1 ~$1.6만(보급형 $1.35만~), H1 ~$9만, R1 $5,900; GPM 60.27%","factory":"중국 항저우","funding_valuation":"상장 688836(2026-08-19), 첫날 ~3,420억위안→8/24 2,500억위안 미만","source":"Robotics & Automation News 2026-03-31 / SCMP","date":"2026-08"},{"company":"UBTech (Walker S2)","capacity_target":"2026 연 5천→1만대","actual_shipments":"2025 1,079대, 1H26 921대","price_cost":"수주 8억위안+","factory":"중국 선전 등(Foxconn 위탁)","funding_valuation":"홍콩 상장(2023)","source":"BigGo / PR Newswire","date":"2026-08"},{"company":"Apptronik (Apollo)","capacity_target":"미공개(Jabil 위탁)","actual_shipments":"파일럿, 대수 미공개","price_cost":"공식가 없음, ~$8만/년 투자자 추정","factory":"미국 텍사스, Jabil","funding_valuation":"$5B~5.5B(2026-02, Series A 누적 $935M)","source":"CNBC 2026-02-11","date":"2026-02"}],"conflicts":[{"issue":"모비스 공급 개시","values":["2026-11(모비스 IR·메리츠)","2027 매출(mdtoday)","7월 IR: 납품 이력 없음"],"resolution":"11월 RMAC용 소량 첫 납품, 2027 최종모델 확정, 실질 매출 2028"},{"issue":"대당 액추에이터 수","values":["31개(모비스 IR)","30여 개(유진)","약 10개+(뉴스핌)","31종(메리츠)"],"resolution":"31개(그리퍼 제외), 2종 표준화"},{"issue":"35만개 캐파 근거","values":["1만대분+마진(모비스)","31×3만=93만"],"resolution":"모비스 1공장≈1만대분"},{"issue":"3만대 성격","values":["캐파(현대차 IR)","연 3만대 Atlas 생산(일부 매체)"],"resolution":"2028 연간 생산능력, 로봇 합산"},{"issue":"소프트뱅크 지분율","values":["9.65%","9.9%","10.01%","10%","9.6%"],"resolution":"9.65%, 종결 미확인"},{"issue":"Atlas 원가 vs BOM","values":["$14만(IR)","$74,850(GS)"],"resolution":"정의 차이(저물량 간접비 포함)"},{"issue":"RMAC 개소","values":["2026-06","2026-09-21"],"resolution":"6월 파일럿, 9/21 공식"},{"issue":"배터리","values":["LGES","삼성SDI","모비스 팩(삼성증권) vs 참여 낮음(9월 IR)"],"resolution":"미확정"}],"checkpoints":[{"date":"2026-10-21","item":"Tesla 3Q26 실적콜: Optimus 생산 대수·원가"},{"date":"2026-10-30","item":"현대차 3Q 실적·이사회: RA 설립·출자비율 결의(예상)"},{"date":"2026-10 중순~","item":"소프트뱅크 9.65% 인수 종결 공시"},{"date":"2026-11","item":"현대모비스 Atlas 액추에이터 첫 공급, 단일판매 공시 여부"},{"date":"2026-11 중순","item":"3Q 분기보고서: 글로비스 BD 지분율(11.39%→~12.5%), 현대차 계열회사 표"},{"date":"2026-11-24","item":"현대모비스 임시주총(램프사업 매각)"},{"date":"2026 4Q","item":"미국 로봇공장 부지 발표, BD 비계열 공급사 선정"},{"date":"2026 말","item":"RMAC 10배 확장, Agility SPAC 클로징"},{"date":"2027 초","item":"Atlas 그룹 외 추가 고객, BD 미국 NDR"},{"date":"2027","item":"모비스 액추에이터 최종 모델 확정·미국공장 부지/건물 투자"},{"date":"2028","item":"RA 3만대 캐파 가동, 모비스 35만개 공장, HMGMA 투입"},{"date":"2029 하반기","item":"기아 조지아 Atlas 투입"},{"date":"2030","item":"컴포넌트 조립 확장·글로벌 거점"}]};
+const SRCS = [["Axios", "https://www.axios.com/local/boston/2026/09/21/boston-dynamics-humanoid-robots-hyundai-metaplant"], ["Barchart/모비스 PR", "https://www.barchart.com/story/news/36939666/hyundai-mobis-forms-strategic-collaboration-framework-with-boston-dynamics"], ["BD 2025-03-18 — bostondynamics.com", "https://bostondynamics.com/news/boston-dynamics-expands-collaboration-with-nvidia/"], ["BD — bostondynamics.com", "https://bostondynamics.com/blog/boston-dynamics-unveils-new-atlas-robot-to-revolutionize-industry/"], ["BD — bostondynamics.com", "https://bostondynamics.com/news/boston-dynamics-lg-innotek-enter-into-new-collaboration/"], ["BigGo — finance.biggo.com", "https://finance.biggo.com/news/cef9b139-8d70-405f-80a3-5583c5254aea"], ["Bloomberg", "https://www.bloomberg.com/news/articles/2026-10-06/boston-dynamics-taps-amazon-alexa-executive-as-new-ceo"], ["Boston Dynamics — bostondynamics.com", "https://bostondynamics.com/?p=9954"], ["CNBC", "https://www.cnbc.com/2026/02/11/apptronik-raises-520-million-at-5-billion-valuation-for-apollo-robot.html"], ["coral-lab", "https://coral-lab.org/blog/boston-dynamics-spot-evaluation"], ["Daum — v.daum.net", "https://v.daum.net/v/20260331090822627"], ["DHL Group", "https://group.dhl.com/en/media-relations/press-releases/2025/dhl-group-signs-mou-with-boston-dynamics-and-accelerates-cross-business-automation-strategy.html"], ["economy.ac", "https://economy.ac/news/2026/09/202609295727"], ["GeekWire", "https://www.geekwire.com/2026/digit-maker-agility-robotics-to-go-public-in-2-5b-deal-heres-what-the-filings-say-about-its-finances/"], ["Hoodline", "https://hoodline.com/2026/06/robot-invasion-boston-dynamics-drops-100-million-factory-on-waltham/"], ["humanoid.guide", "https://humanoid.guide/?p=18163"], ["humanoid.guide", "https://humanoid.guide/?p=17836"], ["humanoid.guide", "https://humanoid.guide/rare-earth-magnets-humanoid-robot-joints/"], ["Interesting Engineering — interestingengineering.com", "https://interestingengineering.com/ces-2026/9-humanoid-robots-at-ces-2026"], ["Korea Herald — koreaherald.com", "https://www.koreaherald.com/article/10651569"], ["Korea Herald — koreaherald.com", "https://www.koreaherald.com/article/10698152"], ["Korea Times 2026-07-19 — koreatimes.co.kr", "https://www.koreatimes.co.kr/business/companies/20260719/hyundai-motor-chief-to-raise-boston-dynamics-stake-fueling-nasdaq-ipo-prospect"], ["Korea Times — koreatimes.co.kr", "https://www.koreatimes.co.kr/business/companies/20260716/hyundai-motor-group-to-take-full-ownership-of-boston-dynamics"], ["Manufacturing Dive — manufacturingdive.com", "https://www.manufacturingdive.com/news/boston-dynamics-begins-robotics-testing-hyundai-atlas-humanoid/831000/"], ["mdtoday", "https://mdtoday.co.kr/news/view/1065615602721332"], ["Motley Fool", "https://www.fool.com/earnings/call-transcripts/2026/08/05/tesla-tsla-q2-2026-earnings-call-transcript/"], ["MTN — news.mtn.co.kr", "https://news.mtn.co.kr/news-detail/2026061514254593218"], ["MTN — news.mtn.co.kr", "https://news.mtn.co.kr/news-detail/2026082616334020684"], ["Pepperstone", "https://pepperstone.com/en/insights/market-analysis/equities/tesla-q3-2026-earnings-preview"], ["Robotics & Automation News — roboticsandautomationnews.com", "https://roboticsandautomationnews.com/2026/03/31/unitree-robotics-files-for-610-million-ipo-as-humanoid-robot-sales-surge/100272/"], ["robotics.press", "https://www.robotics.press/news/boston-dynamics-company-profile-2026/"], ["RobotShop — community.robotshop.com", "https://community.robotshop.com/blog/show/ces-2026-robotics-highlight-atlas-moves-from-prototype-to-product"], ["Robozaps — blog.robozaps.com", "https://blog.robozaps.com/b/tesla-optimus-vs-boston-dynamics-atlas"], ["SCMP", "https://www.scmp.com/tech/tech-trends/article/3364499/unitree-robotics-surges-629-us66-billion-valuation-shanghai-share-debut"], ["TechRadar", "https://www.techradar.com/ai-platforms-assistants/boston-dynamics-atlas-humanoid-robot-is-now-a-product-and-heading-to-factories-in-2028"], ["The Decoder — the-decoder.com", "https://the-decoder.com/google-deepminds-gemini-robotics-models-will-power-boston-dynamics-atlas-for-industrial-tasks/"], ["The Robot Report — therobotreport.com", "https://www.therobotreport.com/boston-dynamics-drops-pinkie-on-new-humanoid-hand/"], ["The Robotics Media — theroboticsmedia.com", "https://theroboticsmedia.com/article/figure-ai-1000th-figure-03-humanoid-botq-manufacturing-milestone-july-23-2026"], ["Venture Atlas/현대차 뉴스룸 — ventureatlas.org", "https://www.ventureatlas.org/news/2026-08-27-boston-dynamics-atlas-us-factory-2028"], ["경향 — v.daum.net", "https://v.daum.net/v/20260719204727706?f=p"], ["경향신문 2026-07-19 — khan.co.kr", "https://www.khan.co.kr/article/202607192043005"], ["글로벌이코노믹 2026-10-20 — g-enews.com", "https://g-enews.com/article/Global-Biz/2026/10/2026101919371951262bd56fbc3c_1"], ["글로벌이코노믹 — g-enews.com", "https://www.g-enews.com/article/Global-Biz/2026/09/2026091420064941662bd56fbc3c_1"], ["뉴스스페이스 — newsspace.kr", "https://newsspace.kr/news/article.html?no=14644"], ["뉴스토마토 — newstomato.com", "https://www.newstomato.com/ReadNews.aspx?no=1290400"], ["뉴스핌 2026-05-19 — newspim.com", "https://www.newspim.com/news/view/20260519001315"], ["뉴스핌 — newspim.com", "https://www.newspim.com/news/view/20260826001057"], ["딜사이트 — dealsite.co.kr", "https://dealsite.co.kr/articles/153075"], ["비즈워치 — news.bizwatch.co.kr", "https://news.bizwatch.co.kr/article/industry/2025/07/28/0016"], ["이데일리 — edaily.co.kr", "https://edaily.co.kr/News/Read?mediaCodeNo=257&newsId=05152886645519112"], ["이데일리 — en.edaily.co.kr", "https://en.edaily.co.kr/news/eda202606185420/"], ["팍스경제TV — paxetv.com", "https://www.paxetv.com/news/articleView.html?idxno=279764"], ["한경매거진 — magazine.hankyung.com", "https://magazine.hankyung.com/business/article/202601250842b"], ["한국경제 2026-06-28 — hankyung.com", "https://www.hankyung.com/article/2026062824081"], ["한국경제 — hankyung.com", "https://www.hankyung.com/article/202508261822g"]];
+const fmt=(v,d=1)=>v==null?'—':Number(v).toLocaleString('ko-KR',{maximumFractionDigits:d,minimumFractionDigits:0});
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const NA='<span class="na">—</span>';
+const cssv=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const T=()=>({ink:cssv('--text-primary'),sec:cssv('--text-secondary'),mut:cssv('--muted'),grid:cssv('--grid'),axis:cssv('--axis'),surf:cssv('--surface-1'),
+  s:[1,2,3,4,5,6,7,8].map(i=>cssv('--s'+i)),decal:cssv('--decal'),accent:cssv('--accent'),up:cssv('--up'),down:cssv('--down')});
+const isMobile=()=>window.innerWidth<640;
+const charts={};
+function mk(id){const el=document.getElementById(id);if(charts[id])charts[id].dispose();const c=echarts.init(el,null,{renderer:'canvas'});charts[id]=c;return c;}
+function base(t){return{
+  animationDuration:500,animationDurationUpdate:300,
+  textStyle:{fontFamily:'system-ui,-apple-system,"Apple SD Gothic Neo","Segoe UI",sans-serif',color:t.sec},
+  tooltip:{trigger:'axis',backgroundColor:t.surf,borderColor:t.grid,borderWidth:1,textStyle:{color:t.ink,fontSize:12},padding:[8,12],confine:true,
+    axisPointer:{type:'shadow',shadowStyle:{color:'rgba(128,128,128,.08)'}}},
+  legend:{type:'scroll',top:0,left:0,textStyle:{color:t.sec,fontSize:11},itemWidth:12,itemHeight:8,icon:'roundRect',pageTextStyle:{color:t.sec},pageIconColor:t.sec,pageIconInactiveColor:t.grid},
+  grid:{left:8,right:44,top:48,bottom:56,containLabel:true}};}
+const axX=t=>({axisLine:{lineStyle:{color:t.axis}},axisTick:{show:false},axisLabel:{color:t.mut,fontSize:11},splitLine:{show:false}});
+const axY=t=>({axisLine:{show:false},axisTick:{show:false},axisLabel:{color:t.mut,fontSize:11},splitLine:{lineStyle:{color:t.grid,width:1}}});
+/* dataZoom: inside + slider on the category axis */
+function zoom(t,horiz){const k=horiz?{yAxisIndex:0}:{xAxisIndex:0};
+  const sl=horiz?{right:6,width:16,top:48,bottom:56}:{height:18,bottom:8};
+  return [{type:'inside',...k,filterMode:'none',zoomOnMouseWheel:true,moveOnMouseMove:false},
+    {type:'slider',...k,...sl,borderColor:t.grid,fillerColor:t.accent+'22',handleSize:14,showDetail:false,
+     dataBackground:{lineStyle:{color:t.grid},areaStyle:{color:t.grid}},selectedDataBackground:{lineStyle:{color:t.accent},areaStyle:{color:t.accent+'33'}},textStyle:{color:t.mut,fontSize:10},brushSelect:false,filterMode:'none'}];}
+/* drag-zoom box: forward drag = zoom into range, reverse drag = reset */
+function addDrag(ch,n,horiz){
+  const zr=ch.getZr();let p0=null,rect=null;const t=T();
+  const idx=px=>{const v=ch.convertFromPixel(horiz?{yAxisIndex:0}:{xAxisIndex:0},px);return Math.max(0,Math.min(n-1,Math.round(Array.isArray(v)?v[horiz?1:0]:v)));};
+  zr.on('mousedown',e=>{if(horiz?e.offsetX>ch.getWidth()-30:e.offsetY>ch.getHeight()-40)return;p0=horiz?e.offsetY:e.offsetX;});
+  zr.on('mousemove',e=>{if(p0===null)return;const p=horiz?e.offsetY:e.offsetX,w=p-p0;if(rect)zr.remove(rect);
+    const fill=w>=0?t.accent+'22':'rgba(128,128,128,.14)';
+    rect=new echarts.graphic.Rect({shape:horiz?{x:0,y:Math.min(p0,p),width:ch.getWidth()-30,height:Math.abs(w)}:{x:Math.min(p0,p),y:30,width:Math.abs(w),height:ch.getHeight()-80},style:{fill},silent:true,z:100});zr.add(rect);});
+  const end=e=>{if(p0===null)return;const p=horiz?e.offsetY:e.offsetX,w=p-p0;if(rect){zr.remove(rect);rect=null;}
+    if(w>12){let a=idx(p0),b=idx(p);if(a>b)[a,b]=[b,a];if(b>a)ch.dispatchAction({type:'dataZoom',startValue:a,endValue:b});}
+    else if(w<-12){ch.dispatchAction({type:'dataZoom',start:0,end:100});}
+    p0=null;};
+  zr.on('mouseup',end);zr.on('globalout',()=>{if(rect){zr.remove(rect);rect=null;}p0=null;});
+}
+const decal=t=>({symbol:'rect',dashArrayX:[1,0],dashArrayY:[2,4],rotation:Math.PI/4,color:t.decal,symbolSize:1});
+const rectKey=c=>`<span style="display:inline-block;width:9px;height:9px;border-radius:2px;background:${c};vertical-align:-1px;margin-right:6px"></span>`;
+function evClass(e){e=String(e||'');if(e.startsWith('확인'))return'ok';if(e.startsWith('보도'))return'rep';if(e.startsWith('테마'))return'thm';return'est';}
+function evGroup(e){e=String(e||'');for(const g of['확인','보도','추정','테마','미확인'])if(e.startsWith(g))return g;return'추정';}
+const badge=e=>`<span class="bdg ${evClass(e)}">${esc(e)}</span>`;
+const pct=v=>v==null?NA:`<span class="${v>0?'up':v<0?'dn':''}">${v>0?'+':''}${fmt(v,1)}%</span>`;
+const mcap=v=>v==null?NA:v>=1?fmt(v,v>=10?1:2)+'조':fmt(Math.round(v*10000),0)+'억';
+
+/* sortable: 1st click desc, 2nd asc, 3rd original */
+function sortable(tbl){
+  const ths=[...tbl.querySelectorAll('th.sortable')];const tb=tbl.tBodies[0];const orig=[...tb.rows];let key=null,dir=null;
+  ths.forEach(th=>{th.insertAdjacentHTML('beforeend','<span class="arr">↕</span>');
+    th.addEventListener('click',()=>{const k=th.cellIndex;
+      if(key!==k){key=k;dir='desc';}else if(dir==='desc'){dir='asc';}else{key=null;dir=null;}
+      ths.forEach(h=>{h.classList.remove('on');h.querySelector('.arr').textContent='↕';});
+      let list=orig.slice();
+      if(key!=null){th.classList.add('on');th.querySelector('.arr').textContent=dir==='desc'?'▾':'▴';
+        const val=r=>{const c=r.cells[key];const v=c.dataset.v!==undefined?c.dataset.v:c.textContent.trim();if(v===''||v==='—')return null;const n=parseFloat(v);return(c.dataset.v!==undefined&&!isNaN(n))?n:String(v);};
+        list.sort((a,b)=>{const x=val(a),y=val(b);if(x==null&&y==null)return 0;if(x==null)return 1;if(y==null)return-1;
+          const r=(typeof x==='number'&&typeof y==='number')?x-y:String(x).localeCompare(String(y),'ko');return dir==='desc'?-r:r;});}
+      list.forEach(r=>tb.appendChild(r));});});
+}
+function filterChips(ctrlId,tblId,getGroup){
+  const btns=[...document.querySelectorAll('#'+ctrlId+' button')];
+  btns.forEach(b=>b.addEventListener('click',()=>{btns.forEach(x=>x.classList.remove('on'));b.classList.add('on');const f=b.dataset.f;
+    [...document.getElementById(tblId).tBodies[0].rows].forEach(r=>{r.style.display=(f==='all'||r.dataset.g===f)?'':'none';});}));
+}
+
+/* ---------- 1. tiles ---------- */
+(function(){
+  const sb=D.softbank_exit, fin25=D.financials.find(f=>f.year==='2025'), cum=D.financials.find(f=>f.year.includes('누적'));
+  const tiles=[
+    {l:'2028 미국 로봇공장(RA) 캐파',v:'3만',u:'대/년',e:'확인',c:'Atlas·Spot·Stretch 합산 생산능력 — "생산량이 아니라 캐파"(현대차 IR)'},
+    {l:'현대차·기아 공장 배치 목표',v:'2.5만+',u:'대',e:'확인',c:'초기 확정 물량, 시점은 "2028년까지" vs "수년간" 상충 → 수년간 누적으로 해석'},
+    {l:'모비스 미국 액추에이터 공장',v:'35만',u:'개/년',e:'확인',c:'2028 가동 · 약 1만대분+안전마진 · 3만대 전량이면 93만개 필요'},
+    {l:'Atlas 대당 원가',v:'$14만→$3만',u:'',e:'확인',c:'초기 양산(약 2억원) → 5만대 이상 목표 · 판매가는 미공개'},
+    {l:'액추에이터 BOM 비중',v:'~60',u:'%',e:'확인',c:'현대차 IR(Atlas) 60%·모비스 "60% 이상" · 교보 50% · Morgan Stanley ~56%'},
+    {l:'모비스 첫 공급',v:'2026-11',u:'',e:'확인',c:'Atlas 바디 액추에이터 31개/대 · RMAC 훈련 플릿용 소량 · 실질 매출은 2028 RA 가동부터'},
+    {l:'소프트뱅크 거래 함의 BD 가치',v:fmt(sb.implied_ev_krw_trillion)+'조',u:'원',e:'추정',c:`9.65% × 약 $${sb.price_usd_m/100}억 역산 ≈ $${sb.implied_ev_usd_b}B · 한화 SOTP 145조원의 약 1/28`},
+    {l:'BD 순손실',v:fmt(-fin25.net_loss,0),u:'억원 (2025)',e:'확인',c:`2021~2025 누적 ${fmt(-cum.net_loss,0)}억원 · 1H26 ${fmt(3888,0)}억원 · 2025 매출 ${fmt(fin25.revenue,0)}억원`}
+  ];
+  document.getElementById('tiles').innerHTML=tiles.map(t=>`<div class="tile"><div class="lbl">${t.l} ${badge(t.e)}</div><div class="val">${t.v}<small>${t.u}</small></div><div class="cap">${esc(t.c)}</div></div>`).join('');
+  const g=[
+    {l:'RA 캐파 3만대 × 31개',v:'93만',u:'개 필요',c:'Atlas만으로 채운다고 가정(본 보고서 계산)'},
+    {l:'모비스 공장 캐파',v:'35만',u:'개/년',c:'1만대분(31만)+마진 — 확인'},
+    {l:'갭',v:'−58만',u:'개 (약 2.7배)',c:'램프 단계 증설 또는 품목 분담 필요(추정)'}];
+  document.getElementById('gap-tiles').innerHTML=g.map(t=>`<div class="tile"><div class="lbl">${t.l}</div><div class="val">${t.v}<small>${t.u}</small></div><div class="cap">${esc(t.c)}</div></div>`).join('');
+})();
+
+/* ---------- 2. timeline ---------- */
+function drawTL(mode){
+  const rows=D.timeline.filter(r=>mode==='all'||r.date.slice(0,4)>='2026');let yr=null,h='';
+  rows.forEach(r=>{const y=r.date.slice(0,4);if(y!==yr){yr=y;h+=`<li class="yr">${y}</li>`;}
+    const done=String(r.status).startsWith('완료');
+    h+=`<li class="${done?'done':''}"><span class="d">${esc(r.date)}</span>${badge(r.evidence)}<span class="st">${esc(r.status)}</span><span class="ev">${esc(r.event)}</span><span class="s">${esc(/\.md$/.test(r.source)?'본 보고서 리서치 노트':r.source)}</span></li>`;});
+  document.getElementById('tl').innerHTML=h;
+}
+drawTL('focus');
+document.querySelectorAll('#tl-ctrl button').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('#tl-ctrl button').forEach(x=>x.classList.remove('on'));b.classList.add('on');drawTL(b.dataset.m);}));
+
+function drawRamp(){
+  const t=T(),c=mk('c-ramp'),X=['2026','2027','2028','2029'];
+  const ct=k=>D.capacity_targets.find(x=>x.item===k).value;
+  const kyobo=[ct('BD 판매 추정 2026E'),ct('BD 판매 추정 2027E'),ct('BD 판매 추정 2028E'),null];
+  const cap=[null,null,ct('미국 로봇공장(RA) 연간 생산능력'),ct('미국 로봇공장(RA) 연간 생산능력')];
+  const daol=[null,null,null,ct('Atlas 누적 양산 목표(2029년까지)')];
+  const o=base(t);
+  c.setOption({...o,grid:{...o.grid,bottom:52},
+    tooltip:{...o.tooltip,formatter:ps=>`<b>${ps[0].axisValue}</b><br>`+ps.filter(p=>p.value!=null).map(p=>`${rectKey(p.color)}${p.seriesName}: <b>${fmt(p.value,0)}</b>대`).join('<br>')},
+    xAxis:{...axX(t),type:'category',data:X},
+    yAxis:{...axY(t),type:'log',min:10,max:100000,axisLabel:{color:t.mut,fontSize:11,formatter:v=>v>=10000?(v/10000)+'만':fmt(v,0)}},
+    dataZoom:zoom(t),
+    series:[
+      {name:'교보 BD 판매 추정(연간)',type:'bar',barMaxWidth:40,itemStyle:{color:t.s[0],borderRadius:[4,4,0,0],decal:decal(t)},data:kyobo,label:{show:true,position:'top',color:t.sec,fontSize:11,formatter:p=>p.value?fmt(p.value,0):''}},
+      {name:'다올 2029년까지 누적',type:'bar',barMaxWidth:40,itemStyle:{color:t.s[3],borderRadius:[4,4,0,0],decal:decal(t)},data:daol,label:{show:true,position:'top',color:t.sec,fontSize:11,formatter:p=>p.value?'누적 '+fmt(p.value/10000,1)+'만':''}},
+      {name:'RA 캐파(로봇 합산, 확인)',type:'line',symbolSize:9,lineStyle:{width:2,color:t.s[1]},itemStyle:{color:t.s[1]},data:cap,connectNulls:false,
+        label:{show:true,position:'top',color:t.sec,fontSize:11,formatter:p=>p.dataIndex===2?'캐파 3만':''}}
+    ]});
+  addDrag(c,X.length);
+}
+
+/* ---------- 3. capa gap ---------- */
+function drawGap(){
+  const t=T(),c=mk('c-gap');
+  const rows=[
+    {n:'모비스 초기 캐파 (mdtoday 보도)',v:30000,k:'s',e:'보도'},
+    {n:'모비스 미국 공장 캐파',v:350000,k:'s',e:'확인'},
+    {n:'필요: 1만대 × 31',v:310000,k:'d',e:'추정'},
+    {n:'필요: 2.5만대 배치 × 31',v:775000,k:'d',e:'추정'},
+    {n:'필요: 3만대 캐파 × 31',v:930000,k:'d',e:'추정'}];
+  const o=base(t);
+  c.setOption({...o,legend:{...o.legend,data:['공급 캐파','필요 수량']},grid:{left:8,right:64,top:36,bottom:16,containLabel:true},
+    tooltip:{...o.tooltip,trigger:'item',formatter:p=>{const r=rows[p.dataIndex];return `<b>${r.n}</b><br>${fmt(r.v,0)}개/년 · ${r.e}<br><span style="color:${t.mut}">35만 대비 ${r.v>=350000?'+':''}${fmt((r.v-350000)/10000,1)}만개</span>`;}},
+    yAxis:{...axX(t),type:'category',data:rows.map(r=>r.n),inverse:true,axisLabel:{color:t.sec,fontSize:11,width:isMobile()?110:200,overflow:'break'}},
+    xAxis:{...axY(t),type:'value',axisLabel:{color:t.mut,fontSize:11,formatter:v=>v?(v/10000)+'만':'0'}},
+    dataZoom:zoom(t,true),
+    series:[{name:'공급 캐파',type:'bar',stack:'a',barMaxWidth:22,itemStyle:{color:t.s[0],borderRadius:[0,4,4,0]},data:rows.map(r=>r.k==='s'?r.v:null),
+        label:{show:true,position:'right',color:t.sec,fontSize:11,formatter:p=>p.value?fmt(p.value/10000,1)+'만':''},
+        markLine:{silent:true,symbol:'none',lineStyle:{color:t.s[0],type:'dashed'},label:{color:t.sec,formatter:'35만',position:'start'},data:[{xAxis:350000}]}},
+      {name:'필요 수량',type:'bar',stack:'a',barMaxWidth:22,itemStyle:{color:t.s[1],borderRadius:[0,4,4,0]},data:rows.map(r=>r.k==='d'?r.v:null),
+        label:{show:true,position:'right',color:t.sec,fontSize:11,formatter:p=>p.value?fmt(p.value/10000,1)+'만':''}}]});
+  addDrag(c,rows.length,true);
+}
+
+/* ---------- 4. cost curve ---------- */
+function drawCost(){
+  const t=T(),c=mk('c-cost');const X=['초기 양산','1만대','3만대','5만대+'];
+  const ct=k=>D.capacity_targets.find(x=>x.item===k);
+  const cost=[ct('Atlas 원가 초기'),ct('Atlas 원가 1만대'),ct('Atlas 원가 3만대'),ct('Atlas 원가 5만대+')];
+  const bom=ct('Goldman Atlas BOM').value;
+  const o=base(t);
+  c.setOption({...o,
+    tooltip:{...o.tooltip,trigger:'axis',axisPointer:{type:'line',lineStyle:{color:t.axis}},formatter:ps=>{const i=ps[0].dataIndex;let s=`<b>${X[i]}</b>`;
+      ps.forEach(p=>{if(p.value==null)return;const extra=p.seriesIndex===0?` · ${cost[i].evidence} (${cost[i].source})`:' · 추정 (Goldman, 이데일리 2026-06-18)';s+=`<br>${rectKey(p.color)}${p.seriesName}: <b>$${fmt(p.value,0)}</b><span style="color:${t.mut}">${extra}</span>`;});
+      return s+`<br>${rectKey(t.s[3])}Goldman BOM: $${fmt(bom,0)} (별도 정의)`;}},
+    xAxis:{...axX(t),type:'category',data:X,boundaryGap:true},
+    yAxis:{...axY(t),type:'value',min:0,max:160000,axisLabel:{color:t.mut,fontSize:11,formatter:v=>'$'+(v/10000)+'만'}},
+    dataZoom:zoom(t),
+    series:[
+      {name:'원가 (회사 IR·삼성증권)',type:'line',symbolSize:10,lineStyle:{width:2,color:t.s[0]},itemStyle:{color:t.s[0]},data:cost.map(x=>x.value),
+        label:{show:true,position:'top',color:t.ink,fontWeight:700,fontSize:12,formatter:p=>'$'+fmt(p.value/10000,1)+'만'},
+        markLine:{silent:true,symbol:'none',lineStyle:{color:t.s[3],type:'dashed',width:2},label:{color:t.sec,position:'insideEndTop',formatter:'Goldman BOM $74,850 (정의 다름)'},data:[{yAxis:bom}]}},
+      {name:'Goldman 판가 추정 (현재→양산)',type:'line',symbol:'diamond',symbolSize:11,lineStyle:{width:2,type:'dashed',color:t.s[1]},itemStyle:{color:t.s[1]},connectNulls:true,data:[120000,null,null,70000],
+        label:{show:true,position:'bottom',color:t.sec,fontSize:11,formatter:p=>p.value?'판가 $'+fmt(p.value/10000,0)+'만':''}}
+    ]});
+  addDrag(c,X.length);
+}
+
+/* ---------- 5. BOM ---------- */
+function drawBom(){
+  const t=T();
+  { const c=mk('c-bom1');const S=['현대차 IR (Atlas)','교보 (휴머노이드)','Morgan Stanley (Optimus급)'];
+    const act=[60,50,56],hand=[20,27,17.2],oth=[null,23,null],rest=[20,null,26.8];
+    const o=base(t);
+    c.setOption({...o,legend:{...o.legend,type:'plain'},grid:{left:8,right:36,top:isMobile()?62:40,bottom:16,containLabel:true},
+      tooltip:{...o.tooltip,formatter:ps=>`<b>${ps[0].axisValue}</b><br>`+ps.filter(p=>p.value!=null).map(p=>`${rectKey(p.color)}${p.seriesName}: <b>${fmt(p.value,1)}%</b>`).join('<br>')},
+      yAxis:{...axX(t),type:'category',data:S,inverse:true,axisLabel:{color:t.sec,fontSize:11,width:isMobile()?90:150,overflow:'break'}},
+      xAxis:{...axY(t),type:'value',max:100,axisLabel:{color:t.mut,fontSize:11,formatter:'{value}%'}},
+      dataZoom:zoom(t,true),
+      series:[['액추에이터',act,t.s[0]],['핸드·그리퍼',hand,t.s[1]],['기타(배터리·연산 등)',oth,t.s[2]],['미공개·잔여',rest,t.grid]].map(([n,d,col],i)=>({name:n,type:'bar',stack:'b',barMaxWidth:26,
+        itemStyle:{color:col,borderColor:t.surf,borderWidth:1},data:d,label:{show:true,color:i===3?t.sec:'#fff',fontSize:11,fontWeight:600,formatter:p=>p.value?fmt(p.value,1)+'%':''}}))});
+    addDrag(c,S.length,true);}
+  { const c=mk('c-bom2');const S=['교보 (액추에이터 내)','X.PIN (중국 BOM)'];
+    const comp={'감속기':[28,21],'모터':[29,19],'센서·엔코더':[19,14],'베어링':[12,null],'롤러스크류':[null,19],'제어기':[null,12],'구조재':[null,10],'기타':[12,5]};
+    const o=base(t);
+    c.setOption({...o,legend:{...o.legend,type:'plain'},grid:{left:8,right:36,top:isMobile()?78:56,bottom:16,containLabel:true},
+      tooltip:{...o.tooltip,formatter:ps=>`<b>${ps[0].axisValue}</b><br>`+ps.filter(p=>p.value!=null).map(p=>`${rectKey(p.color)}${p.seriesName}: <b>${fmt(p.value,1)}%</b>`).join('<br>')},
+      yAxis:{...axX(t),type:'category',data:S,inverse:true,axisLabel:{color:t.sec,fontSize:11,width:isMobile()?80:140,overflow:'break'}},
+      xAxis:{...axY(t),type:'value',max:100,axisLabel:{color:t.mut,fontSize:11,formatter:'{value}%'}},
+      dataZoom:zoom(t,true),
+      series:Object.entries(comp).map(([n,d],i)=>({name:n,type:'bar',stack:'b',barMaxWidth:26,itemStyle:{color:t.s[i],borderColor:t.surf,borderWidth:1},data:d,
+        label:{show:!isMobile(),color:'#fff',fontSize:10,fontWeight:600,formatter:p=>p.value>=10?p.value+'%':''}}))});
+    addDrag(c,S.length,true);}
+}
+(function(){
+  const rows=[
+    ['현대차 IR(2026-06)','확인','Atlas','60%','그리퍼 20%','—','모비스가 핵심부품 80%+ 담당'],
+    ['현대모비스','확인','휴머노이드 일반','60%+','—','—','Barchart/모비스 PR'],
+    ['교보(2026-06-29)','추정','휴머노이드','50%','27%','23%(배터리·연산 등)','액추에이터 내: 6축 토크센서 17.5 / 감속기 12.2 / 모터 9.8 / 베어링 4.1 / 엔코더 2.4 / 기타 4.1 (전체 BOM 대비 %p)'],
+    ['Morgan Stanley','추정','Optimus Gen2급, BOM ~$55k','~56%','17.2%','하체 38.6%, 허리 14.2%, 머리 3.8%','부위별 분해(합계 비중과 별개 축)'],
+    ['X.PIN','추정','중국 공급망','—','—','—','감속기 21 / 모터 19 / 롤러스크류 19 / 센서 14 / 제어기 12 / 구조재 10 / 기타 5'],
+    ['Goldman Sachs','추정','Atlas BOM ~$74,850','—','—','—','판가 ~$12만→~$7만']];
+  document.getElementById('t-bom').innerHTML='<thead><tr><th>출처</th><th>등급</th><th>대상</th><th class="num">액추에이터</th><th>핸드/그리퍼</th><th>기타</th><th>세부</th></tr></thead><tbody>'+
+    rows.map(r=>`<tr><td>${esc(r[0])}</td><td>${badge(r[1])}</td><td>${esc(r[2])}</td><td class="num">${r[3]}</td><td>${r[4]}</td><td class="wc">${esc(r[5])}</td><td class="wc">${esc(r[6])}</td></tr>`).join('')+'</tbody>';
+})();
+
+/* ---------- 6. supplier map ---------- */
+(function(){
+  const CN={KR:'🇰🇷 한국',US:'🇺🇸 미국',JP:'🇯🇵 일본','SE/JP/US':'🇸🇪🇯🇵🇺🇸 스웨덴·일본·미국'};
+  const tk=x=>x==null?NA:(/^\d{6}$/.test(x)?x+' KS':/^\d{4}$/.test(x)?x+' JP':x);
+  const order={'확인':0,'보도':1,'추정':2};
+  document.getElementById('t-sup').innerHTML='<thead><tr><th class="sortable">부품</th><th class="sortable">공급사</th><th class="sortable">국가</th><th class="sortable">증거등급</th><th class="sortable">상장코드</th><th>근거</th></tr></thead><tbody>'+
+    D.supplier_map.map(r=>`<tr data-g="${evGroup(r.evidence)}"><td>${esc(r.component)}</td><td><b>${esc(r.supplier)}</b></td><td>${CN[r.country]||esc(r.country)}</td><td data-v="${2-order[evGroup(r.evidence)]}">${badge(r.evidence)}</td><td>${tk(r.ticker)}</td><td class="src">${esc(r.source)}</td></tr>`).join('')+'</tbody>';
+  sortable(document.getElementById('t-sup'));filterChips('sup-ctrl','t-sup');
+})();
+
+/* ---------- 7. Korea beneficiaries ---------- */
+let RETK='ret_1m';
+const RETL={ret_1m:'1M',ret_3m:'3M',ret_ytd:'YTD',from_52w_high:'52주 고점 대비'};
+function drawRet(){
+  const t=T(),c=mk('c-ret');const rows=D.korea_beneficiaries.slice().sort((a,b)=>b[RETK]-a[RETK]);
+  const o=base(t);
+  c.setOption({...o,legend:{show:false},grid:{left:8,right:56,top:16,bottom:16,containLabel:true},
+    tooltip:{...o.tooltip,formatter:ps=>{const r=rows[ps[0].dataIndex];return `<b>${esc(r.name)}</b> (${r.code}) ${badge(r.evidence)}<br>${esc(r.role)}<br>시총 ${mcap(r.mcap_krw_trillion)}<br>1M ${pct(r.ret_1m)} · 3M ${pct(r.ret_3m)} · YTD ${pct(r.ret_ytd)}<br>52주 고점 대비 ${pct(r.from_52w_high)}`;}},
+    yAxis:{...axX(t),type:'category',inverse:true,data:rows.map(r=>r.name),axisLabel:{color:t.sec,fontSize:11}},
+    xAxis:{...axY(t),type:'value',min:v=>Math.min(0,Math.floor(v.min/10)*10-10),max:v=>Math.max(0,Math.ceil(v.max/10)*10+10),splitNumber:isMobile()?3:6,axisLabel:{color:t.mut,fontSize:11,hideOverlap:true,formatter:'{value}%'}},
+    dataZoom:zoom(t,true),
+    series:[{name:RETL[RETK],type:'bar',barMaxWidth:16,data:rows.map(r=>({value:r[RETK],itemStyle:{color:r[RETK]>=0?t.up:t.down,borderRadius:r[RETK]>=0?[0,4,4,0]:[4,0,0,4]}})),
+      label:{show:true,position:'right',color:t.sec,fontSize:10,formatter:p=>(p.value>0?'+':'')+fmt(p.value,1)}}]});
+  // negative labels on left
+  c.setOption({series:[{data:rows.map(r=>({value:r[RETK],itemStyle:{color:r[RETK]>=0?t.up:t.down,borderRadius:r[RETK]>=0?[0,4,4,0]:[4,0,0,4]},label:{position:r[RETK]>=0?'right':'left'}}))}]});
+  addDrag(c,rows.length,true);
+}
+document.querySelectorAll('#ret-ctrl button').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('#ret-ctrl button').forEach(x=>x.classList.remove('on'));b.classList.add('on');RETK=b.dataset.k;drawRet();}));
+(function(){
+  const order={'확인':5,'보도':4,'추정':3,'테마':2,'미확인':1};
+  document.getElementById('t-kb').innerHTML='<thead><tr><th class="sortable">종목(코드)</th><th>BD 역할</th><th class="sortable">등급</th><th class="sortable num">시총</th><th class="sortable num">1M</th><th class="sortable num">3M</th><th class="sortable num">YTD</th><th class="sortable num">52주高 대비</th></tr></thead><tbody>'+
+    D.korea_beneficiaries.map(r=>{const g=evGroup(r.evidence);return `<tr data-g="${g}"><td><b>${esc(r.name)}</b> <span class="na">${r.code}</span></td><td class="wc">${esc(r.role)}</td><td data-v="${order[g]}">${badge(r.evidence)}</td><td class="num" data-v="${r.mcap_krw_trillion}">${mcap(r.mcap_krw_trillion)}</td>`+
+      ['ret_1m','ret_3m','ret_ytd','from_52w_high'].map(k=>`<td class="num" data-v="${r[k]}">${pct(r[k])}</td>`).join('')+'</tr>';}).join('')+'</tbody>';
+  sortable(document.getElementById('t-kb'));filterChips('kb-ctrl','t-kb');
+})();
+
+/* ---------- 8. ownership ---------- */
+function drawOwn(){
+  const t=T(),c=mk('c-own');const H=D.ownership.filter(r=>r.type==='직접');const names=H.map(r=>r.holder.replace('(LLC)',''));
+  const o=base(t);
+  c.setOption({...o,tooltip:{...o.tooltip,formatter:ps=>`<b>${ps[0].axisValue}</b><br>`+ps.map(p=>`${rectKey(p.color)}${p.seriesName}: <b>${p.value==null?'—':fmt(p.value,2)+'%'}</b>`).join('<br>')},
+    xAxis:{...axX(t),type:'category',data:names,axisLabel:{color:t.sec,fontSize:11,interval:0}},
+    yAxis:{...axY(t),type:'value',max:70,axisLabel:{color:t.mut,fontSize:11,formatter:'{value}%'}},
+    dataZoom:zoom(t),
+    series:[['2025-07','stake_2025_07',t.s[6]],['2026-07 행사 전','stake_before',t.s[0]],['인수 후(계획)','stake_after',t.s[1]]].map(([n,k,col])=>({name:n,type:'bar',barMaxWidth:22,itemStyle:{color:col,borderRadius:[4,4,0,0]},data:H.map(r=>r[k]??null),
+      label:{show:!isMobile(),position:'top',color:t.sec,fontSize:10,formatter:p=>p.value!=null?fmt(p.value,1):''}}))});
+  addDrag(c,names.length);
+  const d=mk('c-donut');const cols=[t.s[0],t.s[1],t.s[2],t.s[4]];
+  const mkData=k=>H.map((r,i)=>({name:r.holder.replace('(LLC)',''),value:r[k],itemStyle:{color:cols[i]}})).filter(x=>x.value>0);
+  d.setOption({textStyle:{fontFamily:'system-ui,-apple-system,"Apple SD Gothic Neo",sans-serif'},
+    tooltip:{trigger:'item',backgroundColor:t.surf,borderColor:t.grid,textStyle:{color:t.ink,fontSize:12},confine:true,formatter:p=>`<b>${p.seriesName}</b><br>${rectKey(p.color)}${p.name}: <b>${fmt(p.value,2)}%</b>`},
+    legend:{top:0,left:0,textStyle:{color:t.sec,fontSize:11},itemWidth:12,itemHeight:8,icon:'roundRect'},
+    series:[{name:'행사 전 (2026-07)',type:'pie',radius:['24%','44%'],center:['50%','56%'],itemStyle:{borderColor:t.surf,borderWidth:2},label:{show:false},data:mkData('stake_before')},
+      {name:'인수 후 (계획)',type:'pie',radius:['54%','74%'],center:['50%','56%'],itemStyle:{borderColor:t.surf,borderWidth:2},label:{color:t.sec,fontSize:11,formatter:p=>`${p.name}\n${fmt(p.value,1)}%`},labelLine:{lineStyle:{color:t.axis}},data:mkData('stake_after')}]});
+}
+(function(){
+  const f=v=>v==null?NA:fmt(v,2)+'%';
+  document.getElementById('t-own').innerHTML='<thead><tr><th>주주</th><th>구분</th><th class="num">2025-07</th><th class="num">2026-07(행사 전)</th><th class="num">인수 후(계획)</th><th>비고</th></tr></thead><tbody>'+
+    D.ownership.map(r=>`<tr><td>${r.type==='간접'?'&nbsp;&nbsp;':''}<b>${esc(r.holder)}</b></td><td>${r.type}</td><td class="num">${f(r.stake_2025_07)}</td><td class="num">${f(r.stake_before)}</td><td class="num">${f(r.stake_after)}${r.stake_after_hanwha?` <span class="na">(한화 ${r.stake_after_hanwha}%)</span>`:''}</td><td class="src">${esc(r.stake_before_note||r.stake_before_alt||'')}</td></tr>`).join('')+'</tbody>';
+})();
+
+/* ---------- 9. financials ---------- */
+const FIN_YRS=['2022','2023','2024','2025','1H26'];
+function drawFin(){
+  const t=T(),c=mk('c-fin');const R=FIN_YRS.map(y=>D.financials.find(f=>f.year===y));
+  const o=base(t);
+  c.setOption({...o,tooltip:{...o.tooltip,formatter:ps=>{const r=R[ps[0].dataIndex];return `<b>${ps[0].axisValue}</b><br>`+ps.map(p=>`${rectKey(p.color)}${p.seriesName}: <b>${p.value==null?'미공개':fmt(p.value,0)+'억원'}</b>`).join('<br>')+(r.capital_injection_note?`<br><span style="color:${t.mut};white-space:normal;display:inline-block;max-width:260px">${esc(r.capital_injection_note)}</span>`:'');}},
+    xAxis:{...axX(t),type:'category',data:FIN_YRS},
+    yAxis:{...axY(t),type:'value',axisLabel:{color:t.mut,fontSize:11,formatter:v=>fmt(v,0)}},
+    dataZoom:zoom(t),
+    series:[['매출','revenue',t.s[0]],['순손실','net_loss',t.s[1]],['증자','capital_injection',t.s[2]]].map(([n,k,col])=>({name:n,type:'bar',barMaxWidth:26,
+      itemStyle:{color:col,borderRadius:[4,4,4,4]},data:R.map(r=>r[k]??null),label:{show:!isMobile(),position:k==='net_loss'?'bottom':'top',color:t.sec,fontSize:10,formatter:p=>p.value!=null?fmt(p.value,0):''}}))});
+  addDrag(c,FIN_YRS.length);
+}
+(function(){
+  const f=v=>v==null?NA:fmt(v,0);
+  document.getElementById('t-fin').innerHTML='<thead><tr><th>기간</th><th class="num">매출</th><th class="num">순손실</th><th class="num">증자</th><th class="num">자산</th><th class="num">부채</th><th class="num">자본</th><th>출처·비고</th></tr></thead><tbody>'+
+    D.financials.map(r=>`<tr><td><b>${esc(r.year)}</b></td><td class="num">${f(r.revenue)}</td><td class="num">${f(r.net_loss)}</td><td class="num">${f(r.capital_injection)}</td><td class="num">${f(r.assets)}</td><td class="num">${f(r.liabilities)}</td><td class="num">${f(r.equity)}</td><td class="src">${esc(r.source)}</td></tr>`).join('')+'</tbody>';
+})();
+
+/* ---------- 10. valuation ---------- */
+let VALM='log';
+function drawVal(){
+  const t=T(),c=mk('c-val');
+  const kind=s=>/인수|소프트뱅크|Korea Herald/.test(s)?0:/증권|KB|IBK|한화|Asiabits/.test(s)?1:2;
+  const KN=['거래 기반·역산','증권사·리서치','매체·기타'];
+  const rows=D.valuation_estimates.map(r=>{let v=r.value_krw_trillion,lo=null;
+    if(v==null&&r.source.includes('2021')){v=1.24;}
+    if(typeof v==='string'){const [a,b]=v.split('~').map(Number);lo=a;v=b;}
+    return {...r,v,lo,k:kind(r.source)};}).sort((a,b)=>a.v-b.v);
+  const o=base(t);
+  c.setOption({...o,legend:{...o.legend,data:KN},grid:{left:8,right:72,top:36,bottom:40,containLabel:true},
+    tooltip:{...o.tooltip,trigger:'item',formatter:p=>{const r=rows[p.dataIndex];return `<b>${esc(r.source)}</b> ${badge(r.evidence)}<br>${esc(r.value)}${r.value_krw_trillion==null?' (≈1.2조원, 본 페이지 환산)':''}<br><span style="color:${t.mut}">${esc(r.date)} · 소프트뱅크 역산(5.2조) 대비 ${fmt(r.v/5.2,1)}배</span>`;}},
+    yAxis:{...axX(t),type:'category',inverse:true,data:rows.map(r=>r.source),axisLabel:{color:t.sec,fontSize:11,width:isMobile()?110:220,overflow:'truncate'}},
+    xAxis:{...axY(t),type:VALM==='log'?'log':'value',min:VALM==='log'?1:0,max:VALM==='log'?200:160,axisLabel:{color:t.mut,fontSize:11,formatter:v=>fmt(v,0)+'조'}},
+    dataZoom:zoom(t,true),
+    series:KN.map((n,ki)=>({name:n,type:'bar',barMaxWidth:18,barGap:'-100%',itemStyle:{color:t.s[[0,1,3][ki]],borderRadius:[0,4,4,0]},
+      data:rows.map(r=>r.k===ki?{value:r.v,itemStyle:r.lo?{decal:decal(t)}:{}}:null),
+      label:{show:true,position:'right',color:t.ink,fontSize:11,fontWeight:600,formatter:p=>{const r=rows[p.dataIndex];return r.lo?`${r.lo}~${r.v}조`:fmt(r.v,1)+'조';}},
+      markLine:ki===0?{silent:true,symbol:'none',lineStyle:{color:t.mut,type:'dashed'},label:{color:t.mut,fontSize:10,formatter:p=>p.value===5.2?'SB 5.2조':'한화 145조',position:'end'},data:[{xAxis:5.2},{xAxis:145}]}:undefined}))});
+  addDrag(c,rows.length,true);
+}
+document.querySelectorAll('#val-ctrl button').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('#val-ctrl button').forEach(x=>x.classList.remove('on'));b.classList.add('on');VALM=b.dataset.m;drawVal();}));
+
+/* ---------- 11. SOTP ---------- */
+function drawSotp(){
+  const t=T(),c=mk('c-sotp');const R=D.sotp.filter(r=>r.source.startsWith('한화'));const X=R.map(r=>r.company);
+  const o=base(t);
+  c.setOption({...o,tooltip:{...o.tooltip,formatter:ps=>{const r=R[ps[0].dataIndex];const bd=r.robot_per_share_krw||r.bd_per_share_krw;
+      return `<b>${r.company}</b> (${r.source})<br>`+ps.map(p=>`${rectKey(p.color)}${p.seriesName}: <b>${fmt(p.value,0)}원</b>`).join('<br>')+`<br><span style="color:${t.mut}">BD${r.robot_per_share_krw?'+로봇':''} 주당가치 / 현재가 = ${fmt(bd/r.price_krw*100,0)}%</span>`;}},
+    xAxis:{...axX(t),type:'category',data:X},
+    yAxis:{...axY(t),type:'value',axisLabel:{color:t.mut,fontSize:11,formatter:v=>(v/10000)+'만'}},
+    dataZoom:zoom(t),
+    series:[
+      {name:'본업 주당가치',type:'bar',stack:'tp',barMaxWidth:30,itemStyle:{color:t.s[6]},data:R.map(r=>r.op_per_share_krw)},
+      {name:'BD(+로봇부품) 주당가치',type:'bar',stack:'tp',barMaxWidth:30,itemStyle:{color:t.s[1],borderRadius:[4,4,0,0]},data:R.map(r=>r.robot_per_share_krw||r.bd_per_share_krw),
+        label:{show:true,position:'top',color:t.sec,fontSize:10,formatter:p=>'TP '+fmt(R[p.dataIndex].tp_krw/10000,0)+'만'}},
+      {name:'현재가',type:'bar',barMaxWidth:30,itemStyle:{color:t.s[0],borderRadius:[4,4,0,0]},data:R.map(r=>r.price_krw),
+        label:{show:true,position:'top',color:t.sec,fontSize:10,formatter:p=>fmt(p.value/10000,1)+'만'}}]});
+  addDrag(c,X.length);
+}
+(function(){
+  const f=(v,d=0)=>v==null?NA:fmt(v,d);
+  document.getElementById('t-sotp').innerHTML='<thead><tr><th class="sortable">회사</th><th>출처</th><th class="sortable num">BD 지분</th><th class="sortable num">BD 가치(조)</th><th class="sortable num">BD 주당(원)</th><th class="sortable num">목표가(원)</th><th class="sortable num">현재가(원)</th><th class="sortable num">BD주당/주가</th></tr></thead><tbody>'+
+    D.sotp.map(r=>{const bd=r.robot_per_share_krw||r.bd_per_share_krw;const ratio=bd&&r.price_krw?bd/r.price_krw*100:null;
+      return `<tr><td><b>${esc(r.company)}</b></td><td>${esc(r.source)}</td><td class="num" data-v="${r.bd_stake_pct??''}">${r.bd_stake_pct?r.bd_stake_pct+'%':NA}</td><td class="num" data-v="${r.bd_value_krw_trillion??''}">${f(r.bd_value_krw_trillion,1)}${r.robot_parts_value_krw_trillion?` <span class="na">+로봇 ${r.robot_parts_value_krw_trillion}</span>`:''}</td><td class="num" data-v="${bd??''}">${f(bd)}</td><td class="num" data-v="${r.tp_krw??''}">${f(r.tp_krw)}</td><td class="num" data-v="${r.price_krw??''}">${f(r.price_krw)}</td><td class="num" data-v="${ratio??''}">${ratio==null?(r.note?`<span class="na">${esc(r.note)}</span>`:NA):fmt(ratio,0)+'%'}</td></tr>`;}).join('')+'</tbody>';
+  sortable(document.getElementById('t-sotp'));
+})();
+
+/* ---------- 12. competitors ---------- */
+function drawComp(){
+  const t=T(),c=mk('c-comp');
+  const R=[{n:'BD Atlas',cap:30000,cn:'2028 RA 연 3만대(로봇 합산)',sh:100,sn:'2026E 약 100대(교보 추정)'},
+    {n:'Tesla Optimus',cap:1000000,cn:'프리몬트 연 100만대(셀사이드)',sh:500,sn:'2025 500대 이하(교보 추정)'},
+    {n:'Figure 03',cap:12000,cn:'BotQ 1세대 연 1.2만대(장기 5만)',sh:1000,sn:'누적 1,000대 생산(2026-07-23)'},
+    {n:'Agility Digit',cap:10000,cn:'RoboFab 최대 연 1만대',sh:100,sn:'유료 약 100대'},
+    {n:'Unitree',cap:75000,cn:'5년 내 휴머노이드 연 7.5만대',sh:5500,sn:'2025 휴머노이드 5,500대+'},
+    {n:'UBTech Walker S2',cap:10000,cn:'2026 연 5천→1만대',sh:1079,sn:'2025 1,079대 (1H26 921대)'},
+    {n:'Apptronik Apollo',cap:null,cn:'미공개(Jabil 위탁)',sh:null,sn:'파일럿, 대수 미공개'}];
+  const o=base(t);
+  c.setOption({...o,tooltip:{...o.tooltip,formatter:ps=>{const r=R[ps[0].dataIndex];return `<b>${r.n}</b><br>${rectKey(t.s[0])}캐파 목표: ${esc(r.cn)}<br>${rectKey(t.s[1])}실제 출하: ${esc(r.sn)}`;}},
+    xAxis:{...axX(t),type:'category',data:R.map(r=>r.n),axisLabel:{color:t.sec,fontSize:11,interval:0,rotate:isMobile()?35:0}},
+    yAxis:{...axY(t),type:'log',min:10,max:10000000,axisLabel:{color:t.mut,fontSize:11,formatter:v=>v>=10000?fmt(v/10000,0)+'만':fmt(v,0)}},
+    dataZoom:zoom(t),
+    series:[{name:'캐파 목표',type:'bar',barMaxWidth:24,itemStyle:{color:t.s[0],borderRadius:[4,4,0,0]},data:R.map(r=>r.cap),label:{show:!isMobile(),position:'top',color:t.sec,fontSize:10,formatter:p=>p.value>=10000?fmt(p.value/10000,1)+'만':fmt(p.value,0)}},
+      {name:'실제 출하(최근)',type:'bar',barMaxWidth:24,itemStyle:{color:t.s[1],borderRadius:[4,4,0,0]},data:R.map(r=>r.sh),label:{show:!isMobile(),position:'top',color:t.sec,fontSize:10,formatter:p=>fmt(p.value,0)}}]});
+  addDrag(c,R.length);
+}
+(function(){
+  document.getElementById('t-comp').innerHTML='<thead><tr><th>회사</th><th>캐파 목표</th><th>실제 출하</th><th>가격/원가</th><th>공장</th><th>자금/밸류</th></tr></thead><tbody>'+
+    D.competitors.map(r=>`<tr><td><b>${esc(r.company)}</b><br><span class="na">${esc(r.date)}</span></td><td class="wc">${esc(r.capacity_target)}</td><td class="wc">${esc(r.actual_shipments)}</td><td class="wc">${esc(r.price_cost)}</td><td class="wc">${esc(r.factory)}</td><td class="wc">${esc(r.funding_valuation)}</td></tr>`).join('')+'</tbody>';
+})();
+
+/* ---------- 13. conflicts (full list from report) ---------- */
+(function(){
+  const C=[
+    ['모비스 공급 개시','2026-11(모비스 IR·메리츠) vs 2027 매출(mdtoday) vs "납품 이력 없음"(7월 IR)','11월 = RMAC용 소량 첫 납품, 2027 = 최종 모델 확정, 실질 매출 = 2028 RA'],
+    ['대당 액추에이터 수','31개(모비스 IR) / 30여 개(유진) / 약 10개+(뉴스핌) / "31종"(메리츠)','31개(그리퍼 제외), 2종 표준화. "31종"은 오기로 판단'],
+    ['35만개 캐파 근거','1만대분+마진(모비스) vs 31×3만=93만','모비스 1공장은 약 1만대분. 3만대 대응에는 증설 필요'],
+    ['3만대 성격','캐파(현대차 IR) vs 연 3만대 Atlas 생산(일부 매체)','2028 미국 신공장 연간 생산능력, Atlas·Spot·Stretch 합산'],
+    ['2.5만대 시점','2028년까지(이데일리) vs 수년간(Manufacturing Dive)','수년간 누적 배치 목표'],
+    ['소프트뱅크 지분','9.65% / 9.9% / 10.01% / 10% / 9.6%','9.65%. 종결은 미확인'],
+    ['인수가','$3.25억 / 약 3.2억달러 / 약 5,000억원(3.35억달러)','약 $3.2~3.35억, 공식 비공개'],
+    ['Atlas 원가 vs BOM','원가 $14만(IR) vs BOM $74,850(GS)','원가는 저물량 조립·간접비 포함, 정의가 다름'],
+    ['Atlas 판매가','$12만(GS) / $13~32만(Robozaps) / $50만+(신한)','공식가 없음'],
+    ['배터리','LGES vs 삼성SDI. 모비스 "참여 낮음"(9월) vs "팩 납품"(삼성증권)','셀 외부·공급사 미확정. 최근 발언 우선'],
+    ['RMAC 개소','2026-06(뉴스핌) vs 2026-09-21(BD·Axios)','6월 파일럿, 9/21 공식 개소'],
+    ['Spot 고객','500곳+(5월) vs 200곳+(9월), 대수 2,000대+(2차)','미확정, 공식 누적 대수 없음'],
+    ['2025 매출','1,501억원(글로비스 공시) vs $1.3억(추정)','공시치 1,501억원'],
+    ['2021 인수가','9,963억원 / $8.8억(약 9,600억) / 가치 $11억','9,963억원(80%)'],
+    ['DoF','56(BD) vs 57(KB)','56'],
+    ['중국 로봇 규제','FCC Covered List 편입 기정사실(iM) vs 법안(GUARD Act) 단계(유진)','1차 확인 필요']];
+  document.getElementById('t-conf').innerHTML='<thead><tr><th>쟁점</th><th>엇갈리는 수치</th><th>본 보고서의 정리</th></tr></thead><tbody>'+
+    C.map(r=>`<tr><td><b>${esc(r[0])}</b></td><td class="wc">${esc(r[1])}</td><td class="wc">${esc(r[2])}</td></tr>`).join('')+'</tbody>';
+})();
+
+/* ---------- 14. checkpoints ---------- */
+(function(){
+  const asof=new Date('2026-10-21');
+  const dd=s=>{const m=s.match(/^(\d{4})-(\d{2})-(\d{2})$/);if(!m)return'';const d=Math.round((new Date(s)-asof)/864e5);return d===0?'<span class="dday">D-day</span>':d>0?`<span class="dday">D-${d}</span>`:`<span class="dday past">D+${-d}</span>`;};
+  const extra=[{date:'2026-11-24',item:'현대모비스 임시주총(램프사업 매각)'},{date:'2027-04-01',item:'모비스 램프사업(OP모빌리티) 매각 완료 예정(약 6,000억원)'}];
+  const rows=D.checkpoints.concat(extra.filter(e=>!D.checkpoints.some(c=>c.date===e.date)));
+  const KEY={'2026 4Q':'2026-12-0','2026 말':'2026-12-9','2027 초':'2027-00-a','2027':'2027-00-b','2028':'2028','2029 하반기':'2029-07','2030':'2030'};
+  rows.sort((a,b)=>(KEY[a.date]||a.date).localeCompare(KEY[b.date]||b.date));
+  document.getElementById('t-chk').innerHTML='<thead><tr><th>일자</th><th>남은 기간</th><th>체크포인트</th></tr></thead><tbody>'+
+    rows.map(r=>`<tr><td><b>${esc(r.date)}</b></td><td>${dd(r.date)}</td><td class="wc">${esc(r.item)}</td></tr>`).join('')+'</tbody>';
+})();
+
+/* ---------- footer sources ---------- */
+document.getElementById('srcs').innerHTML=SRCS.map(s=>`<div>· <a href="${esc(s[1])}" target="_blank" rel="noopener">${esc(s[0])}</a></div>`).join('');
+
+/* ---------- render / theme / resize ---------- */
+function drawAll(){drawRamp();drawGap();drawCost();drawBom();drawRet();drawOwn();drawFin();drawVal();drawSotp();drawComp();}
+drawAll();
+let rt,lastMobile=isMobile();window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{if(isMobile()!==lastMobile){lastMobile=isMobile();drawAll();}else Object.values(charts).forEach(c=>c.resize());},150);});
+if(window.matchMedia){window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',drawAll);}
+</script>
+</body></html>
