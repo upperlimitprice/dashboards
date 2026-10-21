@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>광통신 대해부: 400G→3.2T, 플러거블→NPO→CPO | 쩜상리서치</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
+<style>
+:root{
+  --bg:#f7f7f5; --card:#ffffff; --ink:#0b0b0b; --ink2:#52514e; --muted:#7a7975; --line:#e3e2de;
+  --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a; --s4:#eda100; --s7:#6250d6;
+  --up:#d93a36; --down:#2a62c9; --accent:#0e5aa7;
+  --ok:#137a3f; --rep:#8a5a00; --est:#6250d6;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);
+  font-family:"Pretendard","Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",system-ui,sans-serif;
+  font-size:17px;line-height:1.6;-webkit-text-size-adjust:100%;overflow-x:hidden;overflow-wrap:anywhere}
+td,th{overflow-wrap:normal;word-break:keep-all}
+.wrap{max-width:1200px;margin:0 auto;padding:0 16px}
+section{background:var(--card);border:1px solid var(--line);border-radius:16px;margin:20px 0;padding:28px 28px 24px;overflow:hidden}
+h1{font-size:34px;line-height:1.3;margin:6px 0 10px;letter-spacing:-.5px}
+h2{font-size:26px;margin:0 0 6px;letter-spacing:-.3px}
+h3{font-size:19px;margin:18px 0 8px}
+.kicker{font-size:15px;color:var(--accent);font-weight:700;letter-spacing:.4px}
+.lead{font-size:18px;color:var(--ink2);margin:0 0 14px}
+p{margin:6px 0 10px}
+.src{font-size:16px;color:var(--muted)}
+.src a{color:var(--muted)}
+a{color:var(--accent)}
+.badge{display:inline-block;font-size:13px;font-weight:700;padding:1px 7px;border-radius:999px;border:1px solid;vertical-align:2px;white-space:nowrap;margin-left:4px}
+.b-ok{color:var(--ok);border-color:var(--ok);background:#eef8f1}
+.b-rep{color:var(--rep);border-color:#c99a2e;background:#fdf6e6}
+.b-est{color:var(--est);border-color:var(--est);background:#f1effc}
+.hero-one{font-size:22px;font-weight:800;background:#0b0b0b;color:#fff;border-radius:12px;padding:14px 18px;margin:12px 0 18px}
+.kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.kpi{border:1px solid var(--line);border-radius:12px;padding:14px 16px;background:#fbfbfa}
+.kpi .v{font-size:30px;font-weight:800;line-height:1.2}
+.kpi .l{font-size:16px;color:var(--ink2)}
+.kpi .s{font-size:14px;color:var(--muted);margin-top:4px}
+.v.up{color:var(--up)}
+ol.tight,ul.tight{margin:6px 0 8px;padding-left:22px}
+ol.tight li,ul.tight li{margin:3px 0}
+.grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:20px}
+.grid2 > *{min-width:0}
+figure{margin:12px 0;padding:14px;border:1px solid var(--line);border-radius:12px;background:#fcfcfb}
+figcaption{font-weight:800;font-size:18px;margin-bottom:8px}
+.svgbox{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.svgbox svg{display:block;width:100%;min-width:640px;height:auto}
+.explain{font-size:16px;margin:10px 0 0;padding-left:22px}
+.explain li{margin:3px 0}
+.tbox{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--line);border-radius:10px;margin:8px 0}
+table{border-collapse:collapse;width:100%;font-size:16px;min-width:560px}
+th,td{padding:9px 14px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th:last-child,td:last-child{padding-right:22px}
+th{background:#f2f2ef;font-weight:700;white-space:nowrap}
+td.n,th.n{text-align:right;white-space:nowrap}
+th.sort{cursor:pointer;user-select:none}
+th.sort .arr{font-size:.8em;color:inherit;margin-left:4px}
+.pos{color:var(--up);font-weight:700}.neg{color:var(--down);font-weight:700}
+.chart{width:100%;height:360px}
+.chart.tall{height:420px}
+.note{font-size:16px;background:#fff8e8;border-left:4px solid #eda100;padding:8px 12px;border-radius:6px;margin:10px 0}
+.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.card{border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:#fbfbfa}
+.card b{font-size:17px}
+footer{font-size:15px;color:var(--muted);text-align:center;padding:10px 0 30px}
+@media (max-width:900px){
+  .grid2,.cards{grid-template-columns:minmax(0,1fr)}
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:480px){
+  section{padding:18px 14px;border-radius:12px}
+  h1{font-size:26px} h2{font-size:22px}
+  .hero-one{font-size:18px}
+  .kpi .v{font-size:24px}
+  .chart{height:320px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- ===================== HERO ===================== -->
+<section id="sec-hero">
+  <div class="kicker">쩜상리서치 · 교재용 심층 리포트 · 기준일 2026-10-21</div>
+  <h1>광통신 대해부 — 400G→3.2T, 플러거블→NPO→CPO<br>무엇이 바뀌고, 무엇이 커지고, 누가 먹는가</h1>
+  <div class="hero-one">"CPO는 방향, 1.6T는 지금, 레이저는 병목."</div>
+  <div class="kpis">
+    <div class="kpi"><div class="v up">수천만 개</div><div class="l">2026년 1.6T 포트 출하</div><div class="s">LightCounting(2026-04 업데이트) <span class="badge b-rep">보도</span></div></div>
+    <div class="kpi"><div class="v up">+120%</div><div class="l">2026년 이더넷 광트랜시버 시장 성장</div><div class="s">LightCounting via Lightwave <span class="badge b-rep">보도</span></div></div>
+    <div class="kpi"><div class="v">2029년</div><div class="l">CPO 성장 변곡점(2031 플러거블 추월)</div><div class="s">TrendForce·LightCounting(2026-03) <span class="badge b-rep">보도</span></div></div>
+    <div class="kpi"><div class="v">~2029년 초</div><div class="l">루멘텀 광부품 사실상 완판</div><div class="s">CEO 인터뷰(2026-10) <span class="badge b-rep">보도</span></div></div>
+    <div class="kpi"><div class="v up">$65B</div><div class="l">2030년 인터커넥트 TAM(연 ~65%)</div><div class="s">Marvell 인베스터데이(2026-10-06) <span class="badge b-rep">보도</span></div></div>
+    <div class="kpi"><div class="v up">16→160개</div><div class="l">GPU당 광섬유(Scale-up 광 전환 시, 이론치)</div><div class="s">코닝·신한투자증권(2026-05-14) <span class="badge b-rep">보도</span><span class="badge b-est">추정</span></div></div>
+  </div>
+  <h3>핵심 결론 6가지</h3>
+  <ol class="tight">
+    <li><b>2026~27년 매출은 플러거블(800G→1.6T)</b>에서 나온다. CPO는 2026H2 초기 출하, 대량은 2028~29년 이후. <span class="badge b-rep">보도</span></li>
+    <li>진화 축은 <b>속도(레인당 100G→200G→400G)</b>와 <b>위치(전면패널→보드→패키지)</b>. 3.2T부터 NPO·CPO 논의 본격화, 단 XPO·USFP 등 고밀도 플러거블이 반격. <span class="badge b-rep">보도</span></li>
+    <li>CPO로 갈수록 <b>DSP·모듈 조립·PCB 배선은 축소</b>, <b>레이저(ELS)·SiPh·패키징·광섬유/FAU·정렬장비·계측은 확대</b>. <span class="badge b-est">추정</span></li>
+    <li><b>가장 단단한 병목은 InP 레이저</b> — 증설 리드타임 약 3년, NVIDIA가 루멘텀·코히런트에 각 $2B 투자. <span class="badge b-rep">보도</span></li>
+    <li><b>Scale-up 광 전환은 새 TAM</b>이지만 Kyber·NVL576 2028 지연 보도로 시점 불확실. <span class="badge b-rep">보도</span></li>
+    <li><b>국내는 부품·소재·장비 틈새</b>(광원·광섬유·AWG·정렬장비·계측·커패시터). 대부분 양산 레퍼런스 전 '검증 단계'. <span class="badge b-ok">확인</span><span class="badge b-rep">보도</span></li>
+  </ol>
+  <p class="src">근거 등급: <span class="badge b-ok">확인</span> 공시·보도자료·실적 · <span class="badge b-rep">보도</span> 언론·리서치·증권사 인용 · <span class="badge b-est">추정</span> 쩜상리서치 계산·해석</p>
+</section>
+
+<!-- ===================== TECH ===================== -->
+<section id="sec-tech">
+  <div class="kicker">01 · 기술 원리</div>
+  <h2>왜 '광'인가 — 트랜시버의 구조와 CPO의 차이</h2>
+  <p class="lead">레인당 200Gbps에 다가가면 구리 도달거리는 <b>1m 이하</b>로 줄어든다. 랙 사이 수 미터를 잇는 AI 클러스터에서는 물리 법칙상 광이 필수다. <span class="badge b-rep">보도</span> <span class="src">상상인증권 OFC 2026 참관후기(2026-03-23)</span></p>
+  <figure id="fig-transceiver">
+    <figcaption>그림 1. 플러거블 vs CPO — 전기신호가 빛이 되기까지</figcaption>
+    <div class="svgbox">
+    <svg viewBox="0 0 1000 430" role="img" aria-label="플러거블과 CPO 신호 경로 비교">
+      <defs>
+        <marker id="ar" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#52514e"/></marker>
+      </defs>
+      <text x="20" y="34" font-size="20" font-weight="800" fill="#0b0b0b">A. 플러거블 (현재 주류 · 1.6T 기준 ~30W)</text>
+      <rect x="20" y="52" width="960" height="150" rx="12" fill="#f2f6fc" stroke="#c9d8ee"/>
+      <rect x="40" y="82" width="150" height="90" rx="10" fill="#0b0b0b"/>
+      <text x="115" y="122" font-size="18" fill="#fff" text-anchor="middle" font-weight="700">스위치/GPU</text>
+      <text x="115" y="146" font-size="16" fill="#fff" text-anchor="middle">ASIC·SerDes</text>
+      <line x1="190" y1="127" x2="420" y2="127" stroke="#eb6834" stroke-width="6"/>
+      <text x="305" y="112" font-size="16" fill="#0b0b0b" text-anchor="middle">PCB 구리배선 15~30cm</text>
+      <text x="305" y="152" font-size="15" fill="#52514e" text-anchor="middle">신호손실 ~22dB</text>
+      <rect x="420" y="70" width="400" height="114" rx="10" fill="#fff" stroke="#2a78d6" stroke-width="2"/>
+      <text x="620" y="92" font-size="15" fill="#2a78d6" text-anchor="middle" font-weight="700">전면패널 모듈 (OSFP)</text>
+      <rect x="435" y="102" width="110" height="66" rx="8" fill="#fde9df"/><text x="490" y="132" font-size="17" text-anchor="middle" font-weight="700">DSP</text><text x="490" y="154" font-size="14" text-anchor="middle" fill="#52514e">~20W</text>
+      <rect x="555" y="102" width="110" height="66" rx="8" fill="#eef2f8"/><text x="610" y="132" font-size="17" text-anchor="middle" font-weight="700">드라이버</text><text x="610" y="154" font-size="14" text-anchor="middle" fill="#52514e">TIA/PD</text>
+      <rect x="675" y="102" width="130" height="66" rx="8" fill="#fff3d6"/><text x="740" y="132" font-size="17" text-anchor="middle" font-weight="700">레이저</text><text x="740" y="154" font-size="14" text-anchor="middle" fill="#52514e">EML·SiPh 변조</text>
+      <line x1="820" y1="127" x2="960" y2="127" stroke="#1baf7a" stroke-width="4" marker-end="url(#ar)"/>
+      <text x="890" y="112" font-size="16" text-anchor="middle">광섬유</text>
+      <circle cx="115" cy="66" r="13" fill="#2a78d6"/><text x="115" y="71" font-size="15" fill="#fff" text-anchor="middle">1</text>
+      <circle cx="305" cy="84" r="13" fill="#2a78d6"/><text x="305" y="89" font-size="15" fill="#fff" text-anchor="middle">2</text>
+      <circle cx="490" cy="190" r="13" fill="#2a78d6"/><text x="490" y="195" font-size="15" fill="#fff" text-anchor="middle">3</text>
+      <circle cx="740" cy="190" r="13" fill="#2a78d6"/><text x="740" y="195" font-size="15" fill="#fff" text-anchor="middle">4</text>
+
+      <text x="20" y="250" font-size="20" font-weight="800" fill="#0b0b0b">B. CPO (Co-Packaged · 1.6T 환산 ~9W 주장)</text>
+      <rect x="20" y="268" width="960" height="150" rx="12" fill="#fdf1ec" stroke="#f1cdbd"/>
+      <rect x="40" y="290" width="420" height="110" rx="12" fill="#fff" stroke="#0b0b0b" stroke-width="2" stroke-dasharray="6 4"/>
+      <text x="250" y="312" font-size="15" text-anchor="middle" fill="#52514e">하나의 패키지 기판 (TSMC COUPE 등)</text>
+      <rect x="60" y="322" width="150" height="66" rx="8" fill="#0b0b0b"/><text x="135" y="360" font-size="17" fill="#fff" text-anchor="middle" font-weight="700">ASIC</text>
+      <line x1="210" y1="355" x2="250" y2="355" stroke="#eb6834" stroke-width="6"/>
+      <text x="230" y="345" font-size="13" text-anchor="middle">수 mm</text>
+      <rect x="250" y="322" width="190" height="66" rx="8" fill="#e6f6ef"/><text x="345" y="350" font-size="16" text-anchor="middle" font-weight="700">광엔진</text><text x="345" y="372" font-size="14" text-anchor="middle" fill="#52514e">PIC+EIC (DSP 없음)</text>
+      <rect x="540" y="300" width="170" height="90" rx="10" fill="#fff3d6" stroke="#eda100"/>
+      <text x="625" y="338" font-size="17" text-anchor="middle" font-weight="700">ELS</text><text x="625" y="362" font-size="14" text-anchor="middle" fill="#52514e">외부 레이저(교체형)</text>
+      <line x1="540" y1="345" x2="445" y2="345" stroke="#eda100" stroke-width="4" marker-end="url(#ar)"/>
+      <line x1="440" y1="380" x2="960" y2="380" stroke="#1baf7a" stroke-width="4" marker-end="url(#ar)"/>
+      <text x="840" y="370" font-size="16" text-anchor="middle">고밀도 광섬유·FAU</text>
+      <circle cx="345" cy="404" r="13" fill="#eb6834"/><text x="345" y="409" font-size="15" fill="#fff" text-anchor="middle">5</text>
+      <circle cx="625" cy="290" r="13" fill="#eb6834"/><text x="625" y="295" font-size="15" fill="#fff" text-anchor="middle">6</text>
+    </svg>
+    </div>
+    <ol class="explain">
+      <li><b>ASIC SerDes</b>가 전기신호 송출 — 어디: 스위치·GPU 칩. 왜: 모든 데이터의 출발점.</li>
+      <li><b>PCB 구리배선 15~30cm</b> — 전면패널까지 가는 길. 속도↑일수록 손실↑(1.6T 약 22dB). <span class="badge b-rep">보도</span></li>
+      <li><b>DSP(리타이머)</b> — 망가진 신호 복원. 1.6T 모듈 ~30W 중 ~20W 소비 <span class="badge b-rep">보도</span> (코닝·NVIDIA 자료, 신한 2026-05-14).</li>
+      <li><b>레이저+변조기</b> — 전기를 빛으로. EML·CW 레이저(InP)는 현재 최대 병목.</li>
+      <li><b>CPO 광엔진</b> — ASIC 옆 수 mm에 붙여 DSP·긴 구리배선 제거 → 전력 3.5배↓·손실 4dB 주장. <span class="badge b-rep">보도</span></li>
+      <li><b>ELS(외부광원)</b> — 열에 약한 레이저를 패키지 밖으로 빼서 교체 가능하게. CPO 시대 핵심 부품.</li>
+    </ol>
+    <div class="note">⚠️ <b>상충 수치</b>: 모듈 단위 3.5배 절감(코닝) vs <b>100T 스위치 전체 ~20% 절감</b>(OFC 2026 세션) vs NVIDIA "네트워크 전력효율 최대 5배"(회사 주장). 비교 기준이 다르다. 1.6T 모듈 전력도 &lt;25W(상상인) vs ~30W(코닝)로 상이.</div>
+  </figure>
+</section>
+
+<!-- ===================== ROADMAP ===================== -->
+<section id="sec-roadmap">
+  <div class="kicker">02 · 속도 로드맵</div>
+  <h2>400G → 800G → 1.6T → 3.2T, 그리고 DCI(ZR)</h2>
+  <p class="lead">속도 = <b>레인당 속도 × 레인 수(8)</b>. 50G→100G→200G→400G로 레인 속도가 2배씩 오르며 한 세대가 바뀐다.</p>
+  <div class="tbox"><table>
+    <thead><tr><th>세대</th><th>레인 구성</th><th>폼팩터</th><th class="n">모듈 전력</th><th>상태(2026-10)</th><th>등급</th></tr></thead>
+    <tbody>
+      <tr><td><b>400G</b></td><td>50G PAM4 ×8</td><td>QSFP-DD/OSFP</td><td class="n">&lt;15W</td><td>성숙·비중 축소</td><td><span class="badge b-rep">보도</span></td></tr>
+      <tr><td><b>800G</b></td><td>100G PAM4 ×8</td><td>OSFP/QSFP-DD</td><td class="n">&lt;20W</td><td>주류 · 2026 출하 2배+ 전망</td><td><span class="badge b-rep">보도</span></td></tr>
+      <tr><td><b>1.6T</b></td><td>200G PAM4 ×8</td><td>OSFP flat-top</td><td class="n">&lt;25W~30W</td><td>대량 램프 원년 · 칩셋 $2B+</td><td><span class="badge b-rep">보도</span></td></tr>
+      <tr><td><b>3.2T</b></td><td>400G PAM4/6 ×8</td><td>OSFP-XD·XPO·USFP</td><td class="n">TBD</td><td>OFC 2026 데모 · 표준 2028 이후</td><td><span class="badge b-ok">확인</span><span class="badge b-rep">보도</span></td></tr>
+    </tbody></table></div>
+  <p class="src">출처: 상상인증권 OFC 2026(2026-03-23) · <a href="https://lightcounting.com/newsletter/en/february-2026-pam4-and-coherent-dsps-updated-april-2026-381">LightCounting DSP(2026-04)</a> · <a href="https://www.coherent.com/news/press-releases/coherent-demonstrates-next-gen-pluggable-transceiver-ofc-2026">Coherent OFC 2026 PR</a> · <a href="https://www.delloro.com/ocp-2026-optics-takes-center-stage-in-enabling-the-next-wave-of-ai-networking-and-high-speed-switching/">Dell'Oro OCP 2026(2026-10-19)</a></p>
+
+  <figure id="fig-roadmap">
+    <figcaption>그림 2. 기술별 상용화 타임라인 (2024~2031)</figcaption>
+    <div class="svgbox">
+    <svg viewBox="0 0 1000 400" role="img" aria-label="광통신 기술 타임라인">
+      <g font-size="16" fill="#52514e" text-anchor="middle">
+        <text x="250" y="28">2024</text><text x="345" y="28">2025</text><text x="440" y="28">2026</text><text x="535" y="28">2027</text><text x="630" y="28">2028</text><text x="725" y="28">2029</text><text x="820" y="28">2030</text><text x="915" y="28">2031</text>
+      </g>
+      <g stroke="#e3e2de"><line x1="250" y1="38" x2="250" y2="390"/><line x1="345" y1="38" x2="345" y2="390"/><line x1="440" y1="38" x2="440" y2="390"/><line x1="535" y1="38" x2="535" y2="390"/><line x1="630" y1="38" x2="630" y2="390"/><line x1="725" y1="38" x2="725" y2="390"/><line x1="820" y1="38" x2="820" y2="390"/><line x1="915" y1="38" x2="915" y2="390"/></g>
+      <line x1="458" y1="38" x2="458" y2="390" stroke="#d93a36" stroke-width="2" stroke-dasharray="5 4"/>
+      <text x="462" y="384" font-size="14" fill="#d93a36">오늘(26-10)</text>
+      <g font-size="17" font-weight="700" fill="#0b0b0b">
+        <text x="16" y="72">① 800G 플러거블</text><text x="16" y="122">② 1.6T 플러거블</text><text x="16" y="172">③ 3.2T 플러거블</text>
+        <text x="16" y="222">④ LPO / NPO</text><text x="16" y="272">⑤ CPO 스위치</text><text x="16" y="322">⑥ Scale-up 광</text><text x="16" y="364">⑦ DCI 1.6T ZR</text>
+      </g>
+      <rect x="250" y="56" width="430" height="24" rx="6" fill="#2a78d6" opacity=".85"/>
+      <rect x="345" y="106" width="95" height="24" rx="6" fill="#2a78d6" opacity=".35"/><rect x="440" y="106" width="475" height="24" rx="6" fill="#2a78d6"/>
+      <text x="450" y="124" font-size="14" fill="#fff">2026 대량 램프</text>
+      <rect x="440" y="156" width="190" height="24" rx="6" fill="#6250d6" opacity=".3"/><rect x="630" y="156" width="330" height="24" rx="6" fill="#6250d6"/>
+      <text x="446" y="174" font-size="14" fill="#0b0b0b">데모</text><text x="640" y="174" font-size="14" fill="#fff">초기→확산(2031 1.16억 포트)</text>
+      <rect x="345" y="206" width="380" height="24" rx="6" fill="#1baf7a"/>
+      <text x="355" y="224" font-size="14" fill="#fff">CPO 공백 메우는 브릿지(2026~28)</text>
+      <rect x="345" y="256" width="190" height="24" rx="6" fill="#eb6834" opacity=".35"/><rect x="535" y="256" width="190" height="24" rx="6" fill="#eb6834" opacity=".7"/><rect x="725" y="256" width="235" height="24" rx="6" fill="#eb6834"/>
+      <text x="352" y="274" font-size="14" fill="#0b0b0b">초기 출하</text><text x="542" y="274" font-size="14" fill="#0b0b0b">10만대(Citi)</text><text x="732" y="274" font-size="14" fill="#fff">2029 변곡점</text>
+      <rect x="535" y="306" width="95" height="24" rx="6" fill="#eda100" opacity=".45"/><rect x="630" y="306" width="330" height="24" rx="6" fill="#eda100"/>
+      <text x="540" y="324" font-size="14" fill="#0b0b0b">2H27?</text><text x="640" y="324" font-size="14" fill="#0b0b0b">Kyber·NVLink CPO(2028)</text>
+      <rect x="440" y="348" width="190" height="24" rx="6" fill="#52514e" opacity=".35"/><rect x="630" y="348" width="190" height="24" rx="6" fill="#52514e"/>
+      <text x="446" y="366" font-size="14" fill="#0b0b0b">표준</text><text x="638" y="366" font-size="14" fill="#fff">판매 확대</text>
+    </svg>
+    </div>
+    <ol class="explain">
+      <li>800G는 현 주류, 2026년 출하 2배+ <span class="badge b-rep">보도</span> — 2028 이후 1.6T에 자리 내줌 <span class="badge b-est">추정</span></li>
+      <li>1.6T: 2026 대량 램프, 2031년 1.94억 포트(LightCounting) <span class="badge b-rep">보도</span></li>
+      <li>3.2T: 400G/레인 데모(OFC 2026), 1.6TAUI-8 표준은 2028 이후 <span class="badge b-rep">보도</span></li>
+      <li>LPO/NPO: Micas "NPO가 2026~28 갭을 메운다", 중국 CSP 주도 <span class="badge b-rep">보도</span></li>
+      <li>CPO: NVIDIA·Broadcom 초기 출하 → 2029 변곡점(TrendForce·LC) <span class="badge b-rep">보도</span></li>
+      <li>Scale-up 광: 루멘텀 2H27 출하 vs SemiAnalysis Kyber 2028 지연 <span class="badge b-rep">보도</span> — <b>상충</b></li>
+      <li>DCI: 1600ZR 표준 2026, 1.6T ZR/ZR+ 판매는 2028~29(LightCounting) <span class="badge b-rep">보도</span></li>
+    </ol>
+  </figure>
+</section>
+
+<!-- ===================== PACKAGING ===================== -->
+<section id="sec-packaging">
+  <div class="kicker">03 · 패키징 진화</div>
+  <h2>Pluggable → LPO → XPO/USFP → NPO → CPO → OIO</h2>
+  <p class="lead">광엔진이 ASIC에 <b>가까워질수록</b> 전력은 줄고, 대신 <b>교체성과 제조 난이도</b>가 나빠진다. 이 트레이드오프가 채택 속도를 결정한다.</p>
+  <figure id="fig-packaging">
+    <figcaption>그림 3. 광엔진의 '위치'로 보는 5단계</figcaption>
+    <div class="svgbox">
+    <svg viewBox="0 0 1000 300" role="img" aria-label="패키징 5단계">
+      <g font-size="17" font-weight="800" text-anchor="middle" fill="#0b0b0b">
+        <text x="100" y="28">① Pluggable</text><text x="300" y="28">② LPO/XPO</text><text x="500" y="28">③ NPO</text><text x="700" y="28">④ CPO</text><text x="900" y="28">⑤ OIO</text>
+      </g>
+      <g>
+        <rect x="20" y="44" width="160" height="150" rx="10" fill="#f2f6fc" stroke="#c9d8ee"/>
+        <rect x="35" y="100" width="50" height="40" rx="6" fill="#0b0b0b"/><line x1="85" y1="120" x2="140" y2="120" stroke="#eb6834" stroke-width="4"/>
+        <rect x="140" y="95" width="34" height="50" rx="4" fill="#2a78d6"/><text x="157" y="88" font-size="13" text-anchor="middle">모듈</text>
+        <text x="100" y="180" font-size="14" text-anchor="middle" fill="#52514e">DSP 포함·전면패널</text>
+      </g>
+      <g>
+        <rect x="220" y="44" width="160" height="150" rx="10" fill="#f2f6fc" stroke="#c9d8ee"/>
+        <rect x="235" y="100" width="50" height="40" rx="6" fill="#0b0b0b"/><line x1="285" y1="120" x2="335" y2="120" stroke="#eb6834" stroke-width="4"/>
+        <rect x="335" y="90" width="40" height="60" rx="4" fill="#1baf7a"/><text x="355" y="84" font-size="13" text-anchor="middle">고밀도</text>
+        <text x="300" y="180" font-size="14" text-anchor="middle" fill="#52514e">DSP 제거·액냉</text>
+      </g>
+      <g>
+        <rect x="420" y="44" width="160" height="150" rx="10" fill="#f2f6fc" stroke="#c9d8ee"/>
+        <rect x="435" y="100" width="50" height="40" rx="6" fill="#0b0b0b"/><line x1="485" y1="120" x2="510" y2="120" stroke="#eb6834" stroke-width="4"/>
+        <rect x="510" y="98" width="40" height="44" rx="4" fill="#eda100"/><text x="530" y="90" font-size="13" text-anchor="middle">보드</text>
+        <text x="500" y="180" font-size="14" text-anchor="middle" fill="#52514e">ASIC 옆 소켓</text>
+      </g>
+      <g>
+        <rect x="620" y="44" width="160" height="150" rx="10" fill="#f2f6fc" stroke="#c9d8ee"/>
+        <rect x="640" y="90" width="120" height="60" rx="8" fill="#fff" stroke="#0b0b0b" stroke-dasharray="4 3"/>
+        <rect x="650" y="100" width="50" height="40" rx="6" fill="#0b0b0b"/><rect x="704" y="104" width="46" height="32" rx="4" fill="#eb6834"/>
+        <text x="700" y="180" font-size="14" text-anchor="middle" fill="#52514e">같은 패키지 기판</text>
+      </g>
+      <g>
+        <rect x="820" y="44" width="160" height="150" rx="10" fill="#f2f6fc" stroke="#c9d8ee"/>
+        <rect x="860" y="96" width="80" height="48" rx="6" fill="#0b0b0b"/><rect x="920" y="104" width="16" height="32" rx="3" fill="#6250d6"/>
+        <text x="900" y="180" font-size="14" text-anchor="middle" fill="#52514e">칩렛 자체 광 I/O</text>
+      </g>
+      <line x1="40" y1="226" x2="960" y2="226" stroke="#52514e" stroke-width="2" marker-end="url(#ar2)"/>
+      <defs><marker id="ar2" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#52514e"/></marker></defs>
+      <text x="500" y="254" font-size="17" text-anchor="middle" fill="#0b0b0b" font-weight="700">전기 거리↓ · 전력↓ · 대역폭 밀도↑</text>
+      <text x="500" y="282" font-size="17" text-anchor="middle" fill="#2a62c9" font-weight="700">교체성↓ · 패키징 수율 리스크↑ · 표준 미정</text>
+    </svg>
+    </div>
+    <ol class="explain">
+      <li><b>Pluggable</b>: 고장 시 모듈만 교체 — Google ML 클러스터는 100만 링크당 하루 40건 장애. 그래서 여전히 주류. <span class="badge b-rep">보도</span></li>
+      <li><b>LPO/XPO/USFP</b>: DSP를 빼거나(LPO) 모듈을 키워(XPO 12.8T·64ch·400W 냉각, USFP 400G/레인) 플러거블 수명 연장. <span class="badge b-ok">확인</span></li>
+      <li><b>NPO</b>: 광엔진을 ASIC 옆 별도 보드에 — 탈착 가능, CPO보다 쉬움. 중국 CSP·Micas가 주도. <span class="badge b-rep">보도</span></li>
+      <li><b>CPO</b>: Broadcom TH6-Davisson(102.4T) 출하 발표, NVIDIA Spectrum-X Photonics 생산 진입. <span class="badge b-ok">확인</span><span class="badge b-rep">보도</span></li>
+      <li><b>OIO</b>: GPU 칩렛 자체에 광 I/O — Ayar Labs·Lightmatter. 2028 이후 Scale-up. <span class="badge b-rep">보도</span></li>
+    </ol>
+  </figure>
+  <div class="grid2">
+    <div>
+      <h3>OFC 2026 현장 설문(109명): 관심 vs 2~3년 내 매출 기대</h3>
+      <div id="ch-survey" class="chart"></div>
+      <p class="src">출처: 상상인증권 OFC 2026 참관후기(2026-03-23) <span class="badge b-rep">보도</span></p>
+    </div>
+    <div>
+      <h3>읽는 법</h3>
+      <ul class="tight">
+        <li>관심 1위는 <b>CPO 18.3%</b>지만, 2~3년 내 상업적 파급력 1위는 <b>1.6T/3.2T 플러거블 22.3%</b>. CPO는 11.7%로 3위.</li>
+        <li>현장 요약: <b>"CPO는 방향이고, 지금 바쁜 것은 1.6T."</b></li>
+        <li>CPO 상용화 3대 장벽: 전력·열 관리, 비용·TCO, 패키징 수율.</li>
+        <li>반대 근거: Meta는 OFC 2026에서 CPO 신뢰성이 플러거블보다 높다는 데이터 제시 <span class="badge b-rep">보도</span>.</li>
+        <li>Dell'Oro(2026-10-19): <i>"초기 상용화를 광범위한 채택과 혼동하지 말라."</i></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== LAYERS ===================== -->
+<section id="sec-layers">
+  <div class="kicker">04 · 어디에 쓰이나</div>
+  <h2>AI 네트워크 3계층 — Scale-up · Scale-out · Scale-across</h2>
+  <figure id="fig-layers">
+    <figcaption>그림 4. 계층별 거리·기술·수혜</figcaption>
+    <div class="svgbox">
+    <svg viewBox="0 0 1000 320" role="img" aria-label="AI 네트워크 3계층">
+      <rect x="20" y="20" width="300" height="230" rx="14" fill="#fff3d6" stroke="#eda100"/>
+      <text x="170" y="52" font-size="20" font-weight="800" text-anchor="middle">① Scale-up</text>
+      <text x="170" y="78" font-size="15" text-anchor="middle" fill="#52514e">랙·포드 내 GPU↔GPU · ~2m → 10m+</text>
+      <g fill="#0b0b0b"><rect x="50" y="100" width="44" height="34" rx="5"/><rect x="104" y="100" width="44" height="34" rx="5"/><rect x="158" y="100" width="44" height="34" rx="5"/><rect x="212" y="100" width="44" height="34" rx="5"/><rect x="266" y="100" width="34" height="34" rx="5"/></g>
+      <line x1="50" y1="150" x2="300" y2="150" stroke="#eda100" stroke-width="5"/>
+      <text x="170" y="182" font-size="16" text-anchor="middle">현재 구리(NVL72) → 멀티랙 광</text>
+      <text x="170" y="208" font-size="16" text-anchor="middle" font-weight="700">GPU당 광섬유 최대 144개</text>
+      <text x="170" y="232" font-size="14" text-anchor="middle" fill="#52514e">NVLink·UALink·ESUN</text>
+
+      <rect x="350" y="20" width="300" height="230" rx="14" fill="#f2f6fc" stroke="#2a78d6"/>
+      <text x="500" y="52" font-size="20" font-weight="800" text-anchor="middle">② Scale-out</text>
+      <text x="500" y="78" font-size="15" text-anchor="middle" fill="#52514e">서버↔스위치 · 수십m~2km</text>
+      <rect x="455" y="96" width="90" height="30" rx="5" fill="#2a78d6"/><text x="500" y="117" font-size="14" fill="#fff" text-anchor="middle">스파인</text>
+      <rect x="390" y="150" width="70" height="26" rx="5" fill="#7fa9e4"/><rect x="465" y="150" width="70" height="26" rx="5" fill="#7fa9e4"/><rect x="540" y="150" width="70" height="26" rx="5" fill="#7fa9e4"/>
+      <g stroke="#2a78d6" stroke-width="2"><line x1="500" y1="126" x2="425" y2="150"/><line x1="500" y1="126" x2="500" y2="150"/><line x1="500" y1="126" x2="575" y2="150"/></g>
+      <text x="500" y="208" font-size="16" text-anchor="middle" font-weight="700">800G→1.6T 플러거블 · CPO 스위치</text>
+      <text x="500" y="232" font-size="14" text-anchor="middle" fill="#52514e">1:1 무과구독 → 광모듈 2~4배</text>
+
+      <rect x="680" y="20" width="300" height="230" rx="14" fill="#e6f6ef" stroke="#1baf7a"/>
+      <text x="830" y="52" font-size="20" font-weight="800" text-anchor="middle">③ Scale-across</text>
+      <text x="830" y="78" font-size="15" text-anchor="middle" fill="#52514e">DC↔DC · ≤80km(RTT 2ms)~1,000km</text>
+      <rect x="710" y="110" width="80" height="56" rx="8" fill="#1baf7a"/><text x="750" y="144" font-size="15" fill="#fff" text-anchor="middle">DC-A</text>
+      <rect x="870" y="110" width="80" height="56" rx="8" fill="#1baf7a"/><text x="910" y="144" font-size="15" fill="#fff" text-anchor="middle">DC-B</text>
+      <line x1="790" y1="138" x2="870" y2="138" stroke="#0b0b0b" stroke-width="3" stroke-dasharray="6 4"/>
+      <text x="830" y="208" font-size="16" text-anchor="middle" font-weight="700">400ZR→800ZR→1600ZR</text>
+      <text x="830" y="232" font-size="14" text-anchor="middle" fill="#52514e">코히어런트 DSP·광섬유·증폭기</text>
+      <text x="500" y="292" font-size="17" text-anchor="middle" font-weight="700">GPU당 광섬유: Scale-out 16개 + Scale-up 최대 144개 = 최대 160개 (200G/레인·Rubin Ultra 가정)</text>
+    </svg>
+    </div>
+    <ol class="explain">
+      <li><b>Scale-up</b> — 새로 열리는 TAM. 대역폭이 Scale-out의 약 9~10배(14.4T vs 1.6T/GPU). 루멘텀 "Scale-up CPO가 Scale-out보다 최대 수십 배". <span class="badge b-rep">보도</span></li>
+      <li><b>Scale-out</b> — 지금 매출의 중심. 1.6T 세대 전환이 가장 빠르고 대규모. <span class="badge b-rep">보도</span></li>
+      <li><b>Scale-across</b> — 단일 건물 전력 한계로 분산 학습 확산. NVIDIA는 1,000km 이상 떨어진 DC에서 96% 이상 효율 시연. <span class="badge b-rep">보도</span></li>
+    </ol>
+  </figure>
+  <p class="src">출처: 상상인증권 OFC 2026(2026-03-23), 신한투자증권(2026-05-14, 코닝·SemiAnalysis 인용) · 시점 상충: <a href="https://www.sdxcentral.com/news/nvidia-pushes-kyber-release-to-2028-following-manufacturing-concerns-report/">SDxCentral Kyber 2028 지연(2026-07-06)</a> vs <a href="https://www.tomshardware.com/tech-industry/artificial-intelligence/nvidias-huang-vows-to-deliver-giant-amounts-of-vera-rubin-company-says-that-our-roadmap-is-intact">NVIDIA "roadmap intact"</a> · <a href="https://futurumgroup.com/?p=96506">Marvell 2030 인터커넥트 TAM $65B</a></p>
+</section>
+
+<!-- ===================== VALUE CHAIN ===================== -->
+<section id="sec-valuechain">
+  <div class="kicker">05 · 밸류체인 변화</div>
+  <h2>CPO 시대, 줄어드는 곳과 커지는 곳</h2>
+  <figure id="fig-valuechain">
+    <figcaption>그림 5. 가치 이동 지도 (빨강=확대, 파랑=축소)</figcaption>
+    <div class="svgbox">
+    <svg viewBox="0 0 1000 330" role="img" aria-label="밸류체인 가치 이동">
+      <rect x="20" y="20" width="300" height="290" rx="14" fill="#eef3fc" stroke="#2a62c9"/>
+      <text x="170" y="54" font-size="20" font-weight="800" text-anchor="middle" fill="#2a62c9">▼ 축소 압력</text>
+      <g font-size="17" fill="#0b0b0b">
+        <text x="44" y="96">① 모듈형 DSP·리타이머</text>
+        <text x="44" y="134">② 전면패널 모듈 조립</text>
+        <text x="44" y="172">③ PCB 고속 배선·케이지</text>
+        <text x="44" y="210">④ 범용 EML 모듈 가치</text>
+      </g>
+      <text x="170" y="262" font-size="14" text-anchor="middle" fill="#52514e">단, 3.2T·ZR·XPO에서는 2028까지 성장</text>
+      <text x="170" y="286" font-size="14" text-anchor="middle" fill="#52514e">(장기 방향, 단기 피크아웃 아님)</text>
+
+      <g><path d="M335 165 L410 165" stroke="#52514e" stroke-width="3" marker-end="url(#ar3)"/><defs><marker id="ar3" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#52514e"/></marker></defs>
+      <text x="372" y="150" font-size="15" text-anchor="middle">가치 이동</text></g>
+
+      <rect x="420" y="20" width="560" height="290" rx="14" fill="#fdeeee" stroke="#d93a36"/>
+      <text x="700" y="54" font-size="20" font-weight="800" text-anchor="middle" fill="#d93a36">▲ 확대</text>
+      <g font-size="17" fill="#0b0b0b">
+        <text x="444" y="96">⑤ ELS·고출력 CW 레이저(InP)</text>
+        <text x="444" y="134">⑥ SiPh 파운드리·COUPE 패키징</text>
+        <text x="444" y="172">⑦ 고밀도 광섬유·FAU·커넥터</text>
+        <text x="444" y="210">⑧ 능동정렬·본딩 장비</text>
+        <text x="724" y="96">⑨ 스위치 ASIC 통합 주도권</text>
+        <text x="724" y="134">⑩ 웨이퍼·다이 단계 광 테스트</text>
+        <text x="724" y="172">⑪ 110GHz+ 고주파 수동부품</text>
+        <text x="724" y="210">⑫ 수동 광소자(AWG·MUX)</text>
+      </g>
+      <text x="700" y="268" font-size="15" text-anchor="middle" fill="#52514e">공통분모: 소수 공급자 · 긴 증설 리드타임 · 고객 공동설계</text>
+    </svg>
+    </div>
+    <ol class="explain">
+      <li>DSP: 1.6T 모듈 전력의 ~2/3. CPO는 이를 없앤다 → 장기 축소. 단 1.6T·코히어런트에선 지금 성장(칩셋 $2B+). <span class="badge b-rep">보도</span><span class="badge b-est">추정</span></li>
+      <li>⑤ 레이저: 루멘텀 2029년 초까지 완판, 일부 제품 수요의 70%(내년)·30%(~2028)만 충족, 증설 3년. <span class="badge b-rep">보도</span></li>
+      <li>⑥ SiPh: TSMC COUPE(NVIDIA), GlobalFoundries Fotonix, Intel 300mm InP 공급 주장(2026-10-20). <span class="badge b-rep">보도</span></li>
+      <li>⑦ 광섬유·FAU: NVIDIA CPO 파트너 Corning·Senko·Browave·TFC. 코닝 섬유 생산능력 50%+ 증설. <span class="badge b-rep">보도</span></li>
+      <li>⑧ 정렬: CPO는 서브마이크론 정렬 필수 → 양산 장비 공급자 희소(유진 국내 최선호 성호전자). <span class="badge b-rep">보도</span></li>
+    </ol>
+  </figure>
+  <div class="tbox"><table>
+    <thead><tr><th>구간</th><th>경쟁 강도</th><th>병목 여부</th><th>대표 기업</th></tr></thead>
+    <tbody>
+      <tr><td>ELS 레이저</td><td>낮음(소수)</td><td class="pos">핵심 병목</td><td>Lumentum, Coherent, Sumitomo</td></tr>
+      <tr><td>SiPh 파운드리</td><td>낮음~중간</td><td class="pos">잠재 병목</td><td>TSMC, GlobalFoundries, Intel</td></tr>
+      <tr><td>스위치 ASIC</td><td>낮음(과점)</td><td class="pos">강한 병목</td><td>Broadcom, NVIDIA, Marvell, Cisco</td></tr>
+      <tr><td>DCI 코히어런트</td><td>중간</td><td>수혜</td><td>Ciena, Marvell, Coherent</td></tr>
+      <tr><td>Scale-out 광모듈</td><td>높음</td><td class="neg">비병목(가격 압력)</td><td>Innolight, Eoptolink, Coherent, AAOI</td></tr>
+      <tr><td>테스트·계측</td><td>중간</td><td>숨은 수혜</td><td>Keysight, VIAVI, 파이버프로</td></tr>
+    </tbody></table></div>
+  <p class="src">출처: 상상인증권 OFC 2026(2026-03-23), 신한투자증권(2026-05-14), 유진투자증권(2026-05-21) <span class="badge b-rep">보도</span> · 방향 판단 <span class="badge b-est">추정</span></p>
+</section>
+
+<!-- ===================== GLOBAL ===================== -->
+<section id="sec-global">
+  <div class="kicker">06 · 글로벌 플레이어</div>
+  <h2>누가 무엇을 하나 — 역할·해자·숫자</h2>
+  <div class="tbox" style="max-height:470px;overflow-y:auto">
+  <table id="tbl-global">
+    <thead><tr>
+      <th class="sort" data-type="s">기업<span class="arr"></span></th>
+      <th>역할 · 해자</th>
+      <th class="sort n" data-type="n">시총($B)<span class="arr"></span></th>
+      <th class="sort n" data-type="n">52주고점 대비<span class="arr"></span></th>
+      <th class="sort n" data-type="n">최근분기 매출($M)<span class="arr"></span></th>
+      <th>최근 팩트</th>
+    </tr></thead>
+    <tbody>
+      <tr><td><b>NVIDIA</b></td><td>GPU·NVLink·CPO 스위치, 생태계 설계자</td><td class="n">5216.9</td><td class="n neg">-11.1%</td><td class="n">—</td><td>Spectrum-X Photonics 생산 진입, 레이저사 $2B×2 투자 <span class="badge b-rep">보도</span></td></tr>
+      <tr><td><b>Broadcom</b></td><td>스위치 ASIC 과점, 3세대 CPO</td><td class="n">1596.2</td><td class="n neg">-32.5%</td><td class="n">—</td><td>TH6-Davisson 102.4T 출하 발표 <span class="badge b-ok">확인</span></td></tr>
+      <tr><td><b>Marvell</b></td><td>PAM4·코히어런트 DSP, 커스텀</td><td class="n">210.6</td><td class="n neg">-27.1%</td><td class="n">—</td><td>2030 인터커넥트 TAM $65B <span class="badge b-rep">보도</span></td></tr>
+      <tr><td><b>Corning</b></td><td>고밀도 광섬유·FAU</td><td class="n">114.1</td><td class="n neg">-51.3%</td><td class="n">—</td><td>섬유 생산능력 50%+ 증설 <span class="badge b-rep">보도</span></td></tr>
+      <tr><td><b>Lumentum</b></td><td>EML·CW·UHP 레이저, OCS</td><td class="n">74.5</td><td class="n neg">-28.0%</td><td class="n">1006.3</td><td>2029년 초까지 완판 <span class="badge b-rep">보도</span></td></tr>
+      <tr><td><b>Ciena</b></td><td>코히어런트 DCI(WaveLogic)</td><td class="n">48.5</td><td class="n neg">-46.4%</td><td class="n">—</td><td>Scale-across 수혜 <span class="badge b-rep">보도</span></td></tr>
+      <tr><td><b>Coherent</b></td><td>레이저~트랜시버 수직계열화</td><td class="n">45.6</td><td class="n neg">-47.3%</td><td class="n">2045.5</td><td>6.4T SiPh CPO 공개(OFC) <span class="badge b-rep">보도</span></td></tr>
+      <tr><td><b>Credo</b></td><td>AEC·SerDes·저전력 DSP</td><td class="n">32.2</td><td class="n neg">-44.4%</td><td class="n">—</td><td>1.6T ZeroFlap AOC(OCP) <span class="badge b-rep">보도</span></td></tr>
+      <tr><td><b>Fabrinet</b></td><td>정밀광학 위탁생산(1.6T·CPO)</td><td class="n">12.7</td><td class="n neg">-52.5%</td><td class="n">1315.8</td><td>분기 매출 사상 최대 <span class="badge b-ok">확인</span></td></tr>
+      <tr><td><b>AAOI</b></td><td>트랜시버·레이저(美 생산)</td><td class="n">6.5</td><td class="n neg">-67.2%</td><td class="n">191.9</td><td>흑자 전환(EPS $0.06) <span class="badge b-ok">확인</span></td></tr>
+      <tr><td><b>Innolight</b></td><td>800G/1.6T 트랜시버 1위</td><td class="n">—</td><td class="n">—</td><td class="n">—</td><td>26H1 매출 RMB 417.8억(+182.5%) <span class="badge b-rep">보도</span></td></tr>
+      <tr><td><b>Eoptolink</b></td><td>트랜시버·LPO, XPO 지지</td><td class="n">—</td><td class="n">—</td><td class="n">—</td><td>26H1 매출 RMB 209.1억(+100%) <span class="badge b-rep">보도</span></td></tr>
+    </tbody>
+  </table></div>
+  <p class="src">시세·실적: Financial Modeling Prep 조회 2026-10-21(직전 종가) <span class="badge b-ok">확인</span> · 52주 고점 대비는 쩜상리서치 계산 <span class="badge b-est">추정</span>(분할 조정 미검증) · <a href="https://www.thestandard.com.hk/finance/article/340637/Zhongji-Innolights-H1-2026-net-profit-surges-24-times-to-13-bln-yuan-on-growing-overseas-demand">Innolight</a> · <a href="https://quartr.com/events/eoptolink-technology-inc-ltd-300502-q2-2026_FgrWDhx6">Eoptolink</a> · <a href="https://www.tikr.com/blog/lumentum-stock-jumps-ai-optical-components-sold-out-2029">Lumentum</a> · 헤더 클릭: 1회 내림차순 · 2회 오름차순 · 3회 원래 순서</p>
+  <div class="grid2">
+    <div>
+      <h3>분기 매출 지수 (각 사 25-02 발표분기=100, 점선=컨센서스)</h3>
+      <div id="ch-rev" class="chart"></div>
+      <p class="src">FMP 실적(발표일 기준, 회계분기 상이) <span class="badge b-ok">확인</span> · 26-11E 컨센서스 <span class="badge b-est">추정</span></p>
+    </div>
+    <div>
+      <h3>주가: 52주 고점 대비 하락률 (2026-10-21)</h3>
+      <div id="ch-dd" class="chart"></div>
+      <p class="src">FMP 52주 범위로 계산 <span class="badge b-est">추정</span> · <b>실적은 가속, 주가는 조정</b> — 10월 "AI 투자 우려, 광통신 급락" 뉴스 흐름</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== KOREA ===================== -->
+<section id="sec-korea">
+  <div class="kicker">07 · 국내 기업</div>
+  <h2>한국은 어디에 서 있나 — 부품·소재·장비 틈새</h2>
+  <div class="grid2">
+    <div>
+      <div class="tbox"><table id="tbl-kr">
+        <thead><tr>
+          <th class="sort" data-type="s">기업<span class="arr"></span></th>
+          <th>위치</th>
+          <th class="sort n" data-type="n">2Q26 매출(억)<span class="arr"></span></th>
+          <th class="sort n" data-type="n">2Q26 영업익(억)<span class="arr"></span></th>
+        </tr></thead>
+        <tbody>
+          <tr><td><b>오이솔루션</b></td><td>광원(LD칩)+트랜시버, 1.6T·ELSFP 개발</td><td class="n">196.5</td><td class="n neg">-8.7</td></tr>
+          <tr><td><b>대한광통신</b></td><td>광섬유·케이블, 빅테크 샘플</td><td class="n">490.5</td><td class="n pos">9.6</td></tr>
+          <tr><td><b>우리로</b></td><td>CWDM AWG(CPO망), 200G PD</td><td class="n">147.3</td><td class="n pos">25.5</td></tr>
+          <tr><td><b>성호전자</b></td><td>자회사 에이디에스테크 능동정렬 장비</td><td class="n">852.4</td><td class="n pos">68.9</td></tr>
+          <tr><td><b>파이버프로</b></td><td>편광 스크램블러(계측)·FOG</td><td class="n">133.4</td><td class="n pos">27.0</td></tr>
+          <tr><td><b>아모텍</b></td><td>트랜시버용 BBC 커패시터(110GHz+)</td><td class="n">623.0</td><td class="n neg">-5.8</td></tr>
+          <tr><td><b>빛과전자</b></td><td>광소자·모듈(800G·3.2T 보도)</td><td class="n">43.3</td><td class="n neg">-20.8</td></tr>
+        </tbody></table></div>
+      <p class="src">출처: <a href="https://dart.fss.or.kr">DART</a> 2026 반기보고서 연결 주요계정 <span class="badge b-ok">확인</span> — '당기' 값을 2분기 3개월로 해석(1분기 수치 대조) <span class="badge b-est">추정</span>. 성호전자·아모텍은 전사 실적(광 비중 일부).</p>
+    </div>
+    <div>
+      <h3>2Q26 영업이익 (억원)</h3>
+      <div id="ch-kr" class="chart"></div>
+      <p class="src">상승(흑자)=빨강, 하락(적자)=파랑 · DART <span class="badge b-ok">확인</span></p>
+    </div>
+  </div>
+  <div class="cards">
+    <div class="card"><b>우리로 · CWDM AWG 약 136억원</b><br>중국 VSUNLIGHT향, 단일 최대 광부품 계약(2026-09-14). CPO 네트워크 파장 분리·결합용. <span class="badge b-rep">보도</span> <span class="src"><a href="https://core.asiae.co.kr/article/2026091418150562643">아시아경제</a></span></div>
+    <div class="card"><b>오이솔루션 · 드문 '광원 내재화' 업체</b><br>1Q26 매출 180억(+28% YoY), 시장별 무선 44%·유선 28%·DCI 18%. 데이터센터 양산 레퍼런스는 아직. <span class="badge b-rep">보도</span> <span class="src">유진(2026-05-21)</span></div>
+    <div class="card"><b>아모텍 · 448G 세대의 숨은 부품</b><br>224G(~67GHz)에서 일반 MLCC 한계, 448G(110GHz+)는 구조적으로 불가 → BBC 수요. <span class="badge b-rep">보도</span> <span class="src">상상인(2026-03-23)</span></div>
+    <div class="card"><b>균형 시각</b><br>"국내 광통신주는 글로벌 후발주 — 선도주가 숫자 검증 단계로 가며 멀티플이 꺾이면 불리." 9월 이후 빛과전자→RF머트리얼즈→성호전자 순환 급등 = 테마와 실적 구분 필요. <span class="badge b-rep">보도</span><span class="badge b-est">추정</span></div>
+  </div>
+</section>
+
+<!-- ===================== CHECKPOINTS ===================== -->
+<section id="sec-checkpoints">
+  <div class="kicker">08 · 투자 체크포인트</div>
+  <h2>무엇을 보면 되나 — 선행지표·상충 수치·리스크</h2>
+  <div class="grid2">
+    <div>
+      <h3>체크포인트 (선행지표)</h3>
+      <ol class="tight">
+        <li><b>NVIDIA Rubin Ultra·Kyber 일정</b> — NVL576·NVLink CPO 확정이 Scale-up 광 TAM의 스위치.</li>
+        <li><b>1.6T 램프 속도</b> — Fabrinet(11/2, 컨센 $1,402.9M)·Coherent(11/4, $2,302.5M)·Lumentum(11/5, $1,251.4M) 실적. <span class="badge b-est">추정</span></li>
+        <li><b>레이저 증설</b> — 루멘텀 그린즈버러·일본 팹, InP 6인치 전환. 해소는 2029~30. <span class="badge b-rep">보도</span></li>
+        <li><b>표준 전쟁</b> — XPO MSA vs USFP vs OCI MSA vs NPO 표준.</li>
+        <li><b>하이퍼스케일러 Design Win</b> — OFC 설문 투자 확신 1순위 촉매.</li>
+        <li><b>국내</b> — 샘플→양산 전환 공시(단일판매·공급계약), 고객명 공개 여부.</li>
+      </ol>
+      <h3>리스크</h3>
+      <ul class="tight">
+        <li>AI CapEx 사이클: LightCounting 2027 CapEx +50% 가정·2027~31 사이클 경고. <span class="badge b-rep">보도</span></li>
+        <li>CPO <b>지연</b>(레이저·정렬 기대 후퇴) vs <b>가속</b>(모듈 조립 가치 잠식) 양방향.</li>
+        <li>Scale-out 광모듈 가격 하락, 중국계 상위 업체의 지정학 리스크.</li>
+        <li>국내 후발주 밸류에이션 부담(실적 대비 높은 PBR).</li>
+      </ul>
+    </div>
+    <div>
+      <h3>상충 수치 정리</h3>
+      <div class="tbox"><table>
+        <thead><tr><th>항목</th><th>A</th><th>B</th><th>해석</th></tr></thead>
+        <tbody>
+          <tr><td>CPO 전력 절감</td><td>3.5배(모듈, 코닝)</td><td>~20%(100T 스위치, OFC)</td><td>비교 기준 차이</td></tr>
+          <tr><td>1.6T 모듈 전력</td><td>&lt;25W(상상인)</td><td>~30W(코닝)</td><td>DSP 세대·LPO 여부</td></tr>
+          <tr><td>Scale-up 광 시점</td><td>2H27 출하(루멘텀)</td><td>Kyber 2028 지연(SemiAnalysis)</td><td>NVIDIA "로드맵 유지"</td></tr>
+          <tr><td>루멘텀 완판</td><td>2028년까지(26-05)</td><td>2029년 초까지(26-10)</td><td>최신치 채택</td></tr>
+          <tr><td>NVIDIA CPO 스위치 용량</td><td>400Tb/s(TrendForce)</td><td>409.6Tb/s(일부 매체)</td><td>표기 차이</td></tr>
+          <tr><td>CPO 신뢰성</td><td>교체성 열위(Google)</td><td>플러거블보다 우수(Meta)</td><td>운영 방식 차이</td></tr>
+          <tr><td>Innolight 26H1 순익</td><td>RMB 136.5억</td><td>1,365억(36Kr)</td><td>B는 오기 판단</td></tr>
+        </tbody></table></div>
+      <div class="note"><b>투자 시계열</b> <span class="badge b-est">추정</span><br>① 2026~27: 1.6T 플러거블·DSP·레이저<br>② 2026~28: NPO/LPO·XPO 브릿지<br>③ 2028~30: CPO·Scale-up 광·정렬장비·SiPh</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SOURCES ===================== -->
+<section id="sec-sources">
+  <div class="kicker">09 · 출처 · 면책</div>
+  <h2>출처</h2>
+  <div class="grid2">
+    <ul class="tight src">
+      <li>상상인증권, 「OFC 2026 참관후기: 빛과 반도체」 2026-03-23</li>
+      <li>신한투자증권, 「코닝 Investor Day 자료로 CPO 훑어보기」 2026-05-14</li>
+      <li>유진투자증권, 「통신장비: 버블 in My DNA」 2026-05-21</li>
+      <li>유진투자증권, 「엔비디아와 AMD, 엇갈리는 AI 인프라 해법」 2026-08-11</li>
+      <li>업계 텔레그램 요약 2026-10 (LightCounting 2031 전망, Citi CPO 10만 대)</li>
+      <li><a href="https://www.trendforce.com/presscenter/news/20260727-13151.html">TrendForce CPO 램프 2026-07-27</a></li>
+      <li><a href="https://www.delloro.com/ocp-2026-optics-takes-center-stage-in-enabling-the-next-wave-of-ai-networking-and-high-speed-switching/">Dell'Oro OCP 2026 2026-10-19</a></li>
+      <li><a href="https://counterpointresearch.com/en/insights/ocp-key-takeaways-ai-compute-connectivity">Counterpoint OCP 2026</a></li>
+      <li><a href="https://trendforce.com/news/2026/10/20/news-intel-claims-industrys-only-high-volume-300mm-inp-silicon-photonics-capability-as-cpo-gains-momentum">TrendForce Intel InP SiPh 2026-10-20</a></li>
+      <li><a href="https://investors.broadcom.com/news-releases/news-release-details/broadcom-announces-tomahawkr-6-davisson-industrys-first-1024">Broadcom TH6-Davisson 2025-10-08</a></li>
+      <li><a href="https://www.arista.com/en/company/news/press-release/23697-pr-20260311">Arista XPO MSA 2026-03-12</a></li>
+      <li><a href="https://www.coherent.com/news/press-releases/coherent-demonstrates-next-gen-pluggable-transceiver-ofc-2026">Coherent OFC 2026</a> · <a href="https://www.yolegroup.com/strategy-insights/ai-infrastructure-accelerates-the-shift-to-scalable-optical-systems-ofc-2026-post-show-report/">Yole OFC 2026</a></li>
+    </ul>
+    <ul class="tight src">
+      <li><a href="https://lightcounting.com/newsletter/en/april-2026-market-forecast-379">LightCounting 2026-04 Forecast</a> · <a href="https://www.lightcounting.com/research-note/july-2026-co-packaged-and-near-packaged-optics-cponpo">CPO/NPO 2026-07</a> · <a href="https://lightcounting.com/newsletter/en/february-2026-pam4-and-coherent-dsps-updated-april-2026-381">DSP 2026-04</a></li>
+      <li><a href="https://www.lightwaveonline.com/home/news/55410716/ethernet-optical-transceiver-set-to-grow-120-in-2026">Lightwave +120%</a> · <a href="https://sofia-connect.net/insights/2026-w23-800g-coherent-1-6t-deployment-window/">Sofia Connect 2026 W23</a></li>
+      <li><a href="https://www.thestandard.com.hk/finance/article/340637/Zhongji-Innolights-H1-2026-net-profit-surges-24-times-to-13-bln-yuan-on-growing-overseas-demand">Innolight 26H1</a> · <a href="https://quartr.com/events/eoptolink-technology-inc-ltd-300502-q2-2026_FgrWDhx6">Eoptolink Q2 2026</a></li>
+      <li><a href="https://www.tikr.com/blog/lumentum-stock-jumps-ai-optical-components-sold-out-2029">Lumentum 2029 완판</a> · <a href="https://www.gophotonics.com/news/details/8665-nvidia-announces-2b-investment-and-strategic-partnership-with-lumentum">NVIDIA $2B 투자</a></li>
+      <li><a href="https://futurumgroup.com/?p=96506">Futurum Marvell Investor Day</a> · <a href="https://quartr.com/events/marvell-technology-inc-mrvl-investor-day-2026_3Yyakqd6">Quartr 요약</a></li>
+      <li><a href="https://www.sdxcentral.com/news/nvidia-pushes-kyber-release-to-2028-following-manufacturing-concerns-report/">SDxCentral Kyber 2026-07-06</a> · <a href="https://www.tomshardware.com/tech-industry/artificial-intelligence/nvidias-huang-vows-to-deliver-giant-amounts-of-vera-rubin-company-says-that-our-roadmap-is-intact">Tom's Hardware</a> · <a href="https://www.digitalcitizen.life/nvidia-optics-partners-say-co-packaged-optics-rollout-remains-on-track/">DigitalCitizen</a></li>
+      <li><a href="https://www.simpletechtrend.com/en/post/micas-ocp-2026-lpo-npo-cpo-open-optical-roadmap-en">Micas OCP 2026</a> · <a href="https://eu.36kr.com/en/p/3947164368075907">36Kr</a> · <a href="https://asianews.network/?p=300347">AsiaNews NPO 표준</a></li>
+      <li><a href="https://money.udn.com/money/story/5612/9822743">經濟日報 2026-10-19</a> · <a href="https://core.asiae.co.kr/article/2026091418150562643">아시아경제 우리로 2026-09-14</a></li>
+      <li>시세·실적: <a href="https://financialmodelingprep.com">Financial Modeling Prep</a>(2026-10-21) · 국내 재무: <a href="https://dart.fss.or.kr">DART</a></li>
+    </ul>
+  </div>
+  <p class="src"><b>면책</b>: 본 자료는 교육·정보 제공 목적이며 특정 종목의 매수·매도 권유가 아닙니다. 전망치는 각 기관의 추정이며 실제와 다를 수 있습니다. 투자 판단과 책임은 투자자 본인에게 있습니다.</p>
+</section>
+<footer>© 쩜상리서치 · 기준일 2026-10-21</footer>
+</div>
+
+<script>
+/* ---------- sortable tables: 1click desc, 2 asc, 3 original ---------- */
+document.querySelectorAll('table').forEach(function(tbl){
+  var ths = tbl.querySelectorAll('th.sort'); if(!ths.length) return;
+  var tbody = tbl.tBodies[0];
+  var orig = Array.prototype.slice.call(tbody.rows);
+  var allTh = Array.prototype.slice.call(tbl.tHead.rows[0].cells);
+  ths.forEach(function(th){
+    th.dataset.state = '0';
+    th.querySelector('.arr').textContent = '⇅';
+    th.addEventListener('click', function(){
+      var st = (parseInt(th.dataset.state,10)+1)%3;
+      ths.forEach(function(o){ o.dataset.state='0'; o.querySelector('.arr').textContent='⇅'; });
+      th.dataset.state = String(st);
+      var idx = allTh.indexOf(th), num = th.dataset.type==='n';
+      var rows = orig.slice();
+      if(st>0){
+        var val = function(r){
+          var t = r.cells[idx].textContent.trim();
+          if(num){ var v = parseFloat(t.replace(/[^0-9.\-]/g,'')); return isNaN(v)? null : v; }
+          return t;
+        };
+        rows.sort(function(a,b){
+          var x=val(a), y=val(b);
+          if(x===null && y===null) return 0; if(x===null) return 1; if(y===null) return -1;
+          var c = num ? x-y : String(x).localeCompare(String(y),'ko');
+          return st===1 ? -c : c;
+        });
+        th.querySelector('.arr').textContent = st===1 ? '▼' : '▲';
+      }
+      rows.forEach(function(r){ tbody.appendChild(r); });
+    });
+  });
+});
+
+/* ---------- charts ---------- */
+var C = {s1:'#2a78d6',s2:'#eb6834',s3:'#1baf7a',s4:'#eda100',up:'#d93a36',down:'#2a62c9',ink:'#0b0b0b',ink2:'#52514e',grid:'#ecebe7'};
+var baseText = {color:C.ink2,fontSize:14};
+var charts = [];
+function mk(id,opt){ var el=document.getElementById(id); var c=echarts.init(el,null,{renderer:'svg'}); c.setOption(opt); charts.push(c); return c; }
+var zoomX = [{type:'inside',xAxisIndex:0},{type:'slider',xAxisIndex:0,height:18,bottom:6}];
+var zoomY = [{type:'inside',yAxisIndex:0},{type:'slider',yAxisIndex:0,width:16,right:8}];
+
+/* survey */
+var sCats = ['1.6T/3.2T 플러거블','AI 광 인터커넥트','CPO','LPO/LRO','전력·열 효율','첨단패키징/HB','Optical I/O','PIC 스케일링','테스트·계측','레이저 집적'];
+var sQ2 = [15.6,11.0,18.3,7.3,9.2,8.3,10.1,6.4,2.8,4.6];
+var sQ3 = [22.3,12.6,11.7,10.7,9.7,7.8,6.8,4.9,3.9,3.9];
+mk('ch-survey',{
+  textStyle:{fontFamily:'inherit'},
+  legend:{top:0,textStyle:baseText,data:['관심 화두(Q2)','2~3년 매출 기대(Q3)']},
+  tooltip:{trigger:'axis',axisPointer:{type:'shadow'},valueFormatter:function(v){return v+'%';}},
+  grid:{left:8,right:52,top:34,bottom:8,containLabel:true},
+  xAxis:{type:'value',axisLabel:{...baseText,formatter:'{value}%'},splitLine:{lineStyle:{color:C.grid}}},
+  yAxis:{type:'category',inverse:true,data:sCats,axisLabel:baseText,axisLine:{lineStyle:{color:C.grid}}},
+  dataZoom:zoomY,
+  series:[
+    {name:'관심 화두(Q2)',type:'bar',data:sQ2,itemStyle:{color:C.s1,borderRadius:[0,4,4,0]},barGap:'10%',barMaxWidth:12},
+    {name:'2~3년 매출 기대(Q3)',type:'bar',data:sQ3,itemStyle:{color:C.s2,borderRadius:[0,4,4,0]},barMaxWidth:12,
+     label:{show:true,position:'right',color:C.ink2,fontSize:12,formatter:function(p){return p.dataIndex<3?p.value+'%':'';}}}
+  ]
+});
+
+/* revenue index */
+var q = ['25-02','25-05','25-08','25-11','26-02','26-05','26-08','26-11E'];
+var raw = {
+  'Lumentum':[402.2,425.2,480.7,533.8,665.5,808.4,1006.3,1251.4],
+  'Coherent':[1434.7,1497.9,1529.4,1581.4,1685.6,1805.6,2045.5,2302.5],
+  'Fabrinet':[833.6,871.8,909.7,978.1,1132.9,1214.3,1315.8,1402.9],
+  'AAOI':[100.3,99.9,103.0,118.6,134.3,151.1,191.9,268.1]
+};
+var colors = {'Lumentum':C.s1,'Coherent':C.s2,'Fabrinet':C.s3,'AAOI':C.s4};
+var series = [];
+Object.keys(raw).forEach(function(k){
+  var r = raw[k], idx = r.map(function(v){return +(v/r[0]*100).toFixed(1);});
+  var act = idx.map(function(v,i){return i<7?v:null;});
+  var est = idx.map(function(v,i){return i>=6?v:null;});
+  series.push({name:k,type:'line',data:act,symbolSize:8,lineStyle:{width:2},itemStyle:{color:colors[k]},
+    endLabel:{show:false},emphasis:{focus:'series'}});
+  series.push({name:k,type:'line',data:est,symbolSize:8,symbol:'emptyCircle',lineStyle:{width:2,type:'dashed'},itemStyle:{color:colors[k]},tooltip:{show:false}});
+});
+mk('ch-rev',{
+  textStyle:{fontFamily:'inherit'},
+  legend:{top:0,textStyle:baseText,data:Object.keys(raw)},
+  tooltip:{trigger:'axis',formatter:function(ps){
+    var i = ps[0].dataIndex, s = '<b>'+q[i]+(i===7?' (컨센서스)':'')+'</b>';
+    Object.keys(raw).forEach(function(k){ s += '<br>'+k+': $'+raw[k][i].toLocaleString()+'M (지수 '+(raw[k][i]/raw[k][0]*100).toFixed(0)+')'; });
+    return s; }},
+  grid:{left:8,right:56,top:36,bottom:40,containLabel:true},
+  xAxis:{type:'category',data:q,boundaryGap:false,axisLabel:baseText,axisLine:{lineStyle:{color:C.grid}}},
+  yAxis:{type:'value',min:80,axisLabel:baseText,splitLine:{lineStyle:{color:C.grid}}},
+  dataZoom:zoomX,
+  series:series
+});
+
+/* drawdown */
+var dd = [['AAOI',-67.2],['Fabrinet',-52.5],['Corning',-51.3],['Coherent',-47.3],['Ciena',-46.4],['Credo',-44.4],['Broadcom',-32.5],['Lumentum',-28.0],['Marvell',-27.1],['NVIDIA',-11.1]];
+mk('ch-dd',{
+  textStyle:{fontFamily:'inherit'},
+  tooltip:{trigger:'axis',axisPointer:{type:'shadow'},valueFormatter:function(v){return v+'%';}},
+  grid:{left:8,right:56,top:16,bottom:40,containLabel:true},
+  xAxis:{type:'category',data:dd.map(function(d){return d[0];}),axisLabel:{...baseText,interval:0,rotate:35},axisLine:{lineStyle:{color:C.grid}}},
+  yAxis:{type:'value',max:0,axisLabel:{...baseText,formatter:'{value}%'},splitLine:{lineStyle:{color:C.grid}}},
+  dataZoom:zoomX,
+  series:[{type:'bar',name:'52주 고점 대비',data:dd.map(function(d){return d[1];}),barMaxWidth:26,
+    itemStyle:{color:function(p){return p.value>=0?C.up:C.down;},borderRadius:[0,0,4,4]},
+    label:{show:true,position:'bottom',color:C.ink2,fontSize:12,formatter:'{c}%'}}]
+});
+
+/* korea OP */
+var kr = [['성호전자',68.9],['파이버프로',27.0],['우리로',25.5],['대한광통신',9.6],['아모텍',-5.8],['오이솔루션',-8.7],['빛과전자',-20.8]];
+mk('ch-kr',{
+  textStyle:{fontFamily:'inherit'},
+  tooltip:{trigger:'axis',axisPointer:{type:'shadow'},valueFormatter:function(v){return v+'억원';}},
+  grid:{left:8,right:56,top:24,bottom:40,containLabel:true},
+  xAxis:{type:'category',data:kr.map(function(d){return d[0];}),axisLabel:{...baseText,interval:0,rotate:30},axisLine:{lineStyle:{color:C.grid}}},
+  yAxis:{type:'value',axisLabel:baseText,splitLine:{lineStyle:{color:C.grid}}},
+  dataZoom:zoomX,
+  series:[{type:'bar',name:'2Q26 영업이익',data:kr.map(function(d){return d[1];}),barMaxWidth:30,
+    itemStyle:{color:function(p){return p.value>=0?C.up:C.down;},borderRadius:4},
+    label:{show:true,position:'top',color:C.ink2,fontSize:12}}]
+});
+
+window.addEventListener('resize',function(){ charts.forEach(function(c){c.resize();}); });
+</script>
+</body>
+</html>
