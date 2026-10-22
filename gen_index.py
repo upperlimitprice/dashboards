@@ -15,6 +15,7 @@ ITEMS = [
     ("shipping.html", "🚢 해상 운임 지수", "BDI(벌크) · SCFI·CCFI(컨테이너) · HRCI(용선) — 일일 수집·줌 차트", True),
     ("power-ppi.html", "⚡ 전력기기 PPI", "미국 BLS 변압기·개폐장치·계전기·모터발전기 생산자물가 10년 — 월별 자동갱신", True),
     ("us-liq.html", "💵 미국 유동성 (US Liquidity)", "연준BS−TGA−RRP · 국채금리 3M/2Y/10Y/30Y · DXY · WTI/브렌트 · 재무부 경매일정", True),
+    ("rotation.html", "💱 주식→채권 로테이션 트래커", "테크 ETF vs 채권 ETF 설정·환매 · QQQ/TLT·SPY-TLT 상관·금리·VIX/MOVE · ICI 펀드·MMF · CFTC 자산운용사 · 국채 입찰 수요 — 종합 신호, 매일 자동 갱신", True),
     ("valuation.html", "🌡 밸류에이션 온도", "금리·물가·예탁금 조합 지표 vs KOSPI 밸류 (r=0.78) · 금리 12M 선행 경보", True),
     ("tval.html", "💹 거래대금", "전체·회전율 Top30 · 섹터별 Top10 (상품 제외)", True),
     ("etf.html", "🧺 ETF", "거래대금 순위 · 자금 순증/순유출 Top10 · 인사이트", True),
