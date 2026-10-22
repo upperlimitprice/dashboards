@@ -1,10 +1,10 @@
-<!doctype html><html lang="ko" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<!doctype html><html lang="ko" data-theme="dark"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&text=%F0%9F%87%B0%F0%9F%87%B7%F0%9F%87%AF%F0%9F%87%B5%F0%9F%87%A8%F0%9F%87%B3%F0%9F%87%B9%F0%9F%87%BC%F0%9F%87%BA%F0%9F%87%B8%F0%9F%87%AA%F0%9F%87%BA&display=swap"><!-- 윈도우는 국기 이모지 글꼴이 없어 KR·US 글자로 보임 → 국기 6개만 담은 Noto Color Emoji 부분 글꼴 -->
 <title>글로벌 테크 밸류체인</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
 <style>
 :root{--hm-h:#222b39;--hm-hl:#3a465a;--hm-l:transparent;--hm-ll:transparent;--bg:#0e131a;--card:#161c26;--ink:#e6e9ef;--mut:#929cab;--line:#283140;--up:#ff7b7b;--dn:#5eb3f0;--hov:#1b2330;--acc:#3d8bfd;--chip:#1e2633;color-scheme:dark}
 :root[data-theme=light]{--hm-h:#eef2f7;--hm-hl:#d3dbe6;--hm-l:#f5f7fa;--hm-ll:#e3e8ef;--bg:#eef1f5;--card:#fff;--ink:#16202c;--mut:#67737f;--line:#e2e7ee;--up:#d03030;--dn:#2366b5;--hov:#f5f8fc;--acc:#1f5fbf;--chip:#f1f4f8;color-scheme:light}
-*{box-sizing:border-box;margin:0;padding:0}body{background:var(--bg);color:var(--ink);font:14px/1.55 -apple-system,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;padding:18px 16px 60px}
+*{box-sizing:border-box;margin:0;padding:0}body{background:var(--bg);color:var(--ink);font:14px/1.55 "Noto Color Emoji",-apple-system,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;padding:18px 16px 60px}
 .wrap{max-width:1280px;margin:0 auto}.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:14px}
 h1{font-size:19px;margin-bottom:4px}h2{font-size:15px;margin-bottom:8px}h2 .s{font-size:12px;color:var(--mut);font-weight:400;margin-left:6px}.sub{font-size:12.5px;color:var(--mut);line-height:1.65}
 .top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}.thm{font:inherit;font-size:12px;padding:5px 10px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);cursor:pointer;white-space:nowrap}
@@ -156,7 +156,7 @@ function renderMM(){const el=$('#mm');const td=treeData();const leaves=C.filter(
  if(MM)MM.dispose();MM=echarts.init(el);  // 트리 데이터가 바뀌면 새로 그림(기존 인스턴스 재사용 시 edge 오류)
  $('#mmS').textContent=`${S.ct==='ALL'?'전체':CT[S.ct][1]} ${leaves}개사`;
  const fs=innerWidth<640?10:11.5;
- MM.setOption({backgroundColor:'transparent',animation:false,tooltip:{trigger:'item',confine:true,formatter:p=>{const d=p.data;if(d.ci!=null){const c=C[d.ci];return `<b>${CT[c.country][0]} ${esc(c.name_ko)}</b> ${esc(c.ticker)}<br>${esc(c.products)}${c.l2_draft?`<br><i>초안 분류: ${esc(c.l2_draft)}</i>`:''}${c.xref?`<br><i>교차 표시 · 원 분류 ${esc(c.home)}</i>`:''}<br>시총 ${fB(c.mcap_usd)} · YTD ${fP(c.ytd)}<br>최근 분기 매출 ${fM(c.rev_last_usd_m)} (YoY ${c.rev_yoy==null?'–':(c.rev_yoy>0?'+':'')+c.rev_yoy+'%'})`}
+ MM.setOption({backgroundColor:'transparent',textStyle:{fontFamily:'"Noto Color Emoji",-apple-system,"Apple SD Gothic Neo","Noto Sans KR",sans-serif'},animation:false,tooltip:{trigger:'item',confine:true,formatter:p=>{const d=p.data;if(d.ci!=null){const c=C[d.ci];return `<b>${CT[c.country][0]} ${esc(c.name_ko)}</b> ${esc(c.ticker)}<br>${esc(c.products)}${c.l2_draft?`<br><i>초안 분류: ${esc(c.l2_draft)}</i>`:''}${c.xref?`<br><i>교차 표시 · 원 분류 ${esc(c.home)}</i>`:''}<br>시총 ${fB(c.mcap_usd)} · YTD ${fP(c.ytd)}<br>최근 분기 매출 ${fM(c.rev_last_usd_m)} (YoY ${c.rev_yoy==null?'–':(c.rev_yoy>0?'+':'')+c.rev_yoy+'%'})`}
    return `<b>${esc(d.name)}</b>${d.ytd!=null?'<br>시총가중 YTD '+fP(d.ytd):''}`}},
   series:[{type:'tree',data:[td],layout:lr?'orthogonal':'radial',orient:'LR',roam:true,initialTreeDepth:S.dep,expandAndCollapse:true,
    top:lr?14:'8%',bottom:lr?14:'8%',left:lr?150:'8%',right:lr?(innerWidth<640?150:230):'8%',symbol:'circle',
