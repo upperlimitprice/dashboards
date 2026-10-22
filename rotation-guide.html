@@ -61,6 +61,9 @@ ol.steps li::before{content:counter(s);position:absolute;left:14px;top:12px;widt
 .foot{color:var(--mut);font-size:12.5px;margin-top:30px;border-top:1px solid var(--line);padding-top:14px}
 a{color:var(--dn)}
 @media (max-width:720px){.layers,.cards,.badges{grid-template-columns:1fr}.move{grid-template-columns:1fr}.truck{transform:rotate(90deg)}.card dl{grid-template-columns:64px 1fr}}
+.tbl{overflow-x:auto;background:var(--card);border:1px solid var(--line);border-radius:16px}
+table{border-collapse:collapse;width:100%;font-size:14px}th,td{padding:10px 16px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}th{color:var(--mut);font-weight:700;font-size:12.5px}tr:last-child td{border-bottom:0}
+.rkc{font-weight:900;font-size:16px;color:var(--acc)}.mut2{color:var(--mut);white-space:nowrap;padding-right:22px}
 </style>
 </head>
 <body>
@@ -154,9 +157,16 @@ a{color:var(--dn)}
       <div class="ex">🏠 전입신고서: 큰손이 <b>주소를 옮겼다고 서류</b>에 적은 것</div></div>
     <div class="card"><h4>미국채 입찰 수요</h4><span class="tag">2·5·7·10·20·30년물 경매</span>
       <dl><dt>무엇</dt><dd>응찰률(사겠다는 돈 ÷ 파는 양)과 해외 수요 비중</dd>
-      <dt>해석</dt><dd>응찰률·해외 비중이 평소보다 높으면 <b>채권을 사려는 줄이 길다</b></dd></dl>
+      <dt>켜짐</dt><dd><span class="on">ON</span> 최근 6회 평균 응찰률과 해외(간접) 비중이 <b>둘 다</b> 같은 만기의 직전 12회 평균보다 높음 = <b>채권을 사려는 줄이 길다</b></dd></dl>
       <div class="ex">예) 10년물 응찰률 평소 2.5배 → 이번 2.8배 = 채권 인기 상승</div></div>
   </div>
+</section>
+
+<section>
+  <h2>🏅 신호 우선순위</h2>
+  <p class="lead">8개 신호를 믿을 만한 순서로 정렬했습니다. <b>위쪽 신호가 켜질수록 무게가 큽니다.</b> 대시보드 카드도 이 순서로 나옵니다. (종합 판정 계산은 아래 규칙 그대로)</p>
+  <div class="tbl"><table><thead><tr><th>순위</th><th>신호</th><th>왜 이 순위인가</th><th>주기</th></tr></thead><tbody><tr><td class="rkc">1</td><td><b>ETF 설정·환매 (5일)</b></td><td>실제 돈의 이동을 매일 직접 확인 — 가장 직접적인 증거</td><td class="mut2">매일</td></tr><tr><td class="rkc">2</td><td><b>10년물 금리↓ & 나스닥↓ (20일)</b></td><td>채권을 실제로 사서 금리가 내려갔는지 — 가짜 로테이션(금리 충격)을 걸러냄</td><td class="mut2">매일</td></tr><tr><td class="rkc">3</td><td><b>ICI 펀드 통계 (4주)</b></td><td>시장 전체 펀드 공식 통계로 ETF 신호를 교차 확인</td><td class="mut2">주간·1주 지연</td></tr><tr><td class="rkc">4</td><td><b>QQQ/TLT 비율 (20일)</b></td><td>테크와 장기채의 상대 성과를 한 숫자로</td><td class="mut2">매일</td></tr><tr><td class="rkc">5</td><td><b>테크 상대강도 (20일)</b></td><td>시장 전체가 아니라 테크만 골라 파는지</td><td class="mut2">매일</td></tr><tr><td class="rkc">6</td><td><b>주식·채권 상관 (20일)</b></td><td>시소 국면인지 확인하는 보조 지표</td><td class="mut2">매일</td></tr><tr><td class="rkc">7</td><td><b>COT 자산운용사 (4주)</b></td><td>큰손 포지션 — 방향은 확실하지만 느림</td><td class="mut2">주간·지연</td></tr><tr><td class="rkc">8</td><td><b>국채 입찰 수요 (6회)</b></td><td>간접 지표, 만기·일정에 따라 흔들림</td><td class="mut2">입찰일</td></tr></tbody></table></div>
+  <p class="lead" style="margin-top:10px">원칙: <b>직접 자금 이동</b> → <b>채권 매수가 진짜인지</b> → <b>공식 통계 확인</b> → <b>상대 성과</b> → <b>국면</b> → <b>느린·간접 지표</b></p>
 </section>
 
 <section>
