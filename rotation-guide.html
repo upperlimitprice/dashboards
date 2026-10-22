@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>로테이션 지표 해석서</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4f1ea;--card:#fffdf8;--ink:#1d1f24;--mut:#6b6f78;--line:#e3ddd0;--up:#d6322f;--dn:#2361b8;--neu:#8a8f99;--acc:#e8a33d;--soft-up:#fbe7e6;--soft-dn:#e4edfa;--soft-acc:#fbf0dc;--chip:#efe9dc;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#11141a;--card:#1a1f28;--ink:#e8eaee;--mut:#9aa1ad;--line:#2b3240;--up:#ff6b66;--dn:#5ea8ff;--neu:#9097a3;--acc:#f0b452;--soft-up:#3a1f22;--soft-dn:#1c2a40;--soft-acc:#3a2f1c;--chip:#232a36;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#11141a;--card:#1a1f28;--ink:#e8eaee;--mut:#9aa1ad;--line:#2b3240;--up:#ff6b66;--dn:#5ea8ff;--neu:#9097a3;--acc:#f0b452;--soft-up:#3a1f22;--soft-dn:#1c2a40;--soft-acc:#3a2f1c;--chip:#232a36;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans KR",system-ui,sans-serif;line-height:1.6;font-size:15px}
+.wrap{max-width:980px;margin:0 auto;padding:28px 16px 60px}
+h1{font-size:clamp(26px,5vw,40px);font-weight:900;margin:0 0 6px;letter-spacing:-.02em}
+h2{font-size:22px;font-weight:900;margin:0 0 4px;letter-spacing:-.01em}
+.sub{color:var(--mut);margin:0 0 4px}
+.hero{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:26px 22px;margin-bottom:22px}
+.big{font-size:clamp(18px,3.4vw,22px);font-weight:700;margin:14px 0 0}
+.big b{color:var(--up)}
+.move{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center;margin-top:18px}
+.house{border-radius:16px;padding:16px;text-align:center}
+.house.from{background:var(--soft-dn)}.house.to{background:var(--soft-up)}
+.house .e{font-size:38px}.house b{display:block;font-size:17px}.house span{font-size:13px;color:var(--mut)}
+.truck{font-size:34px;text-align:center}.truck small{display:block;font-size:12px;color:var(--mut)}
+section{margin:30px 0}
+.lead{color:var(--mut);margin:0 0 14px}
+.layers{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.layer{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px}
+.layer .n{display:inline-block;background:var(--ink);color:var(--bg);border-radius:8px;font-weight:900;padding:1px 9px;font-size:13px}
+.layer h3{margin:8px 0 4px;font-size:17px}
+.layer p{margin:0;font-size:14px;color:var(--mut)}
+.layer .an{margin-top:8px;font-size:13.5px;background:var(--chip);border-radius:10px;padding:8px 10px;color:var(--ink)}
+.cards{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px 18px}
+.card h4{margin:0 0 2px;font-size:16.5px}
+.card .tag{font-size:12px;color:var(--mut)}
+.card dl{margin:10px 0 0;display:grid;grid-template-columns:72px 1fr;gap:6px 10px;font-size:14px}
+.card dt{font-weight:700;color:var(--mut)}
+.card dd{margin:0}
+.on{display:inline-block;font-weight:700;color:var(--up);background:var(--soft-up);border-radius:6px;padding:0 6px}
+.trap{color:var(--dn);font-weight:700}
+.ex{background:var(--soft-acc);border-radius:10px;padding:8px 10px;margin-top:10px;font-size:13.5px}
+.ex b{font-variant-numeric:tabular-nums}
+.badges{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.badge{border-radius:16px;padding:16px;text-align:center;border:1px solid var(--line);background:var(--card)}
+.badge .e{font-size:34px}.badge b{display:block;font-size:17px;margin:4px 0}
+.badge p{margin:0;font-size:13.5px;color:var(--mut)}
+.scn{display:grid;gap:12px}
+.s{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px 18px;border-left:6px solid var(--neu)}
+.s.r{border-left-color:var(--up)}.s.b{border-left-color:var(--dn)}
+.s h4{margin:0 0 6px;font-size:16.5px}
+.s .row{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
+.pill{font-size:12.5px;border-radius:999px;padding:2px 10px;background:var(--chip)}
+.pill.u{background:var(--soft-up);color:var(--up)}.pill.d{background:var(--soft-dn);color:var(--dn)}
+.s p{margin:6px 0 0;font-size:14px}
+ol.steps{counter-reset:s;list-style:none;padding:0;margin:0;display:grid;gap:10px}
+ol.steps li{counter-increment:s;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px 12px 52px;position:relative}
+ol.steps li::before{content:counter(s);position:absolute;left:14px;top:12px;width:26px;height:26px;border-radius:50%;background:var(--acc);color:#1d1f24;font-weight:900;display:grid;place-items:center;font-size:14px}
+.foot{color:var(--mut);font-size:12.5px;margin-top:30px;border-top:1px solid var(--line);padding-top:14px}
+a{color:var(--dn)}
+@media (max-width:720px){.layers,.cards,.badges{grid-template-columns:1fr}.move{grid-template-columns:1fr}.truck{transform:rotate(90deg)}.card dl{grid-template-columns:64px 1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="hero">
+  <p class="sub">주식→채권 로테이션 트래커 · 지표 해석 설명서</p>
+  <h1>돈이 정말 "이사" 가고 있을까?</h1>
+  <p class="big">"미국 테크주 팔고 채권 산다"는 말이 <b>진짜인지</b>를 여러 지표로 동시에 확인합니다.</p>
+  <p class="sub" style="margin-top:8px">※ 설명 속 숫자는 이해를 돕기 위한 <b>예시 값</b>입니다. 실제 수치는 대시보드에서 확인하세요.</p>
+  <div class="move">
+    <div class="house from"><div class="e">🏢</div><b>떠나는 집: 테크 주식</b><span>QQQ · XLK · SMH · SOXX · SPY</span></div>
+    <div class="truck">🚚<small>자금 이동</small></div>
+    <div class="house to"><div class="e">🏦</div><b>들어가는 집: 채권</b><span>TLT · IEF · SHY · SGOV · BIL · BND · LQD</span></div>
+  </div>
+</div>
+
+<section>
+  <h2>왜 지표를 여러 개 보나요?</h2>
+  <p class="lead">이사를 확인하는 방법을 생각해 보세요. 소문만 믿지 않고 세 가지를 함께 확인합니다.</p>
+  <div class="layers">
+    <div class="layer"><span class="n">1</span><h3>💸 돈의 이동</h3><p>실제로 돈이 빠지고 들어왔는가</p><div class="an">🏠 비유: 이삿짐이 <b>실제로</b> 나가고 들어오는 게 보이는가</div></div>
+    <div class="layer"><span class="n">2</span><h3>📈 가격의 흔적</h3><p>이동하면 가격에 남는 자국이 있는가</p><div class="an">🏠 비유: 빈집은 조용해지고, 새집 앞엔 <b>트럭 바퀴 자국</b>이 생긴다</div></div>
+    <div class="layer"><span class="n">3</span><h3>🧾 포지션·수요</h3><p>큰손들의 장부와 국채 경매장 분위기</p><div class="an">🏠 비유: <b>전입신고서</b>와 부동산 중개소 대기줄을 확인</div></div>
+  </div>
+</section>
+
+<section>
+  <h2>💸 1층 · 돈의 이동</h2>
+  <p class="lead">가장 직접적인 증거입니다. 단, 하루치만 보면 흔들리니 5일·20일 합계로 봅니다.</p>
+  <div class="cards">
+    <div class="card"><h4>ETF 설정·환매 (자금 유출입)</h4><span class="tag">매일 · 핵심 지표</span>
+      <dl><dt>무엇</dt><dd>ETF는 돈이 들어오면 좌수(주식 수)가 늘고, 빠지면 줄어듭니다. <b>좌수 변화 × 가격 = 실제 들어오고 나간 돈</b></dd>
+      <dt>켜짐</dt><dd><span class="on">ON</span> 테크 ETF 5일 합계 유출 + 채권 ETF 5일 합계 유입이 <b>동시에</b></dd>
+      <dt>주의</dt><dd><span class="trap">한쪽만</span>이면 이사가 아니라 그냥 이탈 또는 그냥 유입</dd></dl>
+      <div class="ex">예) QQQ 좌수가 하루에 500만 좌 줄었고 가격이 $500 → <b>$25억 유출</b>. 같은 날 TLT 좌수 2,000만 좌 증가 × $90 → <b>$18억 유입</b>. 둘이 같은 주에 반복되면 ‘이사 중’</div></div>
+    <div class="card"><h4>ICI 주간 펀드 자금흐름</h4><span class="tag">매주 수요일 발표</span>
+      <dl><dt>무엇</dt><dd>미국 전체 펀드(뮤추얼+ETF)의 주식형·채권형 순유출입. ETF 몇 개가 아니라 <b>시장 전체 공식 통계</b></dd>
+      <dt>켜짐</dt><dd><span class="on">ON</span> 미국 주식형 유출 + 채권형 유입</dd>
+      <dt>주의</dt><dd>1주일 늦게 나오는 ‘확인용’ 지표</dd></dl>
+      <div class="ex">예) 주식형 −$120억, 채권형 +$90억 → 일간 ETF 신호를 <b>공식 통계가 뒷받침</b></div></div>
+    <div class="card"><h4>MMF(머니마켓펀드) 잔고</h4><span class="tag">매주 목요일</span>
+      <dl><dt>무엇</dt><dd>주식 판 돈이 채권이 아니라 <b>현금성 대기실</b>에 머무는지</dd>
+      <dt>해석</dt><dd>MMF만 크게 늘고 장기채 유입이 없으면 <b>‘현금 대기’</b>로 분류(로테이션과 구분)</dd></dl>
+      <div class="ex">🏠 이삿짐을 새집이 아니라 <b>창고</b>에 맡겨 둔 상태. 언제든 다시 주식으로 돌아올 수 있음</div></div>
+    <div class="card"><h4>단기채 vs 장기채</h4><span class="tag">ETF 그룹 비교</span>
+      <dl><dt>무엇</dt><dd>채권으로 가도 SGOV·BIL(초단기) 쪽인지 TLT(장기) 쪽인지</dd>
+      <dt>해석</dt><dd>장기채 유입 = 금리 하락(경기 둔화)에 <b>베팅</b>. 초단기 유입 = 일단 <b>피신</b></dd></dl>
+      <div class="ex">예) TLT +$30억, SGOV +$5억 → 확신 있는 채권 매수. 반대면 현금화에 가까움</div></div>
+  </div>
+</section>
+
+<section>
+  <h2>📈 2층 · 가격의 흔적</h2>
+  <p class="lead">돈이 이동하면 가격에 반드시 자국이 남습니다. 1층이 맞는지 ‘교차 확인’합니다.</p>
+  <div class="cards">
+    <div class="card"><h4>QQQ/TLT 비율</h4><span class="tag">나스닥100 ÷ 장기채</span>
+      <dl><dt>무엇</dt><dd>테크주가 장기채보다 강한지 약한지 한 숫자로</dd>
+      <dt>켜짐</dt><dd><span class="on">ON</span> 20일 동안 비율 하락</dd></dl>
+      <div class="ex">예) 비율 6.0 → 5.4 (−10%) = 테크가 채권보다 10% 덜 오름(또는 더 빠짐)</div></div>
+    <div class="card"><h4>테크 상대강도 (XLK·SMH ÷ SPY)</h4><span class="tag">테크만 파는지, 다 파는지</span>
+      <dl><dt>무엇</dt><dd>테크·반도체가 시장 전체보다 약한지</dd>
+      <dt>해석</dt><dd>테크만 약하면 <b>‘테크→채권’</b>, 전부 약하면 <b>‘주식 전체 축소’</b></dd></dl>
+      <div class="ex">예) SPY −2%, XLK −5% → 테크를 골라서 팔고 있음</div></div>
+    <div class="card"><h4>주식·채권 상관계수 (SPY vs TLT, 20일)</h4><span class="tag">시소인가, 같이 빠지나</span>
+      <dl><dt>무엇</dt><dd>−1에 가까우면 시소(하나 오르면 하나 내림), +1이면 같이 움직임</dd>
+      <dt>켜짐</dt><dd><span class="on">ON</span> 0보다 작음 = 주식 빠질 때 채권이 받쳐줌</dd>
+      <dt>주의</dt><dd><span class="trap">양수(+)</span>면 금리 때문에 둘 다 빠지는 ‘금리 충격’ → 로테이션 아님</dd></dl>
+      <div class="ex">🎢 시소 상태(−0.5) = 피난처 기능 작동 / 같이 추락(+0.6) = 피난처 없음</div></div>
+    <div class="card"><h4>나스닥 하락 + 10년물 금리 하락</h4><span class="tag">채권을 ‘사는’ 힘이 있나</span>
+      <dl><dt>무엇</dt><dd>채권을 사면 가격이 오르고 <b>금리는 내려갑니다</b></dd>
+      <dt>켜짐</dt><dd><span class="on">ON</span> 같은 기간 나스닥↓ & 10년물 금리↓</dd>
+      <dt>주의</dt><dd>나스닥↓ & 금리↑면 금리가 주식을 때리는 중(반대 원인)</dd></dl>
+      <div class="ex">예) 나스닥 −4%, 10년물 4.50% → 4.25% = 판 돈이 채권으로 가는 그림</div></div>
+    <div class="card"><h4>2년물 vs 10년물</h4><span class="tag">어느 만기로 가나</span>
+      <dl><dt>해석</dt><dd>2년물 금리가 더 빠지면 <b>현금성·금리인하 기대</b>, 10년물이 더 빠지면 <b>장기채(듀레이션) 매수</b></dd></dl>
+      <div class="ex">예) 2Y −30bp, 10Y −10bp → ‘연준이 내린다’에 베팅하는 단기 쪽 이동</div></div>
+    <div class="card"><h4>VIX (주식 공포지수)</h4><span class="tag">분위기 온도계</span>
+      <dl><dt>해석</dt><dd>VIX가 오르는데 채권 금리가 안정적이면 채권이 <b>편한 피난처</b>. 둘 다 불안하면 피난처가 흔들림</dd></dl>
+      <div class="ex">예) VIX 15 → 24, 10년물 변동 작음 = 채권으로 숨기 좋은 날씨</div></div>
+  </div>
+</section>
+
+<section>
+  <h2>🧾 3층 · 포지션과 수요</h2>
+  <p class="lead">큰손들의 장부와 국채를 사려는 줄의 길이를 봅니다. 느리지만 ‘진짜 돈’이 확인됩니다.</p>
+  <div class="cards">
+    <div class="card"><h4>CFTC 선물 포지션 (COT)</h4><span class="tag">매주 금요일 · 화요일 기준</span>
+      <dl><dt>무엇</dt><dd>연기금·자산운용사가 나스닥·S&amp;P 선물과 미국채 선물을 얼마나 들고 있는지</dd>
+      <dt>켜짐</dt><dd><span class="on">ON</span> 나스닥 순매수 ↓ & 국채 선물 순매수 ↑</dd></dl>
+      <div class="ex">🏠 전입신고서: 큰손이 <b>주소를 옮겼다고 서류</b>에 적은 것</div></div>
+    <div class="card"><h4>미국채 입찰 수요</h4><span class="tag">2·5·7·10·20·30년물 경매</span>
+      <dl><dt>무엇</dt><dd>응찰률(사겠다는 돈 ÷ 파는 양)과 해외 수요 비중</dd>
+      <dt>해석</dt><dd>응찰률·해외 비중이 평소보다 높으면 <b>채권을 사려는 줄이 길다</b></dd></dl>
+      <div class="ex">예) 10년물 응찰률 평소 2.5배 → 이번 2.8배 = 채권 인기 상승</div></div>
+  </div>
+</section>
+
+<section>
+  <h2>🚦 종합 판정</h2>
+  <p class="lead">하위 신호들의 켜짐 개수와 서로 맞는지로 하나의 상태를 정합니다. 신호 하나만으로는 판단하지 않습니다.</p>
+  <div class="badges">
+    <div class="badge"><div class="e">🔴</div><b>로테이션 진행</b><p>돈의 이동 + 가격 흔적이 같은 방향으로 여러 개 켜짐</p></div>
+    <div class="badge"><div class="e">⚪</div><b>혼재</b><p>일부만 켜졌거나 서로 엇갈림 (예: 유출은 있는데 금리는 오름)</p></div>
+    <div class="badge"><div class="e">🔵</div><b>반대 (주식 선호)</b><p>채권에서 빠져 테크로 들어오는 흐름이 우세</p></div>
+  </div>
+</section>
+
+<section>
+  <h2>🧪 이렇게 읽으세요: 세 가지 장면</h2>
+  <div class="scn">
+    <div class="s r"><h4>장면 A · 진짜 로테이션 🔴</h4>
+      <div class="row"><span class="pill d">QQQ 5일 −$60억</span><span class="pill u">TLT 5일 +$40억</span><span class="pill d">QQQ/TLT −6%</span><span class="pill">상관 −0.4</span><span class="pill d">10Y 4.4→4.2%</span></div>
+      <p>테크에서 빠진 돈이 장기채로 들어가고, 채권 가격이 올라 금리가 내려감. 주식·채권이 시소처럼 움직임 → <b>로테이션이 맞다</b>.</p></div>
+    <div class="s"><h4>장면 B · 금리 충격 (가짜 로테이션) ⚪</h4>
+      <div class="row"><span class="pill d">QQQ −5%</span><span class="pill d">TLT −3%</span><span class="pill">상관 +0.6</span><span class="pill u">10Y 4.3→4.7%</span></div>
+      <p>주식도 채권도 같이 빠짐. 금리가 오르면서 둘 다 때린 것 → 채권으로 간 돈이 아님. <b>“테크 팔고 채권 산다”는 해석은 틀림</b>.</p></div>
+    <div class="s"><h4>장면 C · 현금 대기 ⚪</h4>
+      <div class="row"><span class="pill d">테크 ETF 유출</span><span class="pill">TLT 변화 없음</span><span class="pill u">SGOV·BIL 유입</span><span class="pill u">MMF +$800억</span></div>
+      <p>주식은 팔았지만 장기채가 아니라 현금성 자산에 대기. 채권 강세 베팅이 아니라 <b>관망</b>. 반등 시 주식으로 빨리 돌아올 수 있는 돈.</p></div>
+  </div>
+</section>
+
+<section>
+  <h2>✅ 체크 순서</h2>
+  <ol class="steps">
+    <li><b>매일:</b> 테크 ETF 유출과 채권 ETF 유입이 <b>같은 주에 동시에</b> 나오나?</li>
+    <li><b>가격으로 확인:</b> QQQ/TLT 하락 · 상관계수 음수 · 10년물 금리 하락, 셋이 맞나? (하나라도 반대면 ‘혼재’)</li>
+    <li><b>어디로 갔나:</b> 장기채(TLT)인가, 현금성(SGOV·BIL·MMF)인가?</li>
+    <li><b>매주:</b> ICI 펀드 통계·COT 포지션이 1~2주 이상 같은 방향을 확인해 주나?</li>
+    <li><b>경매장:</b> 국채 입찰 응찰률·해외 수요가 받쳐주나?</li>
+  </ol>
+</section>
+
+<p class="foot">대시보드: <a href="https://upperlimitprice.github.io/dashboards/rotation.html">upperlimitprice.github.io/dashboards/rotation.html</a> · 지표는 공개 자료(ETF 운용사·ICI·CFTC·미 재무부·시장 가격) 기반이며 투자 권유가 아닙니다.</p>
+</div>
+</body>
+</html>
