@@ -87,7 +87,7 @@ $('#thm').onclick=()=>{setT(root.dataset.theme==='dark'?'light':'dark');render()
 const fB=v=>v==null?'–':v>=1000?'$'+(v/1000).toFixed(2)+'T':v>=10?'$'+v.toFixed(0)+'B':'$'+v.toFixed(1)+'B';
 const fP=v=>v==null?'<span class="mut">–</span>':`<span class="${v>0?'up':v<0?'dn':''}">${v>0?'+':''}${v.toFixed(1)}%</span>`;
 const CSYM={USD:'$',KRW:'₩',JPY:'¥',TWD:'NT$',CNY:'CN¥',EUR:'€',CHF:'CHF ',GBP:'£',SEK:'SEK ',NOK:'NOK ',HKD:'HK$'};
-const fJ=(v,sym)=>v>=1e12?sym+(v/1e12).toFixed(v>=1e14?0:v>=1e13?1:2)+'조':sym+Math.round(v/1e8).toLocaleString()+'억';
+const fJ=(v,sym)=>{const x=v>=1e12?v/1e12:v/1e8,d=x>=1000?0:x>=100?(v>=1e12?0:0):x>=10?1:2;return sym+x.toLocaleString('en-US',{maximumFractionDigits:v>=1e12?d:(x>=10?0:1)})+(v>=1e12?'조':'억')};
 const mcapSub=c=>{if(c.mcap_usd==null||c.ccy==='KRW'||!D.fx||!D.fx.KRW)return '';const u=c.mcap_usd*1e9,l=c.ccy!=='USD'&&D.fx[c.ccy]?fJ(u/D.fx[c.ccy],CSYM[c.ccy]||c.ccy+' ')+' · ':'';
  return `<div class="tk" style="white-space:nowrap">${l}(${fJ(u/D.fx.KRW,'₩')})</div>`};
 const fM=v=>v==null?'–':v>=1000?'$'+(v/1000).toFixed(2)+'B':'$'+Math.round(v)+'M';
