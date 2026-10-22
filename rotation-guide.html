@@ -94,20 +94,20 @@ a{color:var(--dn)}
   <div class="cards">
     <div class="card"><h4>ETF 설정·환매 (자금 유출입)</h4><span class="tag">매일 · 핵심 지표</span>
       <dl><dt>무엇</dt><dd>ETF는 돈이 들어오면 좌수(주식 수)가 늘고, 빠지면 줄어듭니다. <b>좌수 변화 × 가격 = 실제 들어오고 나간 돈</b></dd>
-      <dt>켜짐</dt><dd><span class="on">ON</span> 테크 ETF 5일 합계 유출 + 채권 ETF 5일 합계 유입이 <b>동시에</b></dd>
+      <dt>켜짐</dt><dd><span class="on">ON</span> 테크(QQQ·XLK·SMH·SOXX) 5일 합계 유출 + 중장기채(TLT·IEF·AGG·LQD) 5일 합계 유입이 <b>동시에</b></dd>
       <dt>주의</dt><dd><span class="trap">한쪽만</span>이면 이사가 아니라 그냥 이탈 또는 그냥 유입</dd></dl>
       <div class="ex">예) QQQ 좌수가 하루에 500만 좌 줄었고 가격이 $500 → <b>$25억 유출</b>. 같은 날 TLT 좌수 2,000만 좌 증가 × $90 → <b>$18억 유입</b>. 둘이 같은 주에 반복되면 ‘이사 중’</div></div>
     <div class="card"><h4>ICI 주간 펀드 자금흐름</h4><span class="tag">매주 수요일 발표</span>
       <dl><dt>무엇</dt><dd>미국 전체 펀드(뮤추얼+ETF)의 주식형·채권형 순유출입. ETF 몇 개가 아니라 <b>시장 전체 공식 통계</b></dd>
-      <dt>켜짐</dt><dd><span class="on">ON</span> 미국 주식형 유출 + 채권형 유입</dd>
+      <dt>켜짐</dt><dd><span class="on">ON</span> 최근 4주 합계: 미국 주식형 유출 + 과세 채권형 유입</dd>
       <dt>주의</dt><dd>1주일 늦게 나오는 ‘확인용’ 지표</dd></dl>
       <div class="ex">예) 주식형 −$120억, 채권형 +$90억 → 일간 ETF 신호를 <b>공식 통계가 뒷받침</b></div></div>
     <div class="card"><h4>MMF(머니마켓펀드) 잔고</h4><span class="tag">매주 목요일</span>
       <dl><dt>무엇</dt><dd>주식 판 돈이 채권이 아니라 <b>현금성 대기실</b>에 머무는지</dd>
-      <dt>해석</dt><dd>MMF만 크게 늘고 장기채 유입이 없으면 <b>‘현금 대기’</b>로 분류(로테이션과 구분)</dd></dl>
+      <dt>해석</dt><dd>4주간 MMF 잔고 <b>+2% 이상</b> 증가 + 중장기채 20일 유입 없음 → <b>‘현금 대기’</b>로 표시 (점수에는 미반영, 로테이션과 구분용)</dd></dl>
       <div class="ex">🏠 이삿짐을 새집이 아니라 <b>창고</b>에 맡겨 둔 상태. 언제든 다시 주식으로 돌아올 수 있음</div></div>
     <div class="card"><h4>단기채 vs 장기채</h4><span class="tag">ETF 그룹 비교</span>
-      <dl><dt>무엇</dt><dd>채권으로 가도 SGOV·BIL(초단기) 쪽인지 TLT(장기) 쪽인지</dd>
+      <dl><dt>무엇</dt><dd>채권으로 가도 SGOV·BIL·SHY(단기·현금성) 쪽인지 TLT·IEF(중장기) 쪽인지. 단기·현금성은 표시만 하고 점수에는 넣지 않음</dd>
       <dt>해석</dt><dd>장기채 유입 = 금리 하락(경기 둔화)에 <b>베팅</b>. 초단기 유입 = 일단 <b>피신</b></dd></dl>
       <div class="ex">예) TLT +$30억, SGOV +$5억 → 확신 있는 채권 매수. 반대면 현금화에 가까움</div></div>
   </div>
@@ -119,27 +119,27 @@ a{color:var(--dn)}
   <div class="cards">
     <div class="card"><h4>QQQ/TLT 비율</h4><span class="tag">나스닥100 ÷ 장기채</span>
       <dl><dt>무엇</dt><dd>테크주가 장기채보다 강한지 약한지 한 숫자로</dd>
-      <dt>켜짐</dt><dd><span class="on">ON</span> 20일 동안 비율 하락</dd></dl>
+      <dt>켜짐</dt><dd><span class="on">ON</span> 비율이 20거래일 전보다 낮음 (배당 반영 가격)</dd></dl>
       <div class="ex">예) 비율 6.0 → 5.4 (−10%) = 테크가 채권보다 10% 덜 오름(또는 더 빠짐)</div></div>
     <div class="card"><h4>테크 상대강도 (XLK·SMH ÷ SPY)</h4><span class="tag">테크만 파는지, 다 파는지</span>
       <dl><dt>무엇</dt><dd>테크·반도체가 시장 전체보다 약한지</dd>
-      <dt>해석</dt><dd>테크만 약하면 <b>‘테크→채권’</b>, 전부 약하면 <b>‘주식 전체 축소’</b></dd></dl>
+      <dt>켜짐</dt><dd><span class="on">ON</span> XLK/SPY와 SMH/SPY가 <b>둘 다</b> 20일간 하락</dd><dt>해석</dt><dd>테크만 약하면 <b>‘테크→채권’</b>, 전부 약하면 <b>‘주식 전체 축소’</b></dd></dl>
       <div class="ex">예) SPY −2%, XLK −5% → 테크를 골라서 팔고 있음</div></div>
     <div class="card"><h4>주식·채권 상관계수 (SPY vs TLT, 20일)</h4><span class="tag">시소인가, 같이 빠지나</span>
       <dl><dt>무엇</dt><dd>−1에 가까우면 시소(하나 오르면 하나 내림), +1이면 같이 움직임</dd>
-      <dt>켜짐</dt><dd><span class="on">ON</span> 0보다 작음 = 주식 빠질 때 채권이 받쳐줌</dd>
+      <dt>켜짐</dt><dd><span class="on">ON</span> 일간 수익률 20일 상관계수가 0보다 작음 = 주식 빠질 때 채권이 받쳐줌</dd>
       <dt>주의</dt><dd><span class="trap">양수(+)</span>면 금리 때문에 둘 다 빠지는 ‘금리 충격’ → 로테이션 아님</dd></dl>
       <div class="ex">🎢 시소 상태(−0.5) = 피난처 기능 작동 / 같이 추락(+0.6) = 피난처 없음</div></div>
     <div class="card"><h4>나스닥 하락 + 10년물 금리 하락</h4><span class="tag">채권을 ‘사는’ 힘이 있나</span>
       <dl><dt>무엇</dt><dd>채권을 사면 가격이 오르고 <b>금리는 내려갑니다</b></dd>
-      <dt>켜짐</dt><dd><span class="on">ON</span> 같은 기간 나스닥↓ & 10년물 금리↓</dd>
+      <dt>켜짐</dt><dd><span class="on">ON</span> 20일 동안 QQQ 수익률 &lt; 0 그리고 10년물 금리 변화 &lt; 0</dd>
       <dt>주의</dt><dd>나스닥↓ & 금리↑면 금리가 주식을 때리는 중(반대 원인)</dd></dl>
       <div class="ex">예) 나스닥 −4%, 10년물 4.50% → 4.25% = 판 돈이 채권으로 가는 그림</div></div>
-    <div class="card"><h4>2년물 vs 10년물</h4><span class="tag">어느 만기로 가나</span>
+    <div class="card"><h4>2년물 vs 10년물</h4><span class="tag">어느 만기로 가나 · 참고 지표(점수 미반영)</span>
       <dl><dt>해석</dt><dd>2년물 금리가 더 빠지면 <b>현금성·금리인하 기대</b>, 10년물이 더 빠지면 <b>장기채(듀레이션) 매수</b></dd></dl>
       <div class="ex">예) 2Y −30bp, 10Y −10bp → ‘연준이 내린다’에 베팅하는 단기 쪽 이동</div></div>
-    <div class="card"><h4>VIX (주식 공포지수)</h4><span class="tag">분위기 온도계</span>
-      <dl><dt>해석</dt><dd>VIX가 오르는데 채권 금리가 안정적이면 채권이 <b>편한 피난처</b>. 둘 다 불안하면 피난처가 흔들림</dd></dl>
+    <div class="card"><h4>VIX · MOVE (주식·채권 공포지수)</h4><span class="tag">분위기 온도계 · 참고 지표(점수 미반영)</span>
+      <dl><dt>해석</dt><dd>VIX(주식 변동성)는 오르는데 MOVE(채권 변동성)가 안정적이면 채권이 <b>편한 피난처</b>. 둘 다 오르면 피난처가 흔들림</dd></dl>
       <div class="ex">예) VIX 15 → 24, 10년물 변동 작음 = 채권으로 숨기 좋은 날씨</div></div>
   </div>
 </section>
@@ -150,7 +150,7 @@ a{color:var(--dn)}
   <div class="cards">
     <div class="card"><h4>CFTC 선물 포지션 (COT)</h4><span class="tag">매주 금요일 · 화요일 기준</span>
       <dl><dt>무엇</dt><dd>연기금·자산운용사가 나스닥·S&amp;P 선물과 미국채 선물을 얼마나 들고 있는지</dd>
-      <dt>켜짐</dt><dd><span class="on">ON</span> 나스닥 순매수 ↓ & 국채 선물 순매수 ↑</dd></dl>
+      <dt>켜짐</dt><dd><span class="on">ON</span> 최근 4주 변화: 자산운용사의 나스닥100 순매수 ↓ & 국채 선물(2·5·10·울트라10·본드, 10년물 환산 합계) 순매수 ↑</dd></dl>
       <div class="ex">🏠 전입신고서: 큰손이 <b>주소를 옮겼다고 서류</b>에 적은 것</div></div>
     <div class="card"><h4>미국채 입찰 수요</h4><span class="tag">2·5·7·10·20·30년물 경매</span>
       <dl><dt>무엇</dt><dd>응찰률(사겠다는 돈 ÷ 파는 양)과 해외 수요 비중</dd>
@@ -161,11 +161,11 @@ a{color:var(--dn)}
 
 <section>
   <h2>🚦 종합 판정</h2>
-  <p class="lead">하위 신호들의 켜짐 개수와 서로 맞는지로 하나의 상태를 정합니다. 신호 하나만으로는 판단하지 않습니다.</p>
+  <p class="lead">점수에 들어가는 신호는 8개입니다: ① ETF 5일 유출입 ② QQQ/TLT ③ 주식·채권 상관 ④ 금리·나스닥 ⑤ 테크 상대강도 ⑥ ICI ⑦ COT ⑧ 국채 입찰. 각 신호는 <b>ON</b>(로테이션 방향), <b>반대</b>(주식 선호 방향), <b>OFF</b> 중 하나입니다. 신호 하나만으로는 판단하지 않습니다.</p>
   <div class="badges">
-    <div class="badge"><div class="e">🔴</div><b>로테이션 진행</b><p>돈의 이동 + 가격 흔적이 같은 방향으로 여러 개 켜짐</p></div>
-    <div class="badge"><div class="e">⚪</div><b>혼재</b><p>일부만 켜졌거나 서로 엇갈림 (예: 유출은 있는데 금리는 오름)</p></div>
-    <div class="badge"><div class="e">🔵</div><b>반대 (주식 선호)</b><p>채권에서 빠져 테크로 들어오는 흐름이 우세</p></div>
+    <div class="badge"><div class="e">🔴</div><b>로테이션 진행</b><p>ON 4개 이상 <b>그리고</b> ON이 반대보다 2개 이상 많음</p></div>
+    <div class="badge"><div class="e">⚪</div><b>혼재</b><p>위·아래 조건 어디에도 해당하지 않음 (예: ON 3개, 반대 1개)</p></div>
+    <div class="badge"><div class="e">🔵</div><b>반대 (주식 선호)</b><p>반대 4개 이상 <b>그리고</b> 반대가 ON보다 2개 이상 많음</p></div>
   </div>
 </section>
 
