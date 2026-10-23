@@ -163,15 +163,49 @@ table{border-collapse:collapse;width:100%;font-size:14px}th,td{padding:10px 16px
 </section>
 
 <section>
+  <h2>🎲 4층 · 파생상품 — 레버리지 ETF와 옵션</h2>
+  <p class="lead">개인·단기 자금이 어디에 ‘빚내서’ 베팅하는지, 옵션 시장이 어디를 겁내는지를 봅니다. 대시보드 ⑤ 패널에 있고, <b>점수에는 아래 두 개(레버리지 ETF·옵션 포지셔닝)만</b> 들어갑니다. 나머지는 분위기를 읽는 참고 지표입니다.</p>
+  <div class="cards">
+    <div class="card"><h4>레버리지·인버스 ETF 순유입</h4><span class="tag">매일 · 점수 반영 (6위)</span>
+      <dl><dt>무엇</dt><dd>TQQQ(나스닥 3배)처럼 오를 때 2~3배 버는 <b>강세 ETF</b>와 SQQQ처럼 내릴 때 버는 <b>약세(인버스) ETF</b>의 좌수 변화 × NAV. <b>강세 유입 − 약세 유입 = 순베팅</b></dd>
+      <dt>켜짐</dt><dd><span class="on">ON</span> 5일 합계로 테크(TQQQ·QLD·SOXL·TECL − SQQQ·QID·SOXS·TECS) 순유출 <b>그리고</b> 장기채(TMF·UBT − TMV·TBT) 순유입. 반대 방향이면 ‘반대’</dd>
+      <dt>주의</dt><dd><span class="trap">역방향이 잦음</span> — 개인은 급락한 날 TQQQ를 ‘싸다’고 더 사는 경우가 많습니다. 그래서 순위를 중간(6위)에 두었습니다. Direxion(SOXL·TECL·TMF 등)은 과거 좌수 파일이 없어 2026-10-23부터 매일 쌓고 있고, <b>6일치가 모이기 전까지는 ‘데이터 없음’</b>으로 판정하지 않습니다.</dd></dl>
+      <div class="ex">예시) 5일간 TQQQ +$4억, SQQQ +$6억 → 테크 순 <b>−$2억</b>(약세 베팅 우세). 같은 기간 TMF +$3억, TMV −$1억 → 장기채 순 <b>+$4억</b> → ON</div></div>
+    <div class="card"><h4>옵션 포지셔닝 (QQQ 풋↑ & TLT 콜↑)</h4><span class="tag">매일 장 마감 후 · 점수 반영 (10위)</span>
+      <dl><dt>무엇</dt><dd>옵션 미결제(아직 청산되지 않은 계약) 중 <b>풋 ÷ 콜</b> 비율. QQQ 풋이 늘면 나스닥 하락 대비, TLT 콜이 늘면 장기채 상승(금리 하락) 기대</dd>
+      <dt>켜짐</dt><dd><span class="on">ON</span> QQQ 풋/콜 미결제 비율이 20거래일 전보다 높음 <b>그리고</b> TLT 콜/풋 미결제 비율도 높음. 둘 다 낮아지면 ‘반대’</dd>
+      <dt>주의</dt><dd>풋은 하락 베팅일 수도, 주식 보유자의 <b>보험</b>일 수도 있습니다. 무료 원자료(CBOE 지연시세)는 과거 이력을 주지 않아 2026-10-23부터 매일 1점씩 쌓습니다. 20일이 차기 전에는 최소 5일 변화로 계산하고(카드에 기간 표시), 6일 전까지는 판정하지 않습니다 → 그래서 <b>최하위</b>입니다.</dd></dl>
+      <div class="ex">예시) QQQ 풋/콜 미결제 1.40 → 1.55, TLT 콜/풋 0.80 → 0.95 → 나스닥 보험은 늘고 장기채 상승 베팅도 늘어남 → ON</div></div>
+    <div class="card"><h4>VIX 기간구조 (VIX9D · VIX · VIX3M)</h4><span class="tag">참고 지표 · ⚡ 장중 갱신</span>
+      <dl><dt>무엇</dt><dd>9일·30일·3개월 뒤를 보는 변동성 지수. 평소엔 먼 미래가 더 불확실해 <b>VIX9D &lt; VIX &lt; VIX3M</b>(콘탱고)</dd>
+      <dt>해석</dt><dd>VIX/VIX3M이 <b>1을 넘으면 역전</b>(백워데이션) = 지금 당장이 더 무섭다 = <b>급한 위험회피</b>. VIX9D/VIX만 1을 넘으면 ‘단기 경계’</dd></dl>
+      <div class="ex">예시) VIX9D 24 · VIX 22 · VIX3M 20 → 9D/VIX 1.09, VIX/3M 1.10 = 역전. 이런 날 채권으로 피신하는 돈이 같이 보이면 로테이션의 ‘공포형’ 버전</div></div>
+    <div class="card"><h4>CBOE 풋/콜 비율 (거래량)</h4><span class="tag">참고 지표 · 매일(전일분)</span>
+      <dl><dt>무엇</dt><dd>CBOE 거래소 하루 풋 거래량 ÷ 콜 거래량. <b>주식 옵션</b>은 개인 심리, <b>지수 옵션</b>은 기관 헤지에 가깝습니다</dd>
+      <dt>해석</dt><dd>주식 풋/콜이 1년 범위 위쪽(백분위 80+)이면 겁이 많음, 아래쪽이면 낙관 과열. 극단은 종종 반대로 작용(역발상)</dd></dl>
+      <div class="ex">예시) 주식 풋/콜 0.50 → 0.80 = 콜 2개 살 때 풋 1개 → 풋 4개 vs 콜 5개로 겁이 커짐</div></div>
+    <div class="card"><h4>딜러 감마 노출 (GEX, 근사)</h4><span class="tag">참고 지표 · SPY·QQQ</span>
+      <dl><dt>무엇</dt><dd>옵션을 판 딜러가 헤지하느라 사고파는 힘의 크기. 계산: Σ 감마 × 미결제 × 100 × 현물² × 1% (콜 +, 풋 −)</dd>
+      <dt>해석</dt><dd><b>양(+)</b>이면 딜러가 오르면 팔고 내리면 사서 <b>변동을 눌러줌</b>. <b>음(−)</b>이면 반대로 따라 팔고 따라 사서 <b>변동이 커짐</b></dd>
+      <dt>주의</dt><dd>“딜러는 콜을 팔고 풋을 샀다”는 가정의 <b>근사치</b>입니다. 실제 딜러 장부는 공개되지 않습니다</dd></dl>
+      <div class="ex">예시) SPY GEX +$3B/1% → 1% 움직일 때 딜러가 반대로 약 $30억 매매 = 조용한 장. −$2B면 급락 시 매도가 매도를 부르는 장</div></div>
+    <div class="card"><h4>30일 스큐 (QQQ·TLT)</h4><span class="tag">참고 지표</span>
+      <dl><dt>무엇</dt><dd>30일 만기 근처에서 <b>5% 아래 풋의 내재변동성 − 5% 위 콜의 내재변동성</b>. 하락 보험이 얼마나 비싼가</dd>
+      <dt>해석</dt><dd>QQQ 스큐가 커지면 나스닥 하락 보험 수요↑. TLT 스큐가 작아지거나 음수면 장기채 <b>상승</b>(금리 하락) 쪽 콜 수요↑</dd></dl>
+      <div class="ex">예시) QQQ 풋 IV 26%, 콜 IV 18% → 스큐 <b>8vol</b>. 한 달 새 5 → 8vol이면 하락 대비가 급해진 것</div></div>
+  </div>
+</section>
+
+<section>
   <h2>🏅 신호 우선순위</h2>
-  <p class="lead">8개 신호를 믿을 만한 순서로 정렬했습니다. <b>위쪽 신호가 켜질수록 무게가 큽니다.</b> 대시보드 카드도 이 순서로 나옵니다. ⚡ 표시는 미국 장중 15분마다 실시간 시세로 갱신되는 신호입니다. (종합 판정 계산은 아래 규칙 그대로)</p>
-  <div class="tbl"><table><thead><tr><th>순위</th><th>신호</th><th>왜 이 순위인가</th><th>주기</th></tr></thead><tbody><tr><td class="rkc">1</td><td><b>ETF 설정·환매 (5일)</b></td><td>실제 돈의 이동을 매일 직접 확인 — 가장 직접적인 증거</td><td class="mut2">매일</td></tr><tr><td class="rkc">2</td><td><b>10년물 금리↓ & 나스닥↓ (20일)</b></td><td>채권을 실제로 사서 금리가 내려갔는지 — 가짜 로테이션(금리 충격)을 걸러냄</td><td class="mut2">⚡ 장중 15분</td></tr><tr><td class="rkc">3</td><td><b>ICI 펀드 통계 (4주)</b></td><td>시장 전체 펀드 공식 통계로 ETF 신호를 교차 확인</td><td class="mut2">주간·1주 지연</td></tr><tr><td class="rkc">4</td><td><b>QQQ/TLT 비율 (20일)</b></td><td>테크와 장기채의 상대 성과를 한 숫자로</td><td class="mut2">⚡ 장중 15분</td></tr><tr><td class="rkc">5</td><td><b>테크 상대강도 (20일)</b></td><td>시장 전체가 아니라 테크만 골라 파는지</td><td class="mut2">⚡ 장중 15분</td></tr><tr><td class="rkc">6</td><td><b>주식·채권 상관 (20일)</b></td><td>시소 국면인지 확인하는 보조 지표</td><td class="mut2">⚡ 장중 15분</td></tr><tr><td class="rkc">7</td><td><b>COT 자산운용사 (4주)</b></td><td>큰손 포지션 — 방향은 확실하지만 느림</td><td class="mut2">주간·지연</td></tr><tr><td class="rkc">8</td><td><b>국채 입찰 수요 (6회)</b></td><td>간접 지표, 만기·일정에 따라 흔들림</td><td class="mut2">⚡ 입찰 당일</td></tr></tbody></table></div>
+  <p class="lead">10개 신호를 믿을 만한 순서로 정렬했습니다. <b>위쪽 신호가 켜질수록 무게가 큽니다.</b> 대시보드 카드도 이 순서로 나옵니다. ⚡ 표시는 미국 장중 15분마다 실시간 시세로 갱신되는 신호입니다. (종합 판정 계산은 아래 규칙 그대로)</p>
+  <div class="tbl"><table><thead><tr><th>순위</th><th>신호</th><th>왜 이 순위인가</th><th>주기</th></tr></thead><tbody><tr><td class="rkc">1</td><td><b>ETF 설정·환매 (5일)</b></td><td>실제 돈의 이동을 매일 직접 확인 — 가장 직접적인 증거</td><td class="mut2">매일</td></tr><tr><td class="rkc">2</td><td><b>10년물 금리↓ & 나스닥↓ (20일)</b></td><td>채권을 실제로 사서 금리가 내려갔는지 — 가짜 로테이션(금리 충격)을 걸러냄</td><td class="mut2">⚡ 장중 15분</td></tr><tr><td class="rkc">3</td><td><b>ICI 펀드 통계 (4주)</b></td><td>시장 전체 펀드 공식 통계로 ETF 신호를 교차 확인</td><td class="mut2">주간·1주 지연</td></tr><tr><td class="rkc">4</td><td><b>QQQ/TLT 비율 (20일)</b></td><td>테크와 장기채의 상대 성과를 한 숫자로</td><td class="mut2">⚡ 장중 15분</td></tr><tr><td class="rkc">5</td><td><b>테크 상대강도 (20일)</b></td><td>시장 전체가 아니라 테크만 골라 파는지</td><td class="mut2">⚡ 장중 15분</td></tr><tr><td class="rkc">6</td><td><b>레버리지 ETF (5일, 강세−약세)</b></td><td>실제 돈의 이동이지만 개인·단기 성향이라 하락 때 저가매수(역방향)가 잦음 · Direxion 좌수가 2026-10-23부터 쌓여 6일 전까지 판정 불가</td><td class="mut2">매일</td></tr><tr><td class="rkc">7</td><td><b>주식·채권 상관 (20일)</b></td><td>시소 국면인지 확인하는 보조 지표</td><td class="mut2">⚡ 장중 15분</td></tr><tr><td class="rkc">8</td><td><b>COT 자산운용사 (4주)</b></td><td>큰손 포지션 — 방향은 확실하지만 느림</td><td class="mut2">주간·지연</td></tr><tr><td class="rkc">9</td><td><b>국채 입찰 수요 (6회)</b></td><td>간접 지표, 만기·일정에 따라 흔들림</td><td class="mut2">⚡ 입찰 당일</td></tr><tr><td class="rkc">10</td><td><b>옵션 포지셔닝 (QQQ 풋↑ & TLT 콜↑)</b></td><td>헤지·투기가 섞여 해석이 어렵고, 체인 이력이 2026-10-23부터라 최하위 — 20거래일 쌓인 뒤(2026-11 하순) 순위 재검토</td><td class="mut2">매일 장 마감 후</td></tr></tbody></table></div>
   <p class="lead" style="margin-top:10px">원칙: <b>직접 자금 이동</b> → <b>채권 매수가 진짜인지</b> → <b>공식 통계 확인</b> → <b>상대 성과</b> → <b>국면</b> → <b>느린·간접 지표</b></p>
 </section>
 
 <section>
   <h2>🚦 종합 판정</h2>
-  <p class="lead">점수에 들어가는 신호는 8개입니다: ① ETF 5일 유출입 ② QQQ/TLT ③ 주식·채권 상관 ④ 금리·나스닥 ⑤ 테크 상대강도 ⑥ ICI ⑦ COT ⑧ 국채 입찰. 각 신호는 <b>ON</b>(로테이션 방향), <b>반대</b>(주식 선호 방향), <b>OFF</b> 중 하나입니다. 신호 하나만으로는 판단하지 않습니다.</p>
+  <p class="lead">점수에 들어가는 신호는 10개입니다: ① ETF 5일 유출입 ② QQQ/TLT ③ 주식·채권 상관 ④ 금리·나스닥 ⑤ 테크 상대강도 ⑥ ICI ⑦ COT ⑧ 국채 입찰 ⑨ 레버리지 ETF ⑩ 옵션 포지셔닝. 기준(ON 4개 이상 & 차이 2개 이상)은 8개일 때와 같게 유지했습니다 — 새 두 신호는 이력이 쌓이기 전까지 ‘데이터 없음’이라 실제로 판정에 쓰이는 신호 수가 당분간 8개 안팎이고, 레버리지 ETF는 역방향 잡음이 있어 문턱을 낮추거나 높일 근거가 아직 없기 때문입니다(이력 한 달 뒤 재검토). 각 신호는 <b>ON</b>(로테이션 방향), <b>반대</b>(주식 선호 방향), <b>OFF</b> 중 하나입니다. 신호 하나만으로는 판단하지 않습니다.</p>
   <div class="badges">
     <div class="badge"><div class="e">🔴</div><b>로테이션 진행</b><p>ON 4개 이상 <b>그리고</b> ON이 반대보다 2개 이상 많음</p></div>
     <div class="badge"><div class="e">⚪</div><b>혼재</b><p>위·아래 조건 어디에도 해당하지 않음 (예: ON 3개, 반대 1개)</p></div>
@@ -202,6 +236,7 @@ table{border-collapse:collapse;width:100%;font-size:14px}th,td{padding:10px 16px
     <li><b>어디로 갔나:</b> 장기채(TLT)인가, 현금성(SGOV·BIL·MMF)인가?</li>
     <li><b>매주:</b> ICI 펀드 통계·COT 포지션이 1~2주 이상 같은 방향을 확인해 주나?</li>
     <li><b>경매장:</b> 국채 입찰 응찰률·해외 수요가 받쳐주나?</li>
+    <li><b>파생상품:</b> VIX 기간구조가 역전됐나(급한 공포)? 레버리지 ETF 흐름이 테크 약세·장기채 강세 쪽인가, 아니면 단순 저가매수인가?</li>
   </ol>
 </section>
 
