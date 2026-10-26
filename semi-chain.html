@@ -356,7 +356,7 @@ function drawFin(){const el=document.getElementById('cmFinCh');if(!el||!FINC)ret
  const all=(c.qrev||[]).filter(x=>x.rev!=null),n0=all.length,q=all.slice(-FINN),off=n0-q.length;const ccy=c.rev_ccy||c.ccy;
  const k=c.cons&&c.cons.ccy===ccy&&c.cons.rev?c.cons:null;  // 다가올 분기 컨센서스(같은 통화일 때만)
  const [div,un]=finUnit(ccy,Math.max(...q.map(x=>x.rev),k?k.rev:0));const R=v=>v==null?null:+(v/div).toFixed(v/div>=100?0:1);
- const xl=q.map(qLab).concat(k?[k.q||'다음 분기E']:[]),N=xl.length,pad=a=>k?a.concat([null]):a;
+ const kq=k?String(k.q||'다음 분기E').replace(/([1-4])Q\s*FY\d{0,2}(\d{2})/i,'$1Q$2').replace(/E?$/,'E'):'';const xl=q.map(qLab).concat(k?[kq]:[]),N=xl.length,pad=a=>k?a.concat([null]):a;
  const gpm=pad(q.map(x=>x.gp!=null&&x.rev?+(x.gp/x.rev*100).toFixed(1):null)),opm=pad(q.map(x=>x.op!=null&&x.rev?+(x.op/x.rev*100).toFixed(1):null));
  const eOpm=k&&k.op!=null?+(k.op/k.rev*100).toFixed(1):null,eGpm=k&&k.gp!=null?+(k.gp/k.rev*100).toFixed(1):null;
  const hasG=gpm.some(v=>v!=null),cv=x=>getComputedStyle(document.documentElement).getPropertyValue(x).trim();
@@ -374,7 +374,7 @@ function drawFin(){const el=document.getElementById('cmFinCh');if(!el||!FINC)ret
  FINCH.setOption({backgroundColor:'transparent',animation:false,grid:{left:46,right:52,top:28,bottom:SG?70:46},
   tooltip:{trigger:'axis',confine:true,formatter:ps=>`<b>${xl[ps[0].dataIndex]}</b>${ps[0].dataIndex===N-1&&k?' (컨센서스)':''}<br>`+ps.filter(p=>p.value!=null&&p.value!==0).map(p=>`${p.marker}${p.seriesName}: ${p.seriesType==='line'?p.value+'%':p.value.toLocaleString()+' '+un}`).join('<br>')},
   legend:{bottom:0,textStyle:{color:mc,fontSize:11},itemWidth:12,itemHeight:8,type:'scroll'},
-  xAxis:{type:'category',data:xl,axisLabel:{color:mc,fontSize:10.5},axisLine:{lineStyle:{color:lc}}},
+  xAxis:{type:'category',data:xl,axisLabel:{color:mc,fontSize:10,interval:0,rotate:el.clientWidth<520&&N>8?40:0},axisLine:{lineStyle:{color:lc}}},
   yAxis:[{type:'value',name:un,nameTextStyle:{color:mc,fontSize:10},axisLabel:{color:mc,fontSize:10},splitLine:{lineStyle:{color:lc}}},
          {type:'value',axisLabel:{color:mc,fontSize:10,formatter:'{value}%'},splitLine:{show:false}}],
   dataZoom:[{type:'inside',xAxisIndex:0}],
@@ -383,7 +383,7 @@ function drawFin(){const el=document.getElementById('cmFinCh');if(!el||!FINC)ret
    {name:'OPM',type:'line',yAxisIndex:1,data:opm,symbol:'diamond',symbolSize:7,connectNulls:false,itemStyle:{color:'#fb923c'},lineStyle:{width:2.2},label:lab(v=>v+'%',tc)},
    ...(hasG?eLine(eGpm,gpm,'#3b82f6','GPM(E)'):[]),...eLine(eOpm,opm,'#fb923c','OPM(E)')]});
  const f0=q[0],f1=q[q.length-1],ch=f0&&f1&&f0.rev?((f1.rev/f0.rev-1)*100).toFixed(1):null;
- document.getElementById('cmFinSrc').textContent=`출처: ${c.src==='naver'?'네이버 금융 분기 실적(매출총이익 미제공 → GPM 없음)':'FMP 분기 손익계산서'}${SG?' · 사업부별 매출: FMP(SEC XBRL 세그먼트)':''}${k?` · ${k.q||''} = ${esc(k.src||'컨센서스')}(점선·연한 막대, 애널리스트 ${k.n||'-'}명${k.op!=null?', OPM=컨센 영업이익÷매출':''})`:''} · 통화 ${ccy} · ${q.length}개 분기 매출 ${ch!=null?(ch>0?'+':'')+ch+'%':''}`;
+ document.getElementById('cmFinSrc').textContent=`출처: ${c.src==='naver'?'네이버 금융 분기 실적(매출총이익 미제공 → GPM 없음)':'FMP 분기 손익계산서'}${SG?' · 사업부별 매출: FMP(SEC XBRL 세그먼트)':''}${k?` · ${kq} = ${esc(k.src||'컨센서스')}(점선·연한 막대, 애널리스트 ${k.n||'-'}명${k.op!=null?', OPM=컨센 영업이익÷매출':''})`:''} · 통화 ${ccy} · ${q.length}개 분기 매출 ${ch!=null?(ch>0?'+':'')+ch+'%':''}`;
  document.querySelectorAll('.cm-fb button[data-n]').forEach(b=>b.onclick=()=>{FINN=+b.dataset.n;document.querySelectorAll('.cm-fb button[data-n]').forEach(x=>x.classList.toggle('on',x===b));drawFin()});}
 // 기업개요 하단 주가 차트: 일봉/주봉 × 1M·3M·6M·12M (사용자 지시 2026-10-27) — semi-chain-px/{티커}.json 지연 로드
 let PXC={},PXT=null,PXCH=null,PXI='d',PXR=6;
