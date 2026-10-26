@@ -386,8 +386,8 @@ function drawFin(){const el=document.getElementById('cmFinCh');if(!el||!FINC)ret
  document.getElementById('cmFinSrc').textContent=`출처: ${c.src==='naver'?'네이버 금융 분기 실적(매출총이익 미제공 → GPM 없음)':'FMP 분기 손익계산서'}${SG?' · 사업부별 매출: FMP(SEC XBRL 세그먼트)':''}${k?` · ${kq} = ${esc(k.src||'컨센서스')}(점선·연한 막대, 애널리스트 ${k.n||'-'}명${k.op!=null?', OPM=컨센 영업이익÷매출':''})`:''} · 통화 ${ccy} · ${q.length}개 분기 매출 ${ch!=null?(ch>0?'+':'')+ch+'%':''}`;
  document.querySelectorAll('.cm-fb button[data-n]').forEach(b=>b.onclick=()=>{FINN=+b.dataset.n;document.querySelectorAll('.cm-fb button[data-n]').forEach(x=>x.classList.toggle('on',x===b));drawFin()});}
 // 기업개요 하단 주가 차트: 일봉/주봉 × 1M·3M·6M·12M (사용자 지시 2026-10-27) — semi-chain-px/{티커}.json 지연 로드
-let PXC={},PXT=null,PXCH=null,PXI='d',PXR=6;
-function pxBox(c){PXT=c;return `<div class="cm-px"><div class="cm-fch"><b>주가 차트</b><span class="cm-fb" id="pxI">${[['d','일봉'],['w','주봉']].map(([k,l])=>`<button data-i="${k}" class="${k===PXI?'on':''}">${l}</button>`).join('')}</span><span class="cm-fb" id="pxR">${[1,3,6,12].map(n=>`<button data-r="${n}" class="${n===PXR?'on':''}">${n}M</button>`).join('')}</span></div><div id="cmPxCh"><div class="cm-ld">주가 불러오는 중…</div></div><div class="cm-src" id="cmPxSrc"></div></div>`}
+let PXC={},PXT=null,PXCH=null,PXI='d',PXR=12;  // 기본 일봉 12M (사용자 지시 2026-10-27)
+function pxBox(c){PXT=c;return `<div class="cm-px"><div class="cm-fch"><b>주가 차트</b><span class="cm-fb" id="pxI">${[['d','일봉'],['w','주봉']].map(([k,l])=>`<button data-i="${k}" class="${k===PXI?'on':''}">${l}</button>`).join('')}</span><span class="cm-fb" id="pxR">${[1,3,6,12].map(n=>`<button data-r="${n}" class="${n===PXR?'on':''}">${n}M</button>`).join('')}</span><span id="cmPxDD" style="margin-left:auto;font-size:12px"></span></div><div id="cmPxCh"><div class="cm-ld">주가 불러오는 중…</div></div><div class="cm-src" id="cmPxSrc"></div></div>`}
 function pxWeekly(a){const o=[];let cur=null,key=null;for(const r of a){const dt=new Date(r[0]+'T00:00:00Z'),dw=(dt.getUTCDay()+6)%7,mon=new Date(dt-dw*864e5).toISOString().slice(0,10);
  if(mon!==key){if(cur)o.push(cur);key=mon;cur=[r[0],r[1],r[2],r[3],r[4],r[5]||0]}else{cur[0]=r[0];cur[2]=Math.max(cur[2]??r[2],r[2]??cur[2]);cur[3]=Math.min(cur[3]??r[3],r[3]??cur[3]);cur[4]=r[4];cur[5]+=(r[5]||0)}}if(cur)o.push(cur);return o}
 function drawPx(){const el=document.getElementById('cmPxCh');if(!el||!PXT)return;const c=PXT,k=c.ticker.replace(/\./g,'_');
@@ -408,6 +408,13 @@ function drawPx(){const el=document.getElementById('cmPxCh');if(!el||!PXT)return
    series:[{name:'주가',type:'candlestick',data:a.map(r=>[r[1],r[4],r[3],r[2]]),itemStyle:{color:UP,color0:DN,borderColor:UP,borderColor0:DN}},
     {name:PXI==='w'?'MA10':'MA20',type:'line',data:ma(PXI==='w'?10:20),showSymbol:false,lineStyle:{width:1.2,color:'#f0b452'}},
     {name:'거래량',type:'bar',xAxisIndex:1,yAxisIndex:1,data:a.map(r=>({value:r[5]||0,itemStyle:{color:r[4]>=r[1]?UP+'99':DN+'99'}}))}]});
+  // 고점 대비 낙폭(MDD): 보이는 구간의 최고 고가 대비 구간 마지막 종가 — 기간 버튼·휠 확대 모두 반영
+  const dd=(i0,i1)=>{let h=i0;for(let i=i0;i<=i1;i++)if(a[i][2]>a[h][2])h=i;const pk=a[h][2],cur=a[i1][4],v=(cur/pk-1)*100;
+   document.getElementById('cmPxDD').innerHTML=`고점 대비 <b style="color:${v<0?DN:UP}">${v>=0?'+':''}${v.toFixed(1)}%</b> <span style="color:${mc}">(고점 ${(+pk).toLocaleString()} · ${a[h][0].slice(2)})</span>`;
+   PXCH.setOption({series:[{markLine:{symbol:'none',silent:true,label:{formatter:'고점 '+(+pk).toLocaleString(),color:mc,fontSize:10,position:'insideStartTop'},lineStyle:{type:'dashed',color:mc},data:[{yAxis:pk}]},
+    markPoint:{symbol:'pin',symbolSize:26,itemStyle:{color:'#f0b452'},label:{show:false},data:[{coord:[h,pk]}]}}]})};
+  dd(0,a.length-1);
+  PXCH.on('datazoom',()=>{const z=PXCH.getOption().dataZoom[0];const n=a.length-1,i0=Math.max(0,Math.round(z.start/100*n)),i1=Math.min(n,Math.round(z.end/100*n));if(i1>i0)dd(i0,i1)});
   const p0=a[0][4],p1=a[a.length-1][4];document.getElementById('cmPxSrc').textContent=`${PXI==='w'?'주봉':'일봉'} · 최근 ${PXR}개월 ${((p1/p0-1)*100).toFixed(1)}% · 종가 ${(+p1).toLocaleString()} (${a[a.length-1][0]}) · ${PXI==='w'?'MA10(주)':'MA20'} · 출처 ${c.src==='naver'?'네이버 금융':c.src==='tpex'?'TPEx':'FMP'} · 휠/핀치 확대`;
  });
  document.querySelectorAll('#pxI button').forEach(b=>b.onclick=()=>{PXI=b.dataset.i;document.querySelectorAll('#pxI button').forEach(x=>x.classList.toggle('on',x===b));drawPx()});
