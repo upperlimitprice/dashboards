@@ -48,6 +48,9 @@ input{flex:1;min-width:230px}
 .navbtn:not(:disabled):hover{border-color:#1f6fd6;color:#1f6fd6}
 .ozb{font:inherit;font-size:.74rem;padding:3px 10px;border:1px solid #ccd5dd;border-radius:7px;background:#fff;cursor:pointer}
 .ozb.on{background:#1f3b73;color:#fff;border-color:#1f3b73}
+body.embed #nav,body.embed h1,body.embed #insight,body.embed #tabs,body.embed #recentP,body.embed #sec,body.embed #q,body.embed #cmp{display:none!important}
+body.embed .wrap{padding-top:8px}body.embed .duo{grid-template-columns:1fr!important}
+body.embed .duo>*,body.embed .card{min-width:0;max-width:100%;box-sizing:border-box}body.embed .wrap{padding-left:8px;padding-right:8px}
 </style>
 <div class='wrap'>
 <div id='nav' style='position:fixed;top:10px;left:12px;z-index:20;display:flex;gap:6px'>
@@ -148,7 +151,8 @@ Promise.all([fetch('osc/index.json?v='+Date.now()).then(r=>r.json()), fetch('osc
   if(d.updated){$('upd').textContent=`최종 업데이트 ${d.updated}`;document.title=`수급 오실레이터 · ${d.updated} 업데이트`;}
   renderRecent();
   renderInsight();
-  $('q').value=(localStorage.getItem('oscLast')||'삼성전자'); show();
+  const _P=new URLSearchParams(location.search);if(_P.get('embed')==='1')document.body.classList.add('embed');  // 수급 페이지 팝업용 (2026-10-27)
+  $('q').value=_P.get('s')||(localStorage.getItem('oscLast')||'삼성전자'); show();
 });
 async function renderInsight(){
   try{
@@ -200,7 +204,7 @@ async function show(){
   const hit=find($('q').value); if(!hit) return;
   const [tk,name,sh]=hit;
   if(!cacheShard[sh]) cacheShard[sh]=await fetch(`osc/s${sh}.json`).then(r=>r.json());
-  cur={tk,name,rec:cacheShard[sh][tk]}; pushRecent(tk,name); hpush({t:'main',tk}); try{localStorage.setItem('oscLast',name);}catch(_){} 
+  cur={tk,name,rec:cacheShard[sh][tk]}; if(!document.body.classList.contains('embed')){pushRecent(tk,name); hpush({t:'main',tk}); try{localStorage.setItem('oscLast',name);}catch(_){}} 
   $('chips').innerHTML=(hit[3]||[]).map(c=>{const x=SEC.find(y=>y.c===c);return x?`<span class='chip'>${x.n}</span>`:'';}).join('');
   draw();
 }
