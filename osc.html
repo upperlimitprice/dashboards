@@ -50,7 +50,7 @@ input{flex:1;min-width:230px}
 .ozb.on{background:#1f3b73;color:#fff;border-color:#1f3b73}
 body.embed #nav,body.embed h1,body.embed #insight,body.embed #tabs,body.embed #recentP,body.embed #sec,body.embed #q,body.embed #cmp{display:none!important}
 body.embed .wrap{padding-top:8px}body.embed .duo{grid-template-columns:1fr!important}
-body.embed .duo>*,body.embed .card{min-width:0;max-width:100%;box-sizing:border-box}body.embed .wrap{padding-left:8px;padding-right:8px}
+body.embed .duo>*,body.embed .card{min-width:0;max-width:100%;box-sizing:border-box}body.embed .wrap>p.sub{display:none}body.embed .wrap{padding-bottom:6px!important}body.embed .card{padding:10px 14px}body.embed #chart svg{display:block;margin:0 auto}body.embed .wrap{padding-left:8px;padding-right:8px}
 </style>
 <div class='wrap'>
 <div id='nav' style='position:fixed;top:10px;left:12px;z-index:20;display:flex;gap:6px'>
@@ -152,6 +152,9 @@ Promise.all([fetch('osc/index.json?v='+Date.now()).then(r=>r.json()), fetch('osc
   renderRecent();
   renderInsight();
   const _P=new URLSearchParams(location.search);if(_P.get('embed')==='1')document.body.classList.add('embed');  // 수급 페이지 팝업용 (2026-10-27)
+  if(document.body.classList.contains('embed')){  // 팝업: 스크롤 없이 한 화면에 들어오도록 차트 높이를 남은 세로 공간에 맞춤
+    const fit=()=>{const sv=document.querySelector('#chart svg');if(!sv)return;sv.style.maxHeight=Math.max(220,innerHeight-sv.getBoundingClientRect().top-26)+'px';};
+    new MutationObserver(fit).observe($('chart'),{childList:true});addEventListener('resize',fit);}
   $('q').value=_P.get('s')||(localStorage.getItem('oscLast')||'삼성전자'); show();
 });
 async function renderInsight(){
