@@ -238,7 +238,7 @@ function cmTab(k){document.querySelectorAll('#cmTabs button').forEach(b=>b.class
 let PRESD=null;const presLoad=()=>PRESD?Promise.resolve(PRESD):fetch('semi-chain-pres.json',{cache:'no-cache'}).then(r=>r.ok?r.json():{}).catch(()=>({})).then(j=>PRESD=j);
 function renderCo(c,d){const sec=(k,h)=>`<div class="cm-sec" data-k="${k}">${h}</div>`;
  const PR=(PRESD||{})[c.ticker.replace(/\./g,'_')]||[];
- const prH=PR.length?'<h4 class="cm-h">IR 프레젠테이션 자료 · '+PR.length+'건 (최신순)</h4><ul class="cm-pr">'+PR.map(x=>`<li><span class="mut">${x.y||''}${x.q?' Q'+x.q:''}</span> <a href="${esc(x.u)}" target="_blank" rel="noopener noreferrer">${esc(x.t)}</a></li>`).join('')+'</ul><div class="cm-src">출처: 각 사 IR 사이트 원문 링크 (매일 01:00 IR 수집 시 갱신)</div>':'';
+ const prH=PR.length?'<h4 class="cm-h">IR 프레젠테이션 자료 · '+PR.length+'건 (최신 분기순)</h4><ul class="cm-pr">'+PR.map(x=>`<li><span class="mut">${x.p||x.y||''}</span> <a href="${esc(x.u)}" target="_blank" rel="noopener noreferrer">${esc(x.t)}</a></li>`).join('')+'</ul><div class="cm-src">출처: 각 사 IR 사이트 원문 링크 (매일 01:00 IR 수집 시 갱신)</div>':'';
  const ov=`<table class="cm-f">${(d.facts||[]).map(([a,b])=>`<tr><th>${esc(a)}</th><td>${b}</td></tr>`).join('')}<tr><th>밸류체인</th><td>${esc(c.l1)} › ${esc(c.l2)}</td></tr><tr><th>주요 제품</th><td>${esc(c.products)}</td></tr></table><div class="cm-src">출처: ${esc(d.facts_src)}</div>`;
  const bz=d.biz?`${d.biz.html}<div class="cm-src">출처: ${esc(d.biz.src)} → AI 요약 (${esc(d.biz.date)})</div>`:'<div class="cm-ld">사업내용 준비 중</div>';
  let ec;const cl=d.calls;
