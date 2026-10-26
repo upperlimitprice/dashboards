@@ -385,7 +385,7 @@ function opsChart(el,e,n,prev){if(prev)prev.dispose();el.innerHTML='';const ch=e
    const oth=x.map(p=>{if(ob.s[p]==null)return null;const v=ob.s[p]-top.reduce((a,sg)=>a+((P[p]||{})[sg]||0),0);return v>0.5?+v.toFixed(1):null});
    if(oth.some(v=>v!=null))S.push({name:'기타·구분 없음',type:'bar',stack:'b',barMaxWidth:38,itemStyle:{color:SEGC[5]},data:oth})}
   else S.push({name:'수주잔고',type:'bar',stack:'b',barMaxWidth:38,itemStyle:{color:'#5E86C2',borderRadius:[3,3,0,0]},data:x.map(p=>ob.s[p]??null)});
-  if(gp.size)S[0].markArea={silent:true,itemStyle:{color:'rgba(140,150,165,.16)',borderColor:mc,borderType:'dashed',borderWidth:.6},label:{show:true,position:'insideBottom',color:mc,fontSize:10},data:x.filter(p=>gp.has(p)).map(p=>[{xAxis:ymLab(p),name:'미기재'},{xAxis:ymLab(p)}])}}
+  if(gp.size)S[0].markArea={silent:true,itemStyle:{color:'rgba(140,150,165,.16)',borderColor:mc,borderType:'dashed',borderWidth:.6},label:{show:el.clientWidth>=600,position:'insideBottom',color:mc,fontSize:10},data:x.filter(p=>gp.has(p)).map(p=>[{xAxis:ymLab(p),name:'미기재'},{xAxis:ymLab(p)}])}}
  const rv=x.map(p=>e.rev&&e.rev[p]!=null?e.rev[p]:null);
  if(rv.some(v=>v!=null))S.push({name:'분기 매출',type:'line',data:rv,symbol:'none',connectNulls:true,lineStyle:{width:1.4,type:'dashed',color:mc},itemStyle:{color:mc}});
  let um=100;
