@@ -64,6 +64,9 @@ td.co b.cn{cursor:pointer;text-decoration:underline dotted;text-underline-offset
 @media(max-width:640px){.cm-bg{padding:16px}.cm-top{padding:12px 14px 0}.cm-bd{padding:12px 14px 18px}.cm-tabs button{padding:7px 10px}}
 /* 실적발표 화면·다가올 분기 카드 (2026-10-27) */
 .ev-h{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:16px 0 4px;padding-bottom:6px;border-bottom:2px solid var(--line);font-weight:800;font-size:14.5px}.ev-h .n{font-weight:400;color:var(--mut);font-size:12px}
+.ev-dt>summary{cursor:pointer;list-style:none;user-select:none}.ev-dt>summary::-webkit-details-marker{display:none}
+.ev-car{display:inline-block;color:var(--mut);font-size:12px;transition:transform .15s}.ev-dt:not([open])>summary .ev-car{transform:rotate(-90deg)}
+.ev-dt:not([open])>summary{margin-bottom:0}
 .dd{font-size:11px;font-weight:800;padding:1px 9px;border-radius:9px;background:var(--chip);border:1px solid var(--line);color:var(--ink)}.dd.td{background:var(--acc);border-color:var(--acc);color:#fff}.dd.ys{color:var(--mut)}
 .ev{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,.9fr) minmax(0,1.7fr);gap:3px 14px;padding:9px 4px;border-bottom:1px solid var(--line);align-items:center;font-size:12.5px}.ev:hover{background:var(--hov)}
 .ev .nm b{cursor:pointer;font-size:13.5px;text-decoration:underline dotted;text-underline-offset:3px;text-decoration-color:var(--mut)}.ev .nm b:hover{color:var(--acc)}.ev .tk{font-size:11px;color:var(--mut)}.ev .cs{font-variant-numeric:tabular-nums;line-height:1.6}
@@ -308,8 +311,11 @@ const SESS_O=c=>{const l=sessLab(c);return l.startsWith('장전')?0:l.startsWith
 const bySess=(x,y)=>SESS_O(x.c)-SESS_O(y.c)||byCap(x,y);  // 같은 날짜 안에서 장전 → 장중 → 장후 → 시점 미정, 그 안은 시총순
 const dMark=d=>{const n=dDiff(d);return n===0?'<span class="dd td">오늘</span>':n===-1?'<span class="dd ys">어제</span>':n>0&&n<=7?`<span class="dd">D-${n}</span>`:''};
 const evChip=x=>{const c=x.c;return `<span class="ec ${x.done?'dn':c.ne_conf==='확정'?'y':'e'}" data-ci="${c.i}" title="${esc(c.name_ko)} ${esc(c.ticker)} · ${x.done?'발표 완료':esc(c.ne_conf+' · '+(c.ne_src||''))}${c.cons?' · 컨센 '+esc(c.cons.q||''):''}">${CT[c.country][0]} ${esc(c.name_ko.replace(/\s*\(.*?\)\s*/g,''))}${!x.done&&c.ne_time?`<i class="${sessCls(c)}">${esc(sessShort(c))}</i>`:''}<u>${x.done?'✅':c.ne_conf==='확정'?'확정':'예상'}</u></span>`};
+// 줄글 보기 날짜별 접기 토글 (사용자 지시 2026-10-27) — 접은 날짜는 localStorage semi-ev-fold에 기억
+let EVF={};try{EVF=JSON.parse(localStorage.getItem('semi-ev-fold')||'{}')}catch(e){}
+function evFold(el){EVF[el.dataset.d]=!el.open;if(el.open)delete EVF[el.dataset.d];try{localStorage.setItem('semi-ev-fold',JSON.stringify(EVF))}catch(e){}}
 function evList(a){let h='';for(let i=-1;i<=7;i++){const d=addD(TODAY,i),b=a.filter(x=>x.d===d).sort(bySess);
-  h+=`<div class="ev-h">${mdw(d)} <span class="dd ${i===0?'td':i<0?'ys':''}">${i===0?'D-Day 오늘':i<0?'어제 (D+1)':i===1?'D-1 내일':'D-'+i}</span><span class="n">${b.length?b.length+'개사 · 확정 '+b.filter(x=>x.done||x.c.ne_conf==='확정').length:''}</span></div>`+(b.length?b.map((x,j)=>{const o=SESS_O(x.c),po=j?SESS_O(b[j-1].c):-1;return (o!==po?`<div class="ev-sg ${sessCls(x.c)||'ss-na'}">${['장전 발표','장중 발표','장후 발표','발표 시점 미정'][o]}</div>`:'')+evRow(x)}).join(''):'<div class="ev-none">발표 예정 기업 없음</div>')}return h}
+  h+=`<details class="ev-dt" data-d="${d}" ontoggle="evFold(this)"${EVF[d]?'':' open'}><summary class="ev-h"><span class="ev-car">▾</span>${mdw(d)} <span class="dd ${i===0?'td':i<0?'ys':''}">${i===0?'D-Day 오늘':i<0?'어제 (D+1)':i===1?'D-1 내일':'D-'+i}</span><span class="n">${b.length?b.length+'개사 · 확정 '+b.filter(x=>x.done||x.c.ne_conf==='확정').length:''}</span></summary>`+(b.length?b.map((x,j)=>{const o=SESS_O(x.c),po=j?SESS_O(b[j-1].c):-1;return (o!==po?`<div class="ev-sg ${sessCls(x.c)||'ss-na'}">${['장전 발표','장중 발표','장후 발표','발표 시점 미정'][o]}</div>`:'')+evRow(x)}).join(''):'<div class="ev-none">발표 예정 기업 없음</div>')+'</details>'}return h}
 function evAgenda(a){let h='';for(let i=-1;i<=7;i++){const d=addD(TODAY,i),b=a.filter(x=>x.d===d).sort(bySess);
   h+=`<div class="ag"><div class="ag-d">${mdw(d)} ${dMark(d)} <span class="mut" style="font-weight:400;font-size:11.5px">${b.length?b.length+'개사':''}</span></div><div class="ag-c">${b.length?b.map(evChip).join(''):'<span class="mut" style="font-size:12px">발표 예정 기업 없음</span>'}</div></div>`}return h}
 function evCal(){const [Y,M]=EV.m.split('-').map(Number);const first=`${EV.m}-01`,last=new Date(Date.UTC(Y,M,0)).toISOString().slice(0,10);
