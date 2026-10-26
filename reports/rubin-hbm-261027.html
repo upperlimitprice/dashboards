@@ -1,0 +1,83 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>베라루빈 HBM 역산</title>
+<style>
+:root{--bg:#0e1117;--card:#161b24;--ink:#e8ebf1;--sub:#97a0ae;--line:#283040;--acc:#76b900;--up:#ff5a5f;--dn:#4d8dff;--warn:#f0b452;--chip:#1f2633}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:"Pretendard","Apple SD Gothic Neo","Noto Sans KR",sans-serif;max-width:1080px;margin:0 auto;padding:44px 48px 40px}
+h1{font-size:40px;margin:0 0 6px;letter-spacing:-.5px}h1 b{color:var(--acc)}
+.sub{color:var(--sub);font-size:17px;margin-bottom:26px}
+.verdict{display:flex;gap:14px;margin-bottom:22px}
+.v{flex:1;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 20px}
+.v .k{color:var(--sub);font-size:15px}.v .n{font-size:34px;font-weight:800;margin-top:4px}.v .d{font-size:14.5px;color:var(--sub);margin-top:4px;line-height:1.45}
+.v.main{border-color:var(--acc);background:linear-gradient(180deg,#1b2a10,#161b24)}.v.main .n{color:var(--acc)}
+h2{font-size:23px;margin:26px 0 12px;display:flex;align-items:center;gap:10px}h2 .no{background:var(--acc);color:#0e1117;border-radius:8px;padding:1px 9px;font-size:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 22px}
+.formula{font-size:19px;line-height:1.9}.formula b{color:var(--acc)}.formula .m{color:var(--sub);font-size:15px}
+table{width:100%;border-collapse:collapse;font-size:16px}th,td{padding:10px 14px;border-bottom:1px solid var(--line);text-align:right}th{color:var(--sub);font-weight:600;font-size:14.5px}
+td:first-child,th:first-child{text-align:left}tr.hl td{background:#1b2a10}tr.alt td{background:#2a2010}
+.dn{color:var(--dn);font-weight:700}.ok{color:var(--acc);font-weight:700}.wn{color:var(--warn);font-weight:700}
+.stack{display:flex;gap:26px;align-items:flex-end;justify-content:center;padding:6px 0 2px}
+.st{display:flex;flex-direction:column;align-items:center;gap:6px}.st .lay{display:flex;flex-direction:column-reverse;gap:2px}
+.st .lay i{display:block;width:120px;height:9px;border-radius:2px;background:#3a4a2a}.st .lay i.b{background:#555f70;height:12px}
+.st.on .lay i:not(.b){background:var(--acc)}.st .t{font-size:15px;font-weight:700}.st .s{font-size:13.5px;color:var(--sub);text-align:center;line-height:1.4}
+.ev{display:grid;grid-template-columns:1fr 1fr;gap:10px}.e{background:var(--chip);border-radius:12px;padding:12px 14px;font-size:14.5px;line-height:1.5}.e .src{color:var(--sub);font-size:12.5px;margin-top:4px}
+.badge{display:inline-block;padding:2px 9px;border-radius:999px;font-size:13px;font-weight:700;margin-right:6px}.b12{background:#1f3a12;color:var(--acc)}.b8{background:#3a2c10;color:var(--warn)}
+.foot{color:var(--sub);font-size:13px;margin-top:22px;line-height:1.6}
+@media (max-width:700px){body{padding:24px 16px}h1{font-size:28px}.sub{font-size:14px}.verdict{flex-direction:column}.v .n{font-size:27px}
+.formula{font-size:15.5px}table{font-size:13.5px;min-width:640px}th,td{padding:8px 10px}.stack{gap:10px}.st .lay i{width:64px}.st .t{font-size:13px}.st .s{font-size:12px}
+.ev{grid-template-columns:1fr}h2{font-size:19px}}
+</style></head><body>
+<h1>NVIDIA <b>Vera Rubin</b> HBM 역산</h1>
+<div class="sub">스펙표(이전→수정) 용량·대역폭으로 세대·단수·핀 속도를 거꾸로 계산 · 2026-10-27 · 쩜상리서치</div>
+
+<div class="verdict">
+ <div class="v main"><div class="k">Rubin GPU · NVL72 · Superchip</div><div class="n">HBM4 12단 36GB</div><div class="d">24Gb 다이 × 12단 × 8스택 = 288GB<br>핀 10.7 → <b class="dn">9.4Gbps</b> (−12.7%)</div></div>
+ <div class="v"><div class="k">HGX Rubin NVL8 (수정)</div><div class="n" style="color:var(--warn)">HBM4 8단 추정</div><div class="d">스택 ~32GB × 8 = 2TB급<br>핀 <b class="wn">≈8Gbps</b> = JEDEC HBM4 기본 속도</div></div>
+ <div class="v"><div class="k">세대</div><div class="n">HBM4</div><div class="d">HBM4E 아님: 핀 9~11Gbps는 HBM4 구간<br>HBM4E(12~16Gbps)는 Rubin Ultra 몫</div></div>
+</div>
+
+<h2><span class="no">1</span>역산 공식</h2>
+<div class="card formula">
+ 스택당 용량 = GPU 용량 ÷ 8스택 &nbsp;→&nbsp; <b>288GB ÷ 8 = 36GB</b> <span class="m">(36GB를 만드는 표준 구성은 24Gb(3GB) 다이 × 12단뿐)</span><br>
+ 핀당 속도 = GPU 대역폭 ÷ 8스택 × 8bit ÷ 2,048핀 &nbsp;→&nbsp; <b>19.2TB/s → 9.4Gbps</b> · 22TB/s → 10.7Gbps<br>
+ <span class="m">※ 대역폭은 핀 수 × 핀 속도로만 정해지고 단수와 무관 — 단수는 '용량'에서, 속도는 '대역폭'에서 나온다</span>
+</div>
+
+<h2><span class="no">2</span>구성별 역산표</h2>
+<div class="card" style="padding:6px 8px;overflow-x:auto">
+<table>
+<tr><th>구성 (GPU 1개 환산)</th><th>GPU 용량</th><th>스택당</th><th>GPU 대역폭</th><th>스택당</th><th>핀 속도</th><th>판정</th></tr>
+<tr><td>Rubin GPU · 이전</td><td>288GB</td><td>36GB</td><td>22.0TB/s</td><td>2.75TB/s</td><td>10.7Gbps</td><td class="ok">12단</td></tr>
+<tr class="hl"><td>Rubin GPU · 수정</td><td>288GB</td><td>36GB</td><td>19.2TB/s</td><td>2.40TB/s</td><td><b>9.4Gbps</b></td><td class="ok">12단</td></tr>
+<tr><td>Superchip 수정 ÷2</td><td>288GB</td><td>36GB</td><td>19.25TB/s</td><td>2.41TB/s</td><td>9.4Gbps</td><td class="ok">12단</td></tr>
+<tr><td>NVL72 수정 ÷72</td><td>287.5GB</td><td>35.9GB</td><td>19.4TB/s</td><td>2.43TB/s</td><td>9.5Gbps</td><td class="ok">12단</td></tr>
+<tr><td>HGX NVL8 이전 ÷8</td><td>287.5GB</td><td>35.9GB</td><td>22.0TB/s</td><td>2.75TB/s</td><td>10.7Gbps</td><td class="ok">12단</td></tr>
+<tr class="alt"><td>HGX NVL8 수정 ÷8 · 8스택</td><td>250GB</td><td>31.3GB</td><td>16.25TB/s</td><td>2.03TB/s</td><td><b>7.9Gbps</b></td><td class="wn">8단(32GB)</td></tr>
+<tr><td>└ 대안: 12단 7스택만 활성</td><td>252GB</td><td>36GB</td><td>16.25TB/s</td><td>2.32TB/s</td><td>9.1Gbps</td><td style="color:var(--sub)">가능성 낮음</td></tr>
+</table></div>
+
+<h2><span class="no">3</span>스택 구성 비교 (8스택 기준)</h2>
+<div class="card"><div class="stack">
+ <div class="st"><div class="lay"><i class="b"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="t">8단 × 24Gb</div><div class="s">24GB/스택<br>192GB <span class="dn">✗</span><br>(세미애널리시스 전망)</div></div>
+ <div class="st on"><div class="lay"><i class="b"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="t" style="color:var(--acc)">12단 × 24Gb</div><div class="s">36GB/스택<br><b class="ok">288GB ✓</b><br>Rubin 본진</div></div>
+ <div class="st"><div class="lay"><i class="b"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="t" style="color:var(--warn)">8단 × 32Gb</div><div class="s">32GB/스택<br><b class="wn">256GB ≈ 2TB/8 ✓</b><br>HGX 수정치</div></div>
+ <div class="st"><div class="lay"><i class="b"></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="t">16단 × 24Gb</div><div class="s">48GB/스택<br>384GB ✗<br>(샘플링 단계)</div></div>
+</div></div>
+
+<h2><span class="no">4</span>학습 데이터 근거</h2>
+<div class="ev">
+ <div class="e"><span class="badge b12">12단</span><b>마이크론 IR</b>: "HBM4 36GB 12H 2026년 1분기 양산 출하, NVIDIA Vera Rubin용으로 설계" · 스택당 2.8TB/s 이상, 핀 11Gb/s 이상<div class="src">MU FQ2-26 Prepared Remarks · 10/23 웨비나</div></div>
+ <div class="e"><span class="badge b12">12단</span><b>카운터포인트</b>: 루빈용 HBM4 대부분 여전히 12단으로 수렴 — 8단·4단 축소 우려 반박<div class="src">Counterpoint 10월</div></div>
+ <div class="e"><span class="badge b8">8단</span><b>ZDNet Korea</b>: 삼성·SK, 엔비디아향 8단 HBM4 2027년 2분기 양산·출하 목표. 8단은 원래 계획에 없다가 3분기 논의 활발<div class="src">2026-10-26</div></div>
+ <div class="e"><span class="badge b8">8단</span><b>미래에셋</b>: 12단→8단 대체는 공급 제약 속 스택 개수를 늘려 물량을 나누는 방법<div class="src">X 요약 10월</div></div>
+ <div class="e"><b>삼성 HBM4</b>: 안정 11.7Gbps · 최대 13Gbps 주장 → 실제 탑재 9.4Gbps로 <span class="dn">여유 마진 큰 폭</span><div class="src">10월 보도</div></div>
+ <div class="e"><b>가격</b>: 12단 36GB HBM4 스택 약 $600 → $1,300 · GPU당 8스택 ≈ <b>$10.4k</b>, NVL72 576스택 ≈ $0.75M<div class="src">서울경제 인용 · 작성자 계산</div></div>
+</div>
+
+<h2><span class="no">5</span>해석</h2>
+<div class="card" style="font-size:16.5px;line-height:1.75">
+ · <b>용량(288GB) 불변 → 12단 유지</b>, 낮아진 건 <b class="dn">핀 속도(10.7→9.4Gbps)</b>뿐. 단수 축소가 아니라 <u>속도 하향(발열·수율 여유 확보)</u><br>
+ · HGX NVL8만 용량이 2.3→2TB(−13%), 대역폭 −26%: 8스택 × 약 8Gbps(JEDEC 기본)·스택 ~32GB로 맞아떨어져 <b class="wn">8단 HBM4 혼용 신호</b>. 2027년 2분기 8단 공급 보도와 정합<br>
+ · 메모리사 관점: 12단 본진 물량은 유지 → 수요 둔화 우려 과장. 다만 <u>속도 프리미엄(11~13Gbps) 가치는 축소</u>, 8단 혼용 확대 시 스택당 비트·TCB 집약도 하락
+</div>
+<div class="foot">계산: 스택 8개·스택당 2,048 I/O(JEDEC HBM4) 가정. NVL72 1,400TB/s ÷72 = 19.4TB/s로 GPU 수치(19.2)와 소폭 차이는 반올림. HGX 2TB는 반올림 표기라 8단 32GB(2.05TB)·12단 7스택(2.02TB) 모두 맞으며, 32Gb 다이 8단 HBM4 존재 여부는 미확인 — 핀 8Gbps가 JEDEC 기본값과 정확히 일치해 8단 쪽에 무게. 출처: NVIDIA Vera Rubin NVL72 스펙, wccftech(이전→수정표), 거니봇 학습 데이터.</div>
+</body></html>
