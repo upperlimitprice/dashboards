@@ -415,16 +415,19 @@ function drawPx(){const el=document.getElementById('cmPxCh');if(!el||!PXT)return
     markPoint:{symbol:'pin',symbolSize:26,itemStyle:{color:'#f0b452'},label:{show:false},data:[{coord:[h,pk]}]}}]})};
   dd(0,a.length-1);
   // 선 도구: 클릭 1번 = 수평선, 3초 안에 2번째 클릭 = 두 점 잇는 선(첫 클릭의 수평선을 대체). 3초 지나면 별개 명령 (사용자 지시 2026-10-27)
-  const L=PXL[k]||(PXL[k]=[]),ix=d=>{const i=a.findIndex(r=>r[0]>=d);return i<0?null:i};
+  const L=PXL[k]||(PXL[k]=[]),T=d=>Date.parse(d+'T00:00:00Z'),n0=a.length-1,bpd=n0/Math.max(1,T(a[n0][0])-T(a[0][0]));
+  // 날짜 → 봉 위치(증권사 차트처럼 봉 순서 기준 직선). 보이는 기간 밖 날짜는 평균 봉 간격으로 외삽
+  const bx=d=>d<a[0][0]?(T(d)-T(a[0][0]))*bpd:d>a[n0][0]?n0+(T(d)-T(a[n0][0]))*bpd:a.findIndex(r=>r[0]>=d);
   const drawL=()=>PXCH.setOption({series:[{},{},{},{name:'선',type:'line',data:[],silent:true,markLine:{symbol:'none',animation:false,lineStyle:{type:'solid',width:1.4,color:'#b06cf0'},
    label:{color:'#b06cf0',fontSize:10,position:'insideEndTop',formatter:q=>q.data.lb||''},
-   data:L.map(l=>{if(!l.b)return{yAxis:l.a[1],lb:(+l.a[1].toPrecision(5)).toLocaleString()};const i=ix(l.a[0]),j=ix(l.b[0]);return i==null||j==null?null:[{coord:[i,l.a[1]]},{coord:[j,l.b[1]]}]}).filter(Boolean)}}]});
+   data:L.map(l=>{if(!l.b)return{yAxis:l.a[1],lb:(+l.a[1].toPrecision(5)).toLocaleString()};const i1=bx(l.a[0]),i2=bx(l.b[0]);if(i1===i2)return{yAxis:l.b[1],lb:''};const ys=a.map((r,i)=>l.a[1]+(l.b[1]-l.a[1])*(i-i1)/(i2-i1)),[lo,hi]=PXCH.getModel().getComponent('yAxis',0).axis.scale.getExtent(),inr=v=>v>=lo&&v<=hi,sg=[];
+   for(let i=1;i<ys.length;i++)if(inr(ys[i-1])&&inr(ys[i]))sg.push([{coord:[i-1,ys[i-1]]},{coord:[i,ys[i]]}]);return sg}).flat().filter(Boolean)}}]});  // 축 범위 밖 끝점은 ECharts가 선 전체를 숨겨서 범위 안 구간만 봉 단위로 잇는다
   drawL();
   PXCH.getZr().on('click',e=>{if(!PXCH.containPixel({gridIndex:0},[e.offsetX,e.offsetY]))return;const [i,y]=PXCH.convertFromPixel({gridIndex:0},[e.offsetX,e.offsetY]);
    const pt=[a[Math.max(0,Math.min(a.length-1,Math.round(i)))][0],y],now=Date.now();
    if(PXP&&PXP.k===k&&now-PXP.t<3000&&PXP.l===L[L.length-1]){PXP.l.b=pt;PXP=null}else{const l={a:pt};L.push(l);PXP={k,t:now,l}}drawL()});
   document.getElementById('pxClr').onclick=()=>{L.length=0;PXP=null;drawL()};
-  PXCH.on('datazoom',()=>{const z=PXCH.getOption().dataZoom[0];const n=a.length-1,i0=Math.max(0,Math.round(z.start/100*n)),i1=Math.min(n,Math.round(z.end/100*n));if(i1>i0)dd(i0,i1)});
+  PXCH.on('datazoom',()=>{const z=PXCH.getOption().dataZoom[0];const n=a.length-1,i0=Math.max(0,Math.round(z.start/100*n)),i1=Math.min(n,Math.round(z.end/100*n));if(i1>i0)dd(i0,i1);drawL()});
   const p0=a[0][4],p1=a[a.length-1][4];document.getElementById('cmPxSrc').textContent=`${PXI==='w'?'주봉':'일봉'} · 최근 ${PXR}개월 ${((p1/p0-1)*100).toFixed(1)}% · 종가 ${(+p1).toLocaleString()} (${a[a.length-1][0]}) · ${PXI==='w'?'MA10(주)':'MA20'} · 출처 ${c.src==='naver'?'네이버 금융':c.src==='tpex'?'TPEx':'FMP'} · 휠/핀치 확대 · 클릭 수평선, 3초 안에 두 점 클릭 추세선`;
  });
  document.querySelectorAll('#pxI button').forEach(b=>b.onclick=()=>{PXI=b.dataset.i;document.querySelectorAll('#pxI button').forEach(x=>x.classList.toggle('on',x===b));drawPx()});
