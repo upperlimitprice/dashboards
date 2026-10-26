@@ -158,10 +158,18 @@ const fUsd=(v,ccy)=>ccy==='USD'||v==null||!D.fx||!D.fx[ccy]?'':` <span class="mu
 const fEps=(v,ccy)=>v==null?'–':(CSYM[ccy]||'')+v.toLocaleString('en-US',{maximumFractionDigits:Math.abs(v)>=100?0:2});
 const neTag=c=>c.ne?`<span class="cf ${c.ne_conf==='확정'?'y':'e'}">${esc(c.ne_conf)}</span>`:'';
 const neBadge=c=>{let h='';if(c.le&&c.le>=addD(TODAY,-1)&&c.le<=TODAY&&c.le!==c.ne)h+=`<span class="cm-ne" title="최근 실적 발표일">✅ 실적 발표 ${md2(c.le)} (${dLab(c.le)})</span>`;
- if(c.ne)h+=`<span class="cm-ne ${c.ne_conf==='확정'?'':'e'}" title="${esc(c.ne_src||'')}">📅 실적 ${md2(c.ne)} (${dLab(c.ne)}, ${esc(c.ne_conf)}${c.ne_time?' · '+esc(c.ne_time):''})</span>`;return h};
+ if(c.ne)h+=`<span class="cm-ne ${c.ne_conf==='확정'?'':'e'}" title="${esc(c.ne_src||'')}">📅 실적 ${md2(c.ne)} (${dLab(c.ne)}, ${esc(c.ne_conf)}${c.ne_time?' · '+esc(sessLab(c)):''})</span>`;return h};
 const consLine=c=>{const k=c.cons;if(!k)return '<span class="mut">컨센서스 없음</span>';
  return `<span class="mut">${esc(k.q||'다음 분기')}</span> 매출 <b>${fAmt(k.rev,k.ccy)}</b>${k.op!=null?` · ${k.op_k==='EBIT'?'EBIT':'영업이익'} <b>${fAmt(k.op,k.ccy)}</b>`:''}${k.eps!=null?` · EPS ${fEps(k.eps,k.ccy)}`:''}${k.n?` <span class="mut">(${k.n}명)</span>`:''}`};
-function upQ(c){const k=c.cons;const dt=c.ne?`<b>${mdw(c.ne)}</b> · ${dLab(c.ne)} ${neTag(c)}${c.ne_time?`<span class="cf tm">${esc(c.ne_time)}</span>`:''} <span class="mut">출처 ${esc(c.ne_src||'')}</span>`:'<span class="mut">발표 일정 미정</span>';
+// 실적 발표 시점: 장전/장중/장후 + 시각이 확정된 경우 KST 시각 (사용자 지시 2026-10-27)
+const MKT_H={KR:['09:00','15:30',0],JP:['09:00','15:30',0],TW:['09:00','13:30',1],CN:['09:30','15:00',1]};  // 현지 개장·마감, KST와 시차(시간)
+function sessLab(c){const t=c.ne_time||'';if(!t)return '';
+ if(t==='장전')return c.country==='US'?'장전 · 한국 당일 밤':'장전';
+ if(t==='장후')return c.country==='US'?'장후 · 한국 익일 새벽':'장후';
+ const m=/^(\d{1,2}):(\d{2})$/.exec(t),H=MKT_H[c.country];if(!m||!H)return t;
+ const hm=m[1].padStart(2,'0')+':'+m[2],ss=hm<H[0]?'장전':hm>=H[1]?'장후':'장중';
+ const kh=(+m[1]+H[2])%24,kst=String(kh).padStart(2,'0')+':'+m[2];return `${ss} · ${kst} KST`}
+function upQ(c){const k=c.cons;const dt=c.ne?`<b>${mdw(c.ne)}</b> · ${dLab(c.ne)} ${neTag(c)}${c.ne_time?`<span class="cf tm">${esc(sessLab(c))}</span>`:''} <span class="mut">출처 ${esc(c.ne_src||'')}</span>`:'<span class="mut">발표 일정 미정</span>';
  let h=`<div class="cm-up"><h5>📅 다가올 분기 ${esc((k&&k.q)||'')} — 실적발표 예정·컨센서스</h5><div style="font-size:13px">발표 예정일 ${dt}${c.le?` <span class="mut">· 최근 발표 ${esc(c.le)}</span>`:''}</div>`;
  if(!k)return h+'<div class="cm-none">컨센서스 없음 (IB 추정치 미제공)</div></div>';
  const q=(c.qrev||[]).filter(x=>x.rev!=null),L=q[q.length-1],Y=q.length>=4?q[q.length-4]:null,same=k.ccy===(c.rev_ccy||c.ccy);
@@ -285,22 +293,25 @@ let EV={ct:'ALL',cf:false,v:'cal',m:TODAY.slice(0,7),open:{}};try{EV.v=localStor
 function earnRows(lo=addD(TODAY,-1),hi=addD(TODAY,7)){const out=[];
  C.filter(c=>!c.xref).forEach(c=>{if(c.ne&&c.ne>=lo&&c.ne<=hi)out.push({c,d:c.ne,done:c.ne<TODAY});if(c.le&&c.le>=lo&&c.le<=hi&&c.le<=TODAY&&c.le!==c.ne)out.push({c,d:c.le,done:true})});return out}
 function evRow({c,done}){return `<div class="ev"><div class="nm"><span class="flag">${CT[c.country][0]}</span><b data-ci="${c.i}">${esc(c.name_ko)}</b> <span class="tk">${esc(c.ticker)}</span><div class="tk">${esc(c.l1)} › ${esc(c.l2)} · ${fB(c.mcap_usd)}</div></div>
- <div>${done?'<span class="cf dn">✅ 발표 완료</span>':neTag(c)}${!done&&c.ne_time?`<span class="cf tm">${esc(c.ne_time)}</span>`:''}<div class="tk">${done?'최근 실적 발표일':esc(c.ne_src||'')}</div></div>
+ <div>${done?'<span class="cf dn">✅ 발표 완료</span>':neTag(c)}${!done&&c.ne_time?`<span class="cf tm">${esc(sessLab(c))}</span>`:''}<div class="tk">${done?'최근 실적 발표일':esc(c.ne_src||'')}</div></div>
  <div class="cs">${done?'<span class="mut">다음 분기 · </span>':''}${consLine(c)}</div></div>`}
 const evF=x=>(EV.ct==='ALL'||x.c.country===EV.ct)&&(!EV.cf||x.done||x.c.ne_conf==='확정');
 const byCap=(x,y)=>(y.c.mcap_usd||0)-(x.c.mcap_usd||0);
+const sessShort=c=>{const l=sessLab(c);return l.replace(' · 한국 당일 밤','').replace(' · 한국 익일 새벽','').replace(' KST','')};  // 달력 칩용 짧은 표기
+const SESS_O=c=>{const l=sessLab(c);return l.startsWith('장전')?0:l.startsWith('장중')?1:l.startsWith('장후')?2:3};
+const bySess=(x,y)=>SESS_O(x.c)-SESS_O(y.c)||byCap(x,y);  // 같은 날짜 안에서 장전 → 장중 → 장후 → 시점 미정, 그 안은 시총순
 const dMark=d=>{const n=dDiff(d);return n===0?'<span class="dd td">오늘</span>':n===-1?'<span class="dd ys">어제</span>':n>0&&n<=7?`<span class="dd">D-${n}</span>`:''};
-const evChip=x=>{const c=x.c;return `<span class="ec ${x.done?'dn':c.ne_conf==='확정'?'y':'e'}" data-ci="${c.i}" title="${esc(c.name_ko)} ${esc(c.ticker)} · ${x.done?'발표 완료':esc(c.ne_conf+' · '+(c.ne_src||''))}${c.cons?' · 컨센 '+esc(c.cons.q||''):''}">${CT[c.country][0]} ${esc(c.name_ko.replace(/\s*\(.*?\)\s*/g,''))}${!x.done&&c.ne_time?`<i>${esc(c.ne_time)}</i>`:''}<u>${x.done?'✅':c.ne_conf==='확정'?'확정':'예상'}</u></span>`};
-function evList(a){let h='';for(let i=-1;i<=7;i++){const d=addD(TODAY,i),b=a.filter(x=>x.d===d).sort(byCap);
+const evChip=x=>{const c=x.c;return `<span class="ec ${x.done?'dn':c.ne_conf==='확정'?'y':'e'}" data-ci="${c.i}" title="${esc(c.name_ko)} ${esc(c.ticker)} · ${x.done?'발표 완료':esc(c.ne_conf+' · '+(c.ne_src||''))}${c.cons?' · 컨센 '+esc(c.cons.q||''):''}">${CT[c.country][0]} ${esc(c.name_ko.replace(/\s*\(.*?\)\s*/g,''))}${!x.done&&c.ne_time?`<i>${esc(sessShort(c))}</i>`:''}<u>${x.done?'✅':c.ne_conf==='확정'?'확정':'예상'}</u></span>`};
+function evList(a){let h='';for(let i=-1;i<=7;i++){const d=addD(TODAY,i),b=a.filter(x=>x.d===d).sort(bySess);
   h+=`<div class="ev-h">${mdw(d)} <span class="dd ${i===0?'td':i<0?'ys':''}">${i===0?'D-Day 오늘':i<0?'어제 (D+1)':i===1?'D-1 내일':'D-'+i}</span><span class="n">${b.length?b.length+'개사 · 확정 '+b.filter(x=>x.done||x.c.ne_conf==='확정').length:''}</span></div>`+(b.length?b.map(evRow).join(''):'<div class="ev-none">발표 예정 기업 없음</div>')}return h}
-function evAgenda(a){let h='';for(let i=-1;i<=7;i++){const d=addD(TODAY,i),b=a.filter(x=>x.d===d).sort(byCap);
+function evAgenda(a){let h='';for(let i=-1;i<=7;i++){const d=addD(TODAY,i),b=a.filter(x=>x.d===d).sort(bySess);
   h+=`<div class="ag"><div class="ag-d">${mdw(d)} ${dMark(d)} <span class="mut" style="font-weight:400;font-size:11.5px">${b.length?b.length+'개사':''}</span></div><div class="ag-c">${b.length?b.map(evChip).join(''):'<span class="mut" style="font-size:12px">발표 예정 기업 없음</span>'}</div></div>`}return h}
 function evCal(){const [Y,M]=EV.m.split('-').map(Number);const first=`${EV.m}-01`,last=new Date(Date.UTC(Y,M,0)).toISOString().slice(0,10);
  let lo=first,hi=last;if(EV.m===TODAY.slice(0,7)){if(addD(TODAY,-1)<lo)lo=addD(TODAY,-1);if(addD(TODAY,7)>hi)hi=addD(TODAY,7)}  // 이번 달 보기: D-1~D+7이 달을 넘어가도 표시
  const s0=addD(lo,-new Date(lo+'T00:00:00Z').getUTCDay()),e0=addD(hi,6-new Date(hi+'T00:00:00Z').getUTCDay());
  const a=earnRows(s0,e0).filter(evF);
  let h=`<div class="cal-nav"><button data-m="-1">◀ 이전 달</button><b>${Y}년 ${M}월</b><button data-m="1">다음 달 ▶</button>${EV.m!==TODAY.slice(0,7)?'<button data-m="0">이번 달</button>':''}</div><div class="cal"><div class="cal-w">${[...WD].map(w=>`<div>${w}</div>`).join('')}</div><div class="cal-g">`;
- for(let d=s0;d<=e0;d=addD(d,1)){const b=a.filter(x=>x.d===d).sort(byCap),out=d<first||d>last,op=EV.open[d],sh=op?b:b.slice(0,7);
+ for(let d=s0;d<=e0;d=addD(d,1)){const b=a.filter(x=>x.d===d).sort(bySess),out=d<first||d>last,op=EV.open[d],sh=op?b:b.slice(0,7);
   h+=`<div class="cd${out?' out':''}${d===TODAY?' tdy':''}${dDiff(d)>=-1&&dDiff(d)<=7?' win':''}"><div class="cd-h"><span>${+d.slice(8)}${d.slice(8)==='01'||d===s0?`<small> ${+d.slice(5,7)}월</small>`:''}</span>${dMark(d)}</div>${sh.map(evChip).join('')}${b.length>7?`<button class="cd-more" data-d="${d}">${op?'접기':'+'+(b.length-7)+'개 더보기'}</button>`:''}</div>`}
  return h+'</div></div>'}
 function renderEarn(){const all=earnRows();const a=all.filter(evF);
