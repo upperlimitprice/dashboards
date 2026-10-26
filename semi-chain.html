@@ -62,7 +62,7 @@ td.co b.cn{cursor:pointer;text-decoration:underline dotted;text-underline-offset
 .cm-qna{margin-top:10px;border-top:1px dashed var(--line);padding-top:6px}.cm-qna>summary{cursor:pointer;color:var(--acc);font-weight:700;font-size:13px}.cm-bd p.qq{margin-top:12px}.cm-bd p.aa{color:var(--ink)}
 .sb{display:inline-block;font-size:10.5px;font-weight:700;padding:0 6px;border-radius:7px;margin:0 2px;white-space:nowrap;vertical-align:1px;border:1px solid}.sb-nd{color:#d29922;border-color:#d29922}.sb-my{color:#2da44e;border-color:#2da44e}.sb-tg{color:#3d8bfd;border-color:#3d8bfd}.sb-fmp{color:var(--mut);border-color:var(--mut)}.cm-srcs{display:flex;flex-wrap:wrap;gap:4px;margin:4px 0 8px}
 @media(max-width:640px){.cm-bg{padding:16px}.cm-top{padding:12px 14px 0}.cm-bd{padding:12px 14px 18px}.cm-tabs button{padding:7px 10px}}
-</style></head><body><div class="wrap">
+.cm-pr{list-style:none;margin:6px 0 0;padding:0}.cm-pr li{padding:6px 2px;border-bottom:1px solid var(--line);font-size:13.5px;line-height:1.45;overflow-wrap:anywhere}.cm-pr li .mut{display:inline-block;min-width:68px;font-variant-numeric:tabular-nums}</style></head><body><div class="wrap">
 <div class="card"><div class="top"><div><h1>🌐 글로벌 테크 밸류체인</h1><div class="sub" id="sub"></div></div><button class="thm" id="thm">☀︎ 라이트</button></div></div>
 <div class="nav" id="nav"><button data-v="home">🏠 홈</button><button data-v="map">🧠 트리맵</button><button data-v="list">📋 기업목록</button><button data-v="heat">🔥 히트맵</button></div>
 <div class="view" id="vHome">
@@ -235,7 +235,10 @@ function render(){if(VIEW==='home'){renderHome();return}renderTabs();renderTiles
 /* 기업 팝업: 회사명 클릭 → semi-chain-co/{ticker}.json 지연 로드 (기업개요·사업내용·어닝콜) */
 const CMC={};
 function cmTab(k){document.querySelectorAll('#cmTabs button').forEach(b=>b.classList.toggle('on',b.dataset.k===k));document.querySelectorAll('#cmBd .cm-sec').forEach(x=>x.style.display=x.dataset.k===k?'':'none');$('#cmBd').scrollTop=0}
+let PRESD=null;const presLoad=()=>PRESD?Promise.resolve(PRESD):fetch('semi-chain-pres.json',{cache:'no-cache'}).then(r=>r.ok?r.json():{}).catch(()=>({})).then(j=>PRESD=j);
 function renderCo(c,d){const sec=(k,h)=>`<div class="cm-sec" data-k="${k}">${h}</div>`;
+ const PR=(PRESD||{})[c.ticker.replace(/\./g,'_')]||[];
+ const prH=PR.length?'<h4 class="cm-h">IR 프레젠테이션 자료 · '+PR.length+'건 (최신순)</h4><ul class="cm-pr">'+PR.map(x=>`<li><span class="mut">${x.y||''}${x.q?' Q'+x.q:''}</span> <a href="${esc(x.u)}" target="_blank" rel="noopener noreferrer">${esc(x.t)}</a></li>`).join('')+'</ul><div class="cm-src">출처: 각 사 IR 사이트 원문 링크 (매일 01:00 IR 수집 시 갱신)</div>':'';
  const ov=`<table class="cm-f">${(d.facts||[]).map(([a,b])=>`<tr><th>${esc(a)}</th><td>${b}</td></tr>`).join('')}<tr><th>밸류체인</th><td>${esc(c.l1)} › ${esc(c.l2)}</td></tr><tr><th>주요 제품</th><td>${esc(c.products)}</td></tr></table><div class="cm-src">출처: ${esc(d.facts_src)}</div>`;
  const bz=d.biz?`${d.biz.html}<div class="cm-src">출처: ${esc(d.biz.src)} → AI 요약 (${esc(d.biz.date)})</div>`:'<div class="cm-ld">사업내용 준비 중</div>';
  let ec;const cl=d.calls;
@@ -244,15 +247,15 @@ function renderCo(c,d){const sec=(k,h)=>`<div class="cm-sec" data-k="${k}">${h}<
   +'<div class="cm-src">출처: FMP 어닝콜 트랜스크립트 원문 → AI 정리·분기 비교 분석 · 투자 참고용이며 투자 권유가 아닙니다</div>'}
  else ec='<div class="cm-none">어닝콜 트랜스크립트 없음</div>'+(d.ir?`<h4 class="cm-h">IR 실적 요약</h4>${d.ir.html}<div class="cm-src">출처: ${esc(d.ir.src)}</div>`:'<div class="cm-ld">IR 실적 자료 없음</div>');
  const pv=d.priv&&d.priv.quarters&&d.priv.quarters.length?d.priv.quarters.map((q,i)=>`<details class="cm-q"${i===0?' open':''}><summary><b>${esc(q.label)}</b> <span class="mut">자료 ${q.n_items}건${q.fmp?' · FMP 공개 노트와 병합':''}</span></summary><div class="cm-qb"><div class="cm-srcs">${q.sources.map(s=>`<span class="sb sb-${s.label==='노다지'?'nd':s.label.startsWith('텔레그램')?'tg':'my'}">${esc(s.label)} ${s.n}건 · ~${esc(s.last.slice(2))}</span>`).join('')}</div>${q.html}</div></details>`).join('')+'<div class="cm-src">비공개: 노다지 컨콜노트·내 노트(에버노트·노션)·텔레그램 학습 채널 → AI 분기 정리 · ⚠️ = FMP 공개 노트와 다른 내용</div>':'<div class="cm-ld">비공개 노트 없음</div>';
- $('#cmTabs').innerHTML=[['ov','기업개요'],['bz','사업내용'],['ec',cl?'어닝콜':'어닝콜·IR 실적'],...(PVON?[['pv','📒 내 노트·노다지·텔레그램']]:[])].map(([k,l])=>`<button data-k="${k}">${l}</button>`).join('');
+ $('#cmTabs').innerHTML=[['ov','기업개요'],['bz','사업내용'],['ec',cl?'어닝콜':'어닝콜·IR 실적'],...(prH?[['pr','📑 IR 자료']]:[]),...(PVON?[['pv','📒 내 노트·노다지·텔레그램']]:[])].map(([k,l])=>`<button data-k="${k}">${l}</button>`).join('');
  $('#cmTabs').querySelectorAll('button').forEach(b=>b.onclick=()=>cmTab(b.dataset.k));
- $('#cmBd').innerHTML=sec('ov',ov)+sec('bz',bz)+sec('ec',ec)+(PVON?sec('pv',pv):'');cmTab('ov')}
+ $('#cmBd').innerHTML=sec('ov',ov)+sec('bz',bz)+sec('ec',ec)+(prH?sec('pr',prH):'')+(PVON?sec('pv',pv):'');cmTab('ov')}
 function openCo(c){if(!c)return;const bg=$('#cmBg'),k=c.ticker.replace(/\./g,'_');bg.dataset.k=k;
  $('#cmHd').innerHTML=`<div class="cm-t1"><span class="flag">${CT[c.country][0]}</span><b>${esc(c.name_ko)}</b> <span class="tk">${esc(c.ticker)} · ${esc(c.name_en)}</span></div><div class="cm-t2 chips"><span>${esc(c.l1)} › ${esc(c.l2)}</span><span>시총 ${fB(c.mcap_usd)}</span><span>YTD ${fP(c.ytd)}</span></div>`;
  $('#cmTabs').innerHTML='';$('#cmBd').innerHTML='<div class="cm-ld">불러오는 중…</div>';bg.classList.add('on');document.body.style.overflow='hidden';
  (CMC[k]?Promise.resolve(CMC[k]):PRIV?fetch(`co/co_${c.country}.json`).then(r=>{if(!r.ok)throw new Error(r.status);return r.json()}).then(b=>{Object.assign(CMC,b);if(!b[k])throw new Error('none');return b[k]}):fetch(`semi-chain-co/${k}.json`,{cache:'no-cache'}).then(r=>{if(!r.ok)throw new Error(r.status);return r.json()}))
   .then(d=>PK&&!d.priv?pvLoad(c.country).then(b=>{if(b&&b[k])d.priv=b[k];return d}):d)
-  .then(d=>{CMC[k]=d;if(bg.dataset.k===k)renderCo(c,d)}).catch(()=>{if(bg.dataset.k===k)$('#cmBd').innerHTML='<div class="cm-ld">기업 정보 준비 중입니다. 잠시 후 다시 확인해 주세요.</div>'})}
+  .then(d=>presLoad().then(()=>{CMC[k]=d;if(bg.dataset.k===k)renderCo(c,d)})).catch(()=>{if(bg.dataset.k===k)$('#cmBd').innerHTML='<div class="cm-ld">기업 정보 준비 중입니다. 잠시 후 다시 확인해 주세요.</div>'})}
 function closeCo(){$('#cmBg').classList.remove('on');$('#cmBg').dataset.k='';document.body.style.overflow=''}
 $('#cmX').onclick=closeCo;$('#cmBg').addEventListener('click',e=>{if(e.target.id==='cmBg')closeCo()});addEventListener('keydown',e=>{if(e.key==='Escape'&&$('#cmBg').classList.contains('on'))closeCo()});
 $('#tbl').addEventListener('click',e=>{const b=e.target.closest('b.cn');if(b){e.stopPropagation();openCo(C[+b.dataset.ci])}});
