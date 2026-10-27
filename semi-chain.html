@@ -332,7 +332,10 @@ function pvTab(k){const e=PVD[$('#pvBg').dataset.t];if(!e)return;$('#pvTabs').qu
  if(k==='call'&&e.calls&&e.calls.quarters&&e.calls.quarters.length)h=ecHtml(e.name,e.calls);else if(k==='call'&&!ms.some(m=>/✅/.test(m)))h='<div class="pv-na">어닝콜 자료 없음 — 미국·유럽 외 기업은 원문 수집이 어려워 비워 둡니다</div>';
  if(!h)h=`<div class="pv-na">자료 없음 — ${k==='earn'?'컨센서스·과거 발표일 주가 데이터가 부족해 생성되지 않았습니다(주로 미국 외 기업)':'생성되지 않았습니다'}</div>`;
  const u=k==='earn'&&(ms.join(' ').match(/https:\/\/upperlimitprice\.github\.io\/[^\s<]+/)||[])[0];if(u)h+=`<iframe class="pv-if" src="${esc(u)}" loading="lazy"></iframe>`;
- $('#pvBd').innerHTML=h;$('#pvBd').scrollTop=0}
+ $('#pvBd').innerHTML=h;$('#pvBd').scrollTop=0;const f=$('#pvBd iframe');if(f)f.onload=()=>pvFit(f)}
+// 팝업 안 인포그래픽(같은 도메인 페이지) 글자 크기를 팝업 본문(13.5px)에 맞춤 — 사용자 지시 2026-10-27
+function pvFit(f){try{const d=f.contentDocument;if(!d||d.getElementById('pvfit'))return;const st=d.createElement('style');st.id='pvfit';
+ st.textContent='html{font-size:12px!important}body{font-size:12.5px!important;line-height:1.6!important}h1{font-size:1.35rem!important}h2{font-size:1.1rem!important}h3{font-size:1rem!important}.tile .val{font-size:1.05rem!important}';d.head.appendChild(st)}catch(e){}}
 function openPv(t){const e=PVD&&PVD[t];if(!e)return;const c=C.find(x=>x.ticker===t&&!x.xref)||{};const bg=$('#pvBg');bg.dataset.t=t;
  $('#pvHd').innerHTML=`<h3 style="margin:0 40px 8px 0;font-size:17px">${c.country?CT[c.country][0]+' ':''}${esc(e.name)} <span class="tk" style="font-size:12px;color:var(--mut)">${esc(t)} · preview · 발표 ${esc(e.ne)} · 생성 ${esc(e.made)}</span></h3>`;
  $('#pvTabs').innerHTML=PVT.map(([k,n])=>`<button data-k="${k}">${n}</button>`).join('');$('#pvTabs').querySelectorAll('button').forEach(b=>b.onclick=()=>pvTab(b.dataset.k));
