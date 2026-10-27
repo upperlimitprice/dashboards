@@ -307,11 +307,15 @@ function evRow({c,done,d}){return `<div class="ev"><div class="nm"><span class="
  <div>${done?'<span class="cf dn">✅ 발표 완료</span>':neTag(c)}${!done&&c.ne_time?`<span class="cf tm ${sessCls(c)}">${esc(sessLab(c))}</span>`:''}<div class="tk">${done?'최근 실적 발표일':esc(c.ne_src||'')}</div></div>
  <div class="cs">${done?'<span class="mut">다음 분기 · </span>':''}${consLine(c)}</div><div class="pvc">${pvBox(c,d,done)}</div></div>`}
 // 오늘·내일 발표 기업 preview (사용자 지시 2026-10-27): 미리 돌려 둔 /preview 결과(analyst-bot/preview_batch.py) — 유료·개인 자료 요약이라 비공개 레이어 열쇠로 암호화된 semi-chain-prev.bin, 열쇠 있는 기기에서만 박스 표시
-let PVD=null,PVL=null;
-function pvPrevLoad(){if(PVL)return PVL;PVL=(async()=>{try{const r=await fetch('semi-chain-prev.bin',{cache:'no-cache'});if(!r.ok)return;const buf=new Uint8Array(await r.arrayBuffer());
+// 어제(D+1) 발표 기업 review (사용자 지시 2026-10-27): 어제 콜 포함 최근 4개 분기 어닝콜 인포그래픽 + 분기별 전문 — analyst-bot/review_batch.py → semi-chain-rev.bin(같은 열쇠)
+let PVD=null,PVL=null,RVD=null;
+async function decBin(f){const r=await fetch(f,{cache:'no-cache'});if(!r.ok)return {};const buf=new Uint8Array(await r.arrayBuffer());
  const key=await crypto.subtle.importKey('raw',b64u(PK),'AES-GCM',false,['decrypt']);const pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:buf.slice(0,12)},key,buf.slice(12));
- PVD=JSON.parse(await new Response(new Blob([pt]).stream().pipeThrough(new DecompressionStream('gzip'))).text())}catch(e){PVD={}}})();return PVL}
-function pvBox(c,d,done){if(!PK||done||(d!==TODAY&&d!==addD(TODAY,1)))return '';const e=PVD&&PVD[c.ticker];
+ return JSON.parse(await new Response(new Blob([pt]).stream().pipeThrough(new DecompressionStream('gzip'))).text())}
+function pvPrevLoad(){if(PVL)return PVL;PVL=Promise.all([decBin('semi-chain-prev.bin').catch(()=>({})),decBin('semi-chain-rev.bin').catch(()=>({}))]).then(([p,r])=>{PVD=p;RVD=r});return PVL}
+function pvBox(c,d,done){if(!PK)return '';
+ if(done&&d===addD(TODAY,-1)){const r=RVD&&RVD[c.ticker];return r?((r.quarters||[]).length||r.info?`<button class="pvb" data-rv="${esc(c.ticker)}">review</button>`:'<span class="pvb off">어닝콜 자료 없음</span>'):RVD?'<span class="pvb off">review 준비 중</span>':''}
+ if(done||(d!==TODAY&&d!==addD(TODAY,1)))return '';const e=PVD&&PVD[c.ticker];
  return e?`<button class="pvb" data-pv="${esc(c.ticker)}">preview</button>`:PVD?'<span class="pvb off">preview 준비 중</span>':''}
 const PVT=[['deep','AI 리서치'],['call','최근 4개 분기 어닝콜'],['earn','최근 실적일 주가추이']];
 const tg2h=t=>esc(t).replace(/&lt;(\/?)(b|i|u|code)&gt;/g,'<$1$2>').replace(/(https?:\/\/[^\s<]+)/g,'<a href="$1" target="_blank" rel="noopener">$1</a>').replace(/\n/g,'<br>');
@@ -325,6 +329,14 @@ function openPv(t){const e=PVD&&PVD[t];if(!e)return;const c=C.find(x=>x.ticker==
  $('#pvHd').innerHTML=`<h3 style="margin:0 40px 8px 0;font-size:17px">${c.country?CT[c.country][0]+' ':''}${esc(e.name)} <span class="tk" style="font-size:12px;color:var(--mut)">${esc(t)} · preview · 발표 ${esc(e.ne)} · 생성 ${esc(e.made)}</span></h3>`;
  $('#pvTabs').innerHTML=PVT.map(([k,n])=>`<button data-k="${k}">${n}</button>`).join('');$('#pvTabs').querySelectorAll('button').forEach(b=>b.onclick=()=>pvTab(b.dataset.k));
  pvTab('deep');bg.classList.add('on');document.body.style.overflow='hidden'}
+function rvTab(i){const e=RVD[$('#pvBg').dataset.t];if(!e)return;$('#pvTabs').querySelectorAll('button').forEach(b=>b.classList.toggle('on',+b.dataset.i===i));let h;
+ if(i<0){h=e.call&&!/^⚠️/.test(e.call)?`<div class="pv-m">${tg2h(e.call)}</div>`:'';if(e.info)h+=`<iframe class="pv-if" src="${esc(e.info)}" loading="lazy"></iframe>`;else h+='<div class="pv-na">4개 분기 변화 분석 인포그래픽 없음 — 어닝콜 원문을 확보하지 못한 기업입니다</div>'}
+ else{const q=e.quarters[i];h=`<div class="tk" style="color:var(--mut);margin-bottom:8px">${esc(q.label)} · ${esc(q.date)} · 어닝콜 전문</div><div class="pv-m" style="white-space:pre-wrap">${esc(q.text)}</div>`}
+ $('#pvBd').innerHTML=h;$('#pvBd').scrollTop=0}
+function openRv(t){const e=RVD&&RVD[t];if(!e)return;const c=C.find(x=>x.ticker===t&&!x.xref)||{};const bg=$('#pvBg');bg.dataset.t=t;const qs=e.quarters||[];
+ $('#pvHd').innerHTML=`<h3 style="margin:0 40px 8px 0;font-size:17px">${c.country?CT[c.country][0]+' ':''}${esc(e.name)} <span class="tk" style="font-size:12px;color:var(--mut)">${esc(t)} · review · 발표 ${esc(e.d)} · 갱신 ${esc(e.made)}${e.latest?'':' · 어제 콜 전문은 아직 미게시(2시간마다 재확인)'}</span></h3>`;
+ $('#pvTabs').innerHTML='<button data-i="-1">4개 분기 어닝콜 인포그래픽</button>'+qs.map((q,i)=>`<button data-i="${i}">${esc(q.label)} 전문</button>`).reverse().join('');
+ $('#pvTabs').querySelectorAll('button').forEach(b=>b.onclick=()=>rvTab(+b.dataset.i));rvTab(-1);bg.classList.add('on');document.body.style.overflow='hidden'}
 function closePv(){$('#pvBg').classList.remove('on');document.body.style.overflow=''}
 const evF=x=>(EV.ct==='ALL'||x.c.country===EV.ct)&&(!EV.cf||x.done||x.c.ne_conf==='확정');
 const byCap=(x,y)=>(y.c.mcap_usd||0)-(x.c.mcap_usd||0);
@@ -356,7 +368,7 @@ function renderEarn(){const all=earnRows();const a=all.filter(evF);
  $('#evCtl').querySelectorAll('[data-v]').forEach(b=>b.onclick=()=>{EV.v=b.dataset.v;try{localStorage.setItem('semi-ev-view',EV.v)}catch(e){}renderEarn()});
  $('#evL').innerHTML=EV.v==='list'?evList(a):mob?evAgenda(a):evCal();
  $('#evL').querySelectorAll('[data-ci]').forEach(b=>b.onclick=()=>openCo(C[+b.dataset.ci]));
- $('#evL').querySelectorAll('[data-pv]').forEach(b=>b.onclick=()=>openPv(b.dataset.pv));if(PK&&!PVD&&EV.v==='list')pvPrevLoad().then(()=>{if(VIEW==='earn'&&EV.v==='list')renderEarn()});
+ $('#evL').querySelectorAll('[data-pv]').forEach(b=>b.onclick=()=>openPv(b.dataset.pv));$('#evL').querySelectorAll('[data-rv]').forEach(b=>b.onclick=()=>openRv(b.dataset.rv));if(PK&&!PVD&&EV.v==='list')pvPrevLoad().then(()=>{if(VIEW==='earn'&&EV.v==='list')renderEarn()});
  $('#evL').querySelectorAll('.cal-nav [data-m]').forEach(b=>b.onclick=()=>{const k=+b.dataset.m,[y,m]=EV.m.split('-').map(Number),t=new Date(Date.UTC(y,m-1+k,1));EV.m=k?t.toISOString().slice(0,7):TODAY.slice(0,7);renderEarn()});
  $('#evL').querySelectorAll('.cd-more').forEach(b=>b.onclick=()=>{EV.open[b.dataset.d]=!EV.open[b.dataset.d];renderEarn()});
  const N=C.filter(c=>!c.xref);$('#evS').textContent=`어제~7일 뒤 ${a.length}건 · 전체 ${N.length}개사 중 다음 발표일 확정 ${N.filter(c=>c.ne_conf==='확정').length} · 예상 ${N.filter(c=>c.ne_conf==='예상').length} · 컨센서스 ${N.filter(c=>c.cons).length}`;
