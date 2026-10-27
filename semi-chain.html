@@ -28,7 +28,7 @@ tr.g1 td{background:var(--chip)!important;font-weight:800;font-size:14px;padding
 .note{font-size:12px;color:var(--mut);margin-top:8px;line-height:1.75}.more{font:inherit;font-size:12px;margin-top:8px;padding:6px 14px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--acc);cursor:pointer}
 tr.hl td{outline:2px solid var(--acc);outline-offset:-2px}
 .nav{position:sticky;top:0;z-index:30;display:flex;gap:6px;flex-wrap:wrap;background:var(--bg);padding:8px 0 10px;margin-bottom:4px}.nav button{font:inherit;font-size:.9rem;font-weight:700;padding:8px 16px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);cursor:pointer}.nav button.on{background:var(--acc);border-color:var(--acc);color:#fff}
-.view{display:none}.view.on{display:block}#opsT td:last-child,#opsT th:last-child{padding-right:28px}#opsT tbody tr,#opsT tr[data-t]{cursor:pointer}#opsT tr.sel td{background:var(--hov)}#opsT td.co{min-width:130px}#opsCh{width:100%;height:420px}#cmOpsCh{width:100%;height:340px}@media (max-width:600px){#opsCh{height:330px}#cmOpsCh{height:290px}}.ops-hd{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px}.ops-hd b.cn{font-size:15px;cursor:pointer;text-decoration:underline dotted;text-underline-offset:3px;text-decoration-color:var(--mut)}.ops-hd b.cn:hover{color:var(--acc)}
+.view{display:none}.view.on{display:block}#cmOpsCh{width:100%;height:340px}@media (max-width:600px){#cmOpsCh{height:290px}}
 .ins-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px 22px}.ins-blk h3{font-size:13.5px;margin-bottom:4px}.ins-blk .hl{font-size:15px;font-weight:700;margin:4px 0 8px;line-height:1.45}.ins-blk ul{padding-left:18px;font-size:13.2px;line-height:1.85}.ins-blk li{margin-bottom:3px}
 .chips{display:flex;flex-wrap:wrap;gap:5px;font-size:11.5px}.chips span{padding:2px 8px;border-radius:9px;background:var(--chip);border:1px solid var(--line)}
 .issgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:12px}.ic{border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--bg)}
@@ -93,7 +93,7 @@ b.ss-pre,b.ss-mid,b.ss-post{color:var(--sc)}
 .ev-sg{margin:8px 0 2px;padding:2px 8px;font-size:11.5px;font-weight:800;color:var(--sc);border-left:3px solid var(--sc);background:color-mix(in srgb,var(--sc) 8%,transparent);border-radius:0 6px 6px 0}
 .cm-px{margin:14px 0 4px}.cm-px .cm-fch{justify-content:flex-start}.cm-px .cm-fch b{margin-right:auto}#cmPxCh{width:100%;height:340px}@media (max-width:600px){#cmPxCh{height:280px}}</style></head><body><div class="wrap">
 <div class="card"><div class="top"><div><h1>🌐 글로벌 테크 밸류체인</h1><div class="sub" id="sub"></div></div><button class="thm" id="thm">☀︎ 라이트</button></div></div>
-<div class="nav" id="nav"><button data-v="home">🏠 홈</button><button data-v="map">🧠 트리맵</button><button data-v="list">📋 기업목록</button><button data-v="heat">🔥 히트맵</button><button data-v="earn">📅 실적발표</button><button data-v="ops">🏗️ 수주·가동률</button></div>
+<div class="nav" id="nav"><button data-v="home">🏠 홈</button><button data-v="map">🧠 트리맵</button><button data-v="list">📋 기업목록</button><button data-v="heat">🔥 히트맵</button><button data-v="earn">📅 실적발표</button></div>
 <div class="view" id="vHome">
  <div class="card" id="insCard"></div>
  <div class="tiles" id="pulse"></div>
@@ -117,15 +117,6 @@ b.ss-pre,b.ss-mid,b.ss-post{color:var(--sc)}
 <div class="card"><h2>📅 실적발표 일정<span class="s" id="evS"></span></h2>
  <div class="ctl" id="evCtl"></div><div id="evL"></div>
  <div class="note" id="evN"></div></div>
-</div>
-<div class="view" id="vOps">
-<div class="card"><h2>🏗️ 국내 기업 수주잔고 × 가동률<span class="s" id="opsS"></span></h2>
- <div class="ops-hd"><div id="opsHd" style="min-width:0"></div><div class="ctl" style="margin:0"><span class="cm-fb" id="opsN"></span></div></div>
- <div id="opsSt" class="note" style="margin:0 0 6px"></div>
- <div id="opsCh"></div><div class="note" id="opsSrc"></div></div>
-<div class="card"><div class="ctl" id="opsCtl"></div>
- <div class="tblwrap"><table class="t" id="opsT"></table></div>
- <div class="note">행을 누르면 위 차트가 바뀌고, 기업명을 누르면 기업 팝업이 열립니다. 정렬: 열 제목 1번 클릭 내림차순 · 2번 오름차순 · 3번 원래 순서(둘 다 있는 기업 → 시총 큰 순). 잔고/매출 = 최신 수주잔고 ÷ 최근 4개 분기 매출. 가동률 QoQ·YoY는 %p 차이입니다.</div></div>
 </div>
 <div class="view" id="vList">
 <div class="card" id="tblCard"><h2>기업 목록<span class="s" id="tS"></span></h2>
@@ -354,13 +345,13 @@ function renderWeek(){const r=earnRows().filter(x=>x.d>=TODAY);const top=r.slice
  $('#wkCard').querySelectorAll('.wk div[data-d]').forEach(x=>x.onclick=()=>go_('earn'))}
 let VIEW='home';
 function go_(v){if(location.hash.slice(1)!==v)location.hash=v;else show(v);scrollTo({top:0})}
-function show(v){VIEW=['home','map','heat','list','earn','ops'].includes(v)?v:'home';
- document.querySelectorAll('.view').forEach(x=>x.classList.remove('on'));$('#v'+{home:'Home',map:'Map',heat:'Heat',list:'List',earn:'Earn',ops:'Ops'}[VIEW]).classList.add('on');if(VIEW==='map'||VIEW==='list')$('#vCtx').classList.add('on');$('#tabs').style.display=VIEW==='list'?'none':'';  // 목록은 표 안 국가 칩 사용
+function show(v){VIEW=['home','map','heat','list','earn'].includes(v)?v:'home';
+ document.querySelectorAll('.view').forEach(x=>x.classList.remove('on'));$('#v'+{home:'Home',map:'Map',heat:'Heat',list:'List',earn:'Earn'}[VIEW]).classList.add('on');if(VIEW==='map'||VIEW==='list')$('#vCtx').classList.add('on');$('#tabs').style.display=VIEW==='list'?'none':'';  // 목록은 표 안 국가 칩 사용
  document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===VIEW));render()}
 document.querySelectorAll('#nav button').forEach(b=>b.onclick=()=>go_(b.dataset.v));addEventListener('hashchange',()=>show(location.hash.slice(1)));
-function render(){if(VIEW==='home'){renderHome();return}if(VIEW==='earn'){renderEarn();return}if(VIEW==='ops'){renderOps();return}renderTabs();renderTiles();if(VIEW==='heat')renderHM();if(VIEW==='list')renderTable();if(VIEW==='map'){try{renderMM()}catch(e){console.warn(e)}}}
+function render(){if(VIEW==='home'){renderHome();return}if(VIEW==='earn'){renderEarn();return}renderTabs();renderTiles();if(VIEW==='heat')renderHM();if(VIEW==='list')renderTable();if(VIEW==='map'){try{renderMM()}catch(e){console.warn(e)}}}
 /* 🏗️ 수주·가동률: 국내 기업 DART 수주잔고(orders.html 후처리본) × 가동률(util.html) 연결 — kr_ops.py → semi-chain-ops.json 지연 로드 (사용자 지시 2026-10-27) */
-let OPSD=null,OPSS={f:'all',l1:null,sort:null,sel:null},OPSN=12,OPSCH=null,OPSPCH=null;
+let OPSD=null,OPSN=12,OPSPCH=null;
 const opsLoad=()=>OPSD?Promise.resolve(OPSD):fetch('semi-chain-ops.json',{cache:'no-cache'}).then(r=>r.ok?r.json():{co:{}}).catch(()=>({co:{}})).then(j=>OPSD=j);
 const fEok=v=>v==null?'–':Math.abs(v)>=10000?(v/10000).toFixed(1)+'조':Math.round(v).toLocaleString()+'억';
 const fPP=v=>v==null?'<span class="mut">–</span>':`<span class="${v>0?'up':v<0?'dn':''}">${v>0?'+':''}${v.toFixed(1)}%p</span>`;
@@ -372,7 +363,6 @@ function opsRow(c,e){const r={c,e};
  if(e.ut){const s=e.ut.rep,ps=Object.keys(s).sort(),lp=ps[ps.length-1],pv=s[ymAdd(lp,-1)],yv=s[ymAdd(lp,-4)];r.utP=lp;r.ut=s[lp];
   r.utQ=pv!=null?r.ut-pv:null;r.utY=yv!=null?r.ut-yv:null}
  return r}
-const OPSCOLS=[{h:'기업',k:r=>r.c.name_ko},{h:'세부분류',k:r=>r.c.l2},{h:'수주잔고',n:1,k:r=>r.ob},{h:'QoQ',n:1,k:r=>r.obQ},{h:'YoY',n:1,k:r=>r.obY},{h:'잔고/매출',n:1,k:r=>r.cov},{h:'가동률',n:1,k:r=>r.ut},{h:'QoQ',n:1,k:r=>r.utQ},{h:'YoY',n:1,k:r=>r.utY}];
 const opsSrc=e=>'출처: DART 정기보고서 · '+(e.ob?'수주잔고 = 수주상황 표 분기말 잔고(억원, <a href="orders.html" style="color:var(--acc)">수주잔고 트래커</a> 파싱·보정본, 빗금 = 미기재 분기)':'수주잔고 미공시')+' · '+(e.ut?'가동률 = 가동률 표 보고서 기간 평균 %(굵은 선 = 합계 또는 부문 평균, 얇은 선 = 부문, <a href="util.html" style="color:var(--acc)">가동률 트래커</a>)':'가동률 미공시')+' · 점선 = 분기 매출(네이버·FMP, 억원)';
 function opsChart(el,e,n,prev){if(prev)prev.dispose();el.innerHTML='';const ch=echarts.init(el);
  const ob=e.ob,ut=e.ut,gp=new Set(ob&&ob.gaps||[]),ks=[...(ob?Object.keys(ob.s):[]),...gp,...(ut?Object.keys(ut.rep):[])].sort();if(!ks.length)return ch;
@@ -402,38 +392,15 @@ function opsChart(el,e,n,prev){if(prev)prev.dispose();el.innerHTML='';const ch=e
   dataZoom:[{type:'inside',startValue:sv},{type:'slider',startValue:sv,height:16,bottom:30,textStyle:{color:mc,fontSize:9},borderColor:lc}],
   series:S});
  return ch}
-function opsSel(t){OPSS.sel=t;document.querySelectorAll('#opsT tr[data-t]').forEach(tr=>tr.classList.toggle('sel',tr.dataset.t===t));
- const e=OPSD.co[t],c=C.find(x=>x.ticker===t&&!x.xref);if(!e||!c)return;const r=opsRow(c,e);
- $('#opsHd').innerHTML=`<b class="cn" data-ci="${c.i}">${esc(c.name_ko)}</b> <span class="mut" style="font-size:12px">${c.ticker.slice(0,6)} · ${esc(c.l1)} › ${esc(c.l2)}</span>`;
- $('#opsSt').innerHTML=(r.ob!=null?`수주잔고 ${ymLab(r.obP)} <b>${fEok(r.ob)}</b> (QoQ ${fP(r.obQ)} · YoY ${fP(r.obY)}${r.cov!=null?` · 잔고/매출 <b>${r.cov.toFixed(2)}x</b>`:''})`:'수주잔고 미공시')+' · '+(r.ut!=null?`가동률 ${ymLab(r.utP)} <b>${r.ut.toFixed(1)}%</b> (QoQ ${fPP(r.utQ)} · YoY ${fPP(r.utY)})`:'가동률 미공시');
- $('#opsN').innerHTML=[[8,'8Q'],[12,'12Q'],[20,'20Q'],[0,'전체']].map(([n,l])=>`<button data-n="${n}" class="${n===OPSN?'on':''}">${l}</button>`).join('');
- $('#opsN').querySelectorAll('button').forEach(b=>b.onclick=()=>{OPSN=+b.dataset.n;opsSel(OPSS.sel)});
- $('#opsHd b.cn').onclick=()=>openCo(c);
- OPSCH=opsChart($('#opsCh'),e,OPSN,OPSCH);$('#opsSrc').innerHTML=opsSrc(e)+' · 휠·핀치 또는 하단 슬라이더로 기간 확대'}
-function renderOps(){if(!OPSD)$('#opsT').innerHTML='<tr><td class="mut">불러오는 중…</td></tr>';opsLoad().then(()=>{
- const all=Object.entries(OPSD.co||{}).map(([t,e])=>{const c=C.find(x=>x.ticker===t&&!x.xref);return c?opsRow(c,e):null}).filter(Boolean);
- const F={all:['전체',()=>true],both:['둘 다',r=>r.e.ob&&r.e.ut],ob:['수주잔고',r=>!!r.e.ob],ut:['가동률',r=>!!r.e.ut]};
- $('#opsS').textContent=`DART 공시 기준 · 국내 ${all.length}개사 (수주잔고 ${all.filter(F.ob[1]).length} · 가동률 ${all.filter(F.ut[1]).length} · 둘 다 ${all.filter(F.both[1]).length})`;
- let a=all.filter(F[OPSS.f][1]);const l1n={};a.forEach(r=>l1n[r.c.l1]=(l1n[r.c.l1]||0)+1);if(OPSS.l1&&!l1n[OPSS.l1])OPSS.l1=null;
- $('#opsCtl').innerHTML='<span class="lb">데이터</span>'+Object.entries(F).map(([k,[l,f]])=>`<button data-f="${k}" class="${OPSS.f===k?'on':''}">${l}<span class="c">${all.filter(f).length}</span></button>`).join('')
-  +'<span class="lb" style="margin-left:10px">대분류</span>'+[['','전체',a.length],...L1S.filter(l=>l1n[l]).map(l=>[l,l,l1n[l]])].map(([k,l,n])=>`<button data-l="${esc(k)}" class="${(OPSS.l1||'')===k?'on':''}">${esc(l)}<span class="c">${n}</span></button>`).join('');
- if(OPSS.l1)a=a.filter(r=>r.c.l1===OPSS.l1);
- a.sort((x,y)=>(!!(y.e.ob&&y.e.ut))-(!!(x.e.ob&&x.e.ut))||(y.c.mcap_usd||0)-(x.c.mcap_usd||0));
- if(OPSS.sort){const k=OPSCOLS[OPSS.sort.c].k,d=OPSS.sort.d;a=a.slice().sort((x,y)=>{const u=k(x),v=k(y);if(u==null)return 1;if(v==null)return -1;return (typeof u==='string'?u.localeCompare(v,'ko'):u-v)*d})}
- const ql=p=>p?` <span class="mut" style="font-size:10.5px">${ymLab(p)}</span>`:'';
- $('#opsT').innerHTML='<tr>'+OPSCOLS.map((c,i)=>`<th class="${c.n?'n':''}" data-i="${i}">${c.h}<span class="ar">${OPSS.sort&&OPSS.sort.c===i?(OPSS.sort.d<0?'▼':'▲'):''}</span></th>`).join('')+'</tr>'
-  +a.map(r=>`<tr data-t="${esc(r.c.ticker)}"><td class="co"><b class="cn" data-ci="${r.c.i}">${esc(r.c.name_ko)}</b> <span class="tk">${r.c.ticker.slice(0,6)}</span></td><td class="prod">${esc(r.c.l2)}</td>`
-   +`<td class="n">${r.ob!=null?fEok(r.ob)+ql(r.obP):'<span class="mut">–</span>'}</td><td class="n">${r.e.ob?fP(r.obQ):''}</td><td class="n">${r.e.ob?fP(r.obY):''}</td><td class="n">${r.cov!=null?r.cov.toFixed(2)+'x':'<span class="mut">–</span>'}</td>`
-   +`<td class="n">${r.ut!=null?r.ut.toFixed(1)+'%'+ql(r.utP):'<span class="mut">–</span>'}</td><td class="n">${r.e.ut?fPP(r.utQ):''}</td><td class="n">${r.e.ut?fPP(r.utY):''}</td></tr>`).join('');
- $('#opsCtl').querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{OPSS.f=b.dataset.f;renderOps()});
- $('#opsCtl').querySelectorAll('[data-l]').forEach(b=>b.onclick=()=>{OPSS.l1=b.dataset.l||null;renderOps()});
- $('#opsT').querySelectorAll('th').forEach(th=>th.onclick=()=>{const i=+th.dataset.i;OPSS.sort=!OPSS.sort||OPSS.sort.c!==i?{c:i,d:-1}:OPSS.sort.d<0?{c:i,d:1}:null;renderOps()});
- $('#opsT').querySelectorAll('tr[data-t]').forEach(tr=>tr.onclick=ev=>{const b=ev.target.closest('b.cn');if(b){openCo(C[+b.dataset.ci]);return}opsSel(tr.dataset.t)});
- const st=a.find(r=>r.c.ticker===OPSS.sel)?OPSS.sel:a[0]&&a[0].c.ticker;if(st)opsSel(st)})}
-function opsPop(){const el=document.getElementById('cmOps');if(!el||!FINC)return;const t=FINC.ticker;opsLoad().then(()=>{const e=(OPSD.co||{})[t],el2=document.getElementById('cmOps');if(!e||!el2||!FINC||FINC.ticker!==t)return;
- el2.innerHTML=`<div class="cm-fc"><div class="cm-fch"><b>수주잔고 × 가동률 (DART)</b><a href="#ops" style="font-size:12px;color:var(--acc)" onclick="closeCo()">🏗️ 수주·가동률 화면 →</a></div><div id="cmOpsCh"></div><div class="cm-src">${opsSrc(e)}</div></div>`;
- OPSPCH=opsChart(document.getElementById('cmOpsCh'),e,12,OPSPCH)})}
-addEventListener('resize',()=>{OPSCH&&OPSCH.resize();OPSPCH&&OPSPCH.resize()});
+// 🏗️ 수주·가동률 팝업 탭 (국내 기업 중 수주잔고·가동률 데이터가 있는 회사만, 사용자 지시 2026-10-27)
+function opsTab(){const el=document.getElementById('cmOps');if(!el)return;const k=$('#cmBg').dataset.k,c=C.find(x=>x.ticker.replace(/\./g,'_')===k&&!x.xref),e=c&&(OPSD.co||{})[c.ticker];if(!e)return;
+ const r=opsRow(c,e),fo=v=>v==null?'<span class="mut">–</span>':fP(v);
+ el.innerHTML=`<div class="cm-fc"><div class="cm-fch"><b>수주잔고 × 가동률 (DART)</b><span class="cm-fb" id="cmOpsN">${[[8,'8Q'],[12,'12Q'],[20,'20Q'],[0,'전체']].map(([n,l])=>`<button data-n="${n}" class="${n===OPSN?'on':''}">${l}</button>`).join('')}</span></div>
+  <div class="cm-src" style="margin:0 0 6px;font-size:13px">${r.ob!=null?`수주잔고 ${ymLab(r.obP)} <b>${fEok(r.ob)}</b> (QoQ ${fo(r.obQ)} · YoY ${fo(r.obY)}${r.cov!=null?` · 잔고/매출 <b>${r.cov.toFixed(2)}x</b>`:''})`:'수주잔고 미공시'} · ${r.ut!=null?`가동률 ${ymLab(r.utP)} <b>${r.ut.toFixed(1)}%</b> (QoQ ${fPP(r.utQ)} · YoY ${fPP(r.utY)})`:'가동률 미공시'}</div>
+  <div id="cmOpsCh"></div><div class="cm-src">${opsSrc(e)}</div></div>`;
+ el.querySelectorAll('#cmOpsN button').forEach(b=>b.onclick=()=>{OPSN=+b.dataset.n;opsTab()});
+ OPSPCH=opsChart(document.getElementById('cmOpsCh'),e,OPSN,OPSPCH)}
+addEventListener('resize',()=>{OPSPCH&&OPSPCH.resize()});
 /* 기업 팝업: 회사명 클릭 → semi-chain-co/{ticker}.json 지연 로드 (기업개요·사업내용·어닝콜) */
 const CMC={};
 // 📊 실적 탭 상단: 분기 매출(막대) + GPM·OPM(선, 우축 %) — 사용자 지시 2026-10-27 (Fiscal.ai 스타일)
@@ -522,10 +489,11 @@ function drawPx(){const el=document.getElementById('cmPxCh');if(!el||!PXT)return
  });
  document.querySelectorAll('#pxI button').forEach(b=>b.onclick=()=>{PXI=b.dataset.i;document.querySelectorAll('#pxI button').forEach(x=>x.classList.toggle('on',x===b));drawPx()});
  document.querySelectorAll('#pxR button').forEach(b=>b.onclick=()=>{PXR=+b.dataset.r;document.querySelectorAll('#pxR button').forEach(x=>x.classList.toggle('on',x===b));drawPx()});}
-function cmTab(k){document.querySelectorAll('#cmTabs button').forEach(b=>b.classList.toggle('on',b.dataset.k===k));document.querySelectorAll('#cmBd .cm-sec').forEach(x=>x.style.display=x.dataset.k===k?'':'none');$('#cmBd').scrollTop=0;if(k==='fin'){setTimeout(drawFin,0);setTimeout(opsPop,0)}if(k==='ov')setTimeout(drawPx,0)}
+function cmTab(k){document.querySelectorAll('#cmTabs button').forEach(b=>b.classList.toggle('on',b.dataset.k===k));document.querySelectorAll('#cmBd .cm-sec').forEach(x=>x.style.display=x.dataset.k===k?'':'none');$('#cmBd').scrollTop=0;if(k==='fin')setTimeout(drawFin,0);if(k==='ops')setTimeout(opsTab,0);if(k==='ov')setTimeout(drawPx,0)}
 let PRESD=null;const presLoad=()=>PRESD?Promise.resolve(PRESD):fetch('semi-chain-pres.json',{cache:'no-cache'}).then(r=>r.ok?r.json():{}).catch(()=>({})).then(j=>PRESD=j);
 function renderCo(c,d){const sec=(k,h)=>`<div class="cm-sec" data-k="${k}">${h}</div>`;
  const PR=(PRESD||{})[c.ticker.replace(/\./g,'_')]||[];
+ const OPON=c.country==='KR'&&!!(OPSD&&(OPSD.co||{})[c.ticker]);  // 국내 + 수주잔고·가동률 데이터 있는 기업만 탭 표시
  const prH=PR.length?'<h4 class="cm-h">IR 프레젠테이션 자료 · '+PR.length+'건 (최신 분기순)</h4><ul class="cm-pr">'+PR.map(x=>`<li><span class="mut">${x.p||x.y||''}</span> <a href="${esc(x.u)}" target="_blank" rel="noopener noreferrer">${esc(x.t)}</a></li>`).join('')+'</ul><div class="cm-src">출처: 각 사 IR 사이트 원문 링크 (매일 01:00 IR 수집 시 갱신)</div>':'';
  // 시가총액: 현지 통화 (원화) — 한국은 원화만, 미국은 $ (원화)
  const mc=c.mcap_usd==null||!D.fx?null:(()=>{const u=c.mcap_usd*1e9,kr=D.fx.KRW?fJ(u/D.fx.KRW,'₩'):null;if(c.ccy==='KRW')return kr;
@@ -539,17 +507,17 @@ function renderCo(c,d){const sec=(k,h)=>`<div class="cm-sec" data-k="${k}">${h}<
   +'<div class="cm-src">출처: FMP 어닝콜 트랜스크립트 원문 → AI 정리·분기 비교 분석 · 투자 참고용이며 투자 권유가 아닙니다</div>'}
  else ec='<div class="cm-none">어닝콜 트랜스크립트 없음</div>';
  // 📊 실적 탭(모든 기업): 다가올 분기 컨센서스 + 분기 실적 요약(IR 원문 추출 → 없으면 FMP·네이버 분기 손익)
- const fin=finChartBox(c)+(c.country==='KR'?'<div id="cmOps"></div>':'')+upQ(c)+(d.ir?`<h4 class="cm-h">분기 실적 요약</h4>${d.ir.html}<div class="cm-src">출처: ${esc(d.ir.src)}</div>`:'<div class="cm-ld">분기 실적 자료 없음</div>');
+ const fin=finChartBox(c)+upQ(c)+(d.ir?`<h4 class="cm-h">분기 실적 요약</h4>${d.ir.html}<div class="cm-src">출처: ${esc(d.ir.src)}</div>`:'<div class="cm-ld">분기 실적 자료 없음</div>');
  const pv=d.priv&&d.priv.quarters&&d.priv.quarters.length?d.priv.quarters.map((q,i)=>`<details class="cm-q"${i===0?' open':''}><summary><b>${esc(q.label)}</b> <span class="mut">자료 ${q.n_items}건${q.fmp?' · FMP 공개 노트와 병합':''}</span></summary><div class="cm-qb"><div class="cm-srcs">${q.sources.map(s=>`<span class="sb sb-${s.label==='노다지'?'nd':s.label.startsWith('텔레그램')?'tg':'my'}">${esc(s.label)} ${s.n}건 · ~${esc(s.last.slice(2))}</span>`).join('')}</div>${q.html}</div></details>`).join('')+'<div class="cm-src">비공개: 노다지 컨콜노트·내 노트(에버노트·노션)·텔레그램 학습 채널 → AI 분기 정리 · ⚠️ = FMP 공개 노트와 다른 내용</div>':'<div class="cm-ld">비공개 노트 없음</div>';
- $('#cmTabs').innerHTML=[['ov','기업개요'],['bz','사업내용'],['fin','📊 실적'],['ec','어닝콜'],...(prH?[['pr','📑 IR 자료']]:[]),...(PVON?[['pv','📒 내 노트·노다지·텔레그램']]:[])].map(([k,l])=>`<button data-k="${k}">${l}</button>`).join('');
+ $('#cmTabs').innerHTML=[['ov','기업개요'],['bz','사업내용'],['fin','📊 실적'],['ec','어닝콜'],...(OPON?[['ops','🏗️ 수주·가동률']]:[]),...(prH?[['pr','📑 IR 자료']]:[]),...(PVON?[['pv','📒 내 노트·노다지·텔레그램']]:[])].map(([k,l])=>`<button data-k="${k}">${l}</button>`).join('');
  $('#cmTabs').querySelectorAll('button').forEach(b=>b.onclick=()=>cmTab(b.dataset.k));
- $('#cmBd').innerHTML=sec('ov',ov+pxBox(c))+sec('bz',bz)+sec('fin',fin)+sec('ec',ec)+(prH?sec('pr',prH):'')+(PVON?sec('pv',pv):'');cmTab('ov')}
+ $('#cmBd').innerHTML=sec('ov',ov+pxBox(c))+sec('bz',bz)+sec('fin',fin)+sec('ec',ec)+(OPON?sec('ops','<div id="cmOps"></div>'):'')+(prH?sec('pr',prH):'')+(PVON?sec('pv',pv):'');cmTab('ov')}
 function openCo(c){if(!c)return;const bg=$('#cmBg'),k=c.ticker.replace(/\./g,'_');bg.dataset.k=k;
  $('#cmHd').innerHTML=`<div class="cm-t1"><span class="flag">${CT[c.country][0]}</span><b>${esc(c.name_ko)}</b>${neBadge(c)} <span class="tk">${esc(c.ticker)} · ${esc(c.name_en)}</span></div><div class="cm-t2 chips"><span>${esc(c.l1)} › ${esc(c.l2)}</span><span>시총 ${fB(c.mcap_usd)}</span><span>YTD ${fP(c.ytd)}</span></div>`;
  $('#cmTabs').innerHTML='';$('#cmBd').innerHTML='<div class="cm-ld">불러오는 중…</div>';bg.classList.add('on');document.body.style.overflow='hidden';
  (CMC[k]?Promise.resolve(CMC[k]):PRIV?fetch(`co/co_${c.country}.json`).then(r=>{if(!r.ok)throw new Error(r.status);return r.json()}).then(b=>{Object.assign(CMC,b);if(!b[k])throw new Error('none');return b[k]}):fetch(`semi-chain-co/${k}.json`,{cache:'no-cache'}).then(r=>{if(!r.ok)throw new Error(r.status);return r.json()}))
   .then(d=>PK&&!d.priv?pvLoad(c.country).then(b=>{if(b&&b[k])d.priv=b[k];return d}):d)
-  .then(d=>presLoad().then(()=>{CMC[k]=d;if(bg.dataset.k===k)renderCo(c,d)})).catch(()=>{if(bg.dataset.k===k)$('#cmBd').innerHTML='<div class="cm-ld">기업 정보 준비 중입니다. 잠시 후 다시 확인해 주세요.</div>'})}
+  .then(d=>Promise.all([presLoad(),opsLoad()]).then(()=>{CMC[k]=d;if(bg.dataset.k===k)renderCo(c,d)})).catch(()=>{if(bg.dataset.k===k)$('#cmBd').innerHTML='<div class="cm-ld">기업 정보 준비 중입니다. 잠시 후 다시 확인해 주세요.</div>'})}
 function closeCo(){$('#cmBg').classList.remove('on');$('#cmBg').dataset.k='';document.body.style.overflow=''}
 $('#cmX').onclick=closeCo;$('#cmBg').addEventListener('click',e=>{if(e.target.id==='cmBg')closeCo()});addEventListener('keydown',e=>{if(e.key==='Escape'&&$('#cmBg').classList.contains('on'))closeCo()});
 $('#tbl').addEventListener('click',e=>{const b=e.target.closest('b.cn');if(b){e.stopPropagation();openCo(C[+b.dataset.ci])}});
