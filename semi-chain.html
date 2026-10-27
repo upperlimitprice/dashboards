@@ -330,7 +330,7 @@ function renderHome(){const st=I.market||{};const A=st.all||{};
  $('#gobox').innerHTML=[['map','🧠 밸류체인 트리맵','국가별로 대분류 → 세부 카테고리 → 기업 구조와 YTD를 한눈에'],['list','📋 기업 목록 '+CU.length+'개사','제품·시총·YTD·분기 매출 추이·OPM·PER, 국가·카테고리별 필터'],['heat','🔥 카테고리 × 국가 히트맵','어느 밸류체인·어느 나라가 강한지 시총가중 YTD로 비교'],['earn','📅 실적발표 일정','어제~7일 뒤 발표 기업, 확정/예상 일정과 다가올 분기 컨센서스']].map(([v,t,d])=>`<div data-v="${v}"><b>${t}</b><span>${d}</span></div>`).join('');
  $('#gobox').querySelectorAll('div[data-v]').forEach(b=>b.onclick=()=>go_(b.dataset.v))}
 /* 실적발표 화면: 어제(D-1)~D+7 날짜별 발표 기업 (ne=다음 발표일 · le=최근 발표일) */
-let EV={ct:'ALL',cf:false,v:'cal',m:TODAY.slice(0,7),open:{}};try{EV.v=localStorage.getItem('semi-ev-view')||'cal'}catch(e){}
+let EV={ct:'ALL',cf:false,v:'list',m:TODAY.slice(0,7),open:{}};try{EV.v=localStorage.getItem('semi-ev-view2')||'list'}catch(e){}
 function earnRows(lo=addD(TODAY,-1),hi=addD(TODAY,7)){const out=[];
  C.filter(c=>!c.xref).forEach(c=>{if(c.ne&&c.ne>=lo&&c.ne<=hi)out.push({c,d:c.ne,done:c.ne<TODAY});if(c.le&&c.le>=lo&&c.le<=hi&&c.le<=TODAY&&c.le!==c.ne)out.push({c,d:c.le,done:true})});return out}
 function evRow({c,done,d}){return `<div class="ev"><div class="nm"><div class="ev-st">${done?'<span class="cf dn">✅ 발표 완료</span>':neTag(c)}${!done&&c.ne_time?`<span class="cf tm ${sessCls(c)}">${esc(sessLab(c))}</span>`:''}</div><span class="flag">${CT[c.country][0]}</span><b data-ci="${c.i}">${esc(c.name_ko)}</b> <span class="tk">${esc(c.ticker)}</span> <span class="ev-mc">${fB(c.mcap_usd)}</span><div class="tk">${esc(c.l1)} › ${esc(c.l2)}</div></div>
@@ -412,9 +412,9 @@ function evCal(){const [Y,M]=EV.m.split('-').map(Number);const first=`${EV.m}-01
  return h+'</div></div>'}
 function renderEarn(){const all=earnRows();const a=all.filter(evF);
  const n=k=>all.filter(x=>k==='ALL'||x.c.country===k).length,mob=innerWidth<=640;
- $('#evCtl').innerHTML=`<span class="lb">보기</span><button data-v="cal" class="${EV.v==='cal'?'on':''}">🗓️ 달력</button><button data-v="list" class="${EV.v==='list'?'on':''}">📝 줄글</button><span class="lb" style="margin-left:10px">국가</span>`+[['ALL','🌐 전체'],...CO.map(k=>[k,CT[k].join(' ')])].map(([k,l])=>`<button data-k="${k}" class="${EV.ct===k?'on':''}">${l}<span class="c">${n(k)}</span></button>`).join('')+`<span class="lb" style="margin-left:10px">일정</span><button data-f="1" class="${EV.cf?'on':''}">확정만</button>`;
+ $('#evCtl').innerHTML=`<span class="lb">보기</span><button data-v="list" class="${EV.v==='list'?'on':''}">📝 줄글</button><button data-v="cal" class="${EV.v==='cal'?'on':''}">🗓️ 달력</button><span class="lb" style="margin-left:10px">국가</span>`+[['ALL','🌐 전체'],...CO.map(k=>[k,CT[k].join(' ')])].map(([k,l])=>`<button data-k="${k}" class="${EV.ct===k?'on':''}">${l}<span class="c">${n(k)}</span></button>`).join('')+`<span class="lb" style="margin-left:10px">일정</span><button data-f="1" class="${EV.cf?'on':''}">확정만</button>`;
  $('#evCtl').querySelectorAll('[data-k]').forEach(b=>b.onclick=()=>{EV.ct=b.dataset.k;renderEarn()});$('#evCtl [data-f]').onclick=()=>{EV.cf=!EV.cf;renderEarn()};
- $('#evCtl').querySelectorAll('[data-v]').forEach(b=>b.onclick=()=>{EV.v=b.dataset.v;try{localStorage.setItem('semi-ev-view',EV.v)}catch(e){}renderEarn()});
+ $('#evCtl').querySelectorAll('[data-v]').forEach(b=>b.onclick=()=>{EV.v=b.dataset.v;try{localStorage.setItem('semi-ev-view2',EV.v)}catch(e){}renderEarn()});
  $('#evL').innerHTML=EV.v==='list'?evList(a):mob?evAgenda(a):evCal();
  $('#evL').querySelectorAll('[data-ci]').forEach(b=>b.onclick=()=>openCo(C[+b.dataset.ci]));
  $('#evL').querySelectorAll('[data-pv]').forEach(b=>b.onclick=()=>openPv(b.dataset.pv));$('#evL').querySelectorAll('[data-rv]').forEach(b=>b.onclick=()=>openRv(b.dataset.rv));$('#evL').querySelectorAll('[data-req]').forEach(b=>b.onclick=()=>pvReq(b.dataset.req,b.dataset.t));if(PK&&Object.keys(PVQ).length)pvPoll();if(PK&&!PVD&&EV.v==='list')pvPrevLoad().then(()=>{if(VIEW==='earn'&&EV.v==='list')renderEarn()});
