@@ -188,9 +188,9 @@ function upQ(c){const k=c.cons;const dt=c.ne?`<b>${mdw(c.ne)}</b> · ${dLab(c.ne
  const r=(lab,v,lv,yv,ex)=>`<tr><td>${lab}</td><td><b>${fAmt(v,k.ccy)}</b>${fUsd(v,k.ccy)}${ex||''}</td><td>${same&&lv!=null?fAmt(lv,k.ccy):'–'}</td><td>${fP(pc(v,lv))}</td><td>${fP(pc(v,yv))}</td></tr>`;
  h+=`<div class="cm-tw"><table class="cm-t"><tr><th>항목</th><th>컨센서스 ${esc(k.q||'')}</th><th>직전 분기${L?' '+esc(L.q):''}</th><th>QoQ</th><th>YoY</th></tr>`
   +r('매출',k.rev,L&&L.rev,Y&&Y.rev,k.lo&&k.hi?`<div class="tk mut" style="font-size:11px">범위 ${fAmt(k.lo,k.ccy)} ~ ${fAmt(k.hi,k.ccy)}</div>`:'')
-  +(k.op!=null?r(k.op_k==='EBIT'?'EBIT(영업이익)':'영업이익',k.op,L&&L.op,Y&&Y.op,''):'')
+  +(k.op!=null?r('영업이익',k.op,L&&L.op,Y&&Y.op,''):'')
   +(k.eps!=null?`<tr><td>EPS</td><td><b>${fEps(k.eps,k.ccy)}</b></td><td>–</td><td></td><td></td></tr>`:'')+'</table></div>';
- return h+`<div class="cm-src" style="margin-top:4px">컨센서스 출처: ${esc(k.src)}${k.n?` · 애널리스트 ${k.n}명`:''} · 통화 ${esc(k.ccy)}${k.pe?` · 분기말 ${esc(k.pe)}`:''}${k.op_k==='EBIT'?' · 영업이익은 EBIT 추정치':''}</div></div>`}
+ return h+`<div class="cm-src" style="margin-top:4px">컨센서스 출처: ${esc(k.src)}${k.n?` · 애널리스트 ${k.n}명`:''} · 통화 ${esc(k.ccy)}${k.pe?` · 분기말 ${esc(k.pe)}`:''}</div></div>`}
 const inCt=c=>S.ct==='NEW'?isN(c):!isN(c)&&(S.ct==='ALL'||c.country===S.ct);
 const wYtd=a=>{const b=a.filter(c=>c.ytd!=null&&c.mcap_usd);const w=b.reduce((s,c)=>s+c.mcap_usd,0);return w?b.reduce((s,c)=>s+c.ytd*c.mcap_usd,0)/w:null};
 const wAvg=(a,k)=>{const b=a.filter(c=>c[k]!=null&&c.mcap_usd);const w=b.reduce((s,c)=>s+c.mcap_usd,0);return w?b.reduce((s,c)=>s+c[k]*c.mcap_usd,0)/w:null};
