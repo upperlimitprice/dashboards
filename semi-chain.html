@@ -86,7 +86,7 @@ td.co b.cn{cursor:pointer;text-decoration:underline dotted;text-underline-offset
 .ec{text-overflow:ellipsis}.cd-more{font:inherit;font-size:10.5px;color:var(--acc);background:none;border:0;cursor:pointer;padding:2px 3px}
 .ag{border-bottom:1px solid var(--line);padding:8px 0}.ag-d{font-weight:800;font-size:13.5px;display:flex;align-items:center;gap:6px;margin-bottom:4px}.ag-c{display:flex;flex-wrap:wrap;gap:4px}.ag-c .ec{border:1px solid var(--line);background:var(--bg);max-width:100%}
 @media(max-width:640px){.ev{grid-template-columns:1fr;gap:2px}.ev .pvc{text-align:left}}
-.ev .pvc{text-align:right}.pvb{font:inherit;font-size:12px;font-weight:800;padding:6px 12px;border:1px solid var(--acc);border-radius:8px;background:color-mix(in srgb,var(--acc) 12%,transparent);color:var(--acc);cursor:pointer;letter-spacing:.3px}.pvb:hover{background:var(--acc);color:#fff}.pvb.off{border-color:var(--line);background:none;color:var(--mut);cursor:default;font-weight:600;font-size:11px;padding:5px 8px}
+.ev .pvc{text-align:right}.pvb{font:inherit;font-size:12px;font-weight:800;padding:6px 12px;border:1px solid var(--acc);border-radius:8px;background:color-mix(in srgb,var(--acc) 12%,transparent);color:var(--acc);cursor:pointer;letter-spacing:.3px}.pvb:hover{background:var(--acc);color:#fff}.pvb.req{border:1.5px dashed #e8912d;background:none;color:#e8912d}.pvb.req:hover{background:#e8912d;color:#fff}.pvb.ing{border:1.5px dashed #e8912d;background:color-mix(in srgb,#e8912d 12%,transparent);color:#e8912d;cursor:default;font-weight:700;font-size:11px;padding:5px 8px;animation:pvbl 1.4s ease-in-out infinite}@keyframes pvbl{50%{opacity:.45}}.pvb.off{border-color:var(--line);background:none;color:var(--mut);cursor:default;font-weight:600;font-size:11px;padding:5px 8px}
 .pv-m{white-space:normal}.pv-m+.pv-m{margin-top:12px;padding-top:12px;border-top:1px dashed var(--line)}.pv-if{width:100%;height:70vh;border:1px solid var(--line);border-radius:10px;margin-top:12px;background:#fff}.pv-na{color:var(--mut);padding:18px 0}
 .cm-pr{list-style:none;margin:6px 0 0;padding:0}.cm-pr li{padding:6px 2px;border-bottom:1px solid var(--line);font-size:13.5px;line-height:1.45;overflow-wrap:anywhere}.cm-pr li .mut{display:inline-block;min-width:68px;font-variant-numeric:tabular-nums}.cm-fc{margin:2px 0 14px}.cm-fch{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;font-size:13.5px;margin-bottom:4px}.cm-fb button{font:inherit;font-size:11.5px;padding:2px 9px;margin-left:4px;border:1px solid var(--line);border-radius:6px;background:var(--card);color:var(--ink);cursor:pointer}.cm-fb button.on{background:var(--acc);color:#fff;border-color:var(--acc)}#cmFinCh{width:100%;height:360px}@media (max-width:600px){#cmFinCh{height:300px}}.ss-pre{--sc:#e08a00}.ss-mid{--sc:#14a37f}.ss-post{--sc:#7c5ce6}.ss-na{--sc:var(--mut)}
 .cf.tm.ss-pre,.cf.tm.ss-mid,.cf.tm.ss-post{color:var(--sc);background:color-mix(in srgb,var(--sc) 14%,transparent);border-color:color-mix(in srgb,var(--sc) 45%,transparent);font-weight:700}
@@ -313,10 +313,18 @@ async function decBin(f){const r=await fetch(f,{cache:'no-cache'});if(!r.ok)retu
  const key=await crypto.subtle.importKey('raw',b64u(PK),'AES-GCM',false,['decrypt']);const pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:buf.slice(0,12)},key,buf.slice(12));
  return JSON.parse(await new Response(new Blob([pt]).stream().pipeThrough(new DecompressionStream('gzip'))).text())}
 function pvPrevLoad(){if(PVL)return PVL;PVL=Promise.all([decBin('semi-chain-prev.bin').catch(()=>({})),decBin('semi-chain-rev.bin').catch(()=>({}))]).then(([p,r])=>{PVD=p;RVD=r});return PVL}
-function pvBox(c,d,done){if(!PK)return '';
- if(done&&d===addD(TODAY,-1)){const r=RVD&&RVD[c.ticker];return r?((r.quarters||[]).length||r.info?`<button class="pvb" data-rv="${esc(c.ticker)}">review</button>`:'<span class="pvb off">어닝콜 자료 없음</span>'):RVD?'<span class="pvb off">review 준비 중</span>':''}
- if(done||(d!==TODAY&&d!==addD(TODAY,1)))return '';const e=PVD&&PVD[c.ticker];
- return e?`<button class="pvb" data-pv="${esc(c.ticker)}">preview</button>`:PVD?'<span class="pvb off">preview 준비 중</span>':''}
+// 박스 색: 확보(파랑 채움) = 바로 열림 · 대기(회색) = 자동 생성 대상(FMP 어닝콜 보유) 순서 대기 · 미확보(주황 점선) = 누르면 거니봇 요청 → 생성 중(주황 깜빡임) → 완료 시 확보 색
+const BOTU='Gunnyy_bot';let PVQ={};try{PVQ=JSON.parse(localStorage.getItem('semi-pv-req')||'{}')}catch(e){}
+function pvBox(c,d,done){if(!PK)return '';const t=c.ticker;
+ const st=(D_,kind,lab)=>{const e=D_&&D_[t];const k=kind+':'+t;
+  if(e)return kind==='rv'&&!((e.quarters||[]).length||e.info||(e.calls&&e.calls.quarters&&e.calls.quarters.length))?'<span class="pvb off">어닝콜 자료 없음</span>':`<button class="pvb" data-${kind}="${esc(t)}">${lab}</button>`;
+  if(!D_)return '';if((D_._auto||[]).includes(t))return `<span class="pvb off" title="자동 생성 대상 — 순서 대기 중">${lab} 준비 중</span>`;
+  return PVQ[k]&&Date.now()-PVQ[k]<45*60e3?`<span class="pvb ing" title="거니봇에 생성 요청됨 — 완료되면 자동으로 바뀝니다">${lab} 생성 중…</span>`:`<button class="pvb req" data-req="${kind}" data-t="${esc(t)}" title="자료 미확보 — 누르면 거니봇이 생성을 시작합니다(텔레그램에서 '시작' 한 번)">${lab}</button>`};
+ if(done&&d===addD(TODAY,-1))return st(RVD,'rv','review');
+ if(done||(d!==TODAY&&d!==addD(TODAY,1)))return '';return st(PVD,'pv','preview')}
+function pvReq(kind,t){window.open(`https://t.me/${BOTU}?start=${kind}_${t.replace(/\./g,'_')}`,'_blank','noopener');PVQ[kind+':'+t]=Date.now();try{localStorage.setItem('semi-pv-req',JSON.stringify(PVQ))}catch(e){}renderEarn();pvPoll()}
+let PVPT=null;function pvPoll(){if(PVPT)return;PVPT=setInterval(async()=>{const now=Date.now(),ks=Object.keys(PVQ).filter(k=>now-PVQ[k]<45*60e3);if(!ks.length){clearInterval(PVPT);PVPT=null;return}
+ PVL=null;await pvPrevLoad();ks.forEach(k=>{const [kind,t]=k.split(':');if((kind==='pv'?PVD:RVD)[t])delete PVQ[k]});try{localStorage.setItem('semi-pv-req',JSON.stringify(PVQ))}catch(e){}if(VIEW==='earn'&&EV.v==='list')renderEarn()},60e3)}
 const PVT=[['deep','AI 리서치'],['call','최근 4개 분기 어닝콜'],['earn','최근 실적일 주가추이']];
 const tg2h=t=>esc(t).replace(/&lt;(\/?)(b|i|u|code)&gt;/g,'<$1$2>').replace(/(https?:\/\/[^\s<]+)/g,'<a href="$1" target="_blank" rel="noopener">$1</a>').replace(/\n/g,'<br>');
 function pvTab(k){const e=PVD[$('#pvBg').dataset.t];if(!e)return;$('#pvTabs').querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.k===k));
@@ -367,7 +375,7 @@ function renderEarn(){const all=earnRows();const a=all.filter(evF);
  $('#evCtl').querySelectorAll('[data-v]').forEach(b=>b.onclick=()=>{EV.v=b.dataset.v;try{localStorage.setItem('semi-ev-view',EV.v)}catch(e){}renderEarn()});
  $('#evL').innerHTML=EV.v==='list'?evList(a):mob?evAgenda(a):evCal();
  $('#evL').querySelectorAll('[data-ci]').forEach(b=>b.onclick=()=>openCo(C[+b.dataset.ci]));
- $('#evL').querySelectorAll('[data-pv]').forEach(b=>b.onclick=()=>openPv(b.dataset.pv));$('#evL').querySelectorAll('[data-rv]').forEach(b=>b.onclick=()=>openRv(b.dataset.rv));if(PK&&!PVD&&EV.v==='list')pvPrevLoad().then(()=>{if(VIEW==='earn'&&EV.v==='list')renderEarn()});
+ $('#evL').querySelectorAll('[data-pv]').forEach(b=>b.onclick=()=>openPv(b.dataset.pv));$('#evL').querySelectorAll('[data-rv]').forEach(b=>b.onclick=()=>openRv(b.dataset.rv));$('#evL').querySelectorAll('[data-req]').forEach(b=>b.onclick=()=>pvReq(b.dataset.req,b.dataset.t));if(PK&&Object.keys(PVQ).length)pvPoll();if(PK&&!PVD&&EV.v==='list')pvPrevLoad().then(()=>{if(VIEW==='earn'&&EV.v==='list')renderEarn()});
  $('#evL').querySelectorAll('.cal-nav [data-m]').forEach(b=>b.onclick=()=>{const k=+b.dataset.m,[y,m]=EV.m.split('-').map(Number),t=new Date(Date.UTC(y,m-1+k,1));EV.m=k?t.toISOString().slice(0,7):TODAY.slice(0,7);renderEarn()});
  $('#evL').querySelectorAll('.cd-more').forEach(b=>b.onclick=()=>{EV.open[b.dataset.d]=!EV.open[b.dataset.d];renderEarn()});
  const N=C.filter(c=>!c.xref);$('#evS').textContent=`어제~7일 뒤 ${a.length}건 · 전체 ${N.length}개사 중 다음 발표일 확정 ${N.filter(c=>c.ne_conf==='확정').length} · 예상 ${N.filter(c=>c.ne_conf==='예상').length} · 컨센서스 ${N.filter(c=>c.cons).length}`;
