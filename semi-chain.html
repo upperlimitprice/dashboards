@@ -316,9 +316,9 @@ function pvBox(c,d,done){if(!PK||done||(d!==TODAY&&d!==addD(TODAY,1)))return '';
 const PVT=[['deep','AI 리서치'],['call','최근 4개 분기 어닝콜'],['earn','최근 실적일 주가추이']];
 const tg2h=t=>esc(t).replace(/&lt;(\/?)(b|i|u|code)&gt;/g,'<$1$2>').replace(/(https?:\/\/[^\s<]+)/g,'<a href="$1" target="_blank" rel="noopener">$1</a>').replace(/\n/g,'<br>');
 function pvTab(k){const e=PVD[$('#pvBg').dataset.t];if(!e)return;$('#pvTabs').querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.k===k));
- const ms=(e[k]||[]).map(m=>m.replace(/\n*다른 기간을 원하면 이 메시지에 답장으로[\s\S]*$/,'')).filter(m=>!/^⚠️/.test(m)||k!=='call');let h=ms.map(m=>`<div class="pv-m">${tg2h(m)}</div>`).join('');
+ const ms=(e[k]||[]).map(m=>m.replace(/\n*다른 기간을 원하면 이 메시지에 답장으로[\s\S]*$/,'')).filter(m=>!/^⚠️/.test(m));let h=ms.map(m=>`<div class="pv-m">${tg2h(m)}</div>`).join('');
  if(k==='call'&&!ms.some(m=>/✅/.test(m)))h='<div class="pv-na">어닝콜 자료 없음 — 미국·유럽 외 기업은 원문 수집이 어려워 비워 둡니다</div>'+h;
- if(!h)h='<div class="pv-na">자료 없음</div>';
+ if(!h)h=`<div class="pv-na">자료 없음 — ${k==='earn'?'컨센서스·과거 발표일 주가 데이터가 부족해 생성되지 않았습니다(주로 미국 외 기업)':'생성되지 않았습니다'}</div>`;
  const u=k==='earn'&&(ms.join(' ').match(/https:\/\/upperlimitprice\.github\.io\/[^\s<]+/)||[])[0];if(u)h+=`<iframe class="pv-if" src="${esc(u)}" loading="lazy"></iframe>`;
  $('#pvBd').innerHTML=h;$('#pvBd').scrollTop=0}
 function openPv(t){const e=PVD&&PVD[t];if(!e)return;const c=C.find(x=>x.ticker===t&&!x.xref)||{};const bg=$('#pvBg');bg.dataset.t=t;
