@@ -175,9 +175,12 @@ const consLine=c=>{const k=c.cons;if(!k)return '<span class="mut">컨센서스 �
 // 실적발표 줄글: 컨센서스 옆 최근 분기 매출 막대(최근 8개 실적 + 컨센 점선) + 컨센 매출의 QoQ·YoY (사용자 지시 2026-10-27). 반기 공시 기업은 HoH·YoY
 function consBase(c){const k=c.cons;if(!k||k.rev==null)return null;const q=(c.qrev||[]).filter(x=>x.rev!=null&&x.d).sort((a,b)=>a.d<b.d?-1:1);const pm=(k.pe||'').slice(0,7);
  const a=pm?q.filter(x=>x.d.slice(0,7)<pm):q;return a.length?{k,a}:null}
-function consChg(c){const b=consBase(c);if(!b)return '';const {k,a}=b,st=c.semi?2:4,L=a[a.length-1],Y=a.length>=st?a[a.length-st]:null;
- const r=(v,x)=>x&&x>0&&v/x<5&&v/x>.2?v/x-1:null,f=(l,v)=>v==null?'':`<span style="color:var(${v>=0?'--up':'--dn'});font-weight:700">${l} ${v>=0?'+':''}${(v*100).toFixed(1)}%</span>`;
- const t=[f(c.semi?'HoH':'QoQ',r(k.rev,L.rev)),f('YoY',r(k.rev,Y&&Y.rev))].filter(Boolean);return t.length?`<div class="ct-c">컨센 매출 ${t.join(' · ')}</div>`:''}
+function consChg(c){const b=consBase(c);if(!b)return '';const {k,a}=b,st=c.semi?2:4,L=a[a.length-1],Y=a.length>=st?a[a.length-st]:null,ql=c.semi?'HoH':'QoQ';
+ const pc=(l,v)=>`<span style="color:var(${v>=0?'--up':'--dn'});font-weight:700">${l} ${v>=0?'+':''}${(v*100).toFixed(1)}%</span>`,tx=(l,t,up)=>`<span style="color:var(${up?'--up':'--dn'});font-weight:700">${l} ${t}</span>`;
+ const rv=(v,x,l)=>x&&x>0&&v/x<5&&v/x>.2?pc(l,v/x-1):'';
+ const op=(v,x,l)=>{if(v==null||x==null)return '';if(x>0&&v>0)return v/x<10&&v/x>.1?pc(l,v/x-1):'';return x<=0&&v>0?tx(l,'흑자전환',1):x>0?tx(l,'적자전환',0):tx(l,'적자지속',0)};
+ const R=[rv(k.rev,L.rev,ql),rv(k.rev,Y&&Y.rev,'YoY')].filter(Boolean),O=k.op!=null?[op(k.op,L.op,ql),op(k.op,Y&&Y.op,'YoY')].filter(Boolean):[];
+ return (R.length?`<div class="ct-c">컨센 매출 ${R.join(' · ')}</div>`:'')+(O.length?`<div class="ct-c">컨센 영업이익 ${O.join(' · ')}</div>`:'')}
 function consBars(c){const b=consBase(c);if(!b)return '';const {k,a}=b,h=a.slice(-8),vs=h.map(x=>x.rev).concat([k.rev]),mx=Math.max(...vs.map(v=>Math.abs(v)))||1,W=8,G=3,H=30;
  const bar=(v,i,cls,tt)=>{const y=Math.max(1,Math.abs(v)/mx*(H-2));return `<rect x="${i*(W+G)}" y="${H-y}" width="${W}" height="${y}" rx="1.5" class="${cls}"><title>${esc(tt)}</title></rect>`};
  return `<svg class="ct-b" width="${vs.length*(W+G)}" height="${H}" viewBox="0 0 ${vs.length*(W+G)} ${H}">${h.map((x,i)=>bar(x.rev,i,i===h.length-1?'ct-l':'ct-a',`${x.q||x.d} 매출 ${fAmt(x.rev,k.ccy)}`)).join('')}${bar(k.rev,h.length,'ct-e',`${k.q||'다음 분기'} 컨센 ${fAmt(k.rev,k.ccy)}`)}</svg>`}
