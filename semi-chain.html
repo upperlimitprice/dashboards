@@ -321,7 +321,7 @@ const PVT=[['deep','AI 리서치'],['call','최근 4개 분기 어닝콜'],['ear
 const tg2h=t=>esc(t).replace(/&lt;(\/?)(b|i|u|code)&gt;/g,'<$1$2>').replace(/(https?:\/\/[^\s<]+)/g,'<a href="$1" target="_blank" rel="noopener">$1</a>').replace(/\n/g,'<br>');
 function pvTab(k){const e=PVD[$('#pvBg').dataset.t];if(!e)return;$('#pvTabs').querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.k===k));
  const ms=(e[k]||[]).map(m=>m.replace(/\n*다른 기간을 원하면 이 메시지에 답장으로[\s\S]*$/,'')).filter(m=>!/^⚠️/.test(m));let h=ms.map(m=>`<div class="pv-m">${tg2h(m)}</div>`).join('');
- if(k==='call'&&!ms.some(m=>/✅/.test(m)))h='<div class="pv-na">어닝콜 자료 없음 — 미국·유럽 외 기업은 원문 수집이 어려워 비워 둡니다</div>';
+ if(k==='call'&&e.calls&&e.calls.quarters&&e.calls.quarters.length)h=ecHtml(e.name,e.calls);else if(k==='call'&&!ms.some(m=>/✅/.test(m)))h='<div class="pv-na">어닝콜 자료 없음 — 미국·유럽 외 기업은 원문 수집이 어려워 비워 둡니다</div>';
  if(!h)h=`<div class="pv-na">자료 없음 — ${k==='earn'?'컨센서스·과거 발표일 주가 데이터가 부족해 생성되지 않았습니다(주로 미국 외 기업)':'생성되지 않았습니다'}</div>`;
  const u=k==='earn'&&(ms.join(' ').match(/https:\/\/upperlimitprice\.github\.io\/[^\s<]+/)||[])[0];if(u)h+=`<iframe class="pv-if" src="${esc(u)}" loading="lazy"></iframe>`;
  $('#pvBd').innerHTML=h;$('#pvBd').scrollTop=0}
@@ -329,14 +329,13 @@ function openPv(t){const e=PVD&&PVD[t];if(!e)return;const c=C.find(x=>x.ticker==
  $('#pvHd').innerHTML=`<h3 style="margin:0 40px 8px 0;font-size:17px">${c.country?CT[c.country][0]+' ':''}${esc(e.name)} <span class="tk" style="font-size:12px;color:var(--mut)">${esc(t)} · preview · 발표 ${esc(e.ne)} · 생성 ${esc(e.made)}</span></h3>`;
  $('#pvTabs').innerHTML=PVT.map(([k,n])=>`<button data-k="${k}">${n}</button>`).join('');$('#pvTabs').querySelectorAll('button').forEach(b=>b.onclick=()=>pvTab(b.dataset.k));
  pvTab('deep');bg.classList.add('on');document.body.style.overflow='hidden'}
-function rvTab(i){const e=RVD[$('#pvBg').dataset.t];if(!e)return;$('#pvTabs').querySelectorAll('button').forEach(b=>b.classList.toggle('on',+b.dataset.i===i));let h;
- if(i<0){h=e.call&&!/^⚠️/.test(e.call)?`<div class="pv-m">${tg2h(e.call)}</div>`:'';if(e.info)h+=`<iframe class="pv-if" src="${esc(e.info)}" loading="lazy"></iframe>`;else h+='<div class="pv-na">4개 분기 변화 분석 인포그래픽 없음 — 어닝콜 원문을 확보하지 못한 기업입니다</div>'}
- else{const q=e.quarters[i];h=`<div class="tk" style="color:var(--mut);margin-bottom:8px">${esc(q.label)} · ${esc(q.date)} · 어닝콜 전문</div><div class="pv-m" style="white-space:pre-wrap">${esc(q.text)}</div>`}
- $('#pvBd').innerHTML=h;$('#pvBd').scrollTop=0}
-function openRv(t){const e=RVD&&RVD[t];if(!e)return;const c=C.find(x=>x.ticker===t&&!x.xref)||{};const bg=$('#pvBg');bg.dataset.t=t;const qs=e.quarters||[];
- $('#pvHd').innerHTML=`<h3 style="margin:0 40px 8px 0;font-size:17px">${c.country?CT[c.country][0]+' ':''}${esc(e.name)} <span class="tk" style="font-size:12px;color:var(--mut)">${esc(t)} · review · 발표 ${esc(e.d)} · 갱신 ${esc(e.made)}${e.latest?'':' · 어제 콜 전문은 아직 미게시(2시간마다 재확인)'}</span></h3>`;
- $('#pvTabs').innerHTML='<button data-i="-1">4개 분기 어닝콜 인포그래픽</button>'+qs.map((q,i)=>`<button data-i="${i}">${esc(q.label)} 전문</button>`).reverse().join('');
- $('#pvTabs').querySelectorAll('button').forEach(b=>b.onclick=()=>rvTab(+b.dataset.i));rvTab(-1);bg.classList.add('on');document.body.style.overflow='hidden'}
+function openRv(t){const e=RVD&&RVD[t];if(!e)return;const c=C.find(x=>x.ticker===t&&!x.xref)||{};const bg=$('#pvBg');bg.dataset.t=t;
+ $('#pvHd').innerHTML=`<h3 style="margin:0 40px 8px 0;font-size:17px">${c.country?CT[c.country][0]+' ':''}${esc(e.name)} <span class="tk" style="font-size:12px;color:var(--mut)">${esc(t)} · review · 발표 ${esc(e.d)} · 갱신 ${esc(e.made)}${e.latest?'':' · 어제 콜은 아직 미게시(2시간마다 재확인)'}</span></h3>`;
+ $('#pvTabs').innerHTML='<button class="on">최근 4개 분기 어닝콜</button>';
+ const raw={};(e.quarters||[]).forEach(q=>raw[q.date]=q.text);
+ let h=e.calls&&e.calls.quarters&&e.calls.quarters.length?ecHtml(e.name,e.calls,raw):(e.quarters||[]).length?(e.quarters.slice().reverse().map((q,i)=>`<details class="cm-q"${i===0?' open':''}><summary><b>${esc(q.label)}</b> <span class="mut">${esc(q.date)}</span></summary><div class="cm-qb" style="white-space:pre-wrap">${esc(q.text)}</div></details>`).join('')):'<div class="pv-na">어닝콜 자료 없음 — 미국·유럽 외 기업은 원문 수집이 어려워 비워 둡니다</div>';
+ if(e.info)h=`<div class="pv-m" style="margin-bottom:10px">📊 4개 분기 변화 분석 인포그래픽: <a href="${esc(e.info)}" target="_blank" rel="noopener">${esc(e.info)}</a></div>`+h;
+ $('#pvBd').innerHTML=h;$('#pvBd').scrollTop=0;bg.classList.add('on');document.body.style.overflow='hidden'}
 function closePv(){$('#pvBg').classList.remove('on');document.body.style.overflow=''}
 const evF=x=>(EV.ct==='ALL'||x.c.country===EV.ct)&&(!EV.cf||x.done||x.c.ne_conf==='확정');
 const byCap=(x,y)=>(y.c.mcap_usd||0)-(x.c.mcap_usd||0);
@@ -442,6 +441,11 @@ function opsTab(){const el=document.getElementById('cmOps');if(!el)return;const 
  if(e.ob)OPSCHS.push(opsChart(document.getElementById('cmOpsOb'),e,OPSN,null,'ob'));
  if(e.ut)OPSCHS.push(opsChart(document.getElementById('cmOpsUt'),e,OPSN,null,'ut'))}
 addEventListener('resize',()=>OPSCHS.forEach(x=>x&&x.resize()));
+// 기업 팝업 '어닝콜' 탭 · preview '최근 4개 분기 어닝콜' · review 공용 (사용자 지시 2026-10-27: 같은 포맷) — raw={날짜:원문 전문}이면 분기마다 전문 토글
+function ecHtml(nm,cl,raw){if(!(cl&&cl.quarters&&cl.quarters.length))return '<div class="cm-none">어닝콜 트랜스크립트 없음</div>';
+ return (cl.comp?`<div class="cm-hero"><span class="ey">QUARTER-OVER-QUARTER CHANGE ANALYSIS</span><h3>${esc(nm)} — 최신 분기 변화 분석</h3><div class="hq">비교 분기: ${esc((cl.comp_dates||[]).join(' · '))} · 최신 분기 기준 수치·톤·확신 표현의 변화 (원문 인용 포함)</div></div>${cl.comp}`:'')
+  +`<h4 class="cm-h">분기별 어닝콜 노트 · 최근 ${cl.quarters.length}개 분기</h4>`+cl.quarters.map((q,i)=>`<details class="cm-q"${i===0?' open':''}><summary><b>${esc(q.label||'')}</b> <span class="mut">${esc(q.date)}</span>${i===0?'<span class="nw">최신</span>':''}</summary><div class="cm-qb"><h5>핵심포인트</h5>${q.key}<h5>실적/가이던스</h5>${q.perf}${q.qna?`<details class="cm-qna"><summary>QnA 보기</summary>${q.qna}</details>`:''}${raw&&raw[q.date]?`<details class="cm-qna"><summary>어닝콜 전문 보기 (원문)</summary><div style="white-space:pre-wrap">${esc(raw[q.date])}</div></details>`:''}</div></details>`).join('')
+  +'<div class="cm-src">출처: FMP 어닝콜 트랜스크립트 원문 → AI 정리·분기 비교 분석 · 투자 참고용이며 투자 권유가 아닙니다</div>'}
 /* 기업 팝업: 회사명 클릭 → semi-chain-co/{ticker}.json 지연 로드 (기업개요·사업내용·어닝콜) */
 const CMC={};
 // 📊 실적 탭 상단: 분기 매출(막대) + GPM·OPM(선, 우축 %) — 사용자 지시 2026-10-27 (Fiscal.ai 스타일)
@@ -542,11 +546,7 @@ function renderCo(c,d){const sec=(k,h)=>`<div class="cm-sec" data-k="${k}">${h}<
  const fr=(d.facts||[]).slice();if(mc){const i=fr.findIndex(x=>x[0]==='국가·상장시장');fr.splice(i<0?1:i+1,0,['시가총액',mc])}
  const ov=`<table class="cm-f">${fr.map(([a,b])=>`<tr><th>${esc(a)}</th><td>${b}</td></tr>`).join('')}<tr><th>밸류체인</th><td>${esc(c.l1)} › ${esc(c.l2)}</td></tr><tr><th>주요 제품</th><td>${esc(c.products)}</td></tr></table><div class="cm-src">출처: ${esc(d.facts_src)}</div>`;
  const bz=d.biz?`${d.biz.html}<div class="cm-src">출처: ${esc(d.biz.src)} → AI 요약 (${esc(d.biz.date)})</div>`:'<div class="cm-ld">사업내용 준비 중</div>';
- let ec;const cl=d.calls;
- if(cl&&cl.quarters&&cl.quarters.length){ec=(cl.comp?`<div class="cm-hero"><span class="ey">QUARTER-OVER-QUARTER CHANGE ANALYSIS</span><h3>${esc(c.name_ko)} — 최신 분기 변화 분석</h3><div class="hq">비교 분기: ${esc((cl.comp_dates||[]).join(' · '))} · 최신 분기 기준 수치·톤·확신 표현의 변화 (원문 인용 포함)</div></div>${cl.comp}`:'')
-  +`<h4 class="cm-h">분기별 어닝콜 노트 · 최근 ${cl.quarters.length}개 분기</h4>`+cl.quarters.map((q,i)=>`<details class="cm-q"${i===0?' open':''}><summary><b>${esc(q.label||'')}</b> <span class="mut">${esc(q.date)}</span>${i===0?'<span class="nw">최신</span>':''}</summary><div class="cm-qb"><h5>핵심포인트</h5>${q.key}<h5>실적/가이던스</h5>${q.perf}${q.qna?`<details class="cm-qna"><summary>QnA 보기</summary>${q.qna}</details>`:''}</div></details>`).join('')
-  +'<div class="cm-src">출처: FMP 어닝콜 트랜스크립트 원문 → AI 정리·분기 비교 분석 · 투자 참고용이며 투자 권유가 아닙니다</div>'}
- else ec='<div class="cm-none">어닝콜 트랜스크립트 없음</div>';
+ const ec=ecHtml(c.name_ko,d.calls);
  // 📊 실적 탭(모든 기업): 다가올 분기 컨센서스 + 분기 실적 요약(IR 원문 추출 → 없으면 FMP·네이버 분기 손익)
  const fin=finChartBox(c)+upQ(c)+(d.ir?`<h4 class="cm-h">분기 실적 요약</h4>${d.ir.html}<div class="cm-src">출처: ${esc(d.ir.src)}</div>`:'<div class="cm-ld">분기 실적 자료 없음</div>');
  const pv=d.priv&&d.priv.quarters&&d.priv.quarters.length?d.priv.quarters.map((q,i)=>`<details class="cm-q"${i===0?' open':''}><summary><b>${esc(q.label)}</b> <span class="mut">자료 ${q.n_items}건${q.fmp?' · FMP 공개 노트와 병합':''}</span></summary><div class="cm-qb"><div class="cm-srcs">${q.sources.map(s=>`<span class="sb sb-${s.label==='노다지'?'nd':s.label.startsWith('텔레그램')?'tg':'my'}">${esc(s.label)} ${s.n}건 · ~${esc(s.last.slice(2))}</span>`).join('')}</div>${q.html}</div></details>`).join('')+'<div class="cm-src">비공개: 노다지 컨콜노트·내 노트(에버노트·노션)·텔레그램 학습 채널 → AI 분기 정리 · ⚠️ = FMP 공개 노트와 다른 내용</div>':'<div class="cm-ld">비공개 노트 없음</div>';
