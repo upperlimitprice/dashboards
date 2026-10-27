@@ -153,8 +153,12 @@ Promise.all([fetch('osc/index.json?v='+Date.now()).then(r=>r.json()), fetch('osc
   renderInsight();
   const _P=new URLSearchParams(location.search);if(_P.get('embed')==='1')document.body.classList.add('embed');  // 수급 페이지 팝업용 (2026-10-27)
   if(document.body.classList.contains('embed')){  // 팝업: 스크롤 없이 한 화면에 들어오도록 차트 높이를 남은 세로 공간에 맞춤
-    const fit=()=>{const sv=document.querySelector('#chart svg');if(!sv)return;sv.style.maxHeight=Math.max(220,innerHeight-sv.getBoundingClientRect().top-26)+'px';};
-    new MutationObserver(fit).observe($('chart'),{childList:true});addEventListener('resize',fit);}
+    // 다 그린 뒤 실제 넘친 높이만큼 차트를 줄임 — 종목마다 문구 길이·칩 개수로 윗부분이 줄바꿈되는 차이를 흡수
+    let fq=0;const fit=()=>{cancelAnimationFrame(fq);fq=requestAnimationFrame(()=>{const sv=document.querySelector('#chart svg');if(!sv)return;
+      sv.style.maxHeight=Math.max(140,innerHeight-sv.getBoundingClientRect().top-26)+'px';
+      requestAnimationFrame(()=>{const over=document.documentElement.scrollHeight-innerHeight;if(over>0)sv.style.maxHeight=Math.max(120,sv.getBoundingClientRect().height-over-2)+'px';});});};
+    const mo=new MutationObserver(fit);['chart','mt','chips','nm'].forEach(id=>$(id)&&mo.observe($(id),{childList:true,subtree:true,characterData:true}));
+    addEventListener('resize',fit);addEventListener('load',fit);}
   $('q').value=_P.get('s')||(localStorage.getItem('oscLast')||'삼성전자'); show();
 });
 async function renderInsight(){
