@@ -171,7 +171,7 @@ const neTag=c=>c.ne?`<span class="cf ${c.ne_conf==='확정'?'y':'e'}">${esc(c.ne
 const neBadge=c=>{let h='';if(c.le&&c.le>=addD(TODAY,-1)&&c.le<=TODAY&&c.le!==c.ne)h+=`<span class="cm-ne" title="최근 실적 발표일">✅ 실적 발표 ${md2(c.le)} (${dLab(c.le)})</span>`;
  if(c.ne)h+=`<span class="cm-ne ${c.ne_conf==='확정'?'':'e'}" title="${esc(c.ne_src||'')}">📅 실적 ${md2(c.ne)} (${dLab(c.ne)}, ${esc(c.ne_conf)}${c.ne_time?' · <b class="'+sessCls(c)+'">'+esc(sessLab(c))+'</b>':''})</span>`;return h};
 const consLine=c=>{const k=c.cons;if(!k)return '<span class="mut">컨센서스 없음</span>';
- return `<span class="mut">${esc(k.q||'다음 분기')}</span> 매출 <b>${fAmt(k.rev,k.ccy)}</b>${k.op!=null?` · 영업이익 <b>${fAmt(k.op,k.ccy)}</b>`:''}${k.eps!=null?` · EPS ${fEps(k.eps,k.ccy)}`:''}${k.n?` <span class="mut">(${k.n}명)</span>`:''}`};
+ return `<span class="mut">${esc(k.q||'다음 분기')}</span> 매출 <b>${fAmt(k.rev,k.ccy)}</b>${k.op!=null?` · 영업이익 <b>${fAmt(k.op,k.ccy)}</b>`:''}${k.op!=null&&k.rev>0?` · 영업이익률 <b>${(k.op/k.rev*100).toFixed(1)}%</b>`:''}${k.eps!=null?` · EPS ${fEps(k.eps,k.ccy)}`:''}${k.n?` <span class="mut">(${k.n}명)</span>`:''}`};
 // 오늘·내일 발표 예정 행 배지(사용자 지시 2026-10-27): preview 어닝 프리뷰 결과(analyst-bot/preview_batch.py → semi-chain-pvsig.json, 공개 인포그래픽과 같은 값)
 // ① 실적 = 비트(상회) 확률 ≥60% 상회 우위 · ≤40% 하회 우위 · 그 사이 부합 우위 ② 주가 = 모델 예상 반응 방향(±0.5% 기준)
 let PSG=null;fetch('semi-chain-pvsig.json',{cache:'no-cache'}).then(r=>r.ok?r.json():{}).then(j=>{PSG=j;if(VIEW==='earn')renderEarn()}).catch(()=>{PSG={}});
