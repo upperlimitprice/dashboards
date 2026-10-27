@@ -28,7 +28,7 @@ tr.g1 td{background:var(--chip)!important;font-weight:800;font-size:14px;padding
 .note{font-size:12px;color:var(--mut);margin-top:8px;line-height:1.75}.more{font:inherit;font-size:12px;margin-top:8px;padding:6px 14px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--acc);cursor:pointer}
 tr.hl td{outline:2px solid var(--acc);outline-offset:-2px}
 .nav{position:sticky;top:0;z-index:30;display:flex;gap:6px;flex-wrap:wrap;background:var(--bg);padding:8px 0 10px;margin-bottom:4px}.nav button{font:inherit;font-size:.9rem;font-weight:700;padding:8px 16px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--ink);cursor:pointer}.nav button.on{background:var(--acc);border-color:var(--acc);color:#fff}
-.view{display:none}.view.on{display:block}#cmOpsCh{width:100%;height:340px}@media (max-width:600px){#cmOpsCh{height:290px}}
+.view{display:none}.view.on{display:block}
 .ins-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px 22px}.ins-blk h3{font-size:13.5px;margin-bottom:4px}.ins-blk .hl{font-size:15px;font-weight:700;margin:4px 0 8px;line-height:1.45}.ins-blk ul{padding-left:18px;font-size:13.2px;line-height:1.85}.ins-blk li{margin-bottom:3px}
 .chips{display:flex;flex-wrap:wrap;gap:5px;font-size:11.5px}.chips span{padding:2px 8px;border-radius:9px;background:var(--chip);border:1px solid var(--line)}
 .issgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:12px}.ic{border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--bg)}
@@ -351,7 +351,7 @@ function show(v){VIEW=['home','map','heat','list','earn'].includes(v)?v:'home';
 document.querySelectorAll('#nav button').forEach(b=>b.onclick=()=>go_(b.dataset.v));addEventListener('hashchange',()=>show(location.hash.slice(1)));
 function render(){if(VIEW==='home'){renderHome();return}if(VIEW==='earn'){renderEarn();return}renderTabs();renderTiles();if(VIEW==='heat')renderHM();if(VIEW==='list')renderTable();if(VIEW==='map'){try{renderMM()}catch(e){console.warn(e)}}}
 /* 🏗️ 수주·가동률: 국내 기업 DART 수주잔고(orders.html 후처리본) × 가동률(util.html) 연결 — kr_ops.py → semi-chain-ops.json 지연 로드 (사용자 지시 2026-10-27) */
-let OPSD=null,OPSN=12,OPSPCH=null;
+let OPSD=null,OPSN=12;
 const opsLoad=()=>OPSD?Promise.resolve(OPSD):fetch('semi-chain-ops.json',{cache:'no-cache'}).then(r=>r.ok?r.json():{co:{}}).catch(()=>({co:{}})).then(j=>OPSD=j);
 const fEok=v=>v==null?'–':Math.abs(v)>=10000?(v/10000).toFixed(1)+'조':Math.round(v).toLocaleString()+'억';
 const fPP=v=>v==null?'<span class="mut">–</span>':`<span class="${v>0?'up':v<0?'dn':''}">${v>0?'+':''}${v.toFixed(1)}%p</span>`;
@@ -364,43 +364,48 @@ function opsRow(c,e){const r={c,e};
   r.utQ=pv!=null?r.ut-pv:null;r.utY=yv!=null?r.ut-yv:null}
  return r}
 const opsSrc=e=>'출처: DART 정기보고서 · '+(e.ob?'수주잔고 = 수주상황 표 분기말 잔고(억원, <a href="orders.html" style="color:var(--acc)">수주잔고 트래커</a> 파싱·보정본, 빗금 = 미기재 분기)':'수주잔고 미공시')+' · '+(e.ut?'가동률 = 가동률 표 보고서 기간 평균 %(굵은 선 = 합계 또는 부문 평균, 얇은 선 = 부문, <a href="util.html" style="color:var(--acc)">가동률 트래커</a>)':'가동률 미공시')+' · 점선 = 분기 매출(네이버·FMP, 억원)';
-function opsChart(el,e,n,prev){if(prev)prev.dispose();el.innerHTML='';const ch=echarts.init(el);
- const ob=e.ob,ut=e.ut,gp=new Set(ob&&ob.gaps||[]),ks=[...(ob?Object.keys(ob.s):[]),...gp,...(ut?Object.keys(ut.rep):[])].sort();if(!ks.length)return ch;
+// kind: 'ob' 수주잔고(막대+분기 매출 점선, 억원) · 'ut' 가동률(대표선+부문선, %) — 위아래 두 차트로 분리 (사용자 지시 2026-10-27)
+function opsChart(el,e,n,prev,kind){if(prev)prev.dispose();el.innerHTML='';const ch=echarts.init(el);
+ const ob=kind==='ob'?e.ob:null,ut=kind==='ut'?e.ut:null,gp=new Set(ob&&ob.gaps||[]),ks=[...(ob?Object.keys(ob.s):[]),...gp,...(ut?Object.keys(ut.rep):[])].sort();if(!ks.length)return ch;
  const x=[ks[0]];while(x[x.length-1]<ks[ks.length-1])x.push(ymAdd(x[x.length-1],1));
  const cv=k=>getComputedStyle(document.documentElement).getPropertyValue(k).trim(),mc=cv('--mut')||'#999',lc=cv('--line')||'#333',tc=cv('--ink')||'#ddd';
  const SEGC=['#5E86C2','#DE8B4B','#6BAE78','#9F7EC4','#D26F82','#98A2AE'],UTC=['#4FA3B2','#BFA84A','#B37BA4','#8A9B6E'];
- const S=[];
+ const S=[];let um=100;
  if(ob){const top=ob.top||[],P=ob.parts||{};
   if(top.length){top.forEach((sg,i)=>S.push({name:sg,type:'bar',stack:'b',barMaxWidth:38,itemStyle:{color:SEGC[i]},data:x.map(p=>ob.s[p]!=null&&P[p]&&P[p][sg]!=null?P[p][sg]:null)}));
    const oth=x.map(p=>{if(ob.s[p]==null)return null;const v=ob.s[p]-top.reduce((a,sg)=>a+((P[p]||{})[sg]||0),0);return v>0.5?+v.toFixed(1):null});
    if(oth.some(v=>v!=null))S.push({name:'기타·구분 없음',type:'bar',stack:'b',barMaxWidth:38,itemStyle:{color:SEGC[5]},data:oth})}
   else S.push({name:'수주잔고',type:'bar',stack:'b',barMaxWidth:38,itemStyle:{color:'#5E86C2',borderRadius:[3,3,0,0]},data:x.map(p=>ob.s[p]??null)});
-  if(gp.size)S[0].markArea={silent:true,itemStyle:{color:'rgba(140,150,165,.16)',borderColor:mc,borderType:'dashed',borderWidth:.6},label:{show:el.clientWidth>=600,position:'insideBottom',color:mc,fontSize:10},data:x.filter(p=>gp.has(p)).map(p=>[{xAxis:ymLab(p),name:'미기재'},{xAxis:ymLab(p)}])}}
- const rv=x.map(p=>e.rev&&e.rev[p]!=null?e.rev[p]:null);
- if(rv.some(v=>v!=null))S.push({name:'분기 매출',type:'line',data:rv,symbol:'none',connectNulls:true,lineStyle:{width:1.4,type:'dashed',color:mc},itemStyle:{color:mc}});
- let um=100;
- if(ut){const segs=Object.keys(ut.seg||{});segs.forEach((sg,i)=>S.push({name:sg,type:'line',yAxisIndex:1,data:x.map(p=>ut.seg[sg][p]??null),connectNulls:true,symbol:'circle',symbolSize:4,lineStyle:{width:1.2,opacity:.85},itemStyle:{color:UTC[i%4]}}));
-  S.push({name:'가동률',type:'line',yAxisIndex:1,z:5,data:x.map(p=>ut.rep[p]??null),connectNulls:true,symbol:'circle',symbolSize:7,lineStyle:{width:2.8},itemStyle:{color:'#e8590c'},label:{show:true,position:'top',color:tc,fontSize:10,formatter:q=>q.dataIndex===x.length-1||q.dataIndex===x.findLastIndex(p=>ut.rep[p]!=null)?q.value+'%':''}});
+  if(gp.size)S[0].markArea={silent:true,itemStyle:{color:'rgba(140,150,165,.16)',borderColor:mc,borderType:'dashed',borderWidth:.6},label:{show:el.clientWidth>=600,position:'insideBottom',color:mc,fontSize:10},data:x.filter(p=>gp.has(p)).map(p=>[{xAxis:ymLab(p),name:'미기재'},{xAxis:ymLab(p)}])};
+  const rv=x.map(p=>e.rev&&e.rev[p]!=null?e.rev[p]:null);
+  if(rv.some(v=>v!=null))S.push({name:'분기 매출',type:'line',data:rv,symbol:'none',connectNulls:true,lineStyle:{width:1.4,type:'dashed',color:mc},itemStyle:{color:mc}})}
+ if(ut){const segs=Object.keys(ut.seg||{});segs.forEach((sg,i)=>S.push({name:sg,type:'line',data:x.map(p=>ut.seg[sg][p]??null),connectNulls:true,symbol:'circle',symbolSize:4,lineStyle:{width:1.2,opacity:.85},itemStyle:{color:UTC[i%4]}}));
+  S.push({name:'가동률',type:'line',z:5,data:x.map(p=>ut.rep[p]??null),connectNulls:true,symbol:'circle',symbolSize:7,lineStyle:{width:2.8},itemStyle:{color:'#e8590c'},label:{show:true,position:'top',color:tc,fontSize:10,formatter:q=>q.dataIndex===x.findLastIndex(p=>ut.rep[p]!=null)?q.value+'%':''}});
   const vs=[...Object.values(ut.rep),...segs.flatMap(sg=>Object.values(ut.seg[sg]))];um=Math.max(100,Math.ceil(Math.max(...vs)/10)*10)}
  const xl=x.map(ymLab),sv=n&&x.length>n?x.length-n:0;
- ch.setOption({backgroundColor:'transparent',animation:false,grid:{left:58,right:ut?48:20,top:26,bottom:86},
-  tooltip:{trigger:'axis',confine:true,formatter:ps=>{const p=x[ps[0].dataIndex];return `<b>${xl[ps[0].dataIndex]}</b>${gp.has(p)?' <span style="color:#999">수주잔고 미기재</span>':''}${ob&&ob.s[p]!=null?`<br>수주잔고 합계 <b>${fEok(ob.s[p])}</b>`:''}<br>`+ps.filter(q=>q.value!=null).map(q=>`${q.marker}${q.seriesName}: ${q.seriesType==='line'&&q.seriesName!=='분기 매출'?q.value+'%':fEok(q.value)}`).join('<br>')}},
+ ch.setOption({backgroundColor:'transparent',animation:false,grid:{left:58,right:20,top:26,bottom:86},
+  tooltip:{trigger:'axis',confine:true,formatter:ps=>{const p=x[ps[0].dataIndex];return `<b>${xl[ps[0].dataIndex]}</b>${gp.has(p)?' <span style="color:#999">수주잔고 미기재</span>':''}${ob&&ob.s[p]!=null?`<br>수주잔고 합계 <b>${fEok(ob.s[p])}</b>`:''}<br>`+ps.filter(q=>q.value!=null).map(q=>`${q.marker}${q.seriesName}: ${ut?q.value+'%':fEok(q.value)}`).join('<br>')}},
   legend:{bottom:0,type:'scroll',textStyle:{color:mc,fontSize:11},itemWidth:12,itemHeight:8},
   xAxis:{type:'category',data:xl,axisLabel:{color:mc,fontSize:10},axisLine:{lineStyle:{color:lc}}},
-  yAxis:[{type:'value',name:ob?'억원':'',nameTextStyle:{color:mc,fontSize:10},axisLabel:{color:mc,fontSize:10,formatter:v=>v>=10000?(v/10000)+'조':v.toLocaleString()},splitLine:{lineStyle:{color:lc}}},
-         {type:'value',min:0,max:um,name:ut?'가동률':'',nameTextStyle:{color:mc,fontSize:10},axisLabel:{color:mc,fontSize:10,formatter:'{value}%'},splitLine:{show:false}}],
+  yAxis:ut?{type:'value',min:0,max:um,name:'가동률',nameTextStyle:{color:mc,fontSize:10},axisLabel:{color:mc,fontSize:10,formatter:'{value}%'},splitLine:{lineStyle:{color:lc}}}
+          :{type:'value',name:'억원',nameTextStyle:{color:mc,fontSize:10},axisLabel:{color:mc,fontSize:10,formatter:v=>v>=10000?(v/10000)+'조':v.toLocaleString()},splitLine:{lineStyle:{color:lc}}},
   dataZoom:[{type:'inside',startValue:sv},{type:'slider',startValue:sv,height:16,bottom:30,textStyle:{color:mc,fontSize:9},borderColor:lc}],
   series:S});
  return ch}
-// 🏗️ 수주·가동률 팝업 탭 (국내 기업 중 수주잔고·가동률 데이터가 있는 회사만, 사용자 지시 2026-10-27)
+// 🏗️ 수주·가동률 팝업 탭 (국내 기업 중 데이터 있는 회사만, 맨 오른쪽 탭) — 위: 수주잔고 · 아래: 가동률, 데이터 있는 쪽만 표시
+let OPSCHS=[];
 function opsTab(){const el=document.getElementById('cmOps');if(!el)return;const k=$('#cmBg').dataset.k,c=C.find(x=>x.ticker.replace(/\./g,'_')===k&&!x.xref),e=c&&(OPSD.co||{})[c.ticker];if(!e)return;
- const r=opsRow(c,e),fo=v=>v==null?'<span class="mut">–</span>':fP(v);
- el.innerHTML=`<div class="cm-fc"><div class="cm-fch"><b>수주잔고 × 가동률 (DART)</b><span class="cm-fb" id="cmOpsN">${[[8,'8Q'],[12,'12Q'],[20,'20Q'],[0,'전체']].map(([n,l])=>`<button data-n="${n}" class="${n===OPSN?'on':''}">${l}</button>`).join('')}</span></div>
-  <div class="cm-src" style="margin:0 0 6px;font-size:13px">${r.ob!=null?`수주잔고 ${ymLab(r.obP)} <b>${fEok(r.ob)}</b> (QoQ ${fo(r.obQ)} · YoY ${fo(r.obY)}${r.cov!=null?` · 잔고/매출 <b>${r.cov.toFixed(2)}x</b>`:''})`:'수주잔고 미공시'} · ${r.ut!=null?`가동률 ${ymLab(r.utP)} <b>${r.ut.toFixed(1)}%</b> (QoQ ${fPP(r.utQ)} · YoY ${fPP(r.utY)})`:'가동률 미공시'}</div>
-  <div id="cmOpsCh"></div><div class="cm-src">${opsSrc(e)}</div></div>`;
+ const r=opsRow(c,e),fo=v=>v==null?'<span class="mut">–</span>':fP(v),src=opsSrc(e).split(' · ');
+ const btn=`<span class="cm-fb" id="cmOpsN">${[[8,'8Q'],[12,'12Q'],[20,'20Q'],[0,'전체']].map(([n,l])=>`<button data-n="${n}" class="${n===OPSN?'on':''}">${l}</button>`).join('')}</span>`;
+ const box=(id,title,sum,note)=>`<div class="cm-fc" style="margin-bottom:14px"><div class="cm-fch"><b>${title}</b>${id==='cmOpsOb'||!e.ob?btn:''}</div><div class="cm-src" style="margin:0 0 6px;font-size:13px">${sum}</div><div id="${id}" style="width:100%;height:280px"></div><div class="cm-src">${note}</div></div>`;
+ el.innerHTML=(e.ob?box('cmOpsOb','📦 수주잔고 (DART)',`${ymLab(r.obP)} <b>${fEok(r.ob)}</b> · QoQ ${fo(r.obQ)} · YoY ${fo(r.obY)}${r.cov!=null?` · 잔고/매출 <b>${r.cov.toFixed(2)}x</b>`:''}`,'출처: DART 정기보고서 · 수주상황 표 분기말 잔고(억원, <a href="orders.html" style="color:var(--acc)">수주잔고 트래커</a> 파싱·보정본, 빗금 = 미기재 분기) · 점선 = 분기 매출'):'')
+  +(e.ut?box('cmOpsUt','🏭 가동률 (DART)',`${ymLab(r.utP)} <b>${r.ut.toFixed(1)}%</b> · QoQ ${fPP(r.utQ)} · YoY ${fPP(r.utY)}`,'출처: DART 정기보고서 · 가동률 표 보고서 기간 평균 %(굵은 선 = 합계 또는 부문 평균, 얇은 선 = 부문, <a href="util.html" style="color:var(--acc)">가동률 트래커</a>)'):'')
+  +(!e.ob?'<div class="cm-src">수주잔고: 미공시</div>':'')+(!e.ut?'<div class="cm-src">가동률: 미공시</div>':'');
  el.querySelectorAll('#cmOpsN button').forEach(b=>b.onclick=()=>{OPSN=+b.dataset.n;opsTab()});
- OPSPCH=opsChart(document.getElementById('cmOpsCh'),e,OPSN,OPSPCH)}
-addEventListener('resize',()=>{OPSPCH&&OPSPCH.resize()});
+ OPSCHS.forEach(x=>x&&x.dispose());OPSCHS=[];
+ if(e.ob)OPSCHS.push(opsChart(document.getElementById('cmOpsOb'),e,OPSN,null,'ob'));
+ if(e.ut)OPSCHS.push(opsChart(document.getElementById('cmOpsUt'),e,OPSN,null,'ut'))}
+addEventListener('resize',()=>OPSCHS.forEach(x=>x&&x.resize()));
 /* 기업 팝업: 회사명 클릭 → semi-chain-co/{ticker}.json 지연 로드 (기업개요·사업내용·어닝콜) */
 const CMC={};
 // 📊 실적 탭 상단: 분기 매출(막대) + GPM·OPM(선, 우축 %) — 사용자 지시 2026-10-27 (Fiscal.ai 스타일)
@@ -509,9 +514,9 @@ function renderCo(c,d){const sec=(k,h)=>`<div class="cm-sec" data-k="${k}">${h}<
  // 📊 실적 탭(모든 기업): 다가올 분기 컨센서스 + 분기 실적 요약(IR 원문 추출 → 없으면 FMP·네이버 분기 손익)
  const fin=finChartBox(c)+upQ(c)+(d.ir?`<h4 class="cm-h">분기 실적 요약</h4>${d.ir.html}<div class="cm-src">출처: ${esc(d.ir.src)}</div>`:'<div class="cm-ld">분기 실적 자료 없음</div>');
  const pv=d.priv&&d.priv.quarters&&d.priv.quarters.length?d.priv.quarters.map((q,i)=>`<details class="cm-q"${i===0?' open':''}><summary><b>${esc(q.label)}</b> <span class="mut">자료 ${q.n_items}건${q.fmp?' · FMP 공개 노트와 병합':''}</span></summary><div class="cm-qb"><div class="cm-srcs">${q.sources.map(s=>`<span class="sb sb-${s.label==='노다지'?'nd':s.label.startsWith('텔레그램')?'tg':'my'}">${esc(s.label)} ${s.n}건 · ~${esc(s.last.slice(2))}</span>`).join('')}</div>${q.html}</div></details>`).join('')+'<div class="cm-src">비공개: 노다지 컨콜노트·내 노트(에버노트·노션)·텔레그램 학습 채널 → AI 분기 정리 · ⚠️ = FMP 공개 노트와 다른 내용</div>':'<div class="cm-ld">비공개 노트 없음</div>';
- $('#cmTabs').innerHTML=[['ov','기업개요'],['bz','사업내용'],['fin','📊 실적'],['ec','어닝콜'],...(OPON?[['ops','🏗️ 수주·가동률']]:[]),...(prH?[['pr','📑 IR 자료']]:[]),...(PVON?[['pv','📒 내 노트·노다지·텔레그램']]:[])].map(([k,l])=>`<button data-k="${k}">${l}</button>`).join('');
+ $('#cmTabs').innerHTML=[['ov','기업개요'],['bz','사업내용'],['fin','📊 실적'],['ec','어닝콜'],...(prH?[['pr','📑 IR 자료']]:[]),...(PVON?[['pv','📒 내 노트·노다지·텔레그램']]:[]),...(OPON?[['ops','🏗️ 수주·가동률']]:[])].map(([k,l])=>`<button data-k="${k}">${l}</button>`).join('');
  $('#cmTabs').querySelectorAll('button').forEach(b=>b.onclick=()=>cmTab(b.dataset.k));
- $('#cmBd').innerHTML=sec('ov',ov+pxBox(c))+sec('bz',bz)+sec('fin',fin)+sec('ec',ec)+(OPON?sec('ops','<div id="cmOps"></div>'):'')+(prH?sec('pr',prH):'')+(PVON?sec('pv',pv):'');cmTab('ov')}
+ $('#cmBd').innerHTML=sec('ov',ov+pxBox(c))+sec('bz',bz)+sec('fin',fin)+sec('ec',ec)+(prH?sec('pr',prH):'')+(PVON?sec('pv',pv):'')+(OPON?sec('ops','<div id="cmOps"></div>'):'');cmTab('ov')}
 function openCo(c){if(!c)return;const bg=$('#cmBg'),k=c.ticker.replace(/\./g,'_');bg.dataset.k=k;
  $('#cmHd').innerHTML=`<div class="cm-t1"><span class="flag">${CT[c.country][0]}</span><b>${esc(c.name_ko)}</b>${neBadge(c)} <span class="tk">${esc(c.ticker)} · ${esc(c.name_en)}</span></div><div class="cm-t2 chips"><span>${esc(c.l1)} › ${esc(c.l2)}</span><span>시총 ${fB(c.mcap_usd)}</span><span>YTD ${fP(c.ytd)}</span></div>`;
  $('#cmTabs').innerHTML='';$('#cmBd').innerHTML='<div class="cm-ld">불러오는 중…</div>';bg.classList.add('on');document.body.style.overflow='hidden';
