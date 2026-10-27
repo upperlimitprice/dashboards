@@ -356,7 +356,10 @@ let PVPT=null;function pvPoll(){if(PVPT)return;PVPT=setInterval(async()=>{const 
  PVL=null;await pvPrevLoad();ks.forEach(k=>{const [kind,t]=k.split(':');if((kind==='pv'?PVD:RVD)[t])delete PVQ[k]});try{localStorage.setItem('semi-pv-req',JSON.stringify(PVQ))}catch(e){}if(VIEW==='earn'&&EV.v==='list')renderEarn()},60e3)}
 const PVT=[['deep','AI 리서치'],['call','최근 4개 분기 어닝콜'],['earn','최근 실적일 주가추이'],['px','주가 차트'],['fin','실적 추이']];
 const RVT=[['call','최근 4개 분기 어닝콜'],['px','주가 차트'],['fin','실적 추이']];
-const tg2h=t=>esc(t).replace(/&lt;(\/?)(b|i|u|code)&gt;/g,'<$1$2>').replace(/(https?:\/\/[^\s<]+)/g,'<a href="$1" target="_blank" rel="noopener">$1</a>').replace(/\n/g,'<br>');
+// 텔레그램 HTML(이미 &gt;·&amp; 로 이스케이프된 본문) → 허용 태그(b·i·u·code)만 살리고 엔티티는 한 번만 해석 — 이중 이스케이프로 '수요&gt;공급'·'Q&amp;A'가 보이던 문제 수정(2026-10-27)
+const tg2h=t=>{const T=[];t=String(t??'').replace(/<(\/?)(b|i|u|code)>/g,m=>{T.push(m);return `\u0000${T.length-1}\u0000`});
+ t=t.replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/&amp;/g,'&');
+ return esc(t).replace(/\u0000(\d+)\u0000/g,(_,i)=>T[+i]).replace(/(https?:\/\/[^\s<]+)/g,'<a href="$1" target="_blank" rel="noopener">$1</a>').replace(/\n/g,'<br>')};
 // preview·review 팝업 '주가 차트'·'실적 추이' 탭 = 기업 팝업과 같은 차트(pxBox·drawPx / finChartBox·drawFin, 사용자 지시 2026-10-27). review의 실적 추이는 매일 07:30·16:40 갱신된 최신 분기(발표 직후 반영) 기준
 function pvChart(k){const t=$('#pvBg').dataset.t,c=C.find(x=>x.ticker===t&&!x.xref);$('#pvTabs').querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.k===k));if(!c)return;
  $('#cmBd').innerHTML='';  // 같은 ID(cmPxCh·cmFinCh)가 숨은 기업 팝업에 남아 있으면 차트가 그쪽에 그려짐
