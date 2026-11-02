@@ -342,8 +342,16 @@ const isTd=d=>{const w=new Date(d+'T00:00:00Z').getUTCDay();return w>0&&w<6&&!HO
 const nextTd=d=>{while(!isTd(d))d=addD(d,1);return d};
 const prevTd=d=>{d=addD(d,-1);while(!isTd(d))d=addD(d,-1);return d};
 const evDays=()=>{const a=[prevTd(TODAY)];for(let i=0;i<=7;i++){const d=addD(TODAY,i);if(isTd(d))a.push(d)}return a};  // 줄글·모바일 목록: 직전 거래일 + 오늘~7일 뒤 거래일
+// 발표 완료 판정은 한국 날짜가 아니라 기업 현지 시각 기준 (사용자 지시 2026-11-03: 미국 11/2 장후 발표가 한국 11/3 자정에 '완료'로 바뀌던 문제)
+// 발표 예정 시각 = 현지 날짜 + 장전 07:00 · 장중 12:00 · 장후 16:30 · HH:MM(한국 IR) · 미정이면 미국 16:00/그 외 18:00, 그 시각 +30분부터 완료
+const TZN={US:'America/New_York',KR:'Asia/Seoul',JP:'Asia/Tokyo',TW:'Asia/Taipei',CN:'Asia/Shanghai',EU:'Europe/Berlin'};
+function tzEpoch(d,h,m,tz){const g=Date.UTC(+d.slice(0,4),+d.slice(5,7)-1,+d.slice(8,10),h,m);let o;try{o=Object.fromEntries(new Intl.DateTimeFormat('en-US',{timeZone:tz,hourCycle:'h23',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}).formatToParts(new Date(g)).map(x=>[x.type,x.value]))}catch(e){return g-9*36e5}
+ return g-(Date.UTC(+o.year,+o.month-1,+o.day,+o.hour%24,+o.minute)-g)}
+function annAt(c,d){const t=c.ne_time||'';let h,m=0;const x=/^(\d\d):(\d\d)/.exec(t);if(/^장전/.test(t))h=7;else if(/^장중/.test(t))h=12;else if(/^장후/.test(t)){h=16;m=30}else if(x){h=+x[1];m=+x[2]}else h=c.country==='US'?16:18;
+ return tzEpoch(d,h,m,TZN[c.country]||'Asia/Seoul')}
+const evDone=(c,d)=>Date.now()>=annAt(c,d)+30*60e3;
 function earnRows(lo=prevTd(TODAY),hi=addD(TODAY,7)){const out=[];
- C.filter(c=>!c.xref).forEach(c=>{if(c.ne&&c.ne>=lo&&c.ne<=hi)out.push({c,d:nextTd(c.ne),od:c.ne,done:c.ne<TODAY});if(c.le&&c.le>=lo&&c.le<=hi&&c.le<=TODAY&&c.le!==c.ne)out.push({c,d:nextTd(c.le),od:c.le,done:true})});return out}
+ C.filter(c=>!c.xref).forEach(c=>{if(c.ne&&c.ne>=lo&&c.ne<=hi)out.push({c,d:nextTd(c.ne),od:c.ne,done:evDone(c,c.ne)});if(c.le&&c.le>=lo&&c.le<=hi&&c.le<=TODAY&&c.le!==c.ne)out.push({c,d:nextTd(c.le),od:c.le,done:true})});return out}
 function evRow({c,done,d}){return `<div class="ev"><div class="nm"><div class="ev-st">${done?'<span class="cf dn">✅ 발표 완료</span>':neTag(c)}${!done&&c.ne_time?`<span class="cf tm ${sessCls(c)}">${esc(sessLab(c))}</span>`:''}</div><span class="flag">${CT[c.country][0]}</span><b data-ci="${c.i}">${esc(c.name_ko)}</b> <span class="tk">${esc(c.ticker)}</span> <span class="ev-mc">${fB(c.mcap_usd)}</span><div class="tk">${esc(c.l1)} › ${esc(c.l2)}</div></div>
  <div class="ev-bd">${done?resBadges(c,d):pvBadges(c,d)}</div><div class="cs ct"><div class="rv">${bars(c)}<div class="num">${fM(c.rev_last_usd_m)}<small class="mut">${c.qrev&&c.qrev.length?esc(c.qrev[c.qrev.length-1].q):''}</small></div></div><div class="ev-sp">${spark(c.spark,80,26)}</div><div class="ev-pf"><span>YTD ${fP(c.ytd)}</span><span>1M ${fP(c.m1)}</span><span>고점 대비 ${fP(c.from_high)}</span></div><div class="ev-cn">${done?guideLine(c):consLine(c)+consChg(c)}</div></div><div class="pvc">${pvBox(c,d,done)}</div></div>`}
 // 오늘·내일 발표 기업 preview (사용자 지시 2026-10-27): 미리 돌려 둔 /preview 결과(analyst-bot/preview_batch.py) — 유료·개인 자료 요약이라 비공개 레이어 열쇠로 암호화된 semi-chain-prev.bin, 열쇠 있는 기기에서만 박스 표시
@@ -362,7 +370,7 @@ function pvBox(c,d,done){if(!PK)return '';const t=c.ticker;
   return PVQ[k]&&Date.now()-PVQ[k]<45*60e3?`<span class="pvb ing" title="거니봇에 생성 요청됨 — 완료되면 자동으로 바뀝니다">${lab} 생성 중…</span>`:`<button class="pvb req" data-req="${kind}" data-t="${esc(t)}" title="자료 미확보 — 누르면 거니봇이 생성을 시작합니다(텔레그램에서 '시작' 한 번)">${lab}</button>`};
  // 지난 날짜 발표 완료 행도 review (사용자 지시 2026-11-02): 최근분은 주 묶음, 그 이전은 기업별 보관본 {FP}-rev/{티커}.bin, 없으면 생성 요청
  if(done){const a=RVD&&RVD._arch;if(RVD&&!RVD[t]&&a&&a[t]===d)return `<button class="pvb" data-rva="${esc(t)}">review</button>`;return st(RVD,'rv','review')}
- if((d!==TODAY&&d!==addD(TODAY,1)))return '';return st(PVD,'pv','preview')}
+ if(d<prevTd(TODAY)||d>addD(TODAY,1))return '';return st(PVD,'pv','preview')}  // 미발표면 직전 거래일(미국 장후 등 한국 시각으로 하루 밀린 경우)도 preview
 function pvReq(kind,t){window.open(`https://t.me/${BOTU}?start=${MODE==='earn'?'e':''}${kind}_${t.replace(/\./g,'_')}`,'_blank','noopener');PVQ[kind+':'+t]=Date.now();try{localStorage.setItem((MODE==='earn'?'earn-pv-req':'semi-pv-req'),JSON.stringify(PVQ))}catch(e){}renderEarn();pvPoll()}
 let PVPT=null;function pvPoll(){if(PVPT)return;PVPT=setInterval(async()=>{const now=Date.now(),ks=Object.keys(PVQ).filter(k=>now-PVQ[k]<45*60e3);if(!ks.length){clearInterval(PVPT);PVPT=null;return}
  PVL=null;await pvPrevLoad();ks.forEach(k=>{const [kind,t]=k.split(':');if((kind==='pv'?PVD:RVD)[t]||(kind==='rv'&&RVD._arch&&RVD._arch[t]))delete PVQ[k]});try{localStorage.setItem((MODE==='earn'?'earn-pv-req':'semi-pv-req'),JSON.stringify(PVQ))}catch(e){}if(VIEW==='earn'&&(EV.v==='list'||EV.day))renderEarn()},60e3)}
@@ -436,7 +444,7 @@ function renderEarn(){const all=earnRows();const a=all.filter(evF);
  // 달력에서 날짜 클릭 → 그 날짜만 줄글로 (사용자 지시 2026-11-02)
  // 기업명·티커 검색 → 해당 기업만 줄글로 (사용자 지시 2026-11-02): 최근 발표일(실적·주가 배지·review) + 다음 발표일(preview) 칸 둘 다
  let srch='';if(EV.q){const q=EV.q.toLowerCase(),hit=C.filter(c=>!c.xref&&`${c.name_ko} ${c.name_en||''} ${c.ticker}`.toLowerCase().includes(q)).sort((x,y)=>(y.mcap_usd||0)-(x.mcap_usd||0)).slice(0,30);
-  const rs=hit.flatMap(c=>[c.le&&c.le<=TODAY?{c,d:nextTd(c.le),od:c.le,done:true,old:(c.ne&&c.ne>=TODAY&&dDiff(c.ne)<=14)||dDiff(c.le)<-100}:null,c.ne&&c.ne>=TODAY&&c.ne!==c.le?{c,d:nextTd(c.ne),od:c.ne,done:false}:null].filter(Boolean)),ds=[...new Set(rs.map(x=>x.d))].sort(),nd=new Set(rs.map(x=>x.c.ticker)).size;
+  const rs=hit.flatMap(c=>[c.le&&c.le<=TODAY?{c,d:nextTd(c.le),od:c.le,done:true,old:(c.ne&&!evDone(c,c.ne)&&dDiff(c.ne)<=14)||dDiff(c.le)<-100}:null,c.ne&&!evDone(c,c.ne)&&c.ne!==c.le?{c,d:nextTd(c.ne),od:c.ne,done:false}:null].filter(Boolean)),ds=[...new Set(rs.map(x=>x.d))].sort(),nd=new Set(rs.map(x=>x.c.ticker)).size;
   const op=new Set(rs.filter(x=>!x.old).map(x=>x.d));  // 최근 분기·다가올 분기만 펼침, 새 분기 발표가 2주 안이거나 100일 넘은 지난 발표는 접힘
   srch=`<div class="ev-day"><button data-qx="1">✕ 검색 해제</button><b>"${esc(EV.q)}"</b><span class="mut">${hit.length}개사${hit.length===30?' (상위 30곳)':''}${hit.length>nd?` · 일정 없음 ${hit.length-nd}곳`:''}</span></div>`+(rs.length?evList(rs,ds,op):'<div class="ev-none">검색 결과 없음</div>')}
  $('#evL').innerHTML=EV.q?srch:EV.day?`<div class="ev-day"><button data-back="1">← 달력으로</button><b>${mdw(EV.day)}</b><span class="mut">줄글 보기</span></div>`+evList(earnRows(addD(EV.day,-4),EV.day).filter(evF),[EV.day]):EV.v==='list'?evList(a):mob?evAgenda(a):evCal();
@@ -451,7 +459,7 @@ function renderEarn(){const all=earnRows();const a=all.filter(evF);
  $('#evN').innerHTML='보기: 🗓️ 달력(모바일은 날짜별 목록, 날짜를 누르면 그 날짜를 줄글로) / 📝 줄글(컨센서스 포함) — 선택은 이 브라우저에 기억. 거래일만 표시(주말'+(MODE==='earn'?'·미국 증시 휴장일':'')+' 제외, 그날 발표분은 다음 거래일에 표시). 표시: 오늘·어제·D-n(발표까지 남은 날, 내일=D-1), ✅=이미 발표(최근 발표일), <b>확정</b>=회사·거래소 공지 일정(미국 나스닥 실적 캘린더 · 일본 JPX 決算発表予定日 · 한국 DART 기업설명회(IR) 개최 공시), <b>예상</b>=FMP 추정일 또는 한국은 전년 같은 분기 잠정실적·정기보고서 접수일+1년(없으면 법정 제출기한). 시각: 장전/장후(미국), HH:MM(한국 IR 개최 시각, KST).<br>컨센서스: 해외 FMP 애널리스트 추정(매출·영업이익·EPS, 괄호=애널리스트 수, 각 사 보고 통화) · 한국 네이버 증권(FnGuide) 매출액·영업이익·EPS 컨센서스. 회사명을 누르면 기업 팝업(📊 실적 탭에 다가올 분기 상세). 투자 참고용.'}
 {let qt;$('#evQ').oninput=e=>{clearTimeout(qt);qt=setTimeout(()=>{EV.q=e.target.value.trim();EV.day=null;renderEarn()},200)}}
 let EVW=innerWidth<=640;addEventListener('resize',()=>{const m=innerWidth<=640;if(m!==EVW){EVW=m;if(VIEW==='earn')renderEarn()}});
-function renderWeek(){const r=earnRows().filter(x=>x.d>=TODAY);const top=r.slice().sort((x,y)=>(y.c.mcap_usd||0)-(x.c.mcap_usd||0));
+function renderWeek(){const r=earnRows().filter(x=>x.d>=TODAY||!x.done);const top=r.slice().sort((x,y)=>(y.c.mcap_usd||0)-(x.c.mcap_usd||0));
  let h='';for(let i=0;i<=7;i++){const d=addD(TODAY,i),b=top.filter(x=>x.d===d);if(!b.length)continue;
   h+=`<div data-d="${d}"><b>${mdw(d)}</b> <span class="dd ${i===0?'td':''}">${i===0?'D-Day':'D-'+i}</span> <span class="mut">${b.length}개사</span><div class="nm">${b.slice(0,4).map(x=>CT[x.c.country][0]+' '+esc(x.c.name_ko)).join(', ')}${b.length>4?' 외':''}</div></div>`}
  $('#wkCard').innerHTML=`<h2>📅 이번 주 실적 발표<span class="s">오늘~7일 뒤 · ${r.length}개사 · 시총 큰 순</span></h2>`+(h?`<div class="wk">${h}</div>`:'<div class="note">7일 안에 발표 예정 기업 없음</div>')+`<div class="note" style="margin-top:6px"><a href="#earn" style="color:var(--acc)">어제 발표 기업·컨센서스 포함 전체 일정 →</a></div>`;
@@ -615,7 +623,7 @@ function drawPx(){const el=document.getElementById('cmPxCh');if(!el||!PXT)return
 function cmTab(k){document.querySelectorAll('#cmTabs button').forEach(b=>b.classList.toggle('on',b.dataset.k===k));document.querySelectorAll('#cmBd .cm-sec').forEach(x=>x.style.display=x.dataset.k===k?'':'none');$('#cmBd').scrollTop=0;if(k==='fin')setTimeout(drawFin,0);if(k==='ops')setTimeout(opsTab,0);if(k==='val')setTimeout(()=>valRender($('#cmBd .valW'),VALC),0);if(k==='ov')setTimeout(drawPx,0)}
 /* 💰 밸류에이션 탭 (사용자 지시 2026-11-02): 기업 팝업·preview/review 팝업 공용 — 피어 테이블 + 피어 밸류에이션 막대 차트
    지표 PER(기본)·PBR·EV/EBITDA·PSR·EV/Sales, 기준 TTM(기본)·12M Fwd — valuation.py (FMP TTM 벌크 · 애널리스트 추정 다음 4개 분기 합산) */
-const VMET=[['per','PER'],['pbr','PBR'],['evebitda','EV/EBITDA'],['psr','PSR'],['evs','EV/Sales']];
+const VMET=[['per','PER'],['pbr','PBR'],['psr','PSR'],['evebitda','EV/EBITDA'],['evs','EV/Sales']];  // PSR·EV/EBITDA 순서 교체 (사용자 지시 2026-11-03)
 let VALS={b:'t',m:'per',sk:null,sd:0},VALCH=null,VALC=null;
 function valPeers(c){const ok=x=>!x.xref&&x.val;let p=C.filter(x=>ok(x)&&x.l2===c.l2);if(p.length<4)p=C.filter(x=>ok(x)&&x.l1===c.l1);
  p=p.sort((a,b)=>(b.mcap_usd||0)-(a.mcap_usd||0)).slice(0,12);if(!p.includes(c))p=[c,...p.slice(0,11)];return {p,wide:!C.filter(x=>ok(x)&&x.l2===c.l2).length||C.filter(x=>ok(x)&&x.l2===c.l2).length<4}}
