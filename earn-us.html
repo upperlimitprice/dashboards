@@ -94,7 +94,7 @@ td.co b.cn{cursor:pointer;text-decoration:underline dotted;text-underline-offset
 .ec i.ss-pre,.ec i.ss-mid,.ec i.ss-post{color:var(--sc);font-weight:700;font-style:normal}
 b.ss-pre,b.ss-mid,b.ss-post{color:var(--sc)}
 .ev-sg{margin:8px 0 2px;padding:2px 8px;font-size:11.5px;font-weight:800;color:var(--sc);border-left:3px solid var(--sc);background:color-mix(in srgb,var(--sc) 8%,transparent);border-radius:0 6px 6px 0}
-.cm-px{margin:14px 0 4px}.cm-px .cm-fch{justify-content:flex-start}.cm-px .cm-fch b{margin-right:auto}#cmPxCh{width:100%;height:340px}@media (max-width:600px){#cmPxCh{height:280px}}</style></head><body><div class="wrap">
+.cm-px{margin:14px 0 4px}.cm-px .cm-fch{justify-content:flex-start}.cm-px .cm-fch b{margin-right:auto}#cmPxCh{width:100%;height:340px}@media (max-width:600px){#cmPxCh{height:280px}}</style><script src="/dashboards/theme.js"></script></head><body><div class="wrap">
 <div class="card"><div class="top"><div><h1>📅 미국 실적발표 캘린더</h1><div class="sub" id="sub"></div></div><button class="thm" id="thm">☀︎ 라이트</button></div></div>
 <div class="nav" id="nav" style="display:none"><button data-v="home">🏠 홈</button><button data-v="map">🧠 트리맵</button><button data-v="list">📋 기업목록</button><button data-v="heat">🔥 히트맵</button><button data-v="earn">📅 실적발표</button></div>
 <div class="view" id="vHome">
@@ -150,8 +150,8 @@ const L1C=['#3d8bfd','#e5534b','#d29922','#2da44e','#a371f7','#56d4dd','#db61a2'
 const C=D.companies;C.forEach((c,i)=>c.i=i);const CU=C.filter(c=>!c.xref&&!isN(c));  // CU: 교차 표시 제외(전체·국가 합계용)
 let S={grp:'chain',ct:'ALL',l1:null,l2:null,q:'',sort:null,lay:'LR',dep:2,hl:null};
 const root=document.documentElement;const css=v=>getComputedStyle(root).getPropertyValue(v).trim();
-const setT=t=>{root.dataset.theme=t;$('#thm').textContent=t==='dark'?'☀︎ 라이트':'☾ 다크';try{localStorage.setItem('semi-theme',t)}catch(e){}};
-let t0='dark';try{t0=localStorage.getItem('semi-theme')||'dark'}catch(e){}setT(t0);
+const setT=t=>{root.dataset.theme=t;$('#thm').textContent=t==='dark'?'☀︎ 라이트':'☾ 다크';try{localStorage.setItem('semi-theme',t);localStorage.setItem('dash-theme',t)}catch(e){}};  // 대시보드 공통 설정(dash-theme, theme.js)과 공유
+let t0='dark';try{t0=localStorage.getItem('dash-theme')||localStorage.getItem('semi-theme')||(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark')}catch(e){}setT(t0);
 $('#thm').onclick=()=>{setT(root.dataset.theme==='dark'?'light':'dark');render()};
 const fB=v=>v==null?'–':v>=1000?'$'+(v/1000).toFixed(2)+'T':v>=10?'$'+v.toFixed(0)+'B':'$'+v.toFixed(1)+'B';
 const fP=v=>v==null?'<span class="mut">–</span>':`<span class="${v>0?'up':v<0?'dn':''}">${v>0?'+':''}${v.toFixed(1)}%</span>`;

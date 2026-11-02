@@ -300,6 +300,8 @@ if(!ADMIN){
 </body></html>"""
     page = page.replace("__REG__", reg_json)
     (ROOT / "index.html").write_text(page, encoding="utf-8")
+    import subprocess, sys  # 공통 라이트/다크 전환(theme.js) 삽입
+    subprocess.run([sys.executable, str(ROOT / "tools" / "inject_theme.py"), str(ROOT / "index.html")], check=False)
     print(f"index.html 생성 — 위젯 {len(registry)}개")
 
 
