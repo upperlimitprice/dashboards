@@ -103,38 +103,42 @@ def main():
     reg_json = json.dumps(registry, ensure_ascii=False)
     page = """<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>대시보드</title>
 <style>
-body{font-family:'Apple SD Gothic Neo','Noto Sans KR',sans-serif;max-width:1080px;margin:40px auto;padding:0 20px;color:#20262e;background:#eceff3}
+/* 라이트/다크 토큰 (사용자 지시 2026-11-03: 다크에서 박스 구분이 안 되던 문제 — 반전 대신 전용 색) · 기본은 라이트(기기 설정 무관), 버튼으로 다크 선택 시에만 다크 */
+:root{--bg:#eceff3;--ink:#20262e;--mut:#6b7683;--faint:#9aa4ad;--card:#f9fafc;--card-h:#ffffff;--line:#c9d2dc;--line2:#e6ebf1;--acc:#3d5a80;--acc-bg:#e6edf6;--x:#c2cad2;--red:#d63c2f;--red-bg:#fdf0ef;--shadow:0 1px 2px rgba(20,30,45,.06)}
+:root[data-theme="dark"]{--bg:#0b111b;--ink:#e6edf6;--mut:#9aa8bb;--faint:#6f7d90;--card:#162132;--card-h:#1c2a40;--line:#2f405a;--line2:#223047;--acc:#79a8ff;--acc-bg:#1d2c46;--x:#5c6b80;--red:#ff6b5e;--red-bg:#3a1f22;--shadow:0 2px 6px rgba(0,0,0,.45)}
+body{font-family:'Apple SD Gothic Neo','Noto Sans KR',sans-serif;max-width:1080px;margin:40px auto;padding:0 20px;color:var(--ink);background:var(--bg)}
 h1{font-size:1.35rem}
 .layout{display:grid;grid-template-columns:1fr 290px;gap:22px;align-items:start}
 @media(max-width:860px){.layout{grid-template-columns:1fr}}
-h2{font-size:.92rem;margin:0 0 10px;color:#6b7683}
-.card{position:relative;display:block;padding:10px 40px 10px 16px;border:1.5px solid #c9d2dc;border-radius:10px;margin:8px 0;color:#20262e;font-weight:600;font-size:.88rem;line-height:1.35;background:#f9fafc;cursor:pointer}
-.card:hover{border-color:#3d5a80;background:#f9fafcbf0}
-.card small{color:#6b7683;font-weight:400;display:block;margin-top:2px;font-size:.72rem;line-height:1.4}
-.card small a{color:#3d5a80;text-decoration:none}
-.x{position:absolute;top:6px;right:10px;border:0;background:none;color:#c2cad2;font-size:1.05rem;cursor:pointer;line-height:1}
-.x:hover{color:#d63c2f}
-.rf{position:absolute;bottom:6px;right:10px;border:1px solid #c9d2dc;background:#f9fafc;color:#6b7683;font-size:.66rem;border-radius:7px;padding:1px 6px;cursor:pointer;font-weight:600}
-.rf:hover{border-color:#3d5a80;color:#3d5a80}
+h2{font-size:.92rem;margin:0 0 10px;color:var(--mut)}
+.card{position:relative;display:block;padding:10px 40px 10px 16px;border:1.5px solid var(--line);border-radius:10px;margin:8px 0;color:var(--ink);font-weight:600;font-size:.88rem;line-height:1.35;background:var(--card);cursor:pointer;box-shadow:var(--shadow)}
+.card:hover{border-color:var(--acc);background:var(--card-h)}
+.card small{color:var(--mut);font-weight:400;display:block;margin-top:2px;font-size:.72rem;line-height:1.4}
+.card small a{color:var(--acc);text-decoration:none}
+.x{position:absolute;top:6px;right:10px;border:0;background:none;color:var(--x);font-size:1.05rem;cursor:pointer;line-height:1}
+.x:hover{color:var(--red)}
+.rf{position:absolute;bottom:6px;right:10px;border:1px solid var(--line);background:var(--card);color:var(--mut);font-size:.66rem;border-radius:7px;padding:1px 6px;cursor:pointer;font-weight:600}
+.rf:hover{border-color:var(--acc);color:var(--acc)}
 .rf:disabled{opacity:.6;cursor:default}
 #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1c2530;color:#fff;font-size:.82rem;padding:9px 16px;border-radius:9px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:99}
 #toast.show{opacity:.95}
-#side{background:#f9fafc;border:1.5px solid #c9d2dc;border-radius:12px;padding:14px 16px;position:sticky;top:16px}
-.sitem{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:9px 2px;border-bottom:1px solid #e6ebf1;font-size:.85rem}
+#side{background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:14px 16px;position:sticky;top:16px;box-shadow:var(--shadow)}
+.sitem{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:9px 2px;border-bottom:1px solid var(--line2);font-size:.85rem}
 .sitem:last-child{border-bottom:0}
-.sitem .nm{color:#20262e}
-.add{border:1.5px solid #3d5a80;color:#3d5a80;background:#f9fafc;border-radius:8px;font-size:.95rem;width:26px;height:26px;cursor:pointer;font-weight:700;flex:none}
-.add:hover{background:#e6edf6}.add.del{border-color:#c9d2dc;color:#9aa4ad;font-size:.8rem}.add.del:hover{border-color:#d63c2f;color:#d63c2f;background:#fdf0ef}
-.hint{font-size:.72rem;color:#9aa4ad;margin-top:10px}
-.empty{color:#9aa4ad;font-size:.82rem;padding:8px 0}
-.reset{width:100%;margin-top:10px;border:1.5px solid #c9d2dc;background:#f9fafc;color:#6b7683;border-radius:8px;padding:7px 0;font-size:.78rem;cursor:pointer;font-weight:600}
-.reset:hover{border-color:#3d5a80;color:#3d5a80}
+.sitem .nm{color:var(--ink)}
+.add{border:1.5px solid var(--acc);color:var(--acc);background:var(--card);border-radius:8px;font-size:.95rem;width:26px;height:26px;cursor:pointer;font-weight:700;flex:none}
+.add:hover{background:var(--acc-bg)}.add.del{border-color:var(--line);color:var(--faint);font-size:.8rem}.add.del:hover{border-color:var(--red);color:var(--red);background:var(--red-bg)}
+.hint{font-size:.72rem;color:var(--faint);margin-top:10px}
+.empty{color:var(--faint);font-size:.82rem;padding:8px 0}
+.reset{width:100%;margin-top:10px;border:1.5px solid var(--line);background:var(--card);color:var(--mut);border-radius:8px;padding:7px 0;font-size:.78rem;cursor:pointer;font-weight:600}
+.reset:hover{border-color:var(--acc);color:var(--acc)}
+.reset.pub{border-color:var(--acc);color:var(--acc);font-weight:700}
 </style></head><body>
 <h1>📊 쩜상리서치 대시보드</h1>
 <div class='layout'>
 <div><h2>메인 <small style='font-weight:400'>(드래그로 순서 변경 · ✕로 보관함으로 이동)</small></h2><div id='main'></div></div>
 <div id='side'><h2>🗂 전체 위젯 보관함</h2><div id='sideList'></div><div id='hidList' class='hint' style='display:none'></div>
-<button class='reset' id='pubBtn' style='border-color:#3d5a80;color:#3d5a80;font-weight:700'>📤 현재 배치를 공개 배치로 발행</button>
+<button class='reset pub' id='pubBtn'>📤 현재 배치를 공개 배치로 발행</button>
 <button class='reset' id='resetBtn'>쩜상 기본 배치로 초기화</button>
 <div class='hint'>＋ 추가 · ✕ 제거 · 드래그로 순서 변경 — 내 구성은 이 브라우저에만 저장됩니다. 초기화하면 쩜상리서치 기본 배치로 돌아갑니다.</div></div>
 </div>
