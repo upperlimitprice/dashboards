@@ -209,12 +209,13 @@ function consChg(c){const b=consBase(c);if(!b)return '';const {k,a}=b,st=c.semi?
  return (R.length?`<div class="ct-c">컨센 매출 ${R.join(' · ')}</div>`:'')+(O.length?`<div class="ct-c">컨센 영업이익 ${O.join(' · ')}${adj?' <span class="mut" title="해외 기업은 회계 영업이익과 컨센서스(조정 EBIT)의 기준이 달라, 직전 분기·전년 동기 컨센서스 EBIT과 비교합니다">(조정 기준)</span>':''}</div>`:'')}
 // 실적 발표 시점: 장전/장중/장후 + 시각이 확정된 경우 KST 시각 (사용자 지시 2026-10-27)
 const MKT_H={KR:['09:00','15:30',0],JP:['09:00','15:30',0],TW:['09:00','13:30',1],CN:['09:30','15:00',1]};  // 현지 개장·마감, KST와 시차(시간)
-function sessLab(c){const t=c.ne_time||'';if(!t)return '';
- if(t==='장전')return c.country==='US'?'장전 · 한국 당일 밤':'장전';
- if(t==='장후')return c.country==='US'?'장후 · 한국 익일 새벽':'장후';
- const m=/^(\d{1,2}):(\d{2})$/.exec(t),H=MKT_H[c.country];if(!m||!H)return t;
- const hm=m[1].padStart(2,'0')+':'+m[2],ss=hm<H[0]?'장전':hm>=H[1]?'장후':'장중';
- const kh=(+m[1]+H[2])%24,kst=String(kh).padStart(2,'0')+':'+m[2];return `${ss} · ${kst} KST`}
+// 발표 시각 표기 (사용자 지시 2026-11-03): 'KST 11/3 6시' 형식 — 시각이 공시된 경우(한국 IR 등) 그대로, 미국 장전·장후는 통상 시각(장전 07:00·장후 16:05 ET) 환산이라 '경'
+function kstLab(ms,approx){const k=new Date(ms+9*36e5),mi=k.getUTCMinutes();return `KST ${k.getUTCMonth()+1}/${k.getUTCDate()} ${k.getUTCHours()}시${mi&&!approx?` ${mi}분`:''}${approx?'경':''}`}
+function sessLab(c){const t=c.ne_time||'';if(!t||!c.ne)return t||'';const tz=TZN[c.country]||'Asia/Seoul';
+ if(t==='장전'||t==='장후'){if(c.country!=='US')return t;return `${t} · ${kstLab(tzEpoch(c.ne,t==='장전'?7:16,t==='장전'?0:5,tz),true)}`}
+ const m=/^(\d{1,2}):(\d{2})$/.exec(t),H=MKT_H[c.country];if(!m)return t;
+ const hm=m[1].padStart(2,'0')+':'+m[2],ss=H?(hm<H[0]?'장전':hm>=H[1]?'장후':'장중'):'';
+ return `${ss?ss+' · ':''}${kstLab(tzEpoch(c.ne,+m[1],+m[2],tz),false)}`}
 function upQ(c){const k=c.cons;const dt=c.ne?`<b>${mdw(c.ne)}</b> · ${dLab(c.ne)} ${neTag(c)}${c.ne_time?`<span class="cf tm ${sessCls(c)}">${esc(sessLab(c))}</span>`:''} <span class="mut">출처 ${esc(c.ne_src||'')}</span>`:'<span class="mut">발표 일정 미정</span>';
  let h=`<div class="cm-up"><h5>📅 다가올 분기 ${esc((k&&k.q)||'')} — 실적발표 예정·컨센서스</h5><div style="font-size:13px">발표 예정일 ${dt}${c.le?` <span class="mut">· 최근 발표 ${esc(c.le)}</span>`:''}</div>`;
  if(!k)return h+'<div class="cm-none">컨센서스 없음 (IB 추정치 미제공)</div></div>';
@@ -411,7 +412,7 @@ function rvCall(){const e=RVD[$('#pvBg').dataset.t];if(!e)return;$('#pvTabs').qu
 function closePv(){$('#pvBg').classList.remove('on');document.body.style.overflow=''}
 const evF=x=>(EV.ct==='ALL'||(MODE==='earn'?x.c.l1:x.c.country)===EV.ct)&&(!EV.cf||x.done||x.c.ne_conf==='확정');
 const byCap=(x,y)=>(y.c.mcap_usd||0)-(x.c.mcap_usd||0);
-const sessShort=c=>{const l=sessLab(c);return l.replace(' · 한국 당일 밤','').replace(' · 한국 익일 새벽','').replace(' KST','')};  // 달력 칩용 짧은 표기
+const sessShort=c=>{const l=sessLab(c);return l.replace(/ · KST \d+\/\d+ /,' ').replace(/ \d+분/,'')};  // 달력 칩용 짧은 표기: 장후 6시경
 const sessCls=c=>{const o=SESS_O(c);return o===0?'ss-pre':o===1?'ss-mid':o===2?'ss-post':''};  // 장전 주황 · 장중 초록 · 장후 보라
 const SESS_O=c=>{const l=sessLab(c);return l.startsWith('장전')?0:l.startsWith('장중')?1:l.startsWith('장후')?2:3};
 const bySess=(x,y)=>SESS_O(x.c)-SESS_O(y.c)||byCap(x,y);  // 같은 날짜 안에서 장전 → 장중 → 장후 → 시점 미정, 그 안은 시총순
@@ -456,7 +457,7 @@ function renderEarn(){const all=earnRows();const a=all.filter(evF);
  $('#evL').querySelectorAll('.cal-nav [data-m]').forEach(b=>b.onclick=()=>{const k=+b.dataset.m,[y,m]=EV.m.split('-').map(Number),t=new Date(Date.UTC(y,m-1+k,1));EV.m=k?t.toISOString().slice(0,7):TODAY.slice(0,7);renderEarn()});
  $('#evL').querySelectorAll('.cd-more').forEach(b=>b.onclick=()=>{EV.open[b.dataset.d]=!EV.open[b.dataset.d];renderEarn()});
  const N=C.filter(c=>!c.xref);$('#evS').textContent=`어제~7일 뒤 ${a.length}건 · 전체 ${N.length}개사 중 다음 발표일 확정 ${N.filter(c=>c.ne_conf==='확정').length} · 예상 ${N.filter(c=>c.ne_conf==='예상').length} · 컨센서스 ${N.filter(c=>c.cons).length}`;
- $('#evN').innerHTML='보기: 🗓️ 달력(모바일은 날짜별 목록, 날짜를 누르면 그 날짜를 줄글로) / 📝 줄글(컨센서스 포함) — 선택은 이 브라우저에 기억. 거래일만 표시(주말'+(MODE==='earn'?'·미국 증시 휴장일':'')+' 제외, 그날 발표분은 다음 거래일에 표시). 표시: 오늘·어제·D-n(발표까지 남은 날, 내일=D-1), ✅=이미 발표(최근 발표일), <b>확정</b>=회사·거래소 공지 일정(미국 나스닥 실적 캘린더 · 일본 JPX 決算発表予定日 · 한국 DART 기업설명회(IR) 개최 공시), <b>예상</b>=FMP 추정일 또는 한국은 전년 같은 분기 잠정실적·정기보고서 접수일+1년(없으면 법정 제출기한). 시각: 장전/장후(미국), HH:MM(한국 IR 개최 시각, KST).<br>컨센서스: 해외 FMP 애널리스트 추정(매출·영업이익·EPS, 괄호=애널리스트 수, 각 사 보고 통화) · 한국 네이버 증권(FnGuide) 매출액·영업이익·EPS 컨센서스. 회사명을 누르면 기업 팝업(📊 실적 탭에 다가올 분기 상세). 투자 참고용.'}
+ $('#evN').innerHTML='보기: 🗓️ 달력(모바일은 날짜별 목록, 날짜를 누르면 그 날짜를 줄글로) / 📝 줄글(컨센서스 포함) — 선택은 이 브라우저에 기억. 거래일만 표시(주말'+(MODE==='earn'?'·미국 증시 휴장일':'')+' 제외, 그날 발표분은 다음 거래일에 표시). 표시: 오늘·어제·D-n(발표까지 남은 날, 내일=D-1), ✅=이미 발표(최근 발표일), <b>확정</b>=회사·거래소 공지 일정(미국 나스닥 실적 캘린더 · 일본 JPX 決算発表予定日 · 한국 DART 기업설명회(IR) 개최 공시), <b>예상</b>=FMP 추정일 또는 한국은 전년 같은 분기 잠정실적·정기보고서 접수일+1년(없으면 법정 제출기한). 시각: 한국 시간(KST) 월/일 시 — 한국 IR 등 시각이 공시된 경우 그대로, 미국 장전·장후는 통상 발표 시각(장전 07:00·장후 16:05 미 동부) 환산이라 「경」 표기.<br>컨센서스: 해외 FMP 애널리스트 추정(매출·영업이익·EPS, 괄호=애널리스트 수, 각 사 보고 통화) · 한국 네이버 증권(FnGuide) 매출액·영업이익·EPS 컨센서스. 회사명을 누르면 기업 팝업(📊 실적 탭에 다가올 분기 상세). 투자 참고용.'}
 {let qt;$('#evQ').oninput=e=>{clearTimeout(qt);qt=setTimeout(()=>{EV.q=e.target.value.trim();EV.day=null;renderEarn()},200)}}
 let EVW=innerWidth<=640;addEventListener('resize',()=>{const m=innerWidth<=640;if(m!==EVW){EVW=m;if(VIEW==='earn')renderEarn()}});
 function renderWeek(){const r=earnRows().filter(x=>x.d>=TODAY||!x.done);const top=r.slice().sort((x,y)=>(y.c.mcap_usd||0)-(x.c.mcap_usd||0));
