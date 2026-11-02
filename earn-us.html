@@ -79,7 +79,7 @@ td.co b.cn{cursor:pointer;text-decoration:underline dotted;text-underline-offset
 .ic{display:flex;flex-direction:column}.ic .mv{margin-top:auto;padding-top:8px;border-top:1px solid var(--line)}.ic .it:last-of-type{margin-bottom:8px}
 .cal-nav{display:flex;align-items:center;gap:8px;margin:6px 0 8px}.cal-nav b{font-size:15px;min-width:110px;text-align:center}.cal-nav button{font:inherit;font-size:12px;padding:4px 10px;border:1px solid var(--line);border-radius:7px;background:var(--card);color:var(--ink);cursor:pointer}
 .cal-w,.cal-g{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px}.cal-w div{font-size:11.5px;color:var(--mut);font-weight:700;text-align:center;padding:2px 0}
-.cd-h>span:first-child,.ag-d{cursor:pointer}.cd-h>span:first-child:hover,.ag-d:hover{color:var(--acc);text-decoration:underline}.cd.hol{opacity:.5}.cd.hol .hl{font-size:11px;color:var(--mut)}.ev-day{display:flex;align-items:center;gap:8px;margin:0 0 8px;font-size:13px}.ev-day button{border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:6px;padding:3px 10px;cursor:pointer;font-size:12px}
+.ev-q input{width:100%;max-width:380px;box-sizing:border-box;padding:8px 11px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font-size:13.5px;margin:0 0 8px}.cd-h>span:first-child,.ag-d{cursor:pointer}.cd-h>span:first-child:hover,.ag-d:hover{color:var(--acc);text-decoration:underline}.cd.hol{opacity:.5}.cd.hol .hl{font-size:11px;color:var(--mut)}.ev-day{display:flex;align-items:center;gap:8px;margin:0 0 8px;font-size:13px}.ev-day button{border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:6px;padding:3px 10px;cursor:pointer;font-size:12px}
 .cd{border:1px solid var(--line);border-radius:8px;padding:4px 5px 6px;min-height:92px;background:var(--bg);min-width:0}.cd.out{opacity:.45}.cd.win{border-color:color-mix(in srgb,var(--acc) 45%,var(--line))}.cd.tdy{border:2px solid var(--acc);background:color-mix(in srgb,var(--acc) 8%,var(--bg))}
 .cd-h{display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:800;margin-bottom:3px}.cd-h small{font-weight:400;color:var(--mut)}.cd .dd{font-size:10px;padding:0 6px}
 .ec{display:flex;align-items:center;gap:3px;font-size:11.5px;line-height:1.35;padding:2px 3px;border-radius:5px;cursor:pointer;white-space:nowrap;overflow:hidden;min-width:0}.ec:hover{background:var(--hov);color:var(--acc)}
@@ -118,7 +118,7 @@ b.ss-pre,b.ss-mid,b.ss-post{color:var(--sc)}
 </div>
 <div class="view" id="vEarn">
 <div class="card"><h2>📅 미국 실적발표 일정 (시총 50억 달러 이상)<span class="s" id="evS"></span></h2>
- <div class="ctl" id="evCtl"></div><div id="evL"></div>
+ <div class="ev-q"><input id="evQ" type="search" placeholder="🔍 기업명·티커 검색 (예: 애플, NVDA)" autocomplete="off"></div><div class="ctl" id="evCtl"></div><div id="evL"></div>
  <div class="note" id="evN"></div></div>
 </div>
 <div class="view" id="vList">
@@ -433,15 +433,21 @@ function renderEarn(){const all=earnRows();const a=all.filter(evF);
  $('#evCtl').querySelectorAll('[data-k]').forEach(b=>b.onclick=()=>{EV.ct=b.dataset.k;renderEarn()});$('#evCtl [data-f]').onclick=()=>{EV.cf=!EV.cf;renderEarn()};
  $('#evCtl').querySelectorAll('[data-v]').forEach(b=>b.onclick=()=>{EV.v=b.dataset.v;EV.day=null;try{localStorage.setItem('semi-ev-view2',EV.v)}catch(e){}renderEarn()});
  // 달력에서 날짜 클릭 → 그 날짜만 줄글로 (사용자 지시 2026-11-02)
- $('#evL').innerHTML=EV.day?`<div class="ev-day"><button data-back="1">← 달력으로</button><b>${mdw(EV.day)}</b><span class="mut">줄글 보기</span></div>`+evList(earnRows(addD(EV.day,-4),EV.day).filter(evF),[EV.day]):EV.v==='list'?evList(a):mob?evAgenda(a):evCal();
+ // 기업명·티커 검색 → 해당 기업만 줄글로 (사용자 지시 2026-11-02): 최근 발표일(실적·주가 배지·review) + 다음 발표일(preview) 칸 둘 다
+ let srch='';if(EV.q){const q=EV.q.toLowerCase(),hit=C.filter(c=>!c.xref&&`${c.name_ko} ${c.name_en||''} ${c.ticker}`.toLowerCase().includes(q)).sort((x,y)=>(y.mcap_usd||0)-(x.mcap_usd||0)).slice(0,30);
+  const rs=hit.flatMap(c=>[c.le&&c.le<=TODAY?{c,d:nextTd(c.le),od:c.le,done:true}:null,c.ne&&c.ne>=TODAY&&c.ne!==c.le?{c,d:nextTd(c.ne),od:c.ne,done:false}:null].filter(Boolean)),ds=[...new Set(rs.map(x=>x.d))].sort(),nd=new Set(rs.map(x=>x.c.ticker)).size;
+  srch=`<div class="ev-day"><button data-qx="1">✕ 검색 해제</button><b>"${esc(EV.q)}"</b><span class="mut">${hit.length}개사${hit.length===30?' (상위 30곳)':''}${hit.length>nd?` · 일정 없음 ${hit.length-nd}곳`:''}</span></div>`+(rs.length?evList(rs,ds):'<div class="ev-none">검색 결과 없음</div>')}
+ $('#evL').innerHTML=EV.q?srch:EV.day?`<div class="ev-day"><button data-back="1">← 달력으로</button><b>${mdw(EV.day)}</b><span class="mut">줄글 보기</span></div>`+evList(earnRows(addD(EV.day,-4),EV.day).filter(evF),[EV.day]):EV.v==='list'?evList(a):mob?evAgenda(a):evCal();
  $('#evL').querySelectorAll('[data-day]').forEach(b=>b.onclick=e=>{e.stopPropagation();EV.day=b.dataset.day;renderEarn();scrollTo({top:$('#evL').getBoundingClientRect().top+scrollY-80})});
  const bk=$('#evL [data-back]');if(bk)bk.onclick=()=>{EV.day=null;renderEarn()};
+ const qx=$('#evL [data-qx]');if(qx)qx.onclick=()=>{EV.q='';$('#evQ').value='';renderEarn()};
  $('#evL').querySelectorAll('[data-ci]').forEach(b=>b.onclick=()=>openCo(C[+b.dataset.ci]));
- $('#evL').querySelectorAll('[data-pv]').forEach(b=>b.onclick=()=>openPv(b.dataset.pv));$('#evL').querySelectorAll('[data-rv]').forEach(b=>b.onclick=()=>openRv(b.dataset.rv));$('#evL').querySelectorAll('[data-rva]').forEach(b=>b.onclick=()=>{const t=b.dataset.rva;b.textContent='불러오는 중…';decBin(`${FP}-rev/${t.replace(/\./g,'_')}.bin`).then(e=>{if(!e||!e.d)return pvReq('rv',t);RVD[t]=e;openRv(t);renderEarn()}).catch(()=>{b.textContent='review'})});$('#evL').querySelectorAll('[data-req]').forEach(b=>b.onclick=()=>pvReq(b.dataset.req,b.dataset.t));if(PK&&Object.keys(PVQ).length)pvPoll();if(PK&&!PVD&&(EV.v==='list'||EV.day))pvPrevLoad().then(()=>{if(VIEW==='earn'&&(EV.v==='list'||EV.day))renderEarn()});
+ $('#evL').querySelectorAll('[data-pv]').forEach(b=>b.onclick=()=>openPv(b.dataset.pv));$('#evL').querySelectorAll('[data-rv]').forEach(b=>b.onclick=()=>openRv(b.dataset.rv));$('#evL').querySelectorAll('[data-rva]').forEach(b=>b.onclick=()=>{const t=b.dataset.rva;b.textContent='불러오는 중…';decBin(`${FP}-rev/${t.replace(/\./g,'_')}.bin`).then(e=>{if(!e||!e.d)return pvReq('rv',t);RVD[t]=e;openRv(t);renderEarn()}).catch(()=>{b.textContent='review'})});$('#evL').querySelectorAll('[data-req]').forEach(b=>b.onclick=()=>pvReq(b.dataset.req,b.dataset.t));if(PK&&Object.keys(PVQ).length)pvPoll();if(PK&&!PVD&&(EV.v==='list'||EV.day||EV.q))pvPrevLoad().then(()=>{if(VIEW==='earn'&&(EV.v==='list'||EV.day||EV.q))renderEarn()});
  $('#evL').querySelectorAll('.cal-nav [data-m]').forEach(b=>b.onclick=()=>{const k=+b.dataset.m,[y,m]=EV.m.split('-').map(Number),t=new Date(Date.UTC(y,m-1+k,1));EV.m=k?t.toISOString().slice(0,7):TODAY.slice(0,7);renderEarn()});
  $('#evL').querySelectorAll('.cd-more').forEach(b=>b.onclick=()=>{EV.open[b.dataset.d]=!EV.open[b.dataset.d];renderEarn()});
  const N=C.filter(c=>!c.xref);$('#evS').textContent=`어제~7일 뒤 ${a.length}건 · 전체 ${N.length}개사 중 다음 발표일 확정 ${N.filter(c=>c.ne_conf==='확정').length} · 예상 ${N.filter(c=>c.ne_conf==='예상').length} · 컨센서스 ${N.filter(c=>c.cons).length}`;
  $('#evN').innerHTML='보기: 🗓️ 달력(모바일은 날짜별 목록, 날짜를 누르면 그 날짜를 줄글로) / 📝 줄글(컨센서스 포함) — 선택은 이 브라우저에 기억. 거래일만 표시(주말'+(MODE==='earn'?'·미국 증시 휴장일':'')+' 제외, 그날 발표분은 다음 거래일에 표시). 표시: 오늘·어제·D-n(발표까지 남은 날, 내일=D-1), ✅=이미 발표(최근 발표일), <b>확정</b>=회사·거래소 공지 일정(미국 나스닥 실적 캘린더 · 일본 JPX 決算発表予定日 · 한국 DART 기업설명회(IR) 개최 공시), <b>예상</b>=FMP 추정일 또는 한국은 전년 같은 분기 잠정실적·정기보고서 접수일+1년(없으면 법정 제출기한). 시각: 장전/장후(미국), HH:MM(한국 IR 개최 시각, KST).<br>컨센서스: 해외 FMP 애널리스트 추정(매출·영업이익·EPS, 괄호=애널리스트 수, 각 사 보고 통화) · 한국 네이버 증권(FnGuide) 매출액·영업이익·EPS 컨센서스. 회사명을 누르면 기업 팝업(📊 실적 탭에 다가올 분기 상세). 투자 참고용.'}
+{let qt;$('#evQ').oninput=e=>{clearTimeout(qt);qt=setTimeout(()=>{EV.q=e.target.value.trim();EV.day=null;renderEarn()},200)}}
 let EVW=innerWidth<=640;addEventListener('resize',()=>{const m=innerWidth<=640;if(m!==EVW){EVW=m;if(VIEW==='earn')renderEarn()}});
 function renderWeek(){const r=earnRows().filter(x=>x.d>=TODAY);const top=r.slice().sort((x,y)=>(y.c.mcap_usd||0)-(x.c.mcap_usd||0));
  let h='';for(let i=0;i<=7;i++){const d=addD(TODAY,i),b=top.filter(x=>x.d===d);if(!b.length)continue;
