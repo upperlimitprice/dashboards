@@ -17,13 +17,17 @@ h2{font-size:18px;margin:22px 0 4px}.grid{display:grid;grid-template-columns:rep
 .k .l{color:var(--mut);font-size:11.5px}.k .v{font-size:17px;font-weight:800}.k .y{font-size:12.5px;font-weight:700}
 .up{color:var(--up)}.dn{color:var(--dn)}.mut{color:var(--mut)}.ch{width:100%;height:250px}.ch2{width:100%;height:210px}
 table{width:100%;border-collapse:collapse;font-size:12.5px}th,td{padding:6px 16px 6px 8px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}th:first-child,td:first-child,th:nth-child(2),td:nth-child(2){text-align:left}
-th{color:var(--mut);cursor:pointer;user-select:none}th i{font-style:normal;font-size:.85em}.tw{overflow-x:auto}.note{color:var(--mut);font-size:12px;margin-top:6px}a.lk{color:var(--acc);font-size:12px}
+th{color:var(--mut);cursor:pointer;user-select:none}.seg{display:inline-flex;gap:6px;margin:12px 0 0}.seg button{border:1px solid var(--line);background:transparent;color:var(--ink);border-radius:8px;padding:5px 14px;cursor:pointer;font-size:13.5px}.seg button.on{background:var(--acc);color:#fff;border-color:var(--acc)}
+#coQ{width:100%;max-width:360px;padding:7px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font-size:13.5px}.chip.cl{cursor:pointer}.chip.cl.on{background:var(--acc);color:#fff;border-color:var(--acc)}.chip.cl.on .mut{color:#e6edf6}
+.hd{display:flex;flex-wrap:wrap;align-items:baseline;gap:10px}.hd h3{font-size:18px}.big{height:340px;width:100%}th i{font-style:normal;font-size:.85em}.tw{overflow-x:auto}.note{color:var(--mut);font-size:12px;margin-top:6px}a.lk{color:var(--acc);font-size:12px}
 </style></head><body><div class="wrap">
 <h1>🛰 해외 기업 통관·산업 프록시</h1>
 <div class="sub" id="sub"></div>
-<div class="nav" id="nav"></div>
+<div class="seg" id="vw"><button data-v="cat" class="on">📂 분야별</button><button data-v="co">🏢 기업별</button></div>
+<div id="vCat"><div class="nav" id="nav"></div>
 <div class="box"><b>한눈에 보기</b> <span class="mut" style="font-size:12px">최근 3개월 합 YoY · r = 대용치 분기 금액 YoY와 회사 분기 매출 YoY 상관(2020~, 같은 분기) · 헤더 클릭 정렬</span><div class="tw"><table id="sum"></table></div></div>
-<div id="cats"></div>
+<div id="cats"></div></div>
+<div id="vCo" style="display:none"><div class="box"><input id="coQ" type="search" placeholder="🔍 기업명·티커 검색" autocomplete="off"><div class="chips" id="coL" style="margin-top:8px"></div></div><div id="coB"></div></div>
 <div class="note">출처: 미국 통계청 International Trade API(일반수입, 원산지국×HS 10단위, 수량 NO=개) · 일본 経済産業省生産動態統計(e-Stat, 確報·年報 개정치) · 기업 매출 FMP 분기 손익(결산일−45일이 속한 달력 분기로 정렬). 대용치는 국가·산업 단위로 다른 업체 물량이 섞이며 회사 실적과 1:1이 아님. r은 참고 지표(표본 적음 — n 함께 확인). 투자 참고용.</div>
 </div>
 <script>
@@ -83,6 +87,33 @@ function draw(el){const p=D.proxies.find(x=>x.id===el.dataset.p),mc=cv('--mut'),
    .concat(Object.keys(p.c).map((t,i)=>{const R=D.rev[t]||{};return {name:p.c[t]+' 매출',type:'line',data:K.map(k=>R[k]&&R[pq(k)]?+((R[k]/R[pq(k)]-1)*100).toFixed(1):null),symbol:'none',lineStyle:{width:1.5,color:COL[i%6]},itemStyle:{color:COL[i%6]}}}));
   c.setOption({backgroundColor:'transparent',animation:false,legend:{top:0,type:'scroll',textStyle:{color:mc,fontSize:11}},tooltip:{trigger:'axis',confine:true,valueFormatter:v=>v==null?'–':v+'%'},grid:{left:52,right:16,top:46,bottom:24},
    xAxis:{type:'category',data:K,...ax},yAxis:{type:'value',name:'분기 YoY % (축 −100~300% 제한)',nameTextStyle:{color:mc,fontSize:10},min:v=>Math.max(v.min,-100),max:v=>Math.min(v.max,300),...ax},series:ser})}}
+/* 🏢 기업별 보기 (사용자 지시 2026-11-02): 기업 → 연결된 대용치 전부, 회사 매출 YoY vs 대용치 YoY 한 차트 */
+const COS={};D.proxies.forEach(p=>Object.entries(p.c).forEach(([t,n])=>{(COS[t]=COS[t]||{t,n,ps:[]}).ps.push(p)}));
+const COL=Object.values(COS).map(o=>({...o,rs:o.ps.map(p=>({p,...corr(p,o.t)}))})).map(o=>({...o,best:Math.max(...o.rs.map(x=>x.r??-9))})).sort((a,b)=>b.best-a.best);
+let CO=null,COCH=null;
+function coList(){const q=($('#coQ').value||'').trim().toLowerCase(),ls=COL.filter(o=>!q||(o.n+' '+o.t).toLowerCase().includes(q));
+ $('#coL').innerHTML=ls.map(o=>`<span class="chip cl${CO===o.t?' on':''}" data-t="${o.t}">${o.n} <span class="mut">${o.t}</span><b class="${rcls(o.best>-9?o.best:null)}">${o.best>-9?'r '+o.best.toFixed(2):''}</b></span>`).join('');
+ $('#coL').querySelectorAll('[data-t]').forEach(x=>x.onclick=()=>coShow(x.dataset.t))}
+function coShow(t){CO=t;coList();try{history.replaceState(null,'','#co='+t)}catch(e){}const o=COL.find(x=>x.t===t),R=D.rev[t]||{},RK=Object.keys(R).sort(),lq=RK[RK.length-1];
+ const ry=k=>R[k]&&R[pq(k)]?R[k]/R[pq(k)]-1:null;
+ $('#coB').innerHTML=`<div class="box"><div class="hd"><h3>${o.n}</h3><span class="mut">${t}</span><span>최근 분기(${lq||'–'}) 매출 YoY ${pct(lq?ry(lq):null)}</span></div>
+ <div class="big" id="coCh"></div>
+ <div class="tw"><table><tr><th>분야</th><th>대용치</th><th>r (n)</th><th>최신</th><th>금액 3M YoY</th><th>수량 3M YoY</th><th>단가 3M YoY</th><th></th></tr>${o.rs.sort((a,b)=>(b.r??-9)-(a.r??-9)).map(x=>{const M=Object.keys(x.p.m).sort();return `<tr><td>${x.p.cat}</td><td>${x.p.t}</td><td><span class="${rcls(x.r)}">${x.r==null?'–':x.r.toFixed(2)}</span> <span class="mut">(${x.n})</span></td><td>${ym(M[M.length-1])}</td><td>${pct(yoy3(x.p,'v'))}</td><td>${pct(yoy3(x.p,'q'))}</td><td>${pct(yoy3(x.p,'p'))}</td><td><a class="lk" href="#p_${x.p.id}" data-go="${x.p.id}">카드 →</a></td></tr>`}).join('')}</table></div>
+ <div class="note">선 = 분기 YoY(%) · 굵은 선 = ${o.n} 매출 · 가는 선 = 대용치 금액(달력 분기 합) · r = 같은 분기 YoY 상관</div></div>`;
+ $('#coB').querySelectorAll('[data-go]').forEach(a=>a.onclick=()=>{setView('cat')});
+ const ks=new Set(RK);o.ps.forEach(p=>Object.keys(qser(p)).forEach(k=>ks.add(k)));const K=[...ks].sort().filter(k=>k>='2020Q1');
+ const mc=cv('--mut'),lc=cv('--line'),ax={axisLabel:{color:mc,fontSize:10},axisLine:{lineStyle:{color:lc}},splitLine:{lineStyle:{color:lc}}},PC=['#3fb6c6','#f0a43a','#9f7ec4','#46c08a','#d26f82'];
+ if(COCH)COCH.dispose();COCH=echarts.init($('#coCh'));
+ COCH.setOption({backgroundColor:'transparent',animation:false,legend:{top:0,type:'scroll',textStyle:{color:mc,fontSize:11}},tooltip:{trigger:'axis',confine:true,valueFormatter:v=>v==null?'–':v+'%'},grid:{left:52,right:16,top:46,bottom:56},
+  xAxis:{type:'category',data:K,...ax},yAxis:{type:'value',name:'분기 YoY % (축 −100~300% 제한)',nameTextStyle:{color:mc,fontSize:10},min:v=>Math.max(v.min,-100),max:v=>Math.min(v.max,300),...ax},
+  dataZoom:[{type:'inside'},{type:'slider',height:12,bottom:6,textStyle:{color:mc,fontSize:9},borderColor:lc}],
+  series:[{name:o.n+' 매출',type:'line',data:K.map(k=>{const v=ry(k);return v==null?null:+(v*100).toFixed(1)}),symbol:'circle',symbolSize:5,lineStyle:{width:3,color:cv('--ink')},itemStyle:{color:cv('--ink')},z:5}]
+   .concat(o.ps.map((p,i)=>{const Q=qser(p);return {name:p.t,type:'line',data:K.map(k=>Q[k]&&Q[pq(k)]&&!(p.brk&&Q[k].ms[0]>=p.brk&&Q[pq(k)].ms[0]<p.brk)?+((Q[k].v/Q[pq(k)].v-1)*100).toFixed(1):null),symbol:'none',lineStyle:{width:1.6,color:PC[i%5]},itemStyle:{color:PC[i%5]}}}))})}
+function setView(v){document.querySelectorAll('#vw button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));$('#vCat').style.display=v==='cat'?'':'none';$('#vCo').style.display=v==='co'?'':'none';
+ if(v==='co'){coList();if(!CO)coShow(COL[0].t);else setTimeout(()=>COCH&&COCH.resize(),0)}else{try{history.replaceState(null,'',location.pathname)}catch(e){}setTimeout(()=>CH.forEach(c=>c.resize()),0)}}
+document.querySelectorAll('#vw button').forEach(b=>b.onclick=()=>setView(b.dataset.v));$('#coQ').oninput=coList;
+addEventListener('resize',()=>COCH&&COCH.resize());
 const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting&&!e.target.dataset.done){e.target.dataset.done=1;draw(e.target)}}),{rootMargin:'300px'});
-document.querySelectorAll('.ch,.ch2').forEach(el=>io.observe(el));addEventListener('resize',()=>CH.forEach(c=>c.resize()));
+document.querySelectorAll('.ch,.ch2').forEach(el=>io.observe(el));
+{const m=location.hash.match(/^#co=(.+)$/);if(m&&COS[decodeURIComponent(m[1])]){setView('co');coShow(decodeURIComponent(m[1]))}}addEventListener('resize',()=>CH.forEach(c=>c.resize()));
 </script></body></html>
