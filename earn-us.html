@@ -151,7 +151,7 @@ const C=D.companies;C.forEach((c,i)=>c.i=i);const CU=C.filter(c=>!c.xref&&!isN(c
 let S={grp:'chain',ct:'ALL',l1:null,l2:null,q:'',sort:null,lay:'LR',dep:2,hl:null};
 const root=document.documentElement;const css=v=>getComputedStyle(root).getPropertyValue(v).trim();
 const setT=t=>{root.dataset.theme=t;$('#thm').textContent=t==='dark'?'☀︎ 라이트':'☾ 다크';try{localStorage.setItem('semi-theme',t);localStorage.setItem('dash-theme',t)}catch(e){}};  // 대시보드 공통 설정(dash-theme, theme.js)과 공유
-let t0='dark';try{t0=localStorage.getItem('dash-theme')||localStorage.getItem('semi-theme')||(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark')}catch(e){}setT(t0);
+let t0='dark';try{t0=localStorage.getItem('dash-theme')||localStorage.getItem('semi-theme')||'dark'}catch(e){}setT(t0);  // 기본 다크(원래 기본), 선택은 대시보드 공통 설정 공유
 $('#thm').onclick=()=>{setT(root.dataset.theme==='dark'?'light':'dark');render()};
 const fB=v=>v==null?'–':v>=1000?'$'+(v/1000).toFixed(2)+'T':v>=10?'$'+v.toFixed(0)+'B':'$'+v.toFixed(1)+'B';
 const fP=v=>v==null?'<span class="mut">–</span>':`<span class="${v>0?'up':v<0?'dn':''}">${v>0?'+':''}${v.toFixed(1)}%</span>`;
