@@ -654,7 +654,7 @@ function valPeers(c){const pool=(PP&&PP.length?PP:C.filter(x=>!x.xref&&x.val)).f
  const out=[],cnt={},home=c.country;
  for(const x of [...lead,...rest]){if(out.length>=11)break;const k=x.country,n=(cnt[k]||0)+1;if(k==='CN'&&n>3)continue;if(k!==home&&k!=='CN'&&n>5)continue;cnt[k]=n;
   x._why=lead.includes(x)?'업계 대표':x.l2!==cat?(mode==='wide'?(psim(T,ptok(x))>=0.3?'사업 유사(상위 분류)':'규모 유사(상위 분류)'):'인접 분야'):sizeS(x)>=0.6?'규모 유사':psim(T,ptok(x))>=0.4?'사업 유사':'동종';out.push(x)}
- const p=[c,...out].sort((a,b)=>(b.mcap_usd||0)-(a.mcap_usd||0));c._why='본인';return {p,wide:mode==='wide',cat:mode==='wide'?me.l1:cat,nAdj:out.filter(x=>x.l2!==cat).length}}
+ const p=[c,...out.sort((a,b)=>(b.mcap_usd||0)-(a.mcap_usd||0))];c._why='본인';/* 본인 맨 위 (사용자 지시 2026-11-03) */return {p,wide:mode==='wide',cat:mode==='wide'?me.l1:cat,nAdj:out.filter(x=>x.l2!==cat).length}}
 const vv=(x,b,m)=>{const o=x.val&&x.val[b];return o?o[m]:null};
 const vfmt=(v,m)=>v==null?'<span class="mut">–</span>':v<=0?'<span class="mut">'+(m==='per'||m==='evebitda'?'적자':'–')+'</span>':v.toFixed(1)+'x';
 const vmed=a=>{const s=a.filter(v=>v!=null&&v>0).sort((x,y)=>x-y);if(!s.length)return null;const h=s.length>>1;return s.length%2?s[h]:(s[h-1]+s[h])/2};
@@ -662,6 +662,8 @@ function valRender(el,c){if(!el||!c)return;VALC=c;if(!PP){el.innerHTML='<div cla
  if(!c.val){el.innerHTML='<div class="cm-ld">밸류에이션 데이터 없음 (FMP 미커버 종목)</div>';return}
  const {p,wide,cat,nAdj}=valPeers(c),b=VALS.b,M=VALS.m;let rows=p.slice();
  if(VALS.sk){const k=VALS.sk,g=x=>k==='mc'?x.mcap_usd:k==='ytd'?x.ytd:vv(x,b,k);rows.sort((x,y)=>{const a=g(x),z=g(y);if(a==null)return 1;if(z==null)return -1;return VALS.sd===1?z-a:a-z})}
+ rows=[c,...rows.filter(x=>x!==c)];  // 정렬해도 본인은 맨 위 (사용자 지시 2026-11-03)
+
  const ar=k=>VALS.sk===k?(VALS.sd===1?'▼':'▲'):'';
  const th=(k,l)=>`<th data-vs="${k}" class="${k===M?'on':''}">${l}<i>${ar(k)}</i></th>`;
  const fq=b==='f'?(c.val.f&&c.val.f.q?` · ${c.val.f.q} 4개 분기`:''):'';
