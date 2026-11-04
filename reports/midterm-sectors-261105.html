@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>2026 중간선거와 섹터</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
+<style>
+:root{--bg:#f6f7fb;--card:#fff;--ink:#141824;--mut:#5d6578;--line:#e3e6ee;--blue:#1d4ed8;--red:#c81e1e;--gold:#b7791f;--good:#dc2626;--bad:#2563eb;--chip:#eef2ff}
+:root[data-theme="dark"]{--bg:#0d1117;--card:#161b24;--ink:#e6e9f0;--mut:#9aa3b5;--line:#2a3140;--blue:#60a5fa;--red:#f87171;--gold:#f6c453;--chip:#1e2636}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 -apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Pretendard","Noto Sans KR",sans-serif}
+.w{max-width:1080px;margin:0 auto;padding:20px 16px 60px}
+.hero{background:linear-gradient(135deg,#1e3a8a,#1d4ed8 55%,#3b82f6);color:#fff;border-radius:18px;padding:26px 24px}
+.hero .ey{font-size:12px;letter-spacing:.12em;opacity:.8}.hero h1{margin:6px 0 10px;font-size:26px;line-height:1.3}.hero p{margin:0;opacity:.95}
+.kp{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:18px}.kp div{background:rgba(255,255,255,.14);border-radius:12px;padding:10px 12px}.kp b{display:block;font-size:22px}.kp span{font-size:12px;opacity:.9}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;margin-top:16px}
+h2{font-size:19px;margin:0 0 12px}h3{font-size:16px;margin:16px 0 8px}
+.mut{color:var(--mut)}small{color:var(--mut)}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.box{border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--bg)}
+.box h4{margin:0 0 6px;font-size:15px}
+ul{margin:6px 0;padding-left:18px}li{margin:3px 0}
+.tag{display:inline-block;font-size:11.5px;padding:1px 8px;border-radius:99px;background:var(--chip);color:var(--blue);margin-right:4px;font-weight:600}
+.up{color:var(--good);font-weight:700}.dn{color:var(--bad);font-weight:700}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:13px}th,td{border-bottom:1px solid var(--line);padding:7px 10px;text-align:center;white-space:nowrap}
+th:first-child{text-align:left}.hm td{color:var(--ink)}.na{color:var(--mut)}
+.sc th,.sc td{text-align:left;white-space:normal;vertical-align:top}.sc td:first-child{white-space:nowrap;font-weight:700}
+.r1{border-left:4px solid var(--good)}.r2{border-left:4px solid #9ca3af}.r3{border-left:4px solid var(--bad)}
+.ch{width:100%;height:440px}
+.src{font-size:12px;color:var(--mut);line-height:1.7}.src a{color:var(--blue)}
+.tl{border-left:2px solid var(--line);margin-left:6px;padding-left:16px}.tl div{position:relative;margin:8px 0}.tl div:before{content:"";position:absolute;left:-22px;top:7px;width:10px;height:10px;border-radius:50%;background:var(--blue)}
+.note{font-size:12.5px;color:var(--mut);margin-top:8px}
+@media(max-width:720px){.kp{grid-template-columns:repeat(2,1fr)}.g2,.g3{grid-template-columns:1fr}.hero h1{font-size:21px}.ch{height:520px}}
+</style><script src="/dashboards/theme.js"></script></head><body><div class="w">
+
+<div class="hero"><div class="ey">US MIDTERMS 2026 · SECTOR PLAYBOOK · 2026-11-05</div>
+<h1>민주당 상·하원 동시 탈환 — 입법은 거부권에 막히고, '예산·조사·주정부'가 주가를 움직인다</h1>
+<p>결론: <b>관리의료·병원, 태양광·ESS, 금리 민감주(주택·장기채·금)</b>가 상대 수혜. <b>AI 데이터센터 인프라(주정부 규제), 석유·가스, 금융·크립토</b>는 부담. 방산은 단기 약세지만 2006년 선례상 매도 근거는 약함.</p>
+<div class="kp"><div><b>218+</b><span>하원 민주 확정 (최종 251~268 전망)</span></div><div><b>54+</b><span>상원 민주 (7석 탈환)</span></div><div><b>+5</b><span>민주 주지사 순증 (TX·GA·OH·IA 등)</span></div><div><b>6/6</b><span>과거 중간선거 후 12개월 S&P 상승</span></div></div></div>
+
+<div class="card"><h2>① 선거 결과 — 지역구까지 보면 '러스트벨트+선벨트' 동시 이탈</h2>
+<div class="g3">
+<div class="box"><h4>상원 — 7석 탈환</h4><ul><li>텍사스(탈라리코), 캔자스, 오하이오(셰로드 브라운), 아이오와, 노스캐롤라이나(쿠퍼), 사우스캐롤라이나, 메인(콜린스 낙선)</li><li>알래스카·미시시피 미결 → 최대 56석</li><li class="mut">60석(필리버스터) 미달, 67석(거부권 무효화) 크게 미달</li></ul></div>
+<div class="box"><h4>하원 — 압승</h4><ul><li>218석 확정, 약 75석 미결 · CBS 최종 251~268석 전망</li><li>TX-15(라틴계 남부), NC-11, PA-1(피츠패트릭 낙선), OH-7, 아이오와 4석 중 3석 탈환</li><li>제프리스 의장 → 2027-01-03 개원</li></ul></div>
+<div class="box"><h4>주지사 — 데이터센터 허브가 뒤집힘</h4><ul><li><b>텍사스 히노호사</b>(1990년대 이후 첫 민주) · <b>조지아 랜스 보텀스</b> · <b>오하이오 액턴</b>(라마스와미 꺾음) · <b>아이오와 샌드</b></li><li>플로리다는 공화 유지(도널즈)</li><li>텍사스·오하이오·조지아·아이오와 = 미국 대형 데이터센터·전력수요 증가 핵심 지역</li></ul></div>
+</div>
+<p class="note">출구조사 키워드: 물가(생활비)·관세(메인 유권자 69% "관세가 지역경제에 피해")·의료비·전기요금·이란전. 선거 당일 기준 잠정치이며 미결 지역구는 최종 집계 시 바뀔 수 있음.</p></div>
+
+<div class="card"><h2>② 권력 구조 — "법은 못 만들어도 돈줄·조사·주정부는 쥔다"</h2>
+<div class="g2">
+<div class="box"><h4>막히는 것 (트럼프 거부권, 재의결 2/3 불가)</h4><ul><li>관세 철회·의회 권한 회복 법안, 전쟁권한 결의 → 통과돼도 거부권</li><li>IRA 세액공제 원상복구, AI 규제 신법, 최저임금 대폭 인상</li><li>JP모건: "AI 확장 제한 법안이 거부권을 넘을 가능성 낮음 → 기술주 하락은 매수"</li></ul></div>
+<div class="box"><h4>움직이는 것 (실제 주가 변수)</h4><ul><li><b>예산·셧다운 협상</b>: ACA 세액공제·메디케이드 삭감 환원을 예산 통과 조건으로 → 트럼프도 2028 대선 앞 '생활비' 법안 서명 유인</li><li><b>조사권</b>: 감독위원회(가르시아) 조사 예고 → 트럼프 기부 기업·관세 면제·크립토 연계 리스크</li><li><b>주정부</b>: 신임 주지사들의 데이터센터 인허가·전기요금(대형부하 요금제) 정책 — 연방 거부권 밖</li><li><b>국방예산 심의</b>: 이란전 종전 압박 수단(단, 2006년 이라크전 예산은 결국 통과)</li></ul></div>
+</div></div>
+
+<div class="card"><h2>③ 민주당 의제 → 섹터 연결 (실현 경로·확률 반영)</h2><div class="tw"><table class="sc">
+<tr><th>의제</th><th>실현 경로</th><th>확률</th><th>수혜</th><th>피해</th></tr>
+<tr><td>ACA 세액공제 연장·메디케이드 삭감 환원</td><td>개원 100시간 표결 → 예산 협상 카드</td><td>중상</td><td>메디케이드·ACA 관리의료(MOH·CNC·OSCR), 병원(HCA·THC·UHS·CYH)</td><td>–</td></tr>
+<tr><td>관세 권한 회복·관세 축소</td><td>법안은 거부권 → 압박·협상·면제 확대</td><td>중하</td><td>수입 의존 소비재·리테일, 빅테크 하드웨어(애플·아마존)</td><td>관세 보호 업종(철강 등)</td></tr>
+<tr><td>이란전 종전</td><td>전쟁권한 결의(거부권)·국방예산 조건</td><td>중</td><td>항공·운송·소비(유가↓), 장기채, 금리 민감주</td><td>석유·가스, 단기 방산</td></tr>
+<tr><td>생활비·전기요금</td><td>연방 워킹그룹 + 주정부 요금 규제</td><td>중(주정부 상)</td><td>저가 신규 전원(태양광·ESS), 효율·계통</td><td>요금 전가형 IPP(VST·CEG·TLN), 데이터센터 개발사</td></tr>
+<tr><td>AI·데이터센터 규제</td><td>연방은 거부권, <b>주정부·지역 투표</b>가 실효</td><td>주정부 중상</td><td>–</td><td>네오클라우드(CRWV·IREN·NBIS), DC 리츠·개발사, 텍사스·오하이오 프로젝트</td></tr>
+<tr><td>재정·적자 억제</td><td>감세 확대 저지·예산 견제</td><td>중</td><td>장기채(TLT), 주택건설, 금</td><td>–</td></tr>
+<tr><td>금융·크립토 감독, 반부패 조사</td><td>청문회·조사권</td><td>상</td><td>–</td><td>규제완화 기대 금융·지역은행, 크립토·트럼프 연계 자산</td></tr>
+</table></div></div>
+
+<div class="card"><h2>④ 선거 다음 날(11/4) 시장 반응 — S&P 500 대비 초과수익</h2>
+<p class="mut">11/3 종가 → 11/4 종가, S&P 500(SPY) <b id="spy"></b>. 오른쪽(빨강) = 시장보다 강함.</p>
+<div id="c1" class="ch"></div>
+<p class="note">개별 종목: 몰리나·HCA +6%, 센틴 +4%, First Solar +15%, Enphase +12% / 코어위브 −7%, IREN −10%, 록히드·노스롭 −3%, DJT −10%. 서부텍사스유 −7% 이상, 미 국채 금리 하락, 금 +3%.</p></div>
+
+<div class="card"><h2>⑤ 과거 중간선거 케이스스터디 — 선거 후 12개월 섹터 초과수익 (%p, vs S&P 500)</h2>
+<p class="mut">선거 전날 종가 기준 배당 포함 수익률. ★ = 야당(민주)이 의회를 장악한 해 — 이번과 같은 구도. 빨강 = 시장 대비 강세, 파랑 = 약세.</p>
+<div class="tw"><table class="hm"><tr><th>섹터 (ETF)</th><th title="공화 상·하원(부시1기, 여당 승)">2002</th><th title="민주 상·하원 탈환(부시2기·이라크전)">2006 ★</th><th title="공화 하원 탈환(오바마1기)">2010</th><th title="공화 상원 탈환(오바마2기)">2014</th><th title="민주 하원 탈환(트럼프1기)">2018 ★</th><th title="공화 하원 탈환(바이든)">2022</th><th>★ 평균</th><th>전체 평균</th><th>적중</th></tr><tr><th>반도체 <small>SMH</small></th><td style="background:rgba(220,38,38,0.72)">+49.6</td><td style="background:rgba(220,38,38,0.14)">+1.0</td><td style="background:rgba(220,38,38,0.36)">+12.1</td><td style="background:rgba(220,38,38,0.17)">+2.3</td><td style="background:rgba(220,38,38,0.65)">+26.5</td><td style="background:rgba(220,38,38,0.72)">+40.0</td><td style="background:rgba(220,38,38,0.40)">+13.8</td><td style="background:rgba(220,38,38,0.56)">+21.9</td><td>6/6</td></tr><tr><th>기술 <small>XLK</small></th><td style="background:rgba(220,38,38,0.29)">+8.7</td><td style="background:rgba(220,38,38,0.36)">+12.1</td><td style="background:rgba(37,99,235,0.12)">-0.1</td><td style="background:rgba(220,38,38,0.21)">+4.5</td><td style="background:rgba(220,38,38,0.34)">+10.9</td><td style="background:rgba(220,38,38,0.67)">+27.3</td><td style="background:rgba(220,38,38,0.35)">+11.5</td><td style="background:rgba(220,38,38,0.33)">+10.6</td><td>5/6</td></tr><tr><th>금 <small>GLD</small></th><td class="na">–</td><td style="background:rgba(220,38,38,0.60)">+23.8</td><td style="background:rgba(220,38,38,0.55)">+21.5</td><td style="background:rgba(37,99,235,0.36)">-11.9</td><td style="background:rgba(220,38,38,0.24)">+6.1</td><td style="background:rgba(37,99,235,0.14)">-0.9</td><td style="background:rgba(220,38,38,0.42)">+14.9</td><td style="background:rgba(220,38,38,0.27)">+7.7</td><td>3/5</td></tr><tr><th>방산·항공 <small>ITA</small></th><td class="na">–</td><td style="background:rgba(220,38,38,0.70)">+28.9</td><td style="background:rgba(37,99,235,0.15)">-1.7</td><td style="background:rgba(220,38,38,0.16)">+1.9</td><td style="background:rgba(220,38,38,0.14)">+0.8</td><td style="background:rgba(37,99,235,0.36)">-12.2</td><td style="background:rgba(220,38,38,0.42)">+14.8</td><td style="background:rgba(220,38,38,0.19)">+3.5</td><td>3/5</td></tr><tr><th>태양광 <small>TAN</small></th><td class="na">–</td><td class="na">–</td><td style="background:rgba(37,99,235,0.72)">-64.8</td><td style="background:rgba(37,99,235,0.62)">-24.9</td><td style="background:rgba(220,38,38,0.58)">+22.8</td><td style="background:rgba(37,99,235,0.72)">-57.3</td><td style="background:rgba(220,38,38,0.58)">+22.8</td><td style="background:rgba(37,99,235,0.72)">-31.0</td><td>1/4</td></tr><tr><th>클린에너지 <small>ICLN</small></th><td class="na">–</td><td class="na">–</td><td style="background:rgba(37,99,235,0.72)">-48.5</td><td style="background:rgba(37,99,235,0.29)">-8.3</td><td style="background:rgba(220,38,38,0.38)">+12.8</td><td style="background:rgba(37,99,235,0.72)">-46.7</td><td style="background:rgba(220,38,38,0.38)">+12.8</td><td style="background:rgba(37,99,235,0.57)">-22.7</td><td>1/4</td></tr><tr><th>유틸리티 <small>XLU</small></th><td style="background:rgba(220,38,38,0.17)">+2.7</td><td style="background:rgba(220,38,38,0.35)">+11.3</td><td style="background:rgba(220,38,38,0.29)">+8.4</td><td style="background:rgba(37,99,235,0.25)">-6.4</td><td style="background:rgba(220,38,38,0.24)">+5.8</td><td style="background:rgba(37,99,235,0.55)">-21.6</td><td style="background:rgba(220,38,38,0.29)">+8.6</td><td style="background:rgba(37,99,235,0.12)">+0.0</td><td>4/6</td></tr><tr><th>소재 <small>XLB</small></th><td style="background:rgba(220,38,38,0.32)">+10.0</td><td style="background:rgba(220,38,38,0.48)">+18.2</td><td style="background:rgba(37,99,235,0.23)">-5.6</td><td style="background:rgba(37,99,235,0.32)">-9.9</td><td style="background:rgba(37,99,235,0.16)">-2.1</td><td style="background:rgba(37,99,235,0.39)">-13.3</td><td style="background:rgba(220,38,38,0.28)">+8.0</td><td style="background:rgba(37,99,235,0.13)">-0.4</td><td>2/6</td></tr><tr><th>의료기기 <small>IHI</small></th><td class="na">–</td><td style="background:rgba(220,38,38,0.30)">+8.9</td><td style="background:rgba(37,99,235,0.13)">-0.3</td><td style="background:rgba(220,38,38,0.28)">+8.2</td><td style="background:rgba(220,38,38,0.19)">+3.7</td><td style="background:rgba(37,99,235,0.57)">-22.3</td><td style="background:rgba(220,38,38,0.25)">+6.3</td><td style="background:rgba(37,99,235,0.13)">-0.4</td><td>3/5</td></tr><tr><th>산업재 <small>XLI</small></th><td style="background:rgba(220,38,38,0.19)">+3.7</td><td style="background:rgba(220,38,38,0.30)">+8.9</td><td style="background:rgba(37,99,235,0.16)">-1.9</td><td style="background:rgba(37,99,235,0.22)">-5.0</td><td style="background:rgba(220,38,38,0.16)">+1.9</td><td style="background:rgba(37,99,235,0.31)">-9.7</td><td style="background:rgba(220,38,38,0.23)">+5.4</td><td style="background:rgba(37,99,235,0.13)">-0.3</td><td>3/6</td></tr><tr><th>美 장기채 <small>TLT</small></th><td style="background:rgba(37,99,235,0.41)">-14.3</td><td style="background:rgba(37,99,235,0.16)">-2.1</td><td style="background:rgba(220,38,38,0.45)">+16.6</td><td style="background:rgba(37,99,235,0.16)">-2.0</td><td style="background:rgba(220,38,38,0.34)">+11.2</td><td style="background:rgba(37,99,235,0.47)">-17.7</td><td style="background:rgba(220,38,38,0.21)">+4.5</td><td style="background:rgba(37,99,235,0.15)">-1.4</td><td>2/6</td></tr><tr><th>필수소비재 <small>XLP</small></th><td style="background:rgba(37,99,235,0.35)">-11.6</td><td style="background:rgba(220,38,38,0.17)">+2.6</td><td style="background:rgba(220,38,38,0.20)">+3.9</td><td style="background:rgba(220,38,38,0.17)">+2.5</td><td style="background:rgba(37,99,235,0.16)">-2.1</td><td style="background:rgba(37,99,235,0.51)">-19.6</td><td style="background:rgba(220,38,38,0.12)">+0.2</td><td style="background:rgba(37,99,235,0.20)">-4.0</td><td>3/6</td></tr><tr><th>에너지 <small>XLE</small></th><td style="background:rgba(37,99,235,0.22)">-5.0</td><td style="background:rgba(220,38,38,0.58)">+23.2</td><td style="background:rgba(220,38,38,0.37)">+12.3</td><td style="background:rgba(37,99,235,0.56)">-21.9</td><td style="background:rgba(37,99,235,0.60)">-24.0</td><td style="background:rgba(37,99,235,0.61)">-24.6</td><td style="background:rgba(37,99,235,0.13)">-0.4</td><td style="background:rgba(37,99,235,0.25)">-6.7</td><td>2/6</td></tr><tr><th>헬스케어 <small>XLV</small></th><td style="background:rgba(37,99,235,0.42)">-14.8</td><td style="background:rgba(37,99,235,0.19)">-3.6</td><td style="background:rgba(220,38,38,0.16)">+1.9</td><td style="background:rgba(220,38,38,0.17)">+2.4</td><td style="background:rgba(37,99,235,0.28)">-8.2</td><td style="background:rgba(37,99,235,0.49)">-18.4</td><td style="background:rgba(37,99,235,0.24)">-5.9</td><td style="background:rgba(37,99,235,0.26)">-6.8</td><td>2/6</td></tr><tr><th>경기소비재 <small>XLY</small></th><td style="background:rgba(220,38,38,0.24)">+5.9</td><td style="background:rgba(37,99,235,0.41)">-14.3</td><td style="background:rgba(220,38,38,0.21)">+4.7</td><td style="background:rgba(220,38,38,0.41)">+14.5</td><td style="background:rgba(37,99,235,0.12)">-0.1</td><td style="background:rgba(220,38,38,0.17)">+2.7</td><td style="background:rgba(37,99,235,0.26)">-7.2</td><td style="background:rgba(220,38,38,0.16)">+2.2</td><td>4/6</td></tr><tr><th>운송 <small>IYT</small></th><td class="na">–</td><td style="background:rgba(37,99,235,0.30)">-8.9</td><td style="background:rgba(37,99,235,0.21)">-4.6</td><td style="background:rgba(37,99,235,0.36)">-12.1</td><td style="background:rgba(37,99,235,0.26)">-7.0</td><td style="background:rgba(37,99,235,0.30)">-8.9</td><td style="background:rgba(37,99,235,0.28)">-8.0</td><td style="background:rgba(37,99,235,0.29)">-8.3</td><td>0/5</td></tr><tr><th>바이오 <small>IBB</small></th><td style="background:rgba(220,38,38,0.41)">+14.4</td><td style="background:rgba(37,99,235,0.22)">-4.9</td><td style="background:rgba(220,38,38,0.16)">+1.8</td><td style="background:rgba(220,38,38,0.27)">+7.6</td><td style="background:rgba(37,99,235,0.40)">-14.0</td><td style="background:rgba(37,99,235,0.62)">-24.9</td><td style="background:rgba(37,99,235,0.31)">-9.4</td><td style="background:rgba(37,99,235,0.19)">-3.3</td><td>3/6</td></tr><tr><th>금융 <small>XLF</small></th><td style="background:rgba(220,38,38,0.17)">+2.5</td><td style="background:rgba(37,99,235,0.57)">-22.4</td><td style="background:rgba(37,99,235,0.41)">-14.5</td><td style="background:rgba(37,99,235,0.17)">-2.7</td><td style="background:rgba(37,99,235,0.15)">-1.6</td><td style="background:rgba(37,99,235,0.45)">-16.6</td><td style="background:rgba(37,99,235,0.36)">-12.0</td><td style="background:rgba(37,99,235,0.30)">-9.2</td><td>1/6</td></tr><tr><th>주택건설 <small>XHB</small></th><td class="na">–</td><td style="background:rgba(37,99,235,0.72)">-47.1</td><td style="background:rgba(37,99,235,0.17)">-2.3</td><td style="background:rgba(220,38,38,0.31)">+9.7</td><td style="background:rgba(220,38,38,0.44)">+16.2</td><td style="background:rgba(220,38,38,0.52)">+20.0</td><td style="background:rgba(37,99,235,0.43)">-15.5</td><td style="background:rgba(37,99,235,0.13)">-0.7</td><td>3/5</td></tr><tr><th>지역은행 <small>KRE</small></th><td class="na">–</td><td style="background:rgba(37,99,235,0.72)">-30.2</td><td style="background:rgba(220,38,38,0.13)">+0.5</td><td style="background:rgba(220,38,38,0.23)">+5.3</td><td style="background:rgba(37,99,235,0.31)">-9.4</td><td style="background:rgba(37,99,235,0.72)">-48.7</td><td style="background:rgba(37,99,235,0.52)">-19.8</td><td style="background:rgba(37,99,235,0.45)">-16.5</td><td>2/5</td></tr>
+<tr><th>S&P 500 절대수익</th><td>+18.1%</td><td>+9.1%</td><td>+6.7%</td><td>+6.4%</td><td>+14.6%</td><td>+16.9%</td><td></td><td></td><td></td></tr></table></div>
+<div class="g2" style="margin-top:14px">
+<div class="box"><h4>2006 — 가장 닮은 선례 (부시 2기·이라크전·민주 상·하원 탈환)</h4><ul><li>방산 <span class="up">+28.9%p</span>: 민주 의회가 이라크전 예산을 끝내 막지 못함 → <b>"종전 압박 = 방산 매도"는 성급</b></li><li>에너지·소재·금 강세(원자재 사이클), 금융·주택 급락(서브프라임 — 정치보다 거시)</li></ul></div>
+<div class="box"><h4>2018 — 민주 하원 탈환 (트럼프 1기)</h4><ul><li>태양광 <span class="up">+22.8%p</span>, 클린에너지 +12.8, 반도체 +26.5, 장기채 +11.2</li><li>바이오 <span class="dn">−14.0</span>, 헬스케어 −8.2: 약가 인하 압박 → <b>헬스케어는 '제약'이 아닌 '서비스(보험·병원)'로 좁혀야</b></li></ul></div>
+</div>
+<div id="c2" class="ch" style="margin-top:12px"></div>
+<p class="note">한계: 표본 6회(★ 2회), 2007~08 금융위기·2022~23 AI 랠리 등 거시 변수가 정치보다 큼. 정치 효과는 '방향 힌트'로만 사용. S&P 500은 6번 모두 12개월 상승(평균 +12%).</p></div>
+
+<div class="card"><h2>⑥ 결론 — 2027~28 섹터 스코어카드</h2>
+<div class="g3">
+<div class="box r1"><h4>🔺 상대 수혜</h4><ul>
+<li><b>메디케이드·ACA 관리의료 + 병원</b> <span class="tag">1순위</span><br><small>의제 1순위·예산 협상 카드. 단 제약·바이오는 약가 리스크(2018 −14%p)로 제외</small></li>
+<li><b>태양광·ESS·계통</b><br><small>추가 삭감 차단 + 신임 주지사 전기요금 의제. 2018 +22.8%p. 연방 세액공제 원복은 2028 이후 옵션</small></li>
+<li><b>금리 민감: 주택건설·장기채·금</b><br><small>종전·유가↓·적자 견제 → 금리 하락 경로. 금은 ★ 두 해 모두 강세. 주택 ★평균 −15.5%p는 2006 서브프라임(−47.1) 탓, 2018 +16.2·2022 +20.0</small></li>
+<li><b>수입 소비재·리테일</b> <span class="tag">조건부</span><br><small>관세 축소는 협상 결과에 달림</small></li></ul></div>
+<div class="box r2"><h4>⚖️ 중립 (정치보다 사이클)</h4><ul>
+<li><b>반도체·빅테크</b><br><small>과거 6/6 시장 초과(평균 +21.9%p). AI 규제 신법은 거부권 → 하락은 매수 기회(JP모건)</small></li>
+<li><b>방산</b><br><small>단기 종전 압박 vs 2006 선례(+28.9%p). 예산안 실제 감액 여부 확인 후 판단</small></li>
+<li><b>규제 유틸리티</b><br><small>요금 억제 압박 vs 계통 투자 지속 — IPP보다 방어적</small></li></ul></div>
+<div class="box r3"><h4>🔽 상대 부담</h4><ul>
+<li><b>AI 데이터센터 인프라·네오클라우드</b><br><small>TX·OH·GA·IA 주지사 교체 + 지역 투표 규제 = 연방 거부권이 못 막는 경로</small></li>
+<li><b>석유·가스</b><br><small>종전 압박 → 유가 하락(11/4 −7%)</small></li>
+<li><b>금융·지역은행·크립토</b><br><small>★ 평균 금융 −12%p, 지역은행 −19.8%p. 규제완화 정체·조사</small></li>
+<li><b>요금 전가형 발전사(IPP)·트럼프 연계 자산</b></li></ul></div>
+</div>
+<h3>한국 시장 연결 (노출 기준, 투자 권유 아님)</h3>
+<div class="g2"><div class="box"><h4>수혜 노출</h4><ul><li>미국 태양광 생산: 한화솔루션(조지아 공장 — 신임 민주 주지사 지역), OCI홀딩스(텍사스 모듈)</li><li>미국 ESS 배터리: LG에너지솔루션·삼성SDI</li><li>금리 하락 수혜 성장주 전반</li></ul></div>
+<div class="box"><h4>점검 필요</h4><ul><li>미국 데이터센터향 전력기기·냉각(HD현대일렉트릭·LS일렉트릭·효성중공업 등): 텍사스 신규 프로젝트 인허가 속도 확인. 송배전 교체 수요는 초당적이라 영향 제한</li><li>K방산: 유럽·중동 수출 중심이라 미국 국방예산 영향은 간접적</li></ul></div></div></div>
+
+<div class="card"><h2>⑦ 체크포인트</h2><div class="tl">
+<div><b>11월~12월</b> 미결 하원 약 75석·알래스카·미시시피 상원 확정, 데이터센터 지역 투표 최종 집계</div>
+<div><b>2027-01-03</b> 새 의회 개원, 제프리스 의장 — 첫 100시간: ACA 세액공제·메디케이드 환원 표결</div>
+<div><b>2027 1~6월</b> 관세 권한·전쟁권한 결의 표결 → 트럼프 거부권 행사 여부 / TX·GA·OH·IA 주의회·주지사 데이터센터·요금 정책</div>
+<div><b>2027-09-30</b> 2028 회계연도 예산 시한 — 셧다운 협상에서 의료·국방 맞교환 여부</div>
+<div><b>2028-11</b> 대선 — 민주당 집권 시 IRA 세액공제 복원 옵션(태양광·ESS의 2단계 재평가)</div>
+</div></div>
+
+<div class="card src"><b>출처</b><br>
+선거 결과: <a href="https://www.cbsnews.com/live-updates/election-day-2026-midterms/">CBS News</a> · <a href="https://www.nbcnews.com/politics/2026-election/live-blog/midterm-election-results-2026-news-trump-live-updates-rcna605763">NBC News</a> · <a href="https://news.northeastern.edu/2026/11/03/midterm-election-results-analysis-2026/">Northeastern</a> · <a href="https://abcnews.com/Politics/ohio-2026-live-midterm-election-results/story?id=136761684">ABC(오하이오)</a><br>
+의제: <a href="https://www.pbs.org/newshour/politics/heres-whats-on-house-democrats-agenda-if-they-sweep-to-power-in-midterm-elections">PBS</a> · <a href="https://www.yahoo.com/news/politics/articles/democrats-usher-era-resounding-sweep-140104667.html">Yahoo/AP</a> · <a href="https://time.com/article/2026/11/04/democrats-power-midterms/">TIME</a><br>
+시장: <a href="https://www.aol.com/articles/markets-biggest-winners-losers-blunami-153259000.html">Business Insider(AOL)</a> · <a href="https://finance.yahoo.com/markets/live/stock-market-today-dow-sp-500-nasdaq-midterm-elections-earnings-140752043.html">Yahoo Finance</a> · <a href="https://www.cnbc.com/2026/11/02/the-midterms-are-here-how-jpmorgan-expects-the-market-to-react.html">CNBC(JP모건)</a> · <a href="https://www.cnbc.com/2026/11/03/midterm-election-stock-market.html">CNBC</a> · <a href="https://www.spglobal.com/market-intelligence/en/news-insights/articles/2026/10/data-center-backlash-shapes-midterm-ballots-campaigns-across-us-106324121">S&P Global(데이터센터 투표)</a><br>
+과거 수익률·11/4 반응: FMP 배당조정 일별 종가로 자체 계산(섹터 SPDR·iShares·Invesco ETF). 선거 개표는 잠정치. 투자 참고용이며 투자 권유가 아닙니다.</div>
+</div>
+<script>
+const J={"now": [["태양광(TAN)", 5.45], ["의료기기(IHI)", 4.87], ["주택건설(XHB)", 3.83], ["경기소비재(XLY)", 2.57], ["필수소비재(XLP)", 2.08], ["클린에너지(ICLN)", 2.07], ["금(GLD)", 1.94], ["금융(XLF)", 1.14], ["헬스케어(XLV)", 0.76], ["운송(IYT)", 0.7], ["소재(XLB)", 0.6], ["지역은행(KRE)", 0.16], ["바이오(IBB)", -0.42], ["美 장기채(TLT)", -1.28], ["기술(XLK)", -1.4], ["유틸리티(XLU)", -1.43], ["산업재(XLI)", -2.93], ["방산·항공(ITA)", -3.08], ["반도체(SMH)", -4.14], ["에너지(XLE)", -7.31]], "dem": [["태양광(TAN)", 22.8, -31.0], ["금(GLD)", 14.9, 7.7], ["방산·항공(ITA)", 14.8, 3.5], ["반도체(SMH)", 13.8, 21.9], ["클린에너지(ICLN)", 12.8, -22.7], ["기술(XLK)", 11.5, 10.6], ["유틸리티(XLU)", 8.6, 0.0], ["소재(XLB)", 8.0, -0.4], ["의료기기(IHI)", 6.3, -0.4], ["산업재(XLI)", 5.4, -0.3], ["美 장기채(TLT)", 4.5, -1.4], ["필수소비재(XLP)", 0.2, -4.0], ["에너지(XLE)", -0.4, -6.7], ["헬스케어(XLV)", -5.9, -6.8], ["경기소비재(XLY)", -7.2, 2.2], ["운송(IYT)", -8.0, -8.3], ["바이오(IBB)", -9.4, -3.3], ["금융(XLF)", -12.0, -9.2], ["주택건설(XHB)", -15.5, -0.7], ["지역은행(KRE)", -19.8, -16.5]], "spy": 1.78};document.getElementById('spy').textContent=(J.spy>0?'+':'')+J.spy+'%';
+const cv=k=>getComputedStyle(document.documentElement).getPropertyValue(k).trim();
+function bar(id,rows,series){const el=document.getElementById(id),ch=echarts.init(el);const mob=el.clientWidth<600;
+ ch.setOption({animation:false,grid:{left:mob?110:140,right:40,top:series.length>1?34:10,bottom:30},legend:series.length>1?{top:0,textStyle:{color:cv('--mut')}}:undefined,
+  tooltip:{trigger:'axis',axisPointer:{type:'shadow'},valueFormatter:v=>v==null?'–':(v>0?'+':'')+v+'%p'},
+  xAxis:{type:'value',axisLabel:{color:cv('--mut'),formatter:'{value}%p'},splitLine:{lineStyle:{color:cv('--line')}}},
+  yAxis:{type:'category',inverse:true,data:rows.map(r=>r[0]),axisLabel:{color:cv('--ink'),fontSize:mob?10.5:12}},
+  dataZoom:[{type:'inside',yAxisIndex:0},{type:'slider',yAxisIndex:0,right:4,width:12,showDetail:false}],
+  series:series.map((s,i)=>({name:s,type:'bar',data:rows.map(r=>r[i+1]),barMaxWidth:16,color:i?'#9ca3af':'#dc2626',itemStyle:{color:i?'rgba(156,163,175,.75)':(p=>p.value>=0?'#dc2626':'#2563eb')},
+   label:{show:i===0,position:'right',fontSize:10.5,color:cv('--mut'),formatter:p=>(p.value>0?'+':'')+p.value}}))});
+ addEventListener('resize',()=>ch.resize());return ch}
+bar('c1',J.now,['11/4 초과수익']);
+bar('c2',J.dem,['★ 민주 의회 장악 해(2006·2018) 평균','전체 6회 평균']);
+</script></body></html>
