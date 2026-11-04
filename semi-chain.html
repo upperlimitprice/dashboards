@@ -549,7 +549,7 @@ function qLab(x){const h=/^H([12])\s*FY(\d{2,4})/i.exec(x.q||'');if(h)return `${
 // 마진 기준 통일(사용자 승인 2026-11-04): 미국 기업 OPM = (GAAP 영업이익 + SBC)÷매출 = 조정 근사(굵은 선), GAAP OPM 은 흐린 선.
 // 컨센 OPM(E)는 애널리스트 조정 EBIT 기준이라 실적선과 잇지 않고 따로 찍음. 8분기 중앙값과 15%p 넘게 벌어진 분기 = 일회성 표식(축 밖 값은 경계에 붙이고 실제값 표기). 금융업(은행·보험 등)은 GPM·OPM 의미가 없어 숨김.
 const isFinCo=c=>c.l1==='금융';
-function adjOp(x){return x.ng!=null?x.ng:x.op==null?null:x.op+(x.sbc||0)}  // 회사 공식 논갭(SEC 보도자료) 우선, 없으면 GAAP+SBC
+function adjOp(x){return x.ng!=null?x.ng:x.op==null||x.sbc==null?null:x.op+x.sbc}  // SBC 자료 없는 분기는 비움(GAAP 값 섞임 방지)  // 회사 공식 논갭(SEC 보도자료) 우선, 없으면 GAAP+SBC
 function drawFin(){const el=document.getElementById('cmFinCh');if(!el||!FINC)return;const c=FINC;
  const all=(c.qrev||[]).filter(x=>x.rev!=null),n0=all.length,q=all.slice(-(c.semi?FINN/2:FINN)),off=n0-q.length;const ccy=c.rev_ccy||c.ccy;
  const k=!c.semi&&c.cons&&c.cons.ccy===ccy&&c.cons.rev?c.cons:null;  // 분기 컨센서스는 반기 막대와 비교 불가 → 반기 회사는 생략  // 다가올 분기 컨센서스(같은 통화일 때만)
@@ -559,7 +559,8 @@ function drawFin(){const el=document.getElementById('cmFinCh');if(!el||!FINC)ret
  const gpm0=FIN?[]:q.map(x=>pr(x.gp,x.rev)),opm0=FIN?[]:q.map(x=>pr(ADJ?adjOp(x):x.op,x.rev)),opg0=ADJ?q.map(x=>pr(x.op,x.rev)):[];
  const eOpm=!FIN&&k&&k.op!=null?+(k.op/k.rev*100).toFixed(1):null,eGpm=!FIN&&k&&k.gp!=null?+(k.gp/k.rev*100).toFixed(1):null;
  const allO=all.map(x=>pr(ADJ?adjOp(x):x.op,x.rev)).filter(v=>v!=null).slice(-8).sort((a,b)=>a-b),med=allO.length?allO[allO.length>>1]:null;
- const odd=v=>v!=null&&med!=null&&allO.length>=4&&Math.abs(v-med)>15;
+ const spk=a=>a.filter((v,i)=>v!=null&&med!=null&&allO.length>=4&&Math.abs(v-med)>15&&(a[i-1]==null||Math.abs(v-a[i-1])>10)&&(a[i+1]==null||Math.abs(v-a[i+1])>10));  // 중앙값과 15%p↑ 차이 + 앞뒤 분기와도 10%p↑ 튐(꾸준한 성장·하락 추세는 제외)
+ const SPV=new Set([...spk(opm0),...spk(opg0)]),odd=v=>SPV.has(v);
  const nv=[...gpm0,eGpm,...[...opm0,...opg0,eOpm].filter(v=>!odd(v))].filter(v=>v!=null),lo=nv.length?Math.min(0,...nv)-5:-10,hi=nv.length?Math.max(...nv)+8:60;
  const ck=(v,mark)=>v==null?null:(v<lo||v>hi)?{value:v<lo?lo:hi,real:v,symbol:mark?'triangle':'none',symbolSize:9,itemStyle:{color:'#ef4444'}}:(mark&&odd(v))?{value:v,real:v,symbol:'triangle',symbolSize:10,itemStyle:{color:'#ef4444'}}:v;
  const gpm=pad(gpm0.map(v=>ck(v))),opm=pad(opm0.map(v=>ck(v,1))),opg=pad(opg0.map(v=>ck(v))),nOdd=opm0.filter(odd).length;
@@ -590,7 +591,7 @@ function drawFin(){const el=document.getElementById('cmFinCh');if(!el||!FINC)ret
    ...(ADJ?[{name:'OPM(GAAP)',type:'line',yAxisIndex:1,data:opg,symbol:'circle',symbolSize:4,connectNulls:false,itemStyle:{color:'#fb923c',opacity:.45},lineStyle:{width:1.2,type:'dotted',opacity:.5}}]:[]),
    ...(hasG?eLine(eGpm,gpm,'#3b82f6','GPM(E)'):[]),...ePt(eOpm,'#fb923c',k&&k.op_k==='EBIT'?'OPM(E·조정 EBIT)':'OPM(E)')]});
  const f0=q[0],f1=q[q.length-1],ch=f0&&f1&&f0.rev?((f1.rev/f0.rev-1)*100).toFixed(1):null;
- document.getElementById('cmFinSrc').textContent=`출처: ${c.src==='naver'?'네이버 금융 분기 실적(매출총이익 미제공 → GPM 없음)':c.semi?'FMP 반기 손익계산서(반기 실적만 공시하는 회사 — 막대 = 6개월 합계)':'FMP 분기 손익계산서'}${SG?' · 사업부별 매출: FMP(SEC XBRL 세그먼트)':''}${FIN?' · 금융업은 GPM·OPM 미표시':ADJ?` · OPM 굵은 선 = ${NGN?`회사 공식 논갭 영업이익(SEC 실적 보도자료 조정표, ${NGN}개 분기)·그 외 분기는 `:''}(GAAP 영업이익+주식보상비용)÷매출(조정 근사), 점선 = GAAP`:' · OPM = 회계상 영업이익÷매출'}${nOdd?` · ▲ = 최근 8분기 중앙값(${med}%)과 15%p 이상 차이(일회성 의심)`:''}${k?` · ${kq} = ${esc(k.src||'컨센서스')}(점선·연한 막대, 애널리스트 ${k.n||'-'}명${eOpm!=null?`, OPM(E)=컨센 ${k.op_k==='EBIT'?'조정 EBIT':'영업이익'}÷매출 — 실적선과 기준이 달라 따로 표시`:''})`:''} · 통화 ${ccy} · ${q.length}개 ${c.semi?'반기':'분기'} 매출 ${ch!=null?(ch>0?'+':'')+ch+'%':''}`;
+ document.getElementById('cmFinSrc').textContent=`출처: ${c.src==='naver'?'네이버 금융 분기 실적(매출총이익 미제공 → GPM 없음)':c.semi?'FMP 반기 손익계산서(반기 실적만 공시하는 회사 — 막대 = 6개월 합계)':'FMP 분기 손익계산서'}${SG?' · 사업부별 매출: FMP(SEC XBRL 세그먼트)':''}${FIN?' · 금융업은 GPM·OPM 미표시':ADJ?` · OPM 굵은 선 = ${NGN?`회사 공식 논갭 영업이익(SEC 실적 보도자료 조정표, ${NGN}개 분기)·그 외 분기는 `:''}(GAAP 영업이익+주식보상비용)÷매출(조정 근사), 점선 = GAAP`:' · OPM = 회계상 영업이익÷매출'}${nOdd?` · ▲ = 최근 8분기 중앙값(${med}%)과 15%p 이상 차이·앞뒤 분기 대비 급변(일회성 의심)`:''}${k?` · ${kq} = ${esc(k.src||'컨센서스')}(점선·연한 막대, 애널리스트 ${k.n||'-'}명${eOpm!=null?`, OPM(E)=컨센 ${k.op_k==='EBIT'?'조정 EBIT':'영업이익'}÷매출 — 실적선과 기준이 달라 따로 표시`:''})`:''} · 통화 ${ccy} · ${q.length}개 ${c.semi?'반기':'분기'} 매출 ${ch!=null?(ch>0?'+':'')+ch+'%':''}`;
  document.querySelectorAll('.cm-fb button[data-n]').forEach(b=>b.onclick=()=>{FINN=+b.dataset.n;document.querySelectorAll('.cm-fb button[data-n]').forEach(x=>x.classList.toggle('on',x===b));drawFin()});}
 // 기업개요 하단 주가 차트: 일봉/주봉 × 1M·3M·6M·12M (사용자 지시 2026-10-27) — semi-chain-px/{티커}.json 지연 로드
 let PXC={},PXT=null,PXCH=null,PXI='d',PXR=12,PXL={},PXP=null;  // PXL: 티커별 그린 선 [{a:[날짜,가격],b?:[날짜,가격]}], PXP: 직전 클릭(3초 내 두 번째 클릭이면 추세선)  // 기본 일봉 12M (사용자 지시 2026-10-27)
