@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>웨이브 선거 반응 지속성</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
+<style>
+:root{--bg:#f6f7fb;--card:#fff;--ink:#141824;--mut:#5d6578;--line:#e3e6ee;--blue:#1d4ed8;--chip:#eef2ff;--up:#dc2626;--dn:#2563eb}
+:root[data-theme="dark"]{--bg:#0d1117;--card:#161b24;--ink:#e6e9f0;--mut:#9aa3b5;--line:#2a3140;--blue:#60a5fa;--chip:#1e2636;--up:#f87171;--dn:#60a5fa}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 -apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Pretendard","Noto Sans KR",sans-serif}
+.w{max-width:1100px;margin:0 auto;padding:20px 16px 60px}
+.hero{background:linear-gradient(135deg,#312e81,#4338ca 55%,#6366f1);color:#fff;border-radius:18px;padding:26px 24px}
+.hero .ey{font-size:12px;letter-spacing:.12em;opacity:.8}.hero h1{margin:6px 0 10px;font-size:25px;line-height:1.35}.hero p{margin:0;opacity:.95}
+.kp{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:18px}.kp div{background:rgba(255,255,255,.13);border-radius:12px;padding:10px 12px}.kp b{display:block;font-size:21px}.kp span{font-size:12px;opacity:.92}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;margin-top:16px}
+h2{font-size:19px;margin:0 0 12px}.mut{color:var(--mut)}small{color:var(--mut)}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.box{border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--bg)}.box h4{margin:0 0 6px;font-size:15px}
+ul{margin:6px 0;padding-left:18px}li{margin:3px 0}
+.ch{width:100%;height:340px}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:13px}th,td{border-bottom:1px solid var(--line);padding:7px 9px;text-align:center;white-space:nowrap}th:first-child,td:first-child{text-align:left}
+.B{color:var(--dn);font-weight:700}.R{color:var(--up);font-weight:700}
+.note{font-size:12.5px;color:var(--mut);margin-top:8px}
+.src{font-size:12px;color:var(--mut);line-height:1.7}.src a{color:var(--blue)}
+.cs{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.cs .box{font-size:12.5px}.cs table{font-size:12px}.cs td,.cs th{padding:3px 5px}
+.verdict td:first-child{min-width:150px}.verdict td{white-space:normal;text-align:left;vertical-align:top}.verdict td:nth-child(2),.verdict td:nth-child(3){white-space:nowrap;text-align:center}
+.tg{display:inline-block;font-size:11.5px;padding:1px 8px;border-radius:99px;font-weight:700}.tg.k{background:rgba(220,38,38,.12);color:var(--up)}.tg.v{background:rgba(37,99,235,.12);color:var(--dn)}.tg.m{background:var(--chip);color:var(--mut)}
+@media(max-width:760px){.kp{grid-template-columns:repeat(2,1fr)}.g2,.g3,.cs{grid-template-columns:1fr}.hero h1{font-size:20px}}
+</style><script src="/dashboards/theme.js"></script></head><body><div class="w">
+
+<div class="hero"><div class="ey">WAVE ELECTIONS 2006–2024 · FIRST-DAY REACTION → PERSISTENCE OR UNWIND</div>
+<h1>첫날 반응은 "1개월은 가고, 12개월이면 되돌린다" — 국가 간 격차는 더 빨리 되돌린다</h1>
+<p>과거 웨이브 선거 9번(블루 4: 2006·2008·2018·2020 / 레드 5: 2010·2014·2016·2022·2024)에서, 선거 다음 날 S&P 대비 초과수익 상위 3개 섹터를 사고 하위 3개를 판 포지션의 이후 성과를 추적. 2026 블루웨이브의 첫날 반응 폭은 <b>국가 간 격차 역대 3위, 섹터 간 격차 4위</b>(10개 사건 중) 수준이라 '큰 반응 사건' 패턴이 더 잘 맞는다.</p>
+<div class="kp" id="kp"></div></div>
+
+<div class="card"><h2>① 섹터: 첫날 승자 3개 − 패자 3개의 이후 초과수익 (%p)</h2>
+<p class="mut">양수 = 첫날 방향이 이어짐(지속), 음수 = 되돌림. 2020년은 선거 6일 뒤 백신 발표로 시장이 통째로 회전한 이상치라 제외한 평균을 기본으로 표시.</p>
+<div id="c1" class="ch"></div>
+<div class="g3"><div class="box"><h4>1주·1개월: 지속</h4>2020 제외 8번 중 <b>7번·6번</b> 첫날 승자가 더 강함(+4.8%p·+5.7%p). 큰 반응 사건 5번 중 4번.</div>
+<div class="box"><h4>3~6개월: 방향 상실</h4>평균은 양수지만 적중이 4/8·5/8로 동전 던지기. 정책이 실제 법·예산으로 이어졌는지가 갈림.</div>
+<div class="box"><h4>12개월: 되돌림</h4>중앙값 <b>−9.5%p</b>, 2020 제외 8번 중 <b>6번 되돌림</b>, 큰 반응 사건은 5번 중 4번·평균 <b>−20.0%p</b>.</div></div></div>
+
+<div class="card"><h2>② 국가: 첫날 강세국 3개 − 약세국 3개 (美 상장 국가 ETF, %p)</h2>
+<p class="mut">국가 간 격차는 섹터보다 빨리 사라짐. 특히 첫날 국가별 편차가 컸던 사건(2008·2016·2020·2022·2024 — 2026도 이 그룹)에서는 1개월부터 되돌림.</p>
+<div id="c2" class="ch"></div>
+<p class="note">2026 첫날 국가 편차 <b id="d26c"></b>(표준편차, %p) — 2008(2.18)·2016(2.47) 다음 수준. 큰 반응 그룹: 1M −5.3%p(1/5), 3M −6.3%p(1/5), 12M −22.0%p(2/5).</p></div>
+
+<div class="card"><h2>③ 블루 vs 레드 — 블루웨이브는 단기 지속력도 약하다</h2>
+<p class="mut">첫날 ±1%p 이상 움직인 섹터 중, 이후에도 같은 방향으로 시장을 이긴(진) 비율.</p>
+<div id="c3" class="ch" style="height:300px"></div>
+<p class="note">레드웨이브(감세·규제완화·관세)는 정책 기대가 1개월까지 이어지는 경향(64%)이 있지만, 블루웨이브는 1주부터 50% 미만 — 견제형 의회는 "말은 크고 법은 거부권에 막히는" 구조라 첫날 기대가 빨리 식는다.</p></div>
+
+<div class="card"><h2>④ 사건별 결과 — 첫날 승자−패자 포지션 (%p)</h2>
+<div class="tw"><table id="evt"></table></div>
+<p class="note">반응 폭 = 첫날 섹터 초과수익의 표준편차. 2026: 섹터 <b id="d26s"></b> / 국가 <b id="d26c2"></b>.</p></div>
+
+<div class="card"><h2>⑤ 케이스스터디 — 첫날 상·하위 섹터의 이후 성과 (S&P 대비 %p)</h2><div class="cs" id="cs"></div></div>
+
+<div class="card"><h2>⑥ 2026 적용 — 무엇이 지속되고 무엇이 되돌려질까</h2>
+<p class="mut">첫날(11/4) 美 상장 ETF 초과수익 + 통계 패턴(1개월 지속·12개월 되돌림, 국가는 빠른 되돌림) + 정책 경로(거부권)를 함께 반영한 판단. 회귀 추정치는 방향 참고용(9개 사건, 불확실성 큼).</p>
+<div class="tw"><table class="verdict"><tr><th>테마</th><th>첫날</th><th>판단</th><th>근거</th></tr>
+<tr><td><b>한국·대만 (첫날 최대 약세국)</b></td><td>EWY −3.7 · EWT −3.0</td><td><span class="tg k">되돌림(반등) 우위</span></td><td>큰 반응 사건에서 국가 격차는 1개월부터 축소(5번 중 4번). 원인인 데이터센터 규제는 연방 차원에선 거부권에 막힘. 단 주정부 인허가 지연이 실제 수주·capex로 확인되면 예외</td></tr>
+<tr><td><b>중국·홍콩 (첫날 최대 강세국)</b></td><td>MCHI +2.6 · EWH +2.6</td><td><span class="tg v">되돌림(조정) 위험</span></td><td>국가 승자는 3~12개월 상대 약세 경향. 관세 견제는 법안이 거부권에 막혀 실제 인하가 늦어질 가능성. 베이징 반도체 지원책은 별도 재료</td></tr>
+<tr><td><b>반도체·AI 하드웨어</b></td><td>SMH −4.1</td><td><span class="tg m">단기 약세 → 중기 반등</span></td><td>섹터는 1개월까지 첫날 방향 지속 경향 → 단기 추가 약세 가능. 12개월은 첫날 패자가 반등(7/9 사건). 2018 블루 때 반도체 12M +26.5%p</td></tr>
+<tr><td><b>에너지·석유개발</b></td><td>XLE −7.3 · XOP −8.2</td><td><span class="tg m">유가 의존 → 12M 반등 경향</span></td><td>첫날 최대 패자. 2006 블루(이라크전) 에너지 12M +24.5%p, 2022 석유개발 −4.5 → 12M −24.9(유가 하락 지속). 종전이 실제 이뤄지는지가 관건</td></tr>
+<tr><td><b>방산</b></td><td>ITA −3.1</td><td><span class="tg k">되돌림(반등) 우위</span></td><td>2006 이라크전 중 민주 의회에서도 방산 12M +28.9%p — 국방예산은 결국 통과. 실제 감액 전엔 반등 경향</td></tr>
+<tr><td><b>태양광·클린에너지</b></td><td>TAN +5.5 · ICLN +2.1</td><td><span class="tg v">1개월 지속 → 이후 되돌림 위험</span></td><td>2020 블루: 클린에너지 2021년 2월까지 폭등 후 붕괴, 2022 레드 첫날 승자 태양광 12M −64%p. IRA 복원은 거부권에 막혀 2028 이전 실현 어려움. 2018처럼 금리 하락이 받쳐주면 예외</td></tr>
+<tr><td><b>주택건설·항공·의료기기·소매</b></td><td>XHB +5.5 · JETS +4.9 · IHI +4.9 · XRT +3.8</td><td><span class="tg v">1개월 지속 → 12M 되돌림 위험</span></td><td>첫날 상위 그룹. 유가·금리 하락이 이어지면 지속, 반대면 되돌림. 큰 반응 사건의 12M 승자−패자 −20%p</td></tr>
+<tr><td><b>헬스케어 서비스</b></td><td>XLV +0.8 (MOH·HCA +6)</td><td><span class="tg m">입법 확인 필요</span></td><td>ACA·메디케이드 복원은 예산 협상 결과에 좌우. 2008 블루 헬스케어 첫날 +2.7 → 12M −3.0%p</td></tr>
+<tr><td><b>유럽 은행</b></td><td>EU 은행 +6.2(현지)</td><td><span class="tg v">되돌림 위험</span></td><td>선거 첫날 은행 랠리는 미국 은행 기준 2010(−19.5%p)·2024(−20.0%p) 등 12개월 뒤 되돌림이 반복 — 유럽 은행에도 같은 경향을 가정</td></tr>
+</table></div>
+<h3 style="font-size:15px;margin:16px 0 6px">회귀 추정치 (참고) — 사건 고정효과 횡단면 회귀, 전체 9개 사건</h3>
+<div class="g2"><div id="c4" class="ch" style="height:560px"></div><div id="c5" class="ch" style="height:560px"></div></div>
+<p class="note">막대 = 첫날 초과수익에 회귀계수를 곱한 1개월(옅은색)·12개월(진한색) 기대 초과수익. 12개월 기울기 −1.6(섹터)·−3.2(국가)는 첫날 움직임보다 큰 되돌림을 뜻하지만, 사건 수가 9개라 크기는 신뢰하기 어렵고 방향만 참고.</p></div>
+
+<div class="card"><h2>⑦ 방법과 한계</h2><ul>
+<li>대상: 美 상장 섹터 ETF 31종·국가 ETF 15종, FMP 배당조정 종가. 첫날 = 선거일 종가→다음 거래일 종가 초과수익(vs SPY), 이후 = 다음 거래일 종가부터 5·21·63·126·252거래일.</li>
+<li>지표: ① 사건별 첫날 상위3−하위3 포지션의 이후 초과수익 ② 사건 내 평균을 뺀 횡단면 회귀(β>0 지속, β<0 되돌림) ③ ±1%p 이상 움직인 섹터의 방향 유지율.</li>
+<li>한계: 사건 9개(블루 4)로 통계적 검정력이 낮음. 같은 사건 안 관측치는 독립이 아니라 t값이 부풀려지므로 사건 단위 적중(○/9)을 우선 해석. 2008 금융위기·2020 백신 같은 거시 충격이 정치 효과를 압도.</li>
+<li>2026 첫날은 미국 11/4 하루(美 상장 ETF) 기준. 한국·대만 현지 시장은 11/5에 추가 하락(코스피 −5.3%)해 ETF 첫날보다 반응이 큼.</li></ul></div>
+
+<div class="card src">관련: <a href="https://upperlimitprice.github.io/dashboards/reports/bluewave-reaction-261105.html">블루웨이브 국가·섹터 반응</a> · <a href="https://upperlimitprice.github.io/dashboards/reports/midterm-sectors-261105.html">중간선거 섹터 플레이북</a> · 데이터: FMP 일별 종가 자체 계산 · 투자 참고용이며 투자 권유가 아닙니다.</div>
+</div>
+<script>
+const J={"H": ["1W", "1M", "3M", "6M", "12M"], "sec": {"ex": [4.8, 5.7, 4.9, 0.6, -9.2], "med": [2.4, 1.9, -1.7, 1.9, -9.5], "hi": [3.4, 5.0, 2.7, -9.2, -20.0], "hit": ["7/8", "6/8", "4/8", "5/8", "2/8"], "hihit": ["4/5", "4/5", "3/5", "3/5", "1/5"]}, "cty": {"ex": [0.0, -2.0, -3.7, -3.4, -5.2], "med": [0.5, -1.8, -0.5, 0.3, 0.7], "hi": [-1.6, -5.3, -6.3, -11.4, -22.0], "hit": ["6/8", "4/8", "2/8", "5/8", "5/8"], "hihit": ["2/5", "1/5", "1/5", "2/5", "2/5"]}, "ev": [["2006-11-07", "B", "중간", "민주 상·하원 탈환(부시 2기·이라크전)", 0.88, 0.76], ["2008-11-04", "B", "대선", "오바마+민주 트리펙타(금융위기 중)", 3.37, 2.18], ["2010-11-02", "R", "중간", "공화 하원 탈환(오바마 1기)", 0.81, 0.63], ["2014-11-04", "R", "중간", "공화 상원 탈환(오바마 2기)", 1.14, 0.8], ["2016-11-08", "R", "대선", "트럼프 당선+공화 트리펙타(이변)", 3.43, 2.47], ["2018-11-06", "B", "중간", "민주 하원 탈환(트럼프 1기)", 1.0, 0.81], ["2020-11-03", "B", "대선", "바이든 당선(상원은 1/5 조지아 결선)", 3.12, 1.33], ["2022-11-08", "R", "중간", "공화 하원 탈환(바이든)", 1.68, 1.15], ["2024-11-05", "R", "대선", "트럼프 당선+공화 트리펙타", 4.82, 1.51]], "ls": {"sec": {"1W": [1.5, 20.5, 2.4, 7.3, 6.2, -5.2, -15.5, 3.9, 1.9], "1M": [4.5, 26.9, 1.9, -5.9, 11.2, -6.6, -26.5, 12.8, 0.6], "3M": [-1.7, 28.4, 13.2, -10.3, 10.8, -3.1, -27.7, 5.5, -3.5], "6M": [7.4, 6.9, 4.6, -21.9, 1.9, -1.7, -62.2, 22.4, -15.0], "12M": [14.4, 12.4, -21.5, -20.6, -8.6, -1.8, -55.8, -9.5, -38.6]}, "cty": {"1W": [0.5, -6.0, 0.4, 1.3, 1.7, 2.7, -3.1, -1.3, 0.9], "1M": [2.1, -12.6, -4.0, 5.4, 1.9, 3.2, -3.9, -9.9, -1.8], "3M": [-0.5, -17.3, -3.8, 5.8, 0.5, -0.1, -0.3, -6.1, -8.4], "6M": [4.9, -34.0, -1.0, 7.7, 1.9, 2.5, -16.0, 0.3, -9.1], "12M": [11.3, -52.0, -1.5, 14.7, 0.7, 5.3, -39.1, 3.5, -23.2]}}, "per": {"sec": {"1W": [0.09, 1.73, 0.67, 1.61, 0.48, -1.17, -1.36, -0.15, 0.14], "1M": [0.16, 2.11, -0.18, -1.11, 0.82, -0.72, -2.28, 1.69, 0.05], "3M": [-1.39, 2.85, 2.94, -2.44, 0.33, -0.79, -3.15, -0.2, 0.15], "6M": [0.04, 0.8, 0.73, -5.12, -0.26, -0.76, -5.49, 1.99, -0.28], "12M": [2.09, 1.72, -8.47, -4.12, -1.04, -1.96, -5.32, -3.91, -1.3]}, "cty": {"1W": [0.36, -0.49, 0.05, 0.25, 0.49, 1.1, -1.61, -0.77, 0.46], "1M": [0.67, -1.15, -3.04, 1.3, 0.71, 1.76, -2.42, -3.12, 0.17], "3M": [-0.8, -2.4, -5.53, 0.32, 0.54, 0.79, -0.54, -2.44, -1.48], "6M": [1.26, -5.32, -4.19, -0.91, 0.21, 1.95, -5.6, 0.12, -2.21], "12M": [6.16, -9.37, -2.59, 2.18, 0.62, 1.4, -10.7, 1.71, -4.26]}}, "cases": [{"e": "2006-11-07", "w": "B", "k": "중간", "lab": "민주 상·하원 탈환(부시 2기·이라크전)", "top": [["석유개발", 1.48, 4.15, -3.36, 27.91], ["에너지", 1.45, 2.98, -3.41, 24.49], ["유틸리티", 0.8, 1.32, 3.52, 14.57]], "bot": [["금", -1.72, -0.27, 3.61, 28.05], ["헬스케어", -1.73, -1.76, 0.02, 0.32], ["제약", -2.67, -2.95, -1.87, -4.45]]}, {"e": "2008-11-04", "w": "B", "k": "대선", "lab": "오바마+민주 트리펙타(금융위기 중)", "top": [["美 장기채", 5.38, 24.57, 16.9, -12.65], ["헬스케어", 2.69, 2.76, 11.96, -3.01], ["유틸리티", 2.43, 6.02, 12.44, -10.35]], "bot": [["리츠", -5.45, -4.5, -6.5, -0.52], ["클린에너지", -8.64, -16.06, -10.69, -25.64], ["태양광", -11.01, -26.84, -26.74, -36.98]]}, {"e": "2010-11-02", "w": "R", "k": "중간", "lab": "공화 하원 탈환(오바마 1기)", "top": [["지역은행", 1.84, 2.63, 6.76, -2.04], ["은행", 1.43, 2.14, 8.27, -19.51], ["금융", 0.61, 0.44, 3.53, -14.33]], "bot": [["금", -1.09, 2.49, -9.13, 23.07], ["주택건설2", -1.44, 3.36, 5.93, -13.33], ["美 장기채", -2.45, -6.19, -17.95, 18.78]]}, {"e": "2014-11-04", "w": "R", "k": "중간", "lab": "공화 상원 탈환(오바마 2기)", "top": [["석유개발", 2.17, -20.83, -13.22, -38.09], ["원전·우라늄", 2.15, 5.9, -2.98, -38.88], ["유틸리티", 1.56, -4.25, -1.2, -8.49]], "bot": [["바이오", -2.14, 4.1, 7.09, 8.68], ["금", -2.8, 1.43, 5.91, -9.74], ["태양광", -3.02, -7.02, 0.51, -22.56]]}, {"e": "2016-11-08", "w": "R", "k": "대선", "lab": "트럼프 당선+공화 트리펙타(이변)", "top": [["바이오", 7.88, -10.07, -7.81, -12.34], ["금속·광업", 6.64, 9.86, 11.53, -13.4], ["지역은행", 4.61, 15.92, 13.75, -2.82]], "bot": [["美 장기채", -5.3, -10.17, -10.03, -17.97], ["클린에너지", -6.09, -6.26, -2.04, -6.68], ["태양광", -6.65, -1.57, -2.74, 21.77]]}, {"e": "2018-11-06", "w": "B", "k": "중간", "lab": "민주 하원 탈환(트럼프 1기)", "top": [["소프트웨어", 1.76, 1.1, 8.38, 4.14], ["태양광", 0.9, 1.72, 12.81, 21.32], ["기술", 0.82, -1.92, -0.92, 10.67]], "bot": [["美 장기채", -2.0, 11.95, 12.19, 10.76], ["주택건설2", -2.01, 1.24, 7.69, 24.54], ["금", -2.15, 7.45, 9.66, 6.29]]}, {"e": "2020-11-03", "w": "B", "k": "대선", "lab": "바이든 당선(상원은 1/5 조지아 결선)", "top": [["바이오", 3.8, -2.62, 6.86, -22.56], ["주택건설2", 2.88, -12.19, -3.21, -9.32], ["소프트웨어", 2.59, -3.26, 3.07, -1.27]], "bot": [["금속·광업", -7.29, 26.32, 29.0, 46.37], ["은행", -7.62, 16.72, 26.89, 38.65], ["지역은행", -9.37, 18.46, 33.87, 49.34]]}, {"e": "2022-11-08", "w": "R", "k": "중간", "lab": "공화 하원 탈환(바이든)", "top": [["태양광", 3.0, 0.29, -7.83, -64.12], ["美 장기채", 2.38, 7.54, 0.53, -23.54], ["주택건설2", 1.58, 7.0, 19.09, 33.08]], "bot": [["원전·우라늄", -3.02, -7.74, 3.24, 14.18], ["금속·광업", -3.36, 1.54, 6.17, -15.25], ["석유개발", -4.51, -17.5, -14.22, -24.88]]}, {"e": "2024-11-05", "w": "R", "k": "대선", "lab": "트럼프 당선+공화 트리펙타", "top": [["지역은행", 10.93, -3.59, -6.79, -22.79], ["은행", 9.43, -3.51, -6.3, -19.96], ["금속·광업", 5.59, -9.21, -13.09, 20.21]], "bot": [["금", -5.53, -3.96, 6.55, 37.3], ["클린에너지", -9.82, -6.13, -12.08, 30.13], ["태양광", -13.33, -8.02, -10.26, 25.9]]}], "pred": {"sec": [["주택건설2", 5.47, 1.2, -8.4], ["태양광", 5.45, 1.2, -8.3], ["항공", 4.92, 1.0, -7.5], ["의료기기", 4.87, 1.0, -7.4], ["주택건설", 3.83, 0.8, -5.7], ["소매", 3.76, 0.8, -5.6], ["경기소비재", 2.57, 0.5, -3.7], ["필수소비재", 2.08, 0.4, -3.0], ["클린에너지", 2.07, 0.4, -2.9], ["금", 1.94, 0.4, -2.7], ["리츠", 1.36, 0.3, -1.8], ["제약", 1.18, 0.2, -1.5], ["금융", 1.14, 0.2, -1.5], ["헬스케어", 0.76, 0.1, -0.9], ["운송", 0.7, 0.1, -0.8], ["소재", 0.6, 0.1, -0.6], ["보험", 0.41, 0.0, -0.3], ["지역은행", 0.16, -0.0, 0.1], ["은행", 0.09, -0.0, 0.2], ["바이오", -0.42, -0.1, 1.0], ["소프트웨어", -0.9, -0.2, 1.8], ["美 장기채", -1.28, -0.3, 2.4], ["기술", -1.4, -0.4, 2.6], ["유틸리티", -1.43, -0.4, 2.6], ["금속·광업", -2.79, -0.7, 4.8], ["원전·우라늄", -2.84, -0.7, 4.9], ["산업재", -2.93, -0.7, 5.0], ["방산", -3.08, -0.7, 5.2], ["반도체", -4.14, -1.0, 6.9], ["에너지", -7.31, -1.7, 12.0], ["석유개발", -8.16, -1.8, 13.3]], "cty": [["중국(MSCI)", 2.6, -0.8, -6.3], ["홍콩", 2.55, -0.8, -6.1], ["중국(대형)", 2.44, -0.7, -5.8], ["영국", 1.67, -0.4, -3.3], ["독일", 1.65, -0.4, -3.2], ["프랑스", 1.33, -0.3, -2.2], ["유럽", 1.31, -0.3, -2.2], ["인도", 0.95, -0.1, -1.0], ["캐나다", 0.93, -0.1, -0.9], ["호주", 0.91, -0.1, -0.9], ["멕시코", 0.39, 0.1, 0.8], ["브라질", -0.14, 0.3, 2.5], ["일본", -0.4, 0.4, 3.3], ["대만", -2.99, 1.5, 11.6], ["한국", -3.67, 1.7, 13.8]]}, "d26": [3.3, 1.78], "blue": {"1W": 0.38, "1M": 0.44, "3M": 0.44, "6M": 0.42, "12M": 0.45}, "red": {"1W": 0.59, "1M": 0.64, "3M": 0.53, "6M": 0.48, "12M": 0.35}};const cv=k=>getComputedStyle(document.documentElement).getPropertyValue(k).trim();const sg=v=>v==null?'–':(v>0?'+':'')+v;
+const mob=()=>innerWidth<600;
+document.getElementById('kp').innerHTML=[[sg(J.sec.ex[1])+'%p','섹터 1개월 지속 (6/8)'],[sg(J.sec.med[4])+'%p','섹터 12개월 되돌림 (중앙값)'],[sg(J.cty.hi[2])+'%p','국가 3개월 되돌림 (큰 반응 1/5)'],['국가 3위·섹터 4위','2026 첫날 반응 폭 (10개 사건 중)']].map(([a,b])=>`<div><b>${a}</b><span>${b}</span></div>`).join('');
+['d26c','d26c2'].forEach(i=>document.getElementById(i).textContent=J.d26[1]);document.getElementById('d26s').textContent=J.d26[0];
+function grp(id,S,hitK){const ch=echarts.init(document.getElementById(id));
+ ch.setOption({animation:false,grid:{left:46,right:14,top:36,bottom:30},legend:{top:0,textStyle:{color:cv('--mut')}},
+  tooltip:{trigger:'axis',formatter:ps=>`<b>${ps[0].axisValue}</b><br>`+ps.map(p=>`${p.marker}${p.seriesName}: ${sg(p.value)}%p`).join('<br>')+`<br><small>2020 제외 적중 ${S.hit[ps[0].dataIndex]} · 큰 반응 ${S.hihit[ps[0].dataIndex]}</small>`},
+  xAxis:{type:'category',data:J.H,axisLabel:{color:cv('--ink')}},yAxis:{type:'value',axisLabel:{color:cv('--mut'),formatter:'{value}'},splitLine:{lineStyle:{color:cv('--line')}}},
+  dataZoom:[{type:'inside'}],
+  series:[['2020 제외 평균','ex','#6366f1'],['중앙값(9개)','med','#9ca3af'],['큰 반응 사건','hi','#f59e0b']].map(([n,k,c])=>({name:n,type:'bar',data:S[k],itemStyle:{color:c},barMaxWidth:26,label:{show:!mob(),position:'top',fontSize:10,color:cv('--mut'),formatter:p=>sg(p.value)}}))});return ch}
+const c1=grp('c1',J.sec),c2=grp('c2',J.cty);
+const c3=echarts.init(document.getElementById('c3'));c3.setOption({animation:false,grid:{left:46,right:14,top:36,bottom:30},legend:{top:0,textStyle:{color:cv('--mut')}},
+ tooltip:{trigger:'axis',valueFormatter:v=>Math.round(v*100)+'%'},xAxis:{type:'category',data:J.H,axisLabel:{color:cv('--ink')}},
+ yAxis:{type:'value',min:0.2,max:0.8,axisLabel:{color:cv('--mut'),formatter:v=>Math.round(v*100)+'%'},splitLine:{lineStyle:{color:cv('--line')}}},
+ series:[{name:'블루웨이브(4)',type:'line',data:J.H.map(h=>J.blue[h]),itemStyle:{color:'#2563eb'},lineStyle:{width:3},label:{show:true,formatter:p=>Math.round(p.value*100)+'%',color:'#2563eb'}},
+  {name:'레드웨이브(5)',type:'line',data:J.H.map(h=>J.red[h]),itemStyle:{color:'#dc2626'},lineStyle:{width:3},label:{show:true,position:'bottom',formatter:p=>Math.round(p.value*100)+'%',color:'#dc2626'}},
+  {name:'50%(무작위)',type:'line',data:J.H.map(_=>0.5),symbol:'none',lineStyle:{type:'dashed',color:'#9ca3af'}}]});
+const cell=v=>{const a=Math.min(Math.abs(v)/30,1);return `<td style="background:${v>0?`rgba(220,38,38,${.1+.55*a})`:`rgba(37,99,235,${.1+.55*a})`}">${sg(v)}</td>`};
+document.getElementById('evt').innerHTML=`<tr><th>선거</th><th>구분</th><th>반응 폭(섹터/국가)</th>${J.H.map(h=>`<th>섹터 ${h}</th>`).join('')}${['1M','3M','12M'].map(h=>`<th>국가 ${h}</th>`).join('')}</tr>`+
+ J.ev.map((e,i)=>`<tr><td><b>${e[0].slice(0,4)}</b> <small>${e[3]}</small></td><td class="${e[1]}">${e[1]==='B'?'블루':'레드'}·${e[2]}</td><td>${e[4]} / ${e[5]}</td>${J.H.map(h=>cell(J.ls.sec[h][i])).join('')}${['1M','3M','12M'].map(h=>cell(J.ls.cty[h][i])).join('')}</tr>`).join('');
+document.getElementById('cs').innerHTML=J.cases.map(c=>`<div class="box"><h4>${c.e.slice(0,4)} <span class="${c.w}">${c.w==='B'?'블루':'레드'}</span> · ${c.k}</h4><small>${c.lab}</small><table><tr><th></th><th>첫날</th><th>1M</th><th>3M</th><th>12M</th></tr>${[...c.top.map(r=>['🔺',...r]),...c.bot.map(r=>['🔽',...r])].map(r=>`<tr><td>${r[0]} ${r[1]}</td>${r.slice(2).map(v=>`<td style="color:${v>0?'var(--up)':'var(--dn)'}">${sg(v)}</td>`).join('')}</tr>`).join('')}</table></div>`).join('');
+function pr(id,rows,title){const ch=echarts.init(document.getElementById(id));ch.setOption({animation:false,title:{text:title,left:0,textStyle:{fontSize:13,color:cv('--ink')}},grid:{left:mob()?82:96,right:20,top:52,bottom:28},legend:{top:22,textStyle:{color:cv('--mut'),fontSize:11}},
+ tooltip:{trigger:'axis',axisPointer:{type:'shadow'},formatter:ps=>{const r=rows[ps[0].dataIndex];return `<b>${r[0]}</b><br>첫날 ${sg(r[1])}%p<br>추정 1M ${sg(r[2])}%p · 12M ${sg(r[3])}%p`}},
+ xAxis:{type:'value',axisLabel:{color:cv('--mut')},splitLine:{lineStyle:{color:cv('--line')}}},yAxis:{type:'category',inverse:true,data:rows.map(r=>`${r[0]} (${sg(r[1])})`),axisLabel:{color:cv('--ink'),fontSize:10.5}},
+ dataZoom:[{type:'inside',yAxisIndex:0}],
+ series:[{name:'1개월 추정',type:'bar',data:rows.map(r=>r[2]),itemStyle:{color:'rgba(99,102,241,.4)'},barMaxWidth:9},{name:'12개월 추정',type:'bar',data:rows.map(r=>r[3]),itemStyle:{color:p=>p.value>=0?'#dc2626':'#2563eb'},barMaxWidth:9}]});return ch}
+const c4=pr('c4',J.pred.sec,'섹터 (첫날 초과수익 순)'),c5=pr('c5',J.pred.cty,'국가 ETF');
+addEventListener('resize',()=>[c1,c2,c3,c4,c5].forEach(c=>c.resize()));
+</script></body></html>
