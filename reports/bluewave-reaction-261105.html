@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>블루웨이브 시장 반응</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
+<style>
+:root{--bg:#f6f7fb;--card:#fff;--ink:#141824;--mut:#5d6578;--line:#e3e6ee;--blue:#1d4ed8;--chip:#eef2ff;--up:#dc2626;--dn:#2563eb}
+:root[data-theme="dark"]{--bg:#0d1117;--card:#161b24;--ink:#e6e9f0;--mut:#9aa3b5;--line:#2a3140;--blue:#60a5fa;--chip:#1e2636;--up:#f87171;--dn:#60a5fa}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 -apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Pretendard","Noto Sans KR",sans-serif}
+.w{max-width:1100px;margin:0 auto;padding:20px 16px 60px}
+.hero{background:linear-gradient(135deg,#0f172a,#1e3a8a 60%,#2563eb);color:#fff;border-radius:18px;padding:26px 24px}
+.hero .ey{font-size:12px;letter-spacing:.12em;opacity:.8}.hero h1{margin:6px 0 10px;font-size:25px;line-height:1.35}.hero p{margin:0;opacity:.95}
+.kp{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-top:18px}.kp div{background:rgba(255,255,255,.13);border-radius:12px;padding:9px 11px}.kp b{display:block;font-size:20px}.kp span{font-size:12px;opacity:.9}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;margin-top:16px}
+h2{font-size:19px;margin:0 0 12px}.mut{color:var(--mut)}small{color:var(--mut)}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.box{border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--bg)}.box h4{margin:0 0 6px;font-size:15px}
+ul{margin:6px 0;padding-left:18px}li{margin:3px 0}
+.up{color:var(--up);font-weight:700}.dn{color:var(--dn);font-weight:700}
+.ch{width:100%;height:520px}.chs{width:100%;height:430px}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}.tabs button{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:99px;padding:5px 12px;font-size:13.5px;cursor:pointer}.tabs button.on{background:var(--blue);color:#fff;border-color:var(--blue)}
+.tw{overflow-x:auto}.rs{border-collapse:collapse;width:100%;font-size:13.5px}.rs th,.rs td{border-bottom:1px solid var(--line);padding:9px 10px;text-align:left;vertical-align:top}.rs td:first-child{white-space:nowrap}.rs tr.ru td:first-child{border-left:4px solid var(--up);color:var(--up)}.rs tr.rd td:first-child{border-left:4px solid var(--dn);color:var(--dn)}.rs td:nth-child(2){color:var(--mut);min-width:220px}
+@media(max-width:760px){.rs{font-size:12.5px}.rs td:nth-child(2){min-width:160px}}
+.note{font-size:12.5px;color:var(--mut);margin-top:8px}
+.src{font-size:12px;color:var(--mut);line-height:1.7}.src a{color:var(--blue)}
+.flow{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center}.flow .ar{font-size:26px;color:var(--mut);text-align:center}
+@media(max-width:760px){.kp{grid-template-columns:repeat(3,1fr)}.g2,.g3{grid-template-columns:1fr}.hero h1{font-size:20px}.ch{height:600px}.flow{grid-template-columns:1fr}.flow .ar{transform:rotate(90deg)}}
+</style><script src="/dashboards/theme.js"></script></head><body><div class="w">
+
+<div class="hero"><div class="ey">BLUE WAVE · GLOBAL MARKET REACTION · 11/3 종가 → 11/5 (아시아·유럽) / 11/4 (미주)</div>
+<h1>"AI 인프라를 팔고, 관세·유가 피해주를 샀다" — 블루웨이브가 세계 증시를 반으로 갈랐다</h1>
+<p>민주당 상·하원 장악 + 텍사스·오하이오·조지아·아이오와 주지사 교체 → <b>데이터센터 규제 우려</b>로 AI 하드웨어 공급망(한국·대만·일본)이 급락. 반대로 <b>이란전 종전 기대(유가 −8%)·관세 견제·금리 하락</b>의 수혜를 받는 유럽·중국·인도와 미국 내 비(非)AI 업종은 급등.</p>
+<div class="kp" id="kp"></div></div>
+
+<div class="card"><h2>① 국가별 성과 — 선거 전(11/3 종가) 대비</h2>
+<p class="mut">막대 = 누적 수익률. 툴팁에 11/4·11/5 일별 분리. 아시아는 11/4 장중 개표가 진행돼 이틀 반영, 미주는 11/4 하루(11/5 장 시작 전).</p>
+<div id="c1" class="ch"></div>
+<p class="note">일본은 지수 간에도 갈림: 반도체 비중이 큰 닛케이225는 하락, 내수·자동차·금융 비중이 큰 TOPIX는 11/5 +1.3~1.4% 상승(보도 기준).</p></div>
+
+<div class="card"><h2>② 왜 갈렸나 — 4개의 힘</h2>
+<div class="g2">
+<div class="box"><h4>1. AI 데이터센터 규제 공포 <span class="dn">→ 한국·대만·일본 급락</span></h4><ul>
+<li>데이터센터 밀집 지역(텍사스·오하이오·조지아·아이오와)에서 민주당 주지사 당선 + 40여 건의 지역 데이터센터 제한 투표</li>
+<li>"빅테크가 AI 투자 속도를 늦출 수 있다"(웨드부시 아이브스) → 메모리·장비·광통신·전력기기 등 <b>AI 하드웨어 수출국</b>에 매도 집중</li>
+<li>SK하이닉스 −9.6%, 삼성전자 −8.2%, 어드반테스트 −17.6%, 키옥시아 −17.8%, 델타 −11.0%, LS ELECTRIC −14.3%</li></ul></div>
+<div class="box"><h4>2. 이란전 종전 기대 → 유가 −8% <span class="up">→ 원유 수입국·항공 강세</span></h4><ul>
+<li>민주당이 전쟁권한·국방예산으로 종전 압박 → WTI $96 → $88</li>
+<li>수혜: 인도(센섹스 +3.2%), 항공(JAL +13.2%, 루프트한자 +7.0%), 유럽 소비</li>
+<li>피해: 석유(INPEX −11.7%, 미국 에너지 −4.7%), <b>방산</b>(라인메탈 −16.7%, LIG넥스원 −13.4%, BAE −8.4%, 한화에어로 −8.1%)</li></ul></div>
+<div class="box"><h4>3. 관세 견제 기대 <span class="up">→ 대미 수출 소비재·자동차·중국 인터넷</span></h4><ul>
+<li>의회가 관세 권한 회복 추진(거부권에 막혀도 협상력↑)</li>
+<li>도요타 +15.8%, 혼다 +7.9%, 현대차 +5.8%, 폭스바겐 +6.4%, LVMH +6.0%</li>
+<li>중국·홍콩: 텐센트 +8.4%, 알리바바 +9.6%, 항셍테크 약 +5% — 반도체에서 중국 인터넷으로 회전</li></ul></div>
+<div class="box"><h4>4. 금리 하락·재정 견제 <span class="up">→ 은행·금리민감주·금</span></h4><ul>
+<li>美 10년물 −6bp, 금 +5.0%, VIX −20%: 감세 확대 저지·유가발 인플레 둔화 기대</li>
+<li>유럽 은행 +6.2%(4월 이후 최고의 날), 미국 주택건설 +5.4%, 의료기기 +6.7%</li>
+<li>별도 재료: 중국은 베이징의 <b>자국 반도체 지원책</b>이 겹쳐 SMIC +11.5%, 중국 반도체 체인 +10~20%</li></ul></div>
+</div>
+<div class="flow" style="margin-top:14px"><div class="box"><h4>🔽 빠져나간 돈</h4>AI 데이터센터 하드웨어(메모리·장비·광·전력기기·서버) · 방산 · 석유 — <b>한국·대만·일본 대형 수출주</b></div><div class="ar">➜</div><div class="box"><h4>🔺 들어간 돈</h4>관세·유가 피해주(자동차·소비재·항공) · 중국 인터넷 · 은행·금리민감주 · 헬스케어 — <b>유럽·중국·인도, 미국 비AI 업종</b></div></div></div>
+
+<div class="card"><h2>③ 국가별 섹터 — 누가 오르고 누가 내렸나</h2>
+<div class="tabs" id="tabs"></div><div id="c2" class="chs"></div>
+<p class="note" id="secNote"></p></div>
+
+<div class="card"><h2>④ 섹터별 강세·약세 이유</h2>
+<p class="mut">수치는 11/3 종가 대비 %(미국 11/4, 아시아·유럽 11/5까지). 한 섹터 안에서도 국가별 노출이 다른 경우 함께 표기.</p>
+<div class="tw"><table class="rs"><tr><th>섹터</th><th>대표 수익률</th><th>이유</th></tr><tr class="ru"><td>🔺 <b>자동차</b></td><td>도요타 +15.8 · 혼다 +7.9 · 폭스바겐 +6.4 · 현대차 +5.8 · 기아 +4.4</td><td>의회의 관세 권한 회복 추진 → 대미 수출차 관세 인하 기대(거부권에 막혀도 협상력↑) + 유가 하락으로 수요 개선</td></tr><tr class="ru"><td>🔺 <b>항공·여행</b></td><td>JAL +13.2 · 루프트한자 +7.0 · 美 운송 +2.8</td><td>이란전 종전 압박 → WTI −8%로 연료비 급감, 중동 항로 정상화 기대</td></tr><tr class="ru"><td>🔺 <b>은행·보험</b></td><td>유럽 은행 +6.2(4월 이후 최대) · 산탄데르 +7.8 · HSBC +5.9 · 한국 은행 +4.3 · 美 금융 +3.5</td><td>AI 쏠림에서 경기민감 가치주로 회전, 유가발 인플레·경기 부담 완화. 단 미국 지역은행 +1.7은 규제 강화 우려로 상대 부진</td></tr><tr class="ru"><td>🔺 <b>헬스케어·바이오</b></td><td>셀트리온 +13.2 · 美 의료기기 +6.7 · 다이이치산쿄 +6.4 · 몰리나·HCA +6(11/4) · 한국 헬스케어 +4.7 · 노보 +3.0</td><td>ACA 세액공제·메디케이드 복원 기대(병원·보험), 의약품 관세 완화 기대(수출 바이오), AI 대신 방어적 성장주로 이동</td></tr><tr class="ru"><td>🔺 <b>인터넷·플랫폼·소프트웨어</b></td><td>카카오 +11.8 · 알리바바 +9.6 · NAVER +9.4 · 텐센트 +8.4 · 한국 미디어통신 +8.2 · SAP +6.1 · 美 인프라SW +6.6</td><td>'AI 하드웨어 → AI 소프트웨어·플랫폼' 회전: 설비투자 부담 없이 AI 효익을 누리는 쪽. 중국 인터넷은 관세 완화 기대 추가</td></tr><tr class="ru"><td>🔺 <b>태양광·2차전지</b></td><td>한화솔루션 +14.2 · First Solar +15(11/4) · 美 태양광 +5.7 · 한국 2차전지 +2.6</td><td>민주당이 IRA 추가 삭감을 막고 주정부 전기요금 의제로 값싼 신규 전원(태양광·ESS) 선호. 2018 민주 하원 탈환 후에도 태양광 강세</td></tr><tr class="ru"><td>🔺 <b>소비재·유통·럭셔리</b></td><td>패스트리테일링 +7.5 · LVMH +6.0 · 美 경기소비재 +4.3 · 美 필수소비재 +3.4</td><td>관세 완화(수입 원가↓) + 유가 하락에 따른 실질 구매력 개선</td></tr><tr class="ru"><td>🔺 <b>금·주택·리츠</b></td><td>금 +5.0 · 美 금광 +9.7 · 미쓰이부동산 +9.4 · 美 주택건설 +5.4 · 美 리츠 +3.3</td><td>美 10년물 −6bp: 감세 확대 저지(재정 견제)·유가발 물가 둔화 → 금리 하락, 달러 약세</td></tr><tr class="ru"><td>🔺 <b>중국 반도체</b></td><td>SMIC +11.5 · 중국 전공정 장비 +20.8 · 중국 소재 +16.8</td><td>선거 외 재료: 베이징의 자국 반도체 지원책 발표 + 한국·대만 반도체에서 빠진 자금 일부 유입</td></tr><tr class="rd"><td>🔽 <b>메모리·반도체·장비</b></td><td>키옥시아 −17.8 · 어드반테스트 −17.6 · 도쿄일렉트론 −12.5 · SK하이닉스 −9.6 · 한국 반도체 ETF −9.5 · 삼성전자 −8.2 · ASML −5.6 · 美 SMH −2.8</td><td>데이터센터 규제(텍사스·오하이오·조지아 주지사, 지역 투표)로 AI capex 둔화 우려. 가장 많이 오른·쏠린 포지션부터 차익실현 → 한국·일본에 외국인 매도 집중</td></tr><tr class="rd"><td>🔽 <b>AI 전력기기·광통신·서버</b></td><td>후지쿠라 −16.4 · LS ELECTRIC −14.3 · 델타 −11.0 · 효성중공업 −9.1 · HD현대일렉트릭 −8.5 · 지멘스에너지 −6.8 · 美 엔지니어링·건설 −9.7</td><td>데이터센터 전력 수요가 최대 성장 동력이었던 업종. 신규 프로젝트 인허가 지연 + '데이터센터가 전기요금을 더 내라'는 요금 규제 리스크</td></tr><tr class="rd"><td>🔽 <b>네오클라우드·AI 인프라</b></td><td>IREN −10 · CoreWeave −7 · Nebius −5 (11/4)</td><td>주정부 인허가·전력 계약에 직접 노출, 부채로 짓는 구조라 일정 지연에 가장 민감</td></tr><tr class="rd"><td>🔽 <b>방산</b></td><td>라인메탈 −16.7 · LIG넥스원 −13.4 · 미쓰비시중공업 −9.3 · BAE −8.4 · 한화에어로 −8.1 · 美 ITA −1.5</td><td>민주당의 이란전 종전 압박·국방예산 견제. 유럽·한국은 올해 급등분이 커 차익실현이 증폭(2006 이라크전 선례상 실제 예산 감액은 확인 필요)</td></tr><tr class="rd"><td>🔽 <b>석유·가스</b></td><td>INPEX −11.7 · 美 에너지 −4.7 · 유럽 석유 −3.6 · 토탈 −3.4 · CNOOC −3.2</td><td>종전 기대에 따른 WTI −8%($96→$88)</td></tr><tr class="rd"><td>🔽 <b>조선·원전·중공업</b></td><td>한화오션 −8.5 · HD현대중공업 −5.7 · 두산에너빌리티 −5.6 · 한국 중공업 ETF −4.5 · 美 원전 −1.1</td><td>데이터센터 전력(원전·가스터빈) 테마와 방산·美 해군 협력 기대가 함께 꺾임</td></tr></table></div></div>
+<div class="card"><h2>⑤ 반도체·AI 밸류체인: 국가 × 카테고리 (시총가중, 520개사)</h2>
+<p class="mut">같은 'AI 공급망'이라도 국가별로 정반대. 중국만 자국 반도체 지원책 + 회전 매수로 강세, 한국·일본·대만은 전 카테고리 하락. 숫자 = 11/3 종가 대비 %.</p>
+<div id="c3" class="chs" style="height:400px"></div></div>
+
+<div class="card"><h2>⑥ 해석과 체크포인트</h2><div class="g3">
+<div class="box"><h4>과잉 반응일 수 있는 부분</h4><ul><li>연방 차원 AI·데이터센터 규제 신법은 트럼프 거부권에 막힐 가능성이 높음(JP모건: 기술주 하락은 매수)</li><li>하이퍼스케일러 capex 가이던스는 아직 변화 없음</li><li>한국은 메모리 쏠림이 가장 컸던 시장이라 낙폭이 더 컸음</li></ul></div>
+<div class="box"><h4>실제 리스크인 부분</h4><ul><li>주정부 인허가·전기요금(대형부하 요금제)·지역 투표는 거부권 밖 → 텍사스·오하이오 신규 데이터센터 일정 지연 가능</li><li>종전 시 방산 재평가 — 단, 2006년 이라크전 선례상 예산 실제 감액 확인 필요</li></ul></div>
+<div class="box"><h4>다음 확인할 것</h4><ul><li>11/5 미국장: 나스닥100 선물 −1.2%(아시아 반도체 매도의 역류 여부)</li><li>텍사스 주지사 인수위의 데이터센터·전력 정책 발언</li><li>빅테크·네오클라우드 capex 코멘트, 메모리 현물가</li><li>미결 하원 의석·알래스카·미시시피 상원 확정</li></ul></div>
+</div></div>
+
+<div class="card src"><b>출처</b><br>
+지수·ETF·종목·매크로: FMP 일별 종가로 자체 계산(11/3 종가 기준). 테크 밸류체인 = 글로벌 테크 밸류체인 대시보드 520개사, 미국 업종 = 미국 실적발표 캘린더 1,266개사.<br>
+보도: <a href="https://www.fxstreet.com/news/equities-post-midterm-rally-highlights-global-sector-rotation-deutsche-bank-202611050833">도이체방크(FXStreet)</a> · <a href="https://www.kotakneo.com/news/global-markets/asian-market-rotation-after-us-midterms-elections/">Kotak Neo</a> · <a href="https://en.coin-turk.com/chip-stocks-drop-7yuzde-in-south-korea-tencent-and-alibaba-jump-6yuzde-after-us-midterms/">CoinTurk</a> · <a href="https://www.brecorder.com/news/40447548/hong-kong-stocks-jump-on-tech-rally-china-shares-edge-up">Business Recorder</a> · <a href="https://invezz.com/nz/news/2026/11/05/heres-why-the-hang-seng-index-is-soaring-after-the-midterm-elections/">Invezz</a> · <a href="https://www.aol.com/articles/markets-biggest-winners-losers-blunami-153259000.html">Business Insider(AOL)</a> · <a href="https://www.cnbc.com/2026/11/02/the-midterms-are-here-how-jpmorgan-expects-the-market-to-react.html">CNBC(JP모건)</a> · <a href="https://www.cbsnews.com/live-updates/election-day-2026-midterms/">CBS(선거 결과)</a><br>
+관련: <a href="https://upperlimitprice.github.io/dashboards/reports/midterm-sectors-261105.html">2026 중간선거 → 섹터 플레이북(과거 사례)</a> · 투자 참고용이며 투자 권유가 아닙니다.</div>
+</div>
+<script>
+const J={"idx": [{"c": "🇭🇰 홍콩", "n": "항셍", "cum": 5.4, "d1": 1.67, "d2": 3.67}, {"c": "🇮🇳 인도", "n": "인도 센섹스", "cum": 3.22, "d1": 0.5, "d2": 2.71}, {"c": "🇺🇸 미국", "n": "다우", "cum": 3.03, "d1": 3.03, "d2": null}, {"c": "🇪🇺 유럽", "n": "프랑스 CAC40", "cum": 2.94, "d1": 1.96, "d2": 0.96}, {"c": "🇪🇺 유럽", "n": "독일 DAX", "cum": 2.9, "d1": 3.16, "d2": -0.25}, {"c": "🇪🇺 유럽", "n": "영국 FTSE100", "cum": 2.81, "d1": 1.79, "d2": 0.99}, {"c": "🇪🇺 유럽", "n": "유로스톡스50", "cum": 2.62, "d1": 2.9, "d2": -0.28}, {"c": "🇨🇦 캐나다", "n": "캐나다 TSX", "cum": 2.28, "d1": 2.28, "d2": null}, {"c": "🇨🇳 중국", "n": "상하이종합", "cum": 2.27, "d1": 2.16, "d2": 0.1}, {"c": "🇦🇺 호주", "n": "호주 ASX200", "cum": 2.01, "d1": -0.59, "d2": 2.61}, {"c": "🇺🇸 미국", "n": "S&P 500", "cum": 1.58, "d1": 1.58, "d2": null}, {"c": "🇺🇸 미국", "n": "러셀2000", "cum": 1.58, "d1": 1.58, "d2": null}, {"c": "🇺🇸 미국", "n": "나스닥", "cum": 1.44, "d1": 1.44, "d2": null}, {"c": "🇧🇷 브라질", "n": "브라질 보베스파", "cum": 1.23, "d1": 1.23, "d2": null}, {"c": "🇲🇽 멕시코", "n": "멕시코 IPC", "cum": 0.91, "d1": 0.91, "d2": null}, {"c": "🇯🇵 일본", "n": "닛케이225", "cum": -3.18, "d1": -1.42, "d2": -1.79}, {"c": "🇹🇼 대만", "n": "대만 가권", "cum": -4.0, "d1": -0.83, "d2": -3.2}, {"c": "🇰🇷 한국", "n": "코스피", "cum": -4.69, "d1": 0.62, "d2": -5.28}], "sec": {"US": [["의료기기", 6.72], ["태양광", 5.65], ["주택건설", 5.43], ["경기소비재", 4.26], ["금융", 3.51], ["커뮤니케이션", 3.47], ["필수소비재", 3.36], ["리츠", 3.32], ["헬스케어", 3.06], ["클린에너지", 3.04], ["운송", 2.83], ["바이오", 2.63], ["소재", 2.49], ["지역은행", 1.72], ["유틸리티", 0.44], ["기술", -0.01], ["원전·우라늄", -1.06], ["산업재", -1.09], ["방산", -1.54], ["반도체", -2.75], ["에너지", -4.74]], "KR": [["한화솔루션", 14.19], ["셀트리온", 13.22], ["카카오", 11.81], ["NAVER", 9.41], ["미디어통신 (ETF)", 8.16], ["KAI", 8.12], ["삼성바이오로직스", 4.68], ["헬스케어 (ETF)", 4.67], ["은행 (ETF)", 4.34], ["자동차 (ETF)", 4.21], ["2차전지 (ETF)", 2.58], ["필수소비재 (ETF)", 2.32], ["운송 (ETF)", 0.6], ["철강 (ETF)", 0.59], ["건설 (ETF)", 0.34], ["에너지화학 (ETF)", 0.09], ["보험 (ETF)", 0.08], ["증권 (ETF)", -0.55], ["현대로템", -2.2], ["중공업 (ETF)", -4.46], ["두산에너빌리티", -5.56], ["HD현대중공업", -5.74], ["IT (ETF)", -7.54], ["한화에어로스페이스", -8.11], ["한화오션", -8.46], ["HD현대일렉트릭", -8.54], ["효성중공업", -9.13], ["반도체 (ETF)", -9.51], ["LIG넥스원", -13.41], ["LS ELECTRIC", -14.32]], "JP": [["도요타 · 자동차", 15.8], ["JAL · 항공", 13.19], ["미쓰비시상사 · 상사", 10.52], ["미쓰이부동산 · 부동산", 9.35], ["혼다 · 자동차", 7.92], ["패스트리테일링 · 소매", 7.51], ["다이이치산쿄 · 의약품", 6.41], ["소니 · 전기·정밀", 6.18], ["이토추 · 상사", 5.48], ["도쿄해상 · 보험", 5.28], ["다케다 · 의약품", 3.63], ["간사이전력 · 전력", 2.24], ["MUFG · 은행", 1.95], ["SMFG · 은행", 1.14], ["가와사키중공업 · 방산·중공업", -1.22], ["도쿄전력 · 전력", -1.5], ["히타치 · 전기·정밀", -3.98], ["미쓰비시중공업 · 방산·중공업", -9.25], ["소프트뱅크G · AI·통신", -9.75], ["INPEX · 에너지", -11.72], ["도쿄일렉트론 · 반도체", -12.51], ["후지쿠라 · AI·전선", -16.41], ["어드반테스트 · 반도체", -17.57], ["키옥시아 · 반도체", -17.81]], "CN": [["SMIC · 반도체", 11.45], ["알리바바 · 인터넷", 9.59], ["샤오미 · IT기기", 9.44], ["텐센트 · 인터넷", 8.36], ["메이투안 · 인터넷", 8.0], ["징둥 · 인터넷", 6.15], ["BYD · 자동차", 4.63], ["건설은행 · 은행", 3.66], ["핑안 · 보험", 3.48], ["CNOOC · 석유", -3.16]], "TW": [["푸본금융 · 금융", 0.97], ["캐세이금융 · 금융", -0.88], ["TSMC · 반도체", -2.4], ["에버그린 · 해운", -2.81], ["콴타 · AI서버", -3.69], ["폭스콘 · AI서버", -4.28], ["위스트론 · AI서버", -4.53], ["대만플라스틱 · 화학", -5.24], ["미디어텍 · 반도체", -5.85], ["델타 · 전력", -11.02]], "EU": [["루프트한자 · 항공사", 6.96], ["폭스바겐 · 자동차", 6.44], ["은행 (ETF)", 6.17], ["LVMH · 럭셔리", 5.95], ["기초자원 (ETF)", 4.33], ["자동차 (ETF)", 4.18], ["보험 (ETF)", 3.98], ["건설자재 (ETF)", 3.69], ["음식료 (ETF)", 3.58], ["유틸리티 (ETF)", 3.45], ["헬스케어 (ETF)", 3.18], ["통신 (ETF)", 2.05], ["산업재 (ETF)", 0.42], ["기술 (ETF)", -0.3], ["슈나이더 · 전력기기", -2.04], ["탈레스 · 방산", -3.22], ["석유·가스 (ETF)", -3.55], ["레오나르도 · 방산", -4.2], ["ASML · 반도체", -5.63], ["지멘스에너지 · 전력기기", -6.84], ["BAE시스템스 · 방산", -8.39], ["라인메탈 · 방산", -16.66]]}, "hm": [[0, 0, 12.0, 21], [1, 0, 11.0, 11], [2, 0, 20.8, 10], [3, 0, 19.4, 1], [4, 0, 10.2, 5], [5, 0, 16.8, 10], [7, 0, 5.5, 17], [8, 0, 15.3, 3], [0, 1, -2.3, 29], [1, 1, -5.1, 14], [2, 1, -3.8, 9], [3, 1, -6.9, 4], [4, 1, -5.2, 1], [5, 1, -3.3, 4], [6, 1, -8.4, 5], [7, 1, -6.8, 15], [8, 1, -3.1, 2], [0, 2, -6.6, 24], [1, 2, -2.9, 12], [2, 2, -9.4, 3], [3, 2, -13.0, 4], [4, 2, -8.9, 12], [5, 2, -11.4, 9], [6, 2, -10.1, 7], [7, 2, -9.5, 12], [8, 2, -6.3, 11], [0, 3, -5.2, 5], [1, 3, -3.8, 5], [2, 3, -5.7, 5], [3, 3, -4.3, 2], [4, 3, -12.2, 1], [5, 3, -7.6, 4], [6, 3, -6.0, 6], [7, 3, -4.5, 3], [0, 4, -10.9, 26], [1, 4, -8.8, 7], [2, 4, -11.7, 19], [3, 4, -9.0, 12], [4, 4, -13.3, 21], [5, 4, -6.6, 14], [6, 4, -9.5, 17], [7, 4, -11.3, 8], [8, 4, -10.9, 17], [0, 5, -9.7, 4], [1, 5, -14.4, 6], [2, 5, -13.5, 9], [3, 5, -17.5, 5], [4, 5, -16.5, 2], [5, 5, -5.1, 30], [6, 5, -9.6, 17], [7, 5, -9.1, 11], [8, 5, -11.9, 7]], "cats": ["설계·IP", "제조(칩 메이커)", "전공정 장비", "후공정 장비", "후공정·기판", "소재", "부품", "광통신·포토닉스", "인프라·유통"], "ctr": ["🇨🇳 중국", "🇺🇸 미국", "🇹🇼 대만", "🇪🇺 유럽", "🇰🇷 한국", "🇯🇵 일본"], "mac": [["WTI 유가", -7.99, "%"], ["금", 5.01, "%"], ["美 10년물", -6, "bp"], ["VIX", -20.26, "%"], ["비트코인", 3.76, "%"], ["달러/원", -0.18, "%"]]};const cv=k=>getComputedStyle(document.documentElement).getPropertyValue(k).trim();
+const sg=v=>(v>0?'+':'')+v;
+document.getElementById('kp').innerHTML=[['S&P 500',J.idx.find(x=>x.n==='S&P 500').cum,'%'],['코스피',J.idx.find(x=>x.n==='코스피').cum,'%'],['항셍',J.idx.find(x=>x.n==='항셍').cum,'%'],...J.mac.slice(0,3)].map(([n,v,u])=>`<div><b>${sg(v)}${u}</b><span>${n}</span></div>`).join('');
+const mob=()=>innerWidth<600;
+function hbar(el,rows,fmt){const ch=echarts.getInstanceByDom(el)||echarts.init(el);
+ ch.setOption({animation:false,grid:{left:mob()?118:170,right:52,top:8,bottom:28},
+  tooltip:{trigger:'axis',axisPointer:{type:'shadow'},formatter:fmt},
+  xAxis:{type:'value',axisLabel:{color:cv('--mut'),formatter:'{value}%'},splitLine:{lineStyle:{color:cv('--line')}}},
+  yAxis:{type:'category',inverse:true,data:rows.map(r=>r[0]),axisLabel:{color:cv('--ink'),fontSize:mob()?10.5:12}},
+  dataZoom:[{type:'inside',yAxisIndex:0},{type:'slider',yAxisIndex:0,right:4,width:12,showDetail:false}],
+  series:[{type:'bar',data:rows.map(r=>r[1]),barMaxWidth:16,itemStyle:{color:p=>p.value>=0?'#dc2626':'#2563eb'},label:{show:true,position:'right',fontSize:10.5,color:cv('--mut'),formatter:p=>sg(p.value)}}]},true);return ch}
+const c1=hbar(document.getElementById('c1'),J.idx.map(x=>[`${x.c} ${x.n}`,x.cum]),ps=>{const x=J.idx[ps[0].dataIndex];return `<b>${x.c} ${x.n}</b><br>누적 ${sg(x.cum)}%<br>11/4 ${x.d1==null?'–':sg(x.d1)+'%'} · 11/5 ${x.d2==null?'(미개장)':sg(x.d2)+'%'}`});
+const TN={US:'🇺🇸 미국 (섹터 ETF, 11/4)',KR:'🇰🇷 한국 (섹터 ETF + 대표주)',JP:'🇯🇵 일본 (대표주)',CN:'🇨🇳🇭🇰 중국·홍콩 (대표주)',TW:'🇹🇼 대만 (대표주)',EU:'🇪🇺 유럽 (STOXX600 섹터 ETF + 대표주)'};
+const NOTE={US:'S&P +1.6% 속 반도체 −2.8%·에너지 −4.7%·방산 −1.5% vs 의료기기 +6.7%·태양광 +5.7%·주택건설 +5.4%',KR:'반도체 ETF −9.5%·IT −7.5%·중공업 −4.5% vs 미디어통신 +8.2%·헬스케어 +4.7%·은행 +4.3%·자동차 +4.2% — 방산·전력기기·조선이 동반 급락',JP:'도요타 +15.8%·JAL +13.2%·미쓰비시상사 +10.5% vs 키옥시아 −17.8%·어드반테스트 −17.6%·후지쿠라 −16.4%·미쓰비시중공업 −9.3%',CN:'SMIC +11.5%(자국 반도체 지원책)·알리바바 +9.6%·텐센트 +8.4% vs CNOOC −3.2%(유가)',TW:'금융만 보합, AI 서버·전력(델타 −11%)·IC설계(미디어텍 −5.9%) 하락 — TSMC는 −2.4%로 상대 선방',EU:'은행 +6.2%·자동차 +4.2% vs 라인메탈 −16.7%·BAE −8.4%·ASML −5.6%·석유 −3.6%'};
+let cur='KR';const tabs=document.getElementById('tabs');
+function drawSec(){tabs.innerHTML=Object.keys(TN).map(k=>`<button data-k="${k}" class="${k===cur?'on':''}">${TN[k]}</button>`).join('');
+ tabs.querySelectorAll('button').forEach(b=>b.onclick=()=>{cur=b.dataset.k;drawSec()});
+ const el=document.getElementById('c2');el.style.height=Math.max(330,J.sec[cur].length*24+60)+'px';echarts.getInstanceByDom(el)&&echarts.getInstanceByDom(el).resize();
+ hbar(el,J.sec[cur],ps=>`<b>${J.sec[cur][ps[0].dataIndex][0]}</b><br>${sg(ps[0].value)}%`);document.getElementById('secNote').textContent=NOTE[cur]}
+drawSec();
+const c3=echarts.init(document.getElementById('c3'));
+c3.setOption({animation:false,grid:{left:mob()?74:90,right:10,top:10,bottom:mob()?96:70},
+ tooltip:{formatter:p=>`<b>${J.ctr[p.value[1]]} · ${J.cats[p.value[0]]}</b><br>${sg(p.value[2])}% (${p.value[3]}개사)`},
+ xAxis:{type:'category',data:J.cats,axisLabel:{color:cv('--ink'),interval:0,rotate:mob()?50:28,fontSize:11}},yAxis:{type:'category',data:J.ctr,axisLabel:{color:cv('--ink')}},
+ visualMap:{show:false,dimension:2,min:-15,max:15,inRange:{color:['#1d4ed8','#93c5fd','#f3f4f6','#fca5a5','#b91c1c']}},
+ series:[{type:'heatmap',data:J.hm,label:{show:true,formatter:p=>sg(p.value[2]),fontSize:mob()?9.5:11.5,color:'#111'}}]});
+addEventListener('resize',()=>{[c1,c3,echarts.getInstanceByDom(document.getElementById('c2'))].forEach(c=>c&&c.resize())});
+</script></body></html>
