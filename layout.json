@@ -30,6 +30,7 @@
   "exports-auto.html",
   "stockmap.html",
   "global-trade.html",
+  "trade-proxies.html",
   "tam.html",
   "industry.html",
   "power-ppi.html",
@@ -43,11 +44,8 @@
   "rotation.html",
   "flowmap.html",
   "earn-us.html",
-  "midterm.html",
-  "trade-proxies.html",
-  "tanker.html",
-  "valuation.html"
+  "midterm.html"
  ],
  "hidden": [],
- "ver": "20261104161931"
+ "ver": "20261106140259"
 }
