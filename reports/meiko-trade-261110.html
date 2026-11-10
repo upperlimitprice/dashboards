@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>메이코 수출입 대용치</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
+<style>
+:root{--bg:#f6f7fb;--card:#fff;--ink:#141824;--mut:#5d6578;--line:#e3e6ee;--blue:#1d4ed8;--up:#dc2626;--dn:#2563eb;--ok:#059669;--warn:#d97706}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0d1117;--card:#161b24;--ink:#e6e9f0;--mut:#9aa3b5;--line:#2a3140;--blue:#60a5fa;--up:#f87171;--dn:#60a5fa;--ok:#34d399;--warn:#fbbf24}}
+:root[data-theme="dark"]{--bg:#0d1117;--card:#161b24;--ink:#e6e9f0;--mut:#9aa3b5;--line:#2a3140;--blue:#60a5fa;--up:#f87171;--dn:#60a5fa;--ok:#34d399;--warn:#fbbf24}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 -apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Pretendard","Noto Sans KR",sans-serif}
+.w{max-width:1100px;margin:0 auto;padding:20px 16px 60px}
+.hero{background:linear-gradient(135deg,#0f3d3e,#0f766e 55%,#14b8a6);color:#fff;border-radius:18px;padding:26px 24px}
+.hero .ey{font-size:12px;letter-spacing:.12em;opacity:.85}.hero h1{margin:6px 0 10px;font-size:25px;line-height:1.35}.hero p{margin:0;opacity:.95}
+.kp{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:18px}.kp div{background:rgba(255,255,255,.14);border-radius:12px;padding:10px 12px}.kp b{display:block;font-size:21px}.kp span{font-size:12px;opacity:.92}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;margin-top:16px}
+h2{font-size:19px;margin:0 0 12px}.mut{color:var(--mut)}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.box{border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--bg)}.box h4{margin:0 0 6px;font-size:15px}
+ul{margin:6px 0;padding-left:18px}li{margin:3px 0}
+.ch{width:100%;height:360px}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:13px}th,td{border-bottom:1px solid var(--line);padding:7px 12px;text-align:center;white-space:nowrap}th:first-child,td:first-child{text-align:left}td:last-child,th:last-child{padding-right:18px}
+.R{color:var(--up);font-weight:700}.B{color:var(--dn);font-weight:700}.ok{color:var(--ok);font-weight:700}.wn{color:var(--warn);font-weight:700}
+.note{font-size:12.5px;color:var(--mut);margin-top:8px}
+.tag{display:inline-block;font-size:11.5px;padding:1px 8px;border-radius:99px;border:1px solid var(--line);margin-right:4px}
+.src{font-size:12px;color:var(--mut);line-height:1.7}
+@media (max-width:760px){.kp{grid-template-columns:repeat(2,1fr)}.g2,.g3{grid-template-columns:1fr}.hero h1{font-size:21px}.ch{height:300px}}
+</style></head><body><div class="w">
+
+<div class="hero">
+<div class="ey">MEIKO ELECTRONICS (6787.T) · 무역통계 대용치 검증 · 2026-11-10</div>
+<h1>공장 위치 × HS 8534로 메이코 매출을 따라갈 수 있나?</h1>
+<p>쓸 만한 대용치는 <b>일본의 중국산 인쇄회로기판(HS 8534) 수입</b> 하나입니다. 2021년 이후 분기 매출과 증가율 상관이 0.80입니다. 베트남 공장과 직접 연결되는 지표는 모두 실패했습니다.</p>
+<div class="kp">
+<div><b>0.80</b><span>최적 대용치 YoY 상관 (2021~)</span></div>
+<div><b>907억엔</b><span>10~12월 추정 (+50% YoY)</span></div>
+<div><b>829~952</b><span>추정 범위 (억엔)</span></div>
+<div><b>~1,005억엔</b><span>회사 가이던스 환산 (+66%)</span></div>
+</div></div>
+
+<div class="card"><h2>① 생산거점 — 어디서 만들고, 어떤 통계가 잡히나</h2>
+<div class="g3">
+<div class="box"><h4>🇯🇵 일본 · PCB 5곳 + EMS</h4><ul>
+<li>가나가와 아야세 — MLB·HDI·부품내장</li><li>후쿠시마 히로노 — MLB·IVH</li><li>야마가타 덴도·가호쿠 — MLB·HDI·F/R</li><li>미야기 이시노마키 — 부품내장·FPC·모듈기판</li><li>EMS: 요네자와·난요·이이야마</li><li>홋카이도 에니와 UMJ — 인수 기본합의(10/27)</li></ul>
+<div class="note">시도한 통계: 인근 세관(요코하마·센다이·오나하마 등) 수출 → <span class="B">실패</span></div></div>
+<div class="box"><h4>🇨🇳 중국 · PCB 2곳</h4><ul>
+<li>광둥성 광저우 난사 — MLB·HDI</li><li>후베이성 우한 — MLB·HDI·방열·후동</li></ul>
+<div class="note">시도한 통계: 일본의 중국산 8534 수입 → <span class="ok">최적 (0.80)</span>. 성(省)별 중국 수출은 해관 차단 이력으로 시도하지 않음</div></div>
+<div class="box"><h4>🇻🇳 베트남 · 최대 증설 거점</h4><ul>
+<li>하노이 Thach That 1~4공장 — MLB·HDI·FPC·EMS</li><li>하노이 Thang Long — 고밀도 HDI</li><li>하이퐁(구 하이즈엉) — 모듈·EMS</li><li>호아빈 — 美 스마트폰용 고다층 빌드업</li><li>꽝민·옌꽝 — 2028년도 본격 생산</li></ul>
+<div class="note">시도한 통계: 일본·미국·한국·중국의 베트남산 수입, 베트남 수출 → <span class="B">실패 또는 데이터 단절</span></div></div>
+</div>
+<div class="note">거점별 매출(내부거래 포함, FY2020 예상): 일본 392 · 중국 503 · 베트남 466억엔 (2021H1 설명자료 p13). 이후 연도는 공개 자료에서 확보하지 못함.</div>
+</div>
+
+<div class="card"><h2>② 대용치 성적표 — 분기 매출 YoY와의 상관</h2>
+<div id="c_corr" class="ch" style="height:420px"></div>
+<div class="note">래그 0 기준. 베트남 수출은 2021~2023년 12분기뿐이라 0.90이어도 지금은 쓸 수 없습니다. 막대 = 2021년 이후 YoY 상관, 점 = 전 기간 YoY 상관. 비교 기준으로 USD/JPY 환율 YoY 상관은 0.30(2021년 이후 −0.14)이라, 엔화 약세 공통요인 때문에 상관이 높게 나온 것은 아닙니다.</div>
+<div class="g2" style="margin-top:12px">
+<div class="box"><h4>✅ 왜 '일본←중국'이 맞나</h4><ul><li>메이코 중국 공장(광저우·우한) 물량 상당 부분이 일본 고객으로 들어오는 구조로 추정</li><li>2026년 분기 YoY가 거의 그대로 겹침: 1Q 24.5% vs 23.0%, 2Q 38.0% vs 38.5%, 3Q 58.5% vs 55.3%</li></ul></div>
+<div class="box"><h4>❌ 왜 베트남 지표는 실패했나</h4><ul><li>일본의 베트남산 수입은 연 277억엔으로 메이코 베트남 생산보다 훨씬 작고, 2026년 물량(kg)은 오히려 감소</li><li>베트남 물량은 일본이 아니라 미국·중국·현지 EMS로 나가는 것으로 추정</li><li>베트남 자체 수출 통계(Comtrade)는 2023년에서 끊김</li></ul></div>
+</div></div>
+
+<div class="card"><h2>③ 매출 vs 대용치 — 수준(억엔)</h2>
+<div id="c_lv" class="ch"></div>
+<div class="note">메이코 분기 매출(좌)과 일본의 중국산 8534 수입 분기 합계(우). 로그 수준 상관 0.90. 드래그로 확대, 휠로 기간 이동, 더블클릭으로 원상태.</div></div>
+
+<div class="card"><h2>④ 매출 vs 대용치 — 증가율(YoY %)</h2>
+<div id="c_yy" class="ch"></div>
+<div class="note">⚠️ 2026년 7~9월 대용치는 금액 +55%, 물량(kg) +20%입니다. 나머지는 업계 판가 인상(원자재 부족) 효과라, 메이코 고유 신호라기보다 PCB 업계 수요·가격 지표로 봐야 합니다.</div></div>
+
+<div class="card"><h2>⑤ 2026년 10~12월(FY26 3Q) 매출 추정</h2>
+<div id="c_est" class="ch"></div>
+<div class="tw"><table>
+<tr><th>방법</th><th>추정(억엔)</th><th>YoY</th><th>설명</th></tr>
+<tr><td>점추정 (최근 탄력성)</td><td><b>907</b></td><td class="R">+50%</td><td style="text-align:left">최근 3개 분기 매출/대용치 YoY 비율 1.04 × 9월 대용치 YoY(+48%)</td></tr>
+<tr><td>하단 (2021~ 회귀)</td><td>829</td><td class="R">+37%</td><td style="text-align:left">YoY = 0.099 + 0.564 × 대용치 YoY. 직전 분기를 14% 낮게 맞혀 하단으로만 사용</td></tr>
+<tr><td>상단 (3Q 추세 유지)</td><td>952</td><td class="R">+57%</td><td style="text-align:left">7~9월 대용치 YoY +55%가 이어진다고 가정</td></tr>
+<tr><td>회사 가이던스 환산</td><td>~1,005</td><td class="R">+66%</td><td style="text-align:left">하반기 2,142억엔을 전년 10~12월:1~3월 비율로 배분</td></tr>
+</table></div>
+<div class="note">대용치 추정이 가이던스보다 낮은 이유: AI 서버 기판(8월 양산)·광트랜시버 기판·베트남 신공장 가동분은 업계 지표에 잡히지 않습니다. 일본 10월 품목별 수입(9자리)은 11월 하순 e-Stat에 공표되며, 그때 추정을 갱신할 수 있습니다.</div></div>
+
+<div class="card"><h2>⑥ 결론과 한계</h2><ul>
+<li><b>쓸 수 있는 것:</b> 일본의 중국산 8534 수입은 메이코 매출의 <b>방향과 업황 강도</b>를 잘 따라감 → 분기 실적 서프라이즈 방향 점검용</li>
+<li><b>쓸 수 없는 것:</b> 베트남 증설·위성·AI 서버 같은 <b>메이코 고유 성장</b>은 공개 무역통계로 분리 추적 불가</li>
+<li><b>현재 신호:</b> 대용치는 10~12월 +37~57% 성장을 가리킴. 가이던스(+66%)는 신규 제품 기여를 감안하면 무리한 수준은 아니지만, 대용치만으로는 확인되지 않는 부분이 약 50~100억엔</li>
+<li><b>미확보:</b> 유가증권보고서 지역별 매출(EDINET 키 없음), 베트남 성별 HS 통계(공개 경로 없음), 중국 성별 수출(해관 차단 이력)</li></ul>
+<div class="src">출처: 메이코 사업장 목록·결산단신·설명회 자료(2026.11.6), FMP 손익계산서, e-Stat 普通貿易統計(HS 8534.00, 2026-09까지), US Census(2026-09까지), UN Comtrade. 분석·추정은 자체 계산.</div></div>
+
+</div>
+<script>
+const D={"lv": [["2011Q3", 172.1, 130.8], ["2011Q4", 159.7, 118.8], ["2012Q1", 146.9, 106.8], ["2012Q2", 141.4, 121.0], ["2012Q3", 153.3, 137.7], ["2012Q4", 156.2, 129.5], ["2013Q1", 156.2, 134.0], ["2013Q2", 182.6, 156.5], ["2013Q3", 194.7, 176.0], ["2013Q4", 214.2, 169.5], ["2014Q1", 200.9, 143.9], ["2014Q2", 209.6, 156.6], ["2014Q3", 232.8, 195.4], ["2014Q4", 232.4, 275.7], ["2015Q1", 234.2, 233.1], ["2015Q2", 224.5, 195.4], ["2015Q3", 249.0, 231.6], ["2015Q4", 245.3, 224.3], ["2016Q1", 234.1, 206.4], ["2016Q2", 223.2, 173.2], ["2016Q3", 234.2, 203.1], ["2016Q4", 251.6, 193.9], ["2017Q1", 250.1, 190.5], ["2017Q2", 255.3, 178.9], ["2017Q3", 276.8, 213.4], ["2017Q4", 279.8, 203.7], ["2018Q1", 273.5, 170.3], ["2018Q2", 303.4, 175.5], ["2018Q3", 314.2, 171.5], ["2018Q4", 298.0, 195.5], ["2019Q1", 273.5, 170.1], ["2019Q2", 292.2, 173.3], ["2019Q3", 299.0, 193.7], ["2019Q4", 306.9, 170.8], ["2020Q1", 256.6, 153.6], ["2020Q2", 243.4, 166.5], ["2020Q3", 288.9, 153.3], ["2020Q4", 324.5, 165.9], ["2021Q1", 335.7, 182.5], ["2021Q2", 332.8, 200.9], ["2021Q3", 361.9, 224.3], ["2021Q4", 405.0, 239.2], ["2022Q1", 413.0, 240.8], ["2022Q2", 400.1, 253.6], ["2022Q3", 417.0, 266.2], ["2022Q4", 435.5, 261.2], ["2023Q1", 420.2, 240.6], ["2023Q2", 415.9, 252.3], ["2023Q3", 446.3, 267.9], ["2023Q4", 473.2, 277.1], ["2024Q1", 459.2, 271.0], ["2024Q2", 470.1, 265.5], ["2024Q3", 511.4, 286.6], ["2024Q4", 536.0, 271.2], ["2025Q1", 550.5, 283.6], ["2025Q2", 530.7, 274.1], ["2025Q3", 584.2, 294.9], ["2025Q4", 605.4, 312.7], ["2026Q1", 685.4, 349.0], ["2026Q2", 732.2, 379.6], ["2026Q3", 925.8, 458.0]], "yy": [["2018Q1", 9.4, -10.6], ["2018Q2", 18.8, -1.9], ["2018Q3", 13.5, -19.6], ["2018Q4", 6.5, -4.1], ["2019Q1", 0.0, -0.1], ["2019Q2", -3.7, -1.2], ["2019Q3", -4.8, 13.0], ["2019Q4", 3.0, -12.6], ["2020Q1", -6.2, -9.7], ["2020Q2", -16.7, -4.0], ["2020Q3", -3.4, -20.9], ["2020Q4", 5.7, -2.9], ["2021Q1", 30.8, 18.8], ["2021Q2", 36.7, 20.7], ["2021Q3", 25.3, 46.4], ["2021Q4", 24.8, 44.2], ["2022Q1", 23.0, 32.0], ["2022Q2", 20.2, 26.2], ["2022Q3", 15.2, 18.7], ["2022Q4", 7.5, 9.2], ["2023Q1", 1.7, -0.1], ["2023Q2", 3.9, -0.5], ["2023Q3", 7.0, 0.6], ["2023Q4", 8.7, 6.1], ["2024Q1", 9.3, 12.6], ["2024Q2", 13.0, 5.2], ["2024Q3", 14.6, 7.0], ["2024Q4", 13.3, -2.1], ["2025Q1", 19.9, 4.7], ["2025Q2", 12.9, 3.3], ["2025Q3", 14.2, 2.9], ["2025Q4", 12.9, 15.3], ["2026Q1", 24.5, 23.0], ["2026Q2", 38.0, 38.5], ["2026Q3", 58.5, 55.3]], "corr": [["베트남 수출(~2023·12분기)", 0.899, 0.474, 0.924], ["일본←중국 수입", 0.804, 0.611, 0.9], ["일본 수입 전체", 0.769, 0.654, 0.895], ["일본←중국+베트남", 0.755, 0.581, 0.9], ["한국←베트남(~2025)", 0.71, 0.62, 0.831], ["중국←베트남(~2024)", 0.625, 0.498, 0.943], ["미국←중국", 0.599, 0.713, 0.67], ["미국 수입 전체", 0.477, 0.652, 0.908], ["미국←베트남", 0.466, 0.17, 0.961], ["일본 수출 전체", 0.364, 0.385, 0.824], ["일본←베트남", 0.063, 0.201, 0.776], ["日공장 인근 세관(11분기)", -0.412, -0.412, 0.19]], "est": {"point": 907.0, "low": 829.0, "high": 952.0, "guid": 1005.0, "prev": 605.4}};
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const base=()=>({textStyle:{color:css('--ink')},grid:{left:52,right:56,top:56,bottom:70},
+ tooltip:{trigger:'axis',confine:true},legend:{top:4,left:8,textStyle:{color:css('--mut')}},
+ toolbox:{right:8,feature:{dataZoom:{yAxisIndex:'none',title:{zoom:'드래그 확대',back:'되돌리기'}},restore:{title:'원상태'}}},
+ dataZoom:[{type:'inside'},{type:'slider',height:18,bottom:12}]});
+const ax=c=>({axisLine:{lineStyle:{color:css('--line')}},axisLabel:{color:css('--mut')},splitLine:{lineStyle:{color:css('--line')}}});
+const charts=[];
+function mk(id,opt){const c=echarts.init(document.getElementById(id));c.setOption(opt);c.getZr().on('dblclick',()=>c.dispatchAction({type:'restore'}));charts.push(c);return c}
+function draw(){charts.splice(0).forEach(c=>c.dispose());
+ const red=css('--up'),blue=css('--dn'),mut=css('--mut'),ok=css('--ok');
+ mk('c_lv',Object.assign(base(),{xAxis:Object.assign({type:'category',data:D.lv.map(r=>r[0])},ax()),
+  yAxis:[Object.assign({type:'value',name:'매출(억엔)'},ax()),Object.assign({type:'value',name:'수입(억엔)',splitLine:{show:false}},ax())],
+  series:[{name:'메이코 분기 매출',type:'bar',data:D.lv.map(r=>r[1]),itemStyle:{color:ok}},
+          {name:'일본←중국 8534 수입',type:'line',yAxisIndex:1,data:D.lv.map(r=>r[2]),symbol:'none',lineStyle:{width:2.2,color:red}}]}));
+ mk('c_yy',Object.assign(base(),{xAxis:Object.assign({type:'category',data:D.yy.map(r=>r[0])},ax()),
+  yAxis:Object.assign({type:'value',axisLabel:{formatter:'{value}%',color:mut}},ax()),
+  tooltip:{trigger:'axis',confine:true,valueFormatter:v=>v==null?'-':v.toFixed(1)+'%'},
+  series:[{name:'메이코 매출 YoY',type:'line',data:D.yy.map(r=>r[1]),lineStyle:{width:2.5,color:ok},itemStyle:{color:ok}},
+          {name:'대용치 YoY',type:'line',data:D.yy.map(r=>r[2]),lineStyle:{width:2,color:red,type:'dashed'},itemStyle:{color:red}}]}));
+ const cr=D.corr.slice().reverse();
+ mk('c_corr',Object.assign(base(),{grid:{left:150,right:56,top:36,bottom:56},tooltip:{trigger:'axis',confine:true,valueFormatter:v=>v==null?'-':v.toFixed(2)},
+  dataZoom:[{type:'inside',yAxisIndex:0}],
+  yAxis:Object.assign({type:'category',data:cr.map(r=>r[0])},ax()),xAxis:Object.assign({type:'value',min:-0.6,max:1},ax()),
+  series:[{name:'2021~ YoY 상관',type:'bar',data:cr.map(r=>({value:r[1],itemStyle:{color:r[1]>=0.75?ok:(r[1]>=0.5?css('--warn'):blue)}})),label:{show:true,position:'right',color:mut,formatter:p=>p.value==null?'':p.value.toFixed(2)}},
+          {name:'전 기간 YoY 상관',type:'scatter',data:cr.map(r=>r[2]),itemStyle:{color:mut},symbolSize:9}]}));
+ const recent=D.lv.filter(r=>r[0]>='2024Q3'),E=D.est,cat=recent.map(r=>r[0]).concat(['2026Q4E']);
+ mk('c_est',Object.assign(base(),{xAxis:Object.assign({type:'category',data:cat},ax()),yAxis:Object.assign({type:'value',name:'억엔'},ax()),
+  tooltip:{trigger:'axis',confine:true,valueFormatter:v=>v==null?'-':Math.round(v)+'억엔'},
+  series:[{name:'실제 매출',type:'bar',data:recent.map(r=>r[1]).concat([null]),itemStyle:{color:ok}},
+   {name:'대용치 추정(점)',type:'bar',data:recent.map(()=>null).concat([E.point]),itemStyle:{color:red},
+    markLine:{symbol:'none',data:[{yAxis:E.low,name:'하단',lineStyle:{color:blue,type:'dashed'},label:{formatter:'하단 '+E.low,color:blue}},{yAxis:E.high,name:'상단',lineStyle:{color:red,type:'dashed'},label:{formatter:'상단 '+E.high,color:red}}]}},
+   {name:'가이던스 환산',type:'scatter',data:recent.map(()=>null).concat([E.guid]),symbol:'diamond',symbolSize:16,itemStyle:{color:css('--warn')}}]}));
+}
+draw();addEventListener('resize',()=>charts.forEach(c=>c.resize()));
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',draw);
+</script></body></html>
