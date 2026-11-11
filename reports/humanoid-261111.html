@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>휴머노이드 밸류체인 탑픽</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
+<style>
+:root{--bg:#f5f7fb;--card:#fff;--ink:#131a2a;--mut:#5d6578;--line:#e2e6ee;--blue:#1d4ed8;--up:#dc2626;--dn:#2563eb;--ok:#059669;--warn:#d97706}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0d1117;--card:#161b24;--ink:#e6e9f0;--mut:#9aa3b5;--line:#2a3140;--blue:#60a5fa;--up:#f87171;--dn:#60a5fa;--ok:#34d399;--warn:#fbbf24}}
+:root[data-theme="dark"]{--bg:#0d1117;--card:#161b24;--ink:#e6e9f0;--mut:#9aa3b5;--line:#2a3140;--blue:#60a5fa;--up:#f87171;--dn:#60a5fa;--ok:#34d399;--warn:#fbbf24}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 -apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Pretendard","Noto Sans KR",sans-serif}
+.w{max-width:1100px;margin:0 auto;padding:20px 16px 60px}
+.hero{background:linear-gradient(135deg,#1a1033,#4c1d95 55%,#0891b2);color:#fff;border-radius:18px;padding:26px 24px}
+.hero .ey{font-size:12px;letter-spacing:.12em;opacity:.85}.hero h1{margin:6px 0 10px;font-size:25px;line-height:1.35}.hero p{margin:0;opacity:.95}
+.verdict{display:inline-block;background:#fff;color:#0c2a5b;font-weight:800;border-radius:10px;padding:4px 12px;margin:10px 0 4px}
+.kp{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:16px}.kp div{background:rgba(255,255,255,.14);border-radius:12px;padding:10px 12px}.kp b{display:block;font-size:20px}.kp span{font-size:12px;opacity:.92}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px;margin-top:16px}
+h2{font-size:19px;margin:0 0 12px}.mut{color:var(--mut)}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px}.g2>*,.g3>*{min-width:0}.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.box{border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--bg)}.box h4{margin:0 0 6px;font-size:15px}
+ul{margin:6px 0;padding-left:18px}li{margin:3px 0}
+.ch{width:100%;height:360px}
+.tw{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:13px}th,td{border-bottom:1px solid var(--line);padding:7px 12px;text-align:center;white-space:nowrap}th:first-child,td:first-child{text-align:left}td:last-child,th:last-child{padding-right:20px}
+td.wrap{white-space:normal;text-align:left;min-width:240px}
+th.s{cursor:pointer;user-select:none}th.s .ar{font-size:10px;color:var(--mut);margin-left:3px}
+.R{color:var(--up);font-weight:700}.B{color:var(--dn);font-weight:700}.ok{color:var(--ok);font-weight:700}.wn{color:var(--warn);font-weight:700}
+.note{font-size:12.5px;color:var(--mut);margin-top:8px}
+.tg{display:inline-block;font-size:11px;padding:0 7px;border-radius:99px;border:1px solid var(--line);color:var(--mut);margin-left:4px}
+.rk{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:var(--blue);color:#fff;font-weight:800;font-size:13px;margin-right:6px}
+.pick{border-radius:12px;padding:14px;border:1px solid var(--line);background:var(--bg)}.pick b.n{font-size:17px}
+.src{font-size:12px;color:var(--mut);line-height:1.7}.src a{color:var(--blue)}
+@media (max-width:760px){.kp{grid-template-columns:repeat(2,1fr)}.g2,.g3{grid-template-columns:1fr}.hero h1{font-size:21px}.ch{height:300px}}
+</style></head><body><div class="w">
+
+<div class="hero">
+<div class="ey">HUMANOID · PHYSICAL AI · TAM·BOM 인뎁스 · 2026-11-11</div>
+<h1>로봇은 싸지고, 손은 비싸진다 — 성장이 남는 곳은 ‘핸드’와 ‘관절 액추에이터’</h1>
+<div class="verdict">글로벌 부품 탑픽: ① 자오웨이 ② 로보티즈 ③ 하이윈 ④ 투오푸 ⑤ 민스</div>
+<p>대당 BOM이 4.7만 달러에서 1.9만 달러(2030)로 매년 15~20% 내려갑니다. 그래서 물량만 보면 안 되고, <b>대당 함량이 유지되면서 휴머노이드가 곧 그 부품 시장이 되는 세그먼트</b>를 골라야 합니다. 그 기준으로 세그먼트를 거르고, 그 안에서 수혜 강도·검증·밸류로 종목을 골랐습니다. 국내 종목은 수혜가 검증된 로보티즈 하나만 남겼습니다.</p>
+<div class="kp">
+<div><b>80만 대</b><span>2030 출하 기준 경로 (2025 1.7만 대 → 2035 650만 대)</span></div>
+<div><b>$157억</b><span>2030 하드웨어 BOM TAM (CAGR 25~30 +102%)</span></div>
+<div><b>$4.7만 → $1.9만</b><span>옵티머스급 대당 BOM (지금 → 2030)</span></div>
+<div><b>97%</b><span>1H26 글로벌 출하 1.91만 대 중 중국 비중</span></div>
+</div></div>
+
+<div class="card"><h2>① 시장 — 출하 경로와 완성체 시장 규모</h2>
+<div class="g2"><div id="c_mkt" class="ch"></div><div id="c_fc" class="ch"></div></div>
+<div class="note">왼쪽: 기준 경로의 출하량(막대)과 완성체 시장(선), 평균 ASP는 툴팁에서 볼 수 있습니다. 2030년은 전망 중앙값 89만 대를 옵티머스 램프 지연을 반영해 80만 대로 깎았습니다. 오른쪽: 기관별 2030·2035 출하 전망입니다. 2035년 전망은 70만~1,300만 대로 19배나 벌어져 있어, <b>종목 판단은 규모보다 세그먼트 구조</b>에 기대는 편이 안전합니다. <span class="tg">GS·BofA·JPM·Citi·IDC·KB 등</span></div></div>
+
+<div class="card"><h2>② BOM — 휴머노이드 한 대의 원가 구성 (옵티머스급)</h2>
+<div id="c_bom" class="ch" style="height:430px"></div>
+<div class="note">레퍼런스는 몸체 액추에이터 28개와 양손 11→17 구동 DOF입니다. 합계는 지금 약 $47,000(MS $46k와 정합)이고, 2030년 약 $18,700(BofA <$17k, GS $19.7k)입니다. 힘/토크 센서·롤러스크류는 중국 가격 붕괴로 −75% 이상 빠지지만, <b>핸드는 −42%로 하락폭이 가장 작습니다</b>(DOF 상승). 롤러스크류 단가는 출처에 따라 MS $1,350~2,700, 화신 $280, 솽린 ¥499로 크게 갈립니다.</div></div>
+
+<div class="card"><h2>③ 세그먼트 TAM — 성장률 × 휴머노이드 비중 × 규모</h2>
+<div id="c_bub" class="ch" style="height:440px"></div>
+<div class="note">가로축은 2025~30 TAM CAGR, 세로축은 2030년 세그먼트 전체(기존 산업로봇·자동차·스마트폰 수요 포함)에서 휴머노이드가 차지하는 비중, 원 크기는 2030 TAM입니다. <b>오른쪽 위(고성장·고비중)</b>에 촉각·핸드·F/T·관절모터·롤러스크류가 몰려 있습니다. 컴퓨트·비전·배터리는 휴머노이드가 커져도 회사 실적이 거의 움직이지 않습니다(비중 5% 미만).</div>
+<div id="c_tam" class="ch" style="height:380px;margin-top:10px"></div></div>
+
+<div class="card"><h2>④ 세그먼트 성장 점수 — 어디가 ‘좋은 성장’인가</h2>
+<div class="tw"><table id="t_seg"></table></div>
+<div class="note">가중치는 TAM CAGR 30%, 전방 대당 함량 추세(2030~35) 20%, 휴머노이드 비중 20%, 디플레 내성 15%, 진입장벽 15%입니다. 디플레 내성과 진입장벽은 정성 평가(가정)입니다. 감속기는 TAM이 $19억으로 크지만, 중국 국산화율 50% 이상과 원가 −27%(Laifu 1H26) 때문에 9위입니다. 촉각센서가 1위지만 <b>검증된 상장 순수주가 없어</b> 핸드 모듈 업체로 간접 노출합니다.</div></div>
+
+<div class="card"><h2>⑤ 종목 스코어 — 세그먼트 안에서 누가 이기나 (글로벌 24개)</h2>
+<div id="c_stk" class="ch" style="height:460px"></div>
+<div class="note">가로축은 수혜 강도(2030 휴머노이드 매출 ÷ 현재 매출, 로그 척도), 세로축은 2030 휴머노이드 매출 ÷ 시총(%), 원 크기는 종합 점수입니다. 오른쪽 위일수록 ‘민감하고 싸다’는 뜻입니다. 2030 매출은 세그먼트 TAM × 점유율 가정입니다(하모닉드라이브만 회사 목표 사용). 드래그로 확대해 보세요.</div>
+<div class="tw" style="margin-top:10px"><table id="t_stk"></table></div>
+<div class="note">종합 점수 = 세그먼트 25% + 수혜 강도 25% + 검증도 20% + 밸류(½ 2027E PER, ½ 휴머노이드 매출/시총) 20% + 포지셔닝(1년 과열 감점) 10%입니다. 점유율과 검증도 점수는 가정입니다. 중국·홍콩·대만 종목의 PER은 FMP 컨센서스 EPS를 가격 통화로 환산했습니다.</div></div>
+
+<div class="card"><h2>⑥ 최종 탑픽 — 부품 세그먼트 기준</h2>
+<div class="g3">
+<div class="pick"><span class="rk">1</span><b class="n">자오웨이 兆威</b><span class="tg">003021.SZ · 2692.HK</span>
+<ul><li><b>핸드 구동모듈</b>(성장 2위 세그먼트)의 가장 직접적인 상장사입니다</li><li>2030 휴머노이드 매출 $2.4억으로 현재 매출 $2.6억과 맞먹습니다(강도 93%)</li><li>애지봇·UBTech·테슬라가 고객으로 거론됩니다(매출 미공개)</li><li class="wn">2027E PER 85배라 H주 할인으로 접근하는 게 낫습니다</li></ul></div>
+<div class="pick"><span class="rk">2</span><b class="n">로보티즈</b><span class="tg">108490 · 국내 유일 ‘상’</span>
+<ul><li>액추에이터 출하: 2025년 22만 개 → 1~9월 32만 개 → 2027년 100만 개 전망</li><li>폴렌 75만 개 계약, 액추에이터 OPM 22.5%, 20 DOF 핸드 보유</li><li>강도 415%로 점수 2위이고, 국내 셀사이드 Top Pick이 여기로 모입니다</li><li class="wn">PSR 72배, 우즈벡 공장 2Q27 말 지연, ASP 희석이 부담입니다</li></ul></div>
+<div class="pick"><span class="rk">3</span><b class="n">하이윈 上銀</b><span class="tg">2049.TW</span>
+<ul><li><b>롤러스크류</b>(진입장벽 최고)에 감속기·베어링까지 함께 하는 비중국 공급사입니다</li><li>2026-10 ‘미국 대기업 휴머노이드 부품 출하’를 공식 인정했습니다</li><li>2027E PER 26배로, 탈중국 규제가 강해질수록 유리합니다</li><li class="wn">1년 +47% 상승, 고객 비공개</li></ul></div>
+<div class="pick"><span class="rk">4</span><b class="n">투오푸 拓普</b><span class="tg">601689.SS</span>
+<ul><li>테슬라 리니어·로터리 <b>액추에이터 조립</b>(2030 TAM $62억)을 맡습니다</li><li>2026-09 테슬라 로봇팀이 닝보 공장을 실사했습니다</li><li>2027E PER 27배, YTD −34%로 기대가 이미 빠졌습니다(대안: 싼화)</li><li class="wn">테슬라 비중국 공급망 요구가 리스크입니다</li></ul></div>
+<div class="pick"><span class="rk">5</span><b class="n">민스 敏實</b><span class="tg">0425.HK · 가치형</span>
+<ul><li>로보틱스 매출 가이던스 2026년 5억 → 2027년 10억 위안을 회사가 직접 제시했습니다</li><li>2027E PER 7.2배, PSR 0.9배로 가장 저렴합니다</li><li>리더드라이브와 미국 공장 합작을 검토 중입니다</li><li class="ok">하방이 막힌 포트폴리오 완충재입니다</li></ul></div>
+<div class="pick"><span class="rk" style="background:#64748b">·</span><b class="n">완성체·국내·회피</b>
+<ul><li><b>UBTech</b>: 점수 1위지만 가이던스 하향·적자로 <b>관심</b> 단계입니다. <b>유니트리</b>: PSR 158배로 과열입니다. <b>테슬라</b>: 옵션 가치로 봅니다</li><li><b>현대모비스</b>: Atlas 확정 공급이지만 강도 1% 미만이라 저밸류 BD 옵션입니다(PER 8.8배)</li><li class="B">회피: 리더드라이브(PSR 74배)·하모닉드라이브(1년 +84%)·레인보우(PSR 148배)·에스피지(1년 +140%)</li></ul></div>
+</div></div>
+
+<div class="card"><h2>⑦ 핵심 논쟁</h2>
+<div class="g2">
+<div class="box"><h4>손이 최대 병목인가</h4>옵티머스 V3 양손 액추에이터는 약 50개로 몸체(28개)보다 많습니다. 테슬라 3Q 콜은 손·센서 내구성을 병목으로 지목했고, 외부 판매는 2027년 말로 밀렸습니다. → 병목은 곧 단가 협상력이라 핸드 공급사에 유리하지만, 사양이 다시 바뀔 위험이 있습니다.</div>
+<div class="box"><h4>롤러스크류 vs 볼스크류·회전형</h4>옵티머스 선형 관절은 롤러스크류(고정밀품 중국 국산화 20% 미만)를 씁니다. 유니트리 등 중국 OEM은 회전형 QDD 중심이라 대당 탑재량이 0~14개로 갈립니다.</div>
+<div class="box"><h4>중국 가격전쟁과 실수요</h4>MS 설문에서 수요 기업의 72%가 대당 10만 위안 미만, 82%가 3년 내 회수를 요구했습니다. 유니트리 판매의 70%는 대학 향입니다. UBTech는 가이던스를 1만 → 6~7천 대로 낮췄고, 상용화는 약 1년 늦어졌습니다.</div>
+<div class="box"><h4>병목은 데이터·AI인가</h4>테슬라는 1~2만 대를 자체 학습용으로 먼저 만듭니다. Figure는 GPU $35억을 약정했습니다. 하드웨어 물량이 늘어나는 속도는 AI 진척에 달려 있습니다(엔비디아 GR00T·Jetson Thor가 표준).</div>
+</div></div>
+
+<div class="card"><h2>⑧ 향후 6개월 체크포인트</h2>
+<div class="tw"><table id="t_up"></table></div>
+<div class="note"><b>탑픽 무효화 조건</b>: ① V3 손 구동 방식이 바뀌어 핸드 공급사가 교체되는 경우 ② 테슬라 2027 생산 목표가 연 5만 대 미만으로 낮아지는 경우 ③ 롤러스크류가 볼스크류·회전형으로 전환되는 경우 ④ 대당 BOM이 $1만 아래로 떨어지는 시점이 기준 경로보다 2년 앞당겨지는 경우</div></div>
+
+<div class="card src">
+<b>출처</b>: Goldman Sachs·Morgan Stanley·BofA·Citi·JPM·Deutsche Bank·IDC·TrendForce·Bain, 국내 증권사 로봇 리포트 23건(KB·교보·iM·LS·한화·IBK·유진·신한·삼성), 텔레그램 채널, 테슬라 3Q26 콜, 회사 IR / FMP·네이버 시세(2026-11-11)<br>
+<b>한계</b>: 점유율·검증도·디플레 내성·진입장벽 점수는 가정 · 증권사 BOM은 2차 인용 · 2027 출하는 보간 · 촉각·F/T 상장사의 휴머노이드 공급은 미확인<br>
+🗂 <a id="nl" href="#">노션 전문 보고서</a>
+</div>
+</div>
+<script>
+const D={"yrs": ["2025", "2026", "2027", "2028", "2030", "2035"], "units": [17000, 60000, 140000, 250000, 800000, 6500000], "mkt": [0.59, 1.8, 4.06, 6.75, 20.0, 136.5], "asp": [35000, 30000, 29000, 27000, 25000, 21000], "fc": [["IDC", 2030, 510000, "2026-04-20"], ["SAG", 2030, 500000, "2026-10-11"], ["Deutsche Bank", 2030, 700000, "2026-06-16"], ["Goldman Sachs", 2030, 890000, "2026-09-15"], ["Goldman Sachs(구)", 2030, 256000, "2025-01-14"], ["BofA", 2030, 1200000, "2026-09-22"], ["Macquarie", 2030, 1160000, "2025-05-22"], ["J.P. Morgan", 2030, 1750000, "2026-08-17"], ["KB증권", 2030, 667000, "2026-05-12"], ["Goldman Sachs", 2035, 6480000, "2026-09-15"], ["Citi", 2035, 13000000, "2026-08-07"], ["Macquarie", 2035, 9420000, "2025-05-22"], ["Omdia", 2035, 2600000, "2026-01-09"], ["한국투자증권", 2035, 3500000, "2026-04-20"], ["교보증권", 2035, 2635000, "2026-06-29"], ["KB증권", 2035, 10000000, "2026-05-12"], ["BofA", 2035, 10000000, "2025"], ["Yano Research", 2035, 7180000, "2026"], ["Interact Analysis", 2035, 700000, "2026-05"], ["Goldman Sachs(구)", 2035, 1400000, "2025-10-15"]], "bom": [["힘/토크 센서", 7680, 1760], ["관절 모터(프레임리스+엔코더)", 6860, 3024], ["구조재·기타", 6480, 2700], ["리니어 액추에이터·롤러스크류", 5600, 1340], ["감속기", 5100, 2260], ["핸드(코어리스·텐던·마이크로스크류)", 5010, 2884], ["전력반도체·드라이버", 2820, 1130], ["컴퓨트 SoC", 2400, 1200], ["촉각센서", 2000, 1000], ["베어링", 1680, 700], ["배터리", 750, 455], ["비전·라이다", 610, 257]], "seg": [["촉각센서", 0.012, 0.123, 0.841, 5.706, 134.8, 80.8, 694, 1051, 83.9, 1, 100, 95, 81, 45, 80, "손끝→손 전체 어레이로 함량 증가, 기존 시장이 거의 없어 휴머노이드 비중 80%+ — 순수 성장 노출도 최고"], ["핸드(코어리스·텐던·마이크로스크류)", 0.042, 0.391, 2.425, 14.484, 124.6, 68.8, 2497, 3032, 72.0, 2, 86, 65, 69, 50, 80, "DOF 6→22 확대로 대당 함량이 오르는 유일한 대형 구동 세그먼트, 표준화 지연으로 진입장벽 높음"], ["컴퓨트 SoC", 0.033, 0.229, 1.009, 7.023, 98.2, 4.8, 1942, 1261, 60.4, 3, 49, 100, 5, 70, 95, "대당 함량 하락 제한·NVIDIA 독과점으로 수익성 우수하나 기존 엣지AI 시장 대비 휴머노이드 비중은 작음"], ["관절 모터(프레임리스+엔코더)", 0.085, 0.584, 2.543, 13.606, 97.4, 78.4, 4994, 3179, 52.5, 4, 48, 41, 78, 45, 50, "관절당 1개 고정 수요+희토류 하방경직, 기존 로봇용 프레임리스 시장을 2030년 3배 이상 초과 — 안정적 고성장"], ["리니어 액추에이터·롤러스크류", 0.038, 0.259, 1.127, 5.706, 97.3, 67.2, 2220, 1409, 47.1, 5, 48, 29, 67, 15, 75, "기존 시장이 작아 레버리지는 크나 499위안 중국산·전회전형 설계 확산으로 함량 하락 리스크 최대"], ["베어링", 0.017, 0.122, 0.589, 3.072, 104.4, 31.2, 971, 736, 46.3, 6, 58, 35, 31, 50, 55, "정밀 크로스롤러 틈새시장에선 휴머노이드 비중 30%+로 의미, 함량 정체"], ["힘/토크 센서", 0.038, 0.29, 1.48, 6.584, 108.3, 71.2, 2220, 1850, 44.4, 7, 63, 0, 71, 15, 60, "현재 BOM 고비중이나 Bain -70~80%·Lundian 독점적 저가로 단가 급락, 물량은 폭증"], ["구조재·기타", 0.052, 0.419, 2.271, 12.728, 112.9, 2.3, 3052, 2838, 41.9, 8, 70, 51, 2, 45, 25, "BOM 비중은 크나 진입장벽 낮고 기존 다이캐스팅 시장 대비 미미"], ["감속기", 0.08, 0.509, 1.901, 10.095, 88.3, 41.3, 4716, 2376, 40.3, 9, 35, 40, 41, 25, 65, "기존 정밀감속기 시장 대비 휴머노이드 증분이 크지만(2030 비중 ~40%), 중국 국산화·유성 QDD 대체로 단가 하락이 가장 큰 변수"], ["전력반도체·드라이버", 0.042, 0.265, 0.95, 5.267, 86.2, 9.1, 2497, 1188, 36.9, 10, 32, 48, 9, 50, 55, "관절수만큼 늘지만 범용 부품·기존 서보시장 대비 비중 10% 미만"], ["배터리", 0.014, 0.094, 0.383, 2.195, 93.4, 0.2, 832, 478, 34.6, 11, 42, 57, 0, 40, 30, "대당 2~3kWh로 배터리 산업 내 비중 무의미"], ["비전·라이다", 0.019, 0.1, 0.216, 1.317, 62.9, 3.5, 1110, 270, 25.2, 12, 0, 70, 4, 30, 40, "휴머노이드 기여가 기존 차량용 시장 대비 미미, 주가 민감도 낮음"]], "stk": [[1, "UBTech", "9880.HK", "중국/HK", "완성체 4%", 70.5, 55.0, 205.1, 80, 526.6, 11.2, -43.0, 4.42, 18.1, 800, "Walker S 수주 누적, 2026 인도 6~7천대(가이던스 하향)"], [2, "로보티즈", "108490", "한국", "관절 모터(프레임리스+엔코더) 3% + 핸드(코어리스·텐던·마이크로스크류) 3%", 69.3, 62.0, 414.8, 85, null, 72.4, 1.9, 2.6, 5.7, 149, "폴렌(허깅페이스) 75만개 계약, 2Q26 매출 +95%"], [3, "유니트리", "688836.SS", "중국", "완성체 10%", 68.1, 55.0, 1176.5, 90, 261.7, 157.6, -11.1, 45.51, 4.4, 2000, "2025 출하 5,500대+, 1H26 5,900대, 흑자"], [4, "자오웨이", "003021.SZ", "중국", "핸드(코어리스·텐던·마이크로스크류) 10%", 64.4, 72.0, 93.3, 60, 85.0, 14.6, -6.0, 3.78, 6.4, 242, "애지봇·UBTech·테슬라 고객 언급(증권사), 매출 미공개"], [5, "레인보우로보틱스", "277810", "한국", "완성체 0.5%", 61.6, 55.0, 296.2, 70, null, 147.5, -14.1, 4.98, 2.0, 100, "삼성 자회사, 휴머노이드 매출 비중 50% 근접"], [6, "리더드라이브", "688017.SS", "중국", "감속기 15%", 56.6, 40.3, 259.2, 80, 197.4, 74.0, 99.3, 8.35, 3.4, 285, "하모닉 2025 50만대 출하, 중국 OEM 다수 공급"], [7, "민스(敏實)", "0425.HK", "중국", "구조재·기타 5% + 관절 모터(프레임리스+엔코더) 3%", 55.2, 46.2, 4.7, 70, 7.2, 0.9, -32.8, 3.61, 5.3, 190, "로보틱스 매출 가이던스 2026 5억·2027 10억위안"], [8, "밍즈(鳴志)", "603728.SS", "중국", "핸드(코어리스·텐던·마이크로스크류) 6% + 관절 모터(프레임리스+엔코더) 2%", 54.6, 66.9, 40.9, 45, 125.4, 7.9, -11.7, 3.78, 5.2, 196, "코어리스 모터 공급 거론, 미공개"], [9, "한라캐스트", "125490", "한국", "구조재·기타 1%", 53.8, 41.9, 18.0, 50, null, 1.9, -11.1, 0.24, 9.5, 23, "휴머노이드 프레임 수주, 옵티머스 브래킷 보도"], [10, "한웨이", "300007.SZ", "중국", "촉각센서 8%", 53.6, 83.9, 19.8, 30, 64.5, 6.2, -14.3, 2.12, 3.2, 67, "e-skin 촉각센서 개발, 공급 미확인"], [11, "하이윈", "2049.TW", "대만", "리니어 액추에이터·롤러스크류 8% + 감속기 3% + 베어링 5%", 53.5, 44.8, 20.3, 65, 26.2, 3.8, 46.9, 3.32, 5.3, 177, "2026-10 '미국 대기업 휴머노이드 부품 출하' 공식 인정"], [12, "투오푸", "601689.SS", "중국", "액추에이터 조립(감속기+모터+스크류+베어링) 8% + 구조재·기타 3%", 53.5, 46.6, 12.0, 65, 27.1, 2.8, -20.3, 13.2, 4.2, 561, "테슬라 닝보 실사, 리니어 액추에이터 공급 보도"], [13, "싼화", "002050.SZ", "중국", "액추에이터 조립(감속기+모터+스크류+베어링) 10%", 52.5, 47.2, 12.8, 65, 29.3, 4.2, -20.7, 20.17, 3.1, 616, "테슬라 로봇팀 닝보 실사(2026-09), 옵티머스 액추에이터 1차 공급사 보도"], [14, "베스트", "300580.SZ", "중국", "리니어 액추에이터·롤러스크류 5%", 51.7, 47.1, 23.5, 40, 26.5, 5.8, -25.7, 1.4, 4.0, 56, "롤러스크류 장비·제품 투자, 고객 미공개"], [15, "하모닉드라이브", "6324.T", "일본", "감속기 5%", 49.5, 40.3, 21.7, 85, 72.8, 7.5, 84.3, 2.97, 2.9, 87, "휴머노이드 매출 FY3/26 19억엔 공시, FY3/31 133억엔 목표"], [16, "허사이", "HSAI", "중국/美ADR", "비전·라이다 25%", 49.3, 25.2, 10.8, 70, 19.7, 3.8, -37.6, 1.88, 2.9, 54, "로봇용 라이다 출하 ~3배, 유니트리 탑재"], [17, "엔비디아", "NVDA", "미국", "컴퓨트 SoC 40%", 48.5, 60.4, 0.1, 95, 18.2, 13.4, -15.2, 4070.25, 0.0, 404, "BD Atlas Jetson Thor 탑재 공식, GR00T·Isaac 생태계"], [18, "커리센싱", "603662.SS", "중국", "힘/토크 센서 6%", 47.8, 44.4, 32.9, 30, 43.7, 9.0, -12.3, 2.41, 3.7, 89, "6축 F/T 센서 개발, 휴머노이드 공급 미확인"], [19, "호라이즌로보틱스", "9660.HK", "중국/HK", "컴퓨트 SoC 10%", 47.3, 60.4, 10.7, 45, null, 8.3, -53.2, 7.86, 1.3, 101, "로봇 SoC(RDK) 출시, 중국 OEM 채택 초기"], [20, "미얼(盟立)", "2464.TW", "대만", "감속기 4%", 46.8, 40.3, 29.2, 60, 61.1, 4.2, 146.8, 1.08, 7.0, 76, "옵티머스3 하모닉 공급 개시 보도(대만 언론)"], [21, "현대모비스", "012330", "한국", "액추에이터 조립(감속기+모터+스크류+베어링) 6%", 46.5, 47.2, 0.8, 90, 8.78, 0.5, 18.6, 23.79, 1.6, 370, "BD Atlas 액추에이터 31종 2026-11 첫 공급"], [22, "에스피지", "058610", "한국", "감속기 2%", 41.9, 40.3, 15.1, 55, null, 5.0, 140.4, 1.26, 3.0, 38, "로봇 감속기 매출 2025 140억, 2027 300억+ 목표"], [23, "우저우신춘", "603667.SS", "중국", "리니어 액추에이터·롤러스크류 4% + 베어링 6%", 41.4, 46.7, 18.3, 40, 123.4, 7.3, 21.1, 3.19, 2.5, 80, "롤러스크류·베어링 샘플 단계 보도"], [24, "테슬라", "TSLA", "미국", "완성체 20%", 41.3, 55.0, 3.9, 75, 188.0, 14.5, -14.7, 1501.18, 0.3, 4000, "프리몬트 옵티머스 초기 생산(3Q26 콜), 외부판매 2027말"]], "up": [["2026-11 중순", "현대모비스 Atlas 액추에이터 첫 공급(의왕 프로토 라인) 및 공시 여부; 3Q 분기보고서(글로비스 BD 지분율 11.39%→약 12.5%)", "모비스 로봇 매출 인식 시점, 단일판매 공시"], ["2026-11-24", "현대모비스 임시주총(램프사업 매각, 재원 로봇 재투자)", "액추에이터 투자 계획"], ["2026-11~12", "테슬라 '사전프로그래밍 없는 실제 AI' 옵티머스 데모 공개(10/21 콜에서 1~2개월 내 예고)", "자율성·손 조작 수준 — 데이터 병목 해소 신호"], ["2026-12-02", "국회 2027 예산안 법정 처리기한(피지컬 AI 3.1조원 확정 여부)", "휴머노이드 200대 실증·구매 예산 삭감 여부"], ["2026-12-03", "테슬라 2026 연례 주총(오스틴, 이사 재선임·보수 자문투표); SpaceX 합병 관련 언급 주목", "옵티머스 생산 대수·V3 시연, 합병 일정"], ["2026-12", "샤오펑 IRON 양산(SOP) 개시", "중국 완성차발 휴머노이드 양산 첫 사례"], ["2026 4Q", "BD 미국 로봇공장(로보틱스 아메리카) 부지·출자구조 발표, BD 비계열 공급사 선정; RMAC 10배 확장", "3만대 캐파 구체화, 국내 2차 벤더 편입"], ["2026 연말", "테슬라 옵티머스 주당 1,000대 생산 목표 도달 여부; 로보티즈 자체 이족 휴머노이드 사전판매; 마이크로덕 출하", "램프 속도, 액추에이터 발주"], ["2027-01-06~09", "CES 2027(라스베이거스): 삼성 자체 휴머노이드 첫 공개 예정, LG·현대모비스·기아 참가", "삼성 휴머노이드 공급망(레인보우·에스피지 등), 로봇주 연초 계절성"], ["2027 1Q", "LG–NVIDIA 이족보행 휴머노이드 공개 목표; NVIDIA·Agile Robots 'Agile ONE' 레퍼런스 휴머노이드 출시", "레퍼런스 설계 채택 부품사"], ["2027 초", "BD Atlas 그룹 외 추가 고객 발표, BD 미국 NDR(빠르면 2027)", "외부 판가 공개"], ["2027-01 하순", "테슬라 4Q26 실적콜", "옵티머스 누적 생산·2027 외부판매 일정 유지 여부"], ["2027-02 (추정)", "유니트리 상장 6개월 경과 — 일부 오프라인 배정 물량 보호예수 해제(전략배정 20%는 12개월)", "수급 부담"], ["2027-03 중순 (추정)", "NVIDIA GTC 2027(산호세): GR00T·Jetson·Cosmos 차세대", "로봇 파운데이션 모델 성능"], ["2027-04", "옵티머스에 AI5 칩 탑재(연산 AI4 대비 10배), 하드웨어 내구성 완성 후 24시간 가동 목표; 모비스 램프사업 매각 완료(4/1)", "옵티머스 성능 점프"], ["2027 2Q", "로보티즈 우즈벡 공장 상업 양산(GS 기준 2Q27 말), 샤오펑 IRON 중국 인도 개시", "로보티즈 2027 출하 100만개 달성 가능성"], ["미정(진행 중)", "애지봇 홍콩 IPO, 베어로보틱스 나스닥 IPO, 1X 소프트뱅크 지분 인수, BD IPO(2029~30 기대)", "휴머노이드 상장 밸류 벤치마크"]], "notion": "https://app.notion.com/p/AI-TAM-BOM-2026-11-11-4158e39b22a181199d12c7afd39d2775"};
+document.getElementById('nl').href=D.notion;
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const ink=css('--ink'),mut=css('--mut'),line=css('--line');
+const charts=[];
+function mk(id,opt){const c=echarts.init(document.getElementById(id));opt.textStyle={color:ink};c.setOption(opt);charts.push(c);return c;}
+const ax=(o={})=>Object.assign({axisLabel:{color:mut},axisLine:{lineStyle:{color:line}},splitLine:{lineStyle:{color:line}},nameTextStyle:{color:mut}},o);
+const tb={feature:{dataZoom:{title:{zoom:'드래그 확대',back:'되돌리기'}},restore:{title:'초기화'}},right:8,top:0};
+const tbx={feature:{dataZoom:{yAxisIndex:'none',title:{zoom:'드래그 확대',back:'되돌리기'}},restore:{title:'초기화'}},right:8,top:0};
+const fmt=v=>v==null?'–':Number(v).toLocaleString('ko-KR');
+const mob=innerWidth<760;
+// ① 시장
+mk('c_mkt',{tooltip:{trigger:'axis',formatter:ps=>{const i=ps[0].dataIndex;return `<b>${D.yrs[i]}</b><br>출하 ${fmt(D.units[i])}대<br>완성체 시장 $${D.mkt[i]}B<br>평균 ASP $${fmt(D.asp[i])}`}},legend:{top:24,textStyle:{color:mut}},toolbox:tbx,grid:{left:58,right:50,top:64,bottom:30},
+ xAxis:ax({type:'category',data:D.yrs}),yAxis:[ax({type:'log',name:'출하(대)',axisLabel:{color:mut,formatter:v=>v>=1e6?v/1e6+'M':v>=1e3?v/1e3+'k':v}}),ax({type:'log',name:'$B',splitLine:{show:false}})],
+ dataZoom:[{type:'inside'}],
+ series:[{name:'출하(로그)',type:'bar',data:D.units,color:'#7c3aed',label:{show:!mob,position:'top',color:mut,formatter:p=>p.value>=1e6?(p.value/1e6)+'M':(p.value/1e3)+'k'}},{name:'완성체 시장 $B(우, 로그)',type:'line',yAxisIndex:1,data:D.mkt,color:'#0891b2',symbolSize:7,lineStyle:{width:2.4}}]});
+const srcs=[...new Set(D.fc.map(r=>r[0]))];
+mk('c_fc',{tooltip:{trigger:'item',formatter:p=>`<b>${p.data[2]}</b> (${p.data[3]})<br>${p.data[0]}년 ${fmt(p.data[1])}대`},toolbox:tb,grid:{left:58,right:20,top:40,bottom:30},
+ xAxis:ax({type:'category',data:['2030','2035']}),yAxis:ax({type:'log',name:'출하(대)',axisLabel:{color:mut,formatter:v=>v>=1e6?v/1e6+'M':v/1e3+'k'}}),dataZoom:[{type:'inside',xAxisIndex:'none'}],
+ series:[{type:'scatter',symbolSize:12,data:D.fc.map(r=>[String(r[1]),r[2],r[0],r[3]]),itemStyle:{color:'#a78bfa',opacity:.8},label:{show:!mob,position:'right',color:mut,fontSize:10,formatter:p=>p.data[2]}},
+  {type:'scatter',symbol:'diamond',symbolSize:18,data:[['2030',800000,'본 보고서 기준','2026-11'],['2035',6500000,'본 보고서 기준','2026-11']],itemStyle:{color:'#dc2626'}}]});
+// ② BOM
+mk('c_bom',{tooltip:{trigger:'axis',valueFormatter:v=>'$'+fmt(v)},legend:{top:24,textStyle:{color:mut}},toolbox:tbx,grid:{left:mob?120:190,right:30,top:60,bottom:30},
+ yAxis:ax({type:'category',inverse:true,data:D.bom.map(r=>r[0]),axisLabel:{color:mut,width:mob?110:180,overflow:'truncate'}}),xAxis:ax({type:'value',axisLabel:{color:mut,formatter:v=>'$'+v/1000+'k'}}),
+ dataZoom:[{type:'inside',yAxisIndex:0}],
+ series:[{name:'현재',type:'bar',data:D.bom.map(r=>r[1]),color:'#7c3aed'},{name:'2030',type:'bar',data:D.bom.map(r=>r[2]),color:'#22d3ee',label:{show:true,position:'right',color:mut,fontSize:10,formatter:p=>{const r=D.bom[p.dataIndex];return Math.round((r[2]/r[1]-1)*100)+'%'}}}]});
+// ③ 버블
+mk('c_bub',{tooltip:{trigger:'item',formatter:p=>{const r=p.data.r;return `<b>${r[0]}</b><br>2030 TAM $${r[3]}B (2035 $${r[4]}B)<br>CAGR 25~30 ${r[5]}%<br>2030 휴머노이드 비중 ${r[6]}%<br>대당 함량 $${fmt(r[7])} → $${fmt(r[8])}<br>성장 점수 ${r[9]} (${r[10]}위)`}},toolbox:tb,grid:{left:60,right:30,top:40,bottom:44},
+ xAxis:ax({type:'value',name:'CAGR 2025~30 (%)',nameLocation:'middle',nameGap:28,min:55,max:145}),yAxis:ax({type:'value',name:'2030 휴머노이드 비중(%)',nameLocation:'middle',nameGap:34,min:-5,max:100}),
+ dataZoom:[{type:'inside',xAxisIndex:0},{type:'inside',yAxisIndex:0}],
+ series:[{type:'scatter',data:D.seg.map(r=>({value:[r[5],r[6]],r,symbolSize:14+Math.sqrt(r[3])*26,itemStyle:{color:r[10]<=3?'#dc2626':r[10]<=5?'#f59e0b':'#94a3b8',opacity:.75}})),
+  label:{show:true,position:'top',color:ink,fontSize:mob?9:11,formatter:p=>p.data.r[0].replace(/\(.*\)/,'')}}]});
+mk('c_tam',{tooltip:{trigger:'axis',valueFormatter:v=>'$'+v+'B'},legend:{top:24,textStyle:{color:mut}},toolbox:tbx,grid:{left:48,right:20,top:64,bottom:mob?90:70},
+ xAxis:ax({type:'category',data:D.seg.map(r=>r[0].replace(/\(.*\)/,'')),axisLabel:{color:mut,rotate:mob?55:30,fontSize:10}}),yAxis:ax({type:'value',name:'$B'}),
+ dataZoom:[{type:'inside'}],
+ series:[['2027',2,'#c4b5fd'],['2030',3,'#7c3aed'],['2035',4,'#0891b2']].map(([n,i,c])=>({name:n,type:'bar',data:D.seg.map(r=>r[i]),color:c}))});
+// 정렬 표 공통 (1클릭 내림차순·2클릭 오름차순·3클릭 원상태)
+function sortable(id,cols,data,row){const t=document.getElementById(id);let rows=data.slice(),sk=null,sd=0;
+ t.innerHTML='<thead><tr>'+cols.map((c,i)=>c.k==null?`<th>${c.h}</th>`:`<th class="s" data-i="${i}">${c.h}<span class="ar"></span></th>`).join('')+'</tr></thead><tbody></tbody>';
+ const tb=t.querySelector('tbody');const draw=()=>tb.innerHTML=rows.map(row).join('');
+ t.querySelectorAll('th.s').forEach(th=>th.onclick=()=>{const k=cols[+th.dataset.i].k;if(sk!==k){sk=k;sd=1}else sd=(sd+1)%3;
+  const v=x=>x[k]==null?-Infinity:x[k];rows=sd===0?data.slice():data.slice().sort((a,b)=>sd===1?v(b)-v(a):v(a)-v(b));
+  t.querySelectorAll('th.s .ar').forEach(a=>a.textContent='');if(sd)th.querySelector('.ar').textContent=sd===1?'▼':'▲';draw();});draw();}
+sortable('t_seg',[{h:'순위',k:10},{h:'세그먼트'},{h:'점수',k:9},{h:'2030 TAM',k:3},{h:'CAGR 25~30',k:5},{h:'휴머노이드 비중',k:6},{h:'함량 추세',k:12},{h:'디플레 내성',k:14},{h:'진입장벽',k:15},{h:'판단'}],D.seg,
+ r=>`<tr><td><span class="rk">${r[10]}</span></td><td>${r[0]}</td><td class="${r[10]<=3?'R':''}">${r[9]}</td><td>$${r[3]}B</td><td>${r[5]}%</td><td>${r[6]}%</td><td>${r[12]}</td><td>${r[14]}</td><td>${r[15]}</td><td class="wrap">${r[16]}</td></tr>`);
+const pc=v=>v==null?'–':`<span class="${v>0?'R':'B'}">${v>0?'🔺':'🔽'}${Math.abs(v).toFixed(0)}%</span>`;
+const TOP=['자오웨이','로보티즈','하이윈','투오푸','민스(敏實)'];
+sortable('t_stk',[{h:'순위',k:0},{h:'종목'},{h:'국가'},{h:'점수',k:5},{h:'세그먼트 점수',k:6},{h:'수혜 강도',k:7},{h:'검증도',k:8},{h:'2027E PER',k:9},{h:'PSR',k:10},{h:'1년',k:11},{h:'휴머노이드 매출/시총',k:13},{h:'시총 $B',k:12},{h:'세그먼트(점유 가정)'},{h:'검증 근거'}],D.stk,
+ r=>`<tr><td>${r[0]}</td><td>${TOP.includes(r[1])?'⭐ ':''}<b>${r[1]}</b> <span class="mut" style="font-size:11px">${r[2]}</span></td><td>${r[3]}</td><td><b>${r[5]}</b></td><td>${r[6]}</td><td>${r[7]==null?'–':r[7]+'%'}</td><td>${r[8]}</td><td>${r[9]==null?'적자':r[9]+'x'}</td><td>${r[10]==null?'–':r[10]+'x'}</td><td>${pc(r[11])}</td><td>${r[13]}%</td><td>${fmt(r[12])}</td><td class="wrap" style="min-width:200px">${r[4]}</td><td class="wrap">${r[15]}</td></tr>`);
+mk('c_stk',{tooltip:{trigger:'item',formatter:p=>{const r=p.data.r;return `<b>${r[1]}</b> ${r[2]}<br>종합 ${r[5]} (${r[0]}위)<br>수혜 강도 ${r[7]}% · 휴머노이드 매출/시총 ${r[13]}%<br>2030 휴머노이드 매출 $${fmt(r[14])}M<br>2027E PER ${r[9]??'적자'} · 1년 ${r[11]}%`}},toolbox:tb,grid:{left:66,right:30,top:40,bottom:44},
+ xAxis:ax({type:'log',name:'수혜 강도: 2030 휴머노이드 매출 ÷ 현재 매출 (%)',nameLocation:'middle',nameGap:28,min:0.05,max:2000}),yAxis:ax({type:'log',name:'2030 휴머노이드 매출 ÷ 시총(%)',nameLocation:'middle',nameGap:40,min:0.01,max:30}),
+ dataZoom:[{type:'inside',xAxisIndex:0},{type:'inside',yAxisIndex:0}],
+ series:[{type:'scatter',data:D.stk.map(r=>({value:[Math.max(r[7],0.06),Math.max(r[13],0.011)],r,symbolSize:(r[5]-35)*1.1,itemStyle:{color:TOP.includes(r[1])?'#dc2626':['한국'].includes(r[3])?'#2563eb':'#94a3b8',opacity:.75}})),
+  labelLayout:{hideOverlap:true},label:{show:true,position:'top',fontSize:mob?9:11,color:ink,formatter:p=>p.data.r[1]}}]});
+sortable('t_up',[{h:'시점'},{h:'이벤트'},{h:'볼 것'}],D.up,r=>`<tr><td>${r[0]}</td><td class="wrap">${r[1]}</td><td class="wrap">${r[2]}</td></tr>`);
+addEventListener('resize',()=>charts.forEach(c=>c.resize()));
+</script></body></html>
