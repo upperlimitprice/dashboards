@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>원익QnC(074600) 비즈니스 모델 교재 — 쩜상리서치</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
+<style>
+:root{
+  --bg:#f7f8fa; --card:#ffffff; --ink:#1b2430; --sub:#5a6675; --line:#e3e7ed;
+  --navy:#1f3a5f; --teal:#138a8a; --amber:#c98a00; --up:#d64545; --down:#2f6fd6;
+  --ok:#1e8a4c; --news:#c26a00; --est:#6b5bb5;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);
+  font-family:"Pretendard","Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",system-ui,sans-serif;
+  font-size:17px;line-height:1.6;-webkit-text-size-adjust:100%;overflow-x:hidden}
+.wrap{max-width:1120px;margin:0 auto;padding:0 18px}
+section{background:var(--card);border:1px solid var(--line);border-radius:16px;margin:22px 0;padding:28px 30px;overflow:hidden}
+h1{font-size:34px;line-height:1.3;margin:6px 0 10px}
+h2{font-size:26px;margin:0 0 6px;color:var(--navy)}
+h2 .no{display:inline-block;background:var(--navy);color:#fff;border-radius:8px;font-size:17px;padding:2px 10px;margin-right:8px;vertical-align:4px}
+h3{font-size:19px;margin:18px 0 8px}
+p{margin:8px 0}
+.lead{color:var(--sub);margin:0 0 14px}
+.small{font-size:16px;color:var(--sub)}
+.badge{display:inline-block;font-size:13px;line-height:1;font-weight:700;padding:4px 7px;border-radius:6px;vertical-align:2px;margin:0 2px;white-space:nowrap}
+.b-ok{background:#e4f4ea;color:var(--ok)} .b-news{background:#fdeedb;color:var(--news)} .b-est{background:#ece9f8;color:var(--est)}
+.src{font-size:16px;color:var(--sub)} .src a{color:var(--sub)}
+.up{color:var(--up);font-weight:700} .down{color:var(--down);font-weight:700}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:16px}
+.kpi{border:1px solid var(--line);border-radius:12px;padding:14px 14px 12px;background:#fbfcfd}
+.kpi .k{font-size:15px;color:var(--sub)} .kpi .v{font-size:25px;font-weight:800;margin:2px 0}
+.kpi .s{font-size:16px;color:var(--sub)}
+.oneline{background:#eef4fb;border-left:5px solid var(--navy);padding:12px 16px;border-radius:8px;font-size:19px;font-weight:600}
+.brand{font-weight:800;color:var(--teal);letter-spacing:.5px}
+.card{border:1px solid var(--line);border-radius:12px;padding:14px 16px;background:#fbfcfd}
+.card h4{margin:0 0 6px;font-size:18px}
+.analogy{background:#fff8e6;border:1px dashed #e7c46a;border-radius:10px;padding:10px 14px;margin:10px 0}
+.analogy b{color:#8a5a00}
+figure{margin:16px 0 4px;padding:14px;border:1px solid var(--line);border-radius:12px;background:#fcfdff}
+figure svg{width:100%;height:auto;display:block}
+figcaption{font-size:16px;color:var(--sub);margin-top:8px}
+ol.steps{margin:8px 0 0;padding-left:22px} ol.steps li{margin:4px 0}
+.chart{width:100%;height:360px}
+.chart.tall{height:400px}
+.tbl-wrap{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--line);border-radius:10px;margin:10px 0}
+table{border-collapse:collapse;width:100%;min-width:560px;font-size:16px}
+th,td{padding:10px 14px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{background:#f1f4f8;font-weight:700;white-space:nowrap}
+td:last-child,th:last-child{padding-right:22px}
+td.n,th.n{text-align:right;white-space:nowrap}
+th.sortable{cursor:pointer;user-select:none}
+th.sortable .arr{font-size:.8em;margin-left:4px;color:inherit;opacity:.85}
+.pill{display:inline-block;background:#eef1f5;border-radius:999px;padding:2px 10px;font-size:14px;margin:2px 3px 2px 0}
+.hl{background:#e6f5f5}
+.warn{border-left:5px solid var(--up);background:#fdf1f1;border-radius:8px;padding:10px 14px;margin:8px 0}
+.check{border-left:5px solid var(--teal);background:#eef8f8;border-radius:8px;padding:10px 14px;margin:8px 0}
+footer{color:var(--sub);font-size:14px;text-align:center;padding:10px 0 30px}
+@media (max-width:860px){
+  section{padding:20px 16px}
+  .grid2,.grid3{grid-template-columns:1fr}
+  .kpis{grid-template-columns:1fr 1fr}
+  h1{font-size:26px} h2{font-size:22px}
+  .chart{height:320px} .chart.tall{height:340px}
+  .kpi .v{font-size:21px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- ============ HERO ============ -->
+<section id="sec-hero">
+  <div class="small"><span class="brand">쩜상리서치</span> · 초보 투자자 교재 · 기준일 2026-11-13</div>
+  <h1>원익QnC(074600)<br>"반도체 공장의 석영 소모품을 파는 회사"</h1>
+  <div class="oneline">장비가 아니라 <u>장비 속에서 닳아 없어지는 석영(쿼츠) 부품</u>을 만들고·씻고·원재료까지 만든다 → 팹이 돌아가는 한 매출이 반복된다. 약점은 자회사 모멘티브의 낮은 마진과 차입금.</div>
+  <div class="kpis">
+    <div class="kpi"><div class="k">주가 (11/13 종가)</div><div class="v">29,000원 <span class="up" style="font-size:17px">+17.4%</span></div><div class="s">시총 7,624억 <span class="badge b-ok">확인</span> 네이버증권</div></div>
+    <div class="kpi"><div class="k">3Q26 영업이익</div><div class="v">444억 <span class="up" style="font-size:17px">YoY +455%</span></div><div class="s">OPM 15.7% <span class="badge b-ok">확인</span> DART 잠정 11/13</div></div>
+    <div class="kpi"><div class="k">3Q26 매출</div><div class="v">2,837억 <span class="up" style="font-size:17px">+23.2%</span></div><div class="s">4개 분기 연속 QoQ 증가 <span class="badge b-ok">확인</span></div></div>
+    <div class="kpi"><div class="k">쿼츠 한국 가동률</div><div class="v">91.3%</div><div class="s">2026 상반기 <span class="badge b-ok">확인</span> DART 반기</div></div>
+    <div class="kpi"><div class="k">매출 구성 (1H26)</div><div class="v" style="font-size:20px">쿼츠웨어 42% · 원재료 43%</div><div class="s">세정 11% · 세라믹 3% <span class="badge b-ok">확인</span></div></div>
+    <div class="kpi"><div class="k">PBR / 최근 4Q PER</div><div class="v">1.43배 / 13.2배</div><div class="s">BPS 20,322원 <span class="badge b-est">추정</span> PER</div></div>
+    <div class="kpi"><div class="k">순차입금</div><div class="v down">약 7,432억</div><div class="s">2026-06말 <span class="badge b-est">추정</span> 차입 7,898−현금 466</div></div>
+    <div class="kpi"><div class="k">핵심 이벤트</div><div class="v" style="font-size:20px">2027-05-15</div><div class="s">SJL 공동매각요구권 기한 <span class="badge b-ok">확인</span></div></div>
+  </div>
+  <p class="src" style="margin-top:12px">근거 등급: <span class="badge b-ok">확인</span> 공시·거래소 1차 자료 · <span class="badge b-news">보도</span> 증권사·언론 · <span class="badge b-est">추정</span> 쩜상리서치 계산</p>
+</section>
+
+<!-- ============ 1. 쿼츠웨어란 ============ -->
+<section id="sec-basics">
+  <h2><span class="no">1</span>쿼츠웨어가 뭐길래?</h2>
+  <p class="lead">쿼츠(석영) = 모래 성분(SiO₂)을 아주 순수하게 녹인 <b>초고온용 유리</b>. 1,000℃ 넘는 열·플라즈마·강산에도 버티고 금속 불순물이 거의 없어 웨이퍼를 오염시키지 않는다.</p>
+  <div class="analogy"><b>비유</b> — 반도체 공장 = 초고급 주방. 웨이퍼 = 재료, 장비 = 오븐·가스레인지, <b>쿼츠웨어 = 오븐 속 내열유리 용기·트레이·뚜껑</b>. 좋은 오븐이라도 용기는 금 가고 그을려서 주기적으로 바꿔야 한다.</div>
+  <figure id="fig-process">
+    <svg viewBox="0 0 1000 440" role="img" aria-label="반도체 전공정 흐름과 쿼츠 부품 사용 위치">
+      <defs>
+        <marker id="ar" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#8a96a6"/></marker>
+      </defs>
+      <text x="20" y="32" font-size="22" font-weight="700" fill="#1f3a5f">웨이퍼 1장이 칩이 되기까지 — 이 과정을 수백 번 반복</text>
+      <!-- steps -->
+      <g font-size="19" text-anchor="middle">
+        <rect x="20" y="70" width="170" height="110" rx="14" fill="#e6f5f5" stroke="#138a8a" stroke-width="3"/>
+        <text x="105" y="112" font-weight="700">산화·확산</text><text x="105" y="140" font-size="16" fill="#5a6675">가마에 굽기</text><text x="105" y="163" font-size="16" fill="#5a6675">800~1,200℃</text>
+        <rect x="215" y="70" width="170" height="110" rx="14" fill="#f3f5f8" stroke="#b8c2cf" stroke-width="2"/>
+        <text x="300" y="112" font-weight="700">포토(노광)</text><text x="300" y="140" font-size="16" fill="#5a6675">빛으로 회로</text><text x="300" y="163" font-size="16" fill="#5a6675">밑그림</text>
+        <rect x="410" y="70" width="170" height="110" rx="14" fill="#e6f5f5" stroke="#138a8a" stroke-width="3"/>
+        <text x="495" y="112" font-weight="700">식각(Etch)</text><text x="495" y="140" font-size="16" fill="#5a6675">플라즈마로</text><text x="495" y="163" font-size="16" fill="#5a6675">깎아내기</text>
+        <rect x="605" y="70" width="170" height="110" rx="14" fill="#e6f5f5" stroke="#138a8a" stroke-width="3"/>
+        <text x="690" y="112" font-weight="700">증착(CVD)</text><text x="690" y="140" font-size="16" fill="#5a6675">가스로 얇은</text><text x="690" y="163" font-size="16" fill="#5a6675">막 쌓기</text>
+        <rect x="800" y="70" width="180" height="110" rx="14" fill="#e6f5f5" stroke="#138a8a" stroke-width="3"/>
+        <text x="890" y="112" font-weight="700">세정(Wet)</text><text x="890" y="140" font-size="16" fill="#5a6675">약액 수조에</text><text x="890" y="163" font-size="16" fill="#5a6675">담가 씻기</text>
+      </g>
+      <g stroke="#8a96a6" stroke-width="3" marker-end="url(#ar)">
+        <line x1="190" y1="125" x2="212" y2="125"/><line x1="385" y1="125" x2="407" y2="125"/>
+        <line x1="580" y1="125" x2="602" y2="125"/><line x1="775" y1="125" x2="797" y2="125"/>
+      </g>
+      <path d="M890,182 C890,225 105,225 105,184" fill="none" stroke="#8a96a6" stroke-width="2.5" stroke-dasharray="7 6" marker-end="url(#ar)"/>
+      <text x="500" y="222" font-size="16" fill="#5a6675" text-anchor="middle">수십~수백 회 반복 (3D NAND·GAA·HBM일수록 반복 횟수↑)</text>
+      <!-- quartz parts row -->
+      <g font-size="17">
+        <circle cx="45" cy="275" r="17" fill="#138a8a"/><text x="45" y="281" fill="#fff" font-weight="700" text-anchor="middle">1</text>
+        <text x="72" y="270" font-weight="700">튜브·보트</text><text x="72" y="294" fill="#5a6675">웨이퍼 꽂는 선반+가마 통</text>
+        <circle cx="440" cy="275" r="17" fill="#138a8a"/><text x="440" y="281" fill="#fff" font-weight="700" text-anchor="middle">2</text>
+        <text x="467" y="270" font-weight="700">포커스 링·윈도우</text><text x="467" y="294" fill="#5a6675">플라즈마와 함께 깎임</text>
+        <circle cx="45" cy="345" r="17" fill="#138a8a"/><text x="45" y="351" fill="#fff" font-weight="700" text-anchor="middle">3</text>
+        <text x="72" y="340" font-weight="700">돔·인젝터·튜브(CVD)</text><text x="72" y="364" fill="#5a6675">막이 같이 쌓여 세정→교체</text>
+        <circle cx="440" cy="345" r="17" fill="#138a8a"/><text x="440" y="351" fill="#fff" font-weight="700" text-anchor="middle">4</text>
+        <text x="467" y="340" font-weight="700">배스(약액 수조)</text><text x="467" y="364" fill="#5a6675">강산에 서서히 침식</text>
+        <rect x="760" y="250" width="220" height="130" rx="12" fill="#fff8e6" stroke="#e7c46a"/>
+        <text x="870" y="282" text-anchor="middle" font-weight="700" fill="#8a5a00">쿼츠 매출 구성</text>
+        <text x="870" y="312" text-anchor="middle">식각용 ≈ 50%</text>
+        <text x="870" y="340" text-anchor="middle">확산·기타 ≈ 50%</text>
+        <text x="870" y="366" text-anchor="middle" font-size="14" fill="#5a6675">한국IR협의회 2026-06</text>
+      </g>
+      <text x="20" y="420" font-size="15" fill="#5a6675">청록 테두리 = 쿼츠 부품이 들어가는 공정 (공시: 산화·확산·식각·이온주입·화학증착에서 웨이퍼 보호·이송 용기)</text>
+    </svg>
+    <figcaption>
+      <ol class="steps">
+        <li><b>어디에</b>: 확산 가마(튜브·보트), 식각 장비(링·윈도우), 증착 장비(돔·튜브), 세정 수조(배스). <span class="badge b-ok">확인</span> DART 반기 '주요 제품'</li>
+        <li><b>어떻게</b>: 장비사(램리서치·TEL)가 새 장비에 끼워 출하(초도) → 팹(삼성·SK하이닉스·TSMC)이 닳으면 교체 주문. <span class="badge b-news">보도</span> 한국IR협의회</li>
+        <li><b>왜 석영</b>: 고온·플라즈마·강산 내성 + 초고순도. 대체재(SiC·합성쿼츠)도 있지만 쿼츠 링 사용량이 여전히 최대. <span class="badge b-news">보도</span> 디일렉 2024-01</li>
+      </ol>
+    </figcaption>
+  </figure>
+</section>
+
+<!-- ============ 2. 왜 소모되나 ============ -->
+<section id="sec-consume">
+  <h2><span class="no">2</span>왜 닳아서 다시 사야 하나 — 장비 속을 들여다보기</h2>
+  <p class="lead">교체 주기는 부품마다 <b>1개월~36개월</b> <span class="badge b-ok">확인</span> 공시. 증권사는 평균 2~3개월(SK증권 2016), 체임버 부품 1~6개월(한화 2017)로 봄 <span class="badge b-news">보도</span> — 링처럼 빨리 닳는 부품과 튜브처럼 오래 쓰는 부품 차이.</p>
+  <figure id="fig-chamber">
+    <svg viewBox="0 0 1000 520" role="img" aria-label="확산 퍼니스와 식각 체임버 단면에서 쿼츠 부품 위치">
+      <!-- Furnace -->
+      <text x="30" y="34" font-size="21" font-weight="700" fill="#1f3a5f">A. 확산·산화 퍼니스(세로형 가마)</text>
+      <rect x="70" y="60" width="300" height="380" rx="20" fill="#fde9e2" stroke="#e08a6a" stroke-width="3"/>
+      <text x="220" y="84" font-size="16" fill="#b5532f" text-anchor="middle">히터 (800~1,200℃)</text>
+      <path d="M110,430 L110,140 Q110,95 220,95 Q330,95 330,140 L330,430" fill="#eaf6fb" stroke="#4aa3c7" stroke-width="5"/>
+      <g stroke="#9fb3c2" stroke-width="3">
+        <line x1="170" y1="150" x2="170" y2="400"/><line x1="270" y1="150" x2="270" y2="400"/>
+      </g>
+      <g stroke="#1f3a5f" stroke-width="4">
+        <line x1="160" y1="170" x2="280" y2="170"/><line x1="160" y1="200" x2="280" y2="200"/><line x1="160" y1="230" x2="280" y2="230"/>
+        <line x1="160" y1="260" x2="280" y2="260"/><line x1="160" y1="290" x2="280" y2="290"/><line x1="160" y1="320" x2="280" y2="320"/>
+        <line x1="160" y1="350" x2="280" y2="350"/><line x1="160" y1="380" x2="280" y2="380"/>
+      </g>
+      <rect x="150" y="405" width="140" height="28" rx="6" fill="#cfe9f3" stroke="#4aa3c7" stroke-width="3"/>
+      <g font-size="17">
+        <circle cx="400" cy="130" r="16" fill="#138a8a"/><text x="400" y="136" fill="#fff" font-weight="700" text-anchor="middle">1</text>
+        <text x="424" y="128" font-weight="700">쿼츠 튜브</text><text x="424" y="150" fill="#5a6675" font-size="15">고온 반복→뿌옇게 결정화</text>
+        <line x1="384" y1="130" x2="332" y2="140" stroke="#138a8a" stroke-width="2"/>
+        <circle cx="400" cy="250" r="16" fill="#138a8a"/><text x="400" y="256" fill="#fff" font-weight="700" text-anchor="middle">2</text>
+        <text x="424" y="248" font-weight="700">쿼츠 보트</text><text x="424" y="270" fill="#5a6675" font-size="15">웨이퍼 100여 장 꽂는 선반</text>
+        <line x1="384" y1="250" x2="272" y2="250" stroke="#138a8a" stroke-width="2"/>
+        <circle cx="400" cy="400" r="16" fill="#138a8a"/><text x="400" y="406" fill="#fff" font-weight="700" text-anchor="middle">3</text>
+        <text x="424" y="398" font-weight="700">페데스탈</text><text x="424" y="420" fill="#5a6675" font-size="15">보트 받침 (단열)</text>
+        <line x1="384" y1="400" x2="292" y2="418" stroke="#138a8a" stroke-width="2"/>
+      </g>
+      <text x="220" y="470" font-size="15" fill="#5a6675" text-anchor="middle">남색 선 = 웨이퍼</text>
+      <!-- Etch -->
+      <text x="560" y="34" font-size="21" font-weight="700" fill="#1f3a5f">B. 플라즈마 식각 체임버</text>
+      <rect x="590" y="70" width="320" height="300" rx="14" fill="#f3f5f8" stroke="#8a96a6" stroke-width="3"/>
+      <rect x="610" y="80" width="280" height="26" rx="5" fill="#cfe9f3" stroke="#4aa3c7" stroke-width="3"/>
+      <ellipse cx="750" cy="200" rx="120" ry="48" fill="#e9dcfb" opacity=".9"/>
+      <text x="750" y="207" font-size="18" text-anchor="middle" fill="#6b4fb0" font-weight="700">플라즈마</text>
+      <rect x="600" y="115" width="14" height="235" fill="#cfe9f3" stroke="#4aa3c7" stroke-width="2"/>
+      <rect x="886" y="115" width="14" height="235" fill="#cfe9f3" stroke="#4aa3c7" stroke-width="2"/>
+      <rect x="665" y="300" width="170" height="50" rx="4" fill="#d6dbe2" stroke="#8a96a6"/>
+      <text x="750" y="331" font-size="15" text-anchor="middle" fill="#5a6675">정전척(ESC)</text>
+      <rect x="680" y="284" width="140" height="10" fill="#1f3a5f"/>
+      <rect x="650" y="282" width="30" height="16" rx="3" fill="#7cc4de" stroke="#2c86ad" stroke-width="2"/>
+      <rect x="820" y="282" width="30" height="16" rx="3" fill="#7cc4de" stroke="#2c86ad" stroke-width="2"/>
+      <g font-size="17">
+        <circle cx="600" cy="410" r="16" fill="#138a8a"/><text x="600" y="416" fill="#fff" font-weight="700" text-anchor="middle">4</text>
+        <text x="624" y="408" font-weight="700">포커스(엣지) 링</text><text x="624" y="430" fill="#5a6675" font-size="15">웨이퍼 둘레 고리, 같이 깎여 두께↓</text>
+        <line x1="650" y1="300" x2="604" y2="394" stroke="#138a8a" stroke-width="2"/>
+        <circle cx="940" cy="93" r="16" fill="#138a8a"/><text x="940" y="99" fill="#fff" font-weight="700" text-anchor="middle">5</text>
+        <line x1="924" y1="93" x2="892" y2="93" stroke="#138a8a" stroke-width="2"/>
+        <circle cx="940" cy="230" r="16" fill="#138a8a"/><text x="940" y="236" fill="#fff" font-weight="700" text-anchor="middle">6</text>
+        <line x1="924" y1="230" x2="902" y2="230" stroke="#138a8a" stroke-width="2"/>
+        <text x="600" y="462" font-weight="700">5 윈도우·상부판 / 6 라이너(벽면)</text>
+        <text x="600" y="486" fill="#5a6675" font-size="15">플라즈마 침식 + 반응 부산물 증착 → 세정 → 반복 후 교체</text>
+      </g>
+      <text x="750" y="299" font-size="13" text-anchor="middle" fill="#fff">웨이퍼</text>
+    </svg>
+    <figcaption>
+      <ol class="steps">
+        <li><b>열에 지친다(①~③)</b>: 가마는 수백 번 가열·냉각 → 석영이 결정화(실투)되고 벽에 쌓인 막이 떨어지면 웨이퍼 불량 → 교체.</li>
+        <li><b>플라즈마에 깎인다(④~⑥)</b>: 식각은 웨이퍼만 깎지 못하고 주변 링·라이너도 함께 깎음. 300단+ NAND·GAA처럼 공정이 독해질수록 더 빨리 닳음 <span class="badge b-news">보도</span> 한국IR협의회.</li>
+        <li><b>그래서 반복 매출</b>: 장비가 많이·오래 돌수록(가동률↑) 교체·세정 주문이 늘어난다 <span class="badge b-ok">확인</span> 공시 "가동률이 높을수록 소모성 부품 사용빈도↑".</li>
+      </ol>
+    </figcaption>
+  </figure>
+</section>
+
+<!-- ============ 3. 사업부 ============ -->
+<section id="sec-business">
+  <h2><span class="no">3</span>사업부별로 돈 버는 방식</h2>
+  <p class="lead">한 회사 안에 <b>원재료 → 가공 → 세정</b>이 다 들어 있다 (빵집이 밀가루 공장과 식기세척 서비스까지 가진 셈).</p>
+  <div class="grid2">
+    <div>
+      <div id="chart-seg" class="chart"></div>
+      <p class="src">2026 상반기 총부문매출(내부거래 제거 전) 비중 <span class="badge b-ok">확인</span> <a href="https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260814001542">DART 반기보고서</a></p>
+    </div>
+    <div class="grid2" style="gap:12px">
+      <div class="card"><h4>① 쿼츠웨어 42.4%</h4><p class="small" style="margin:0">튜브·보트·링을 <b>주문 생산</b>해 장비사(초도)·팹(교체)에 판매. 1H26 2,364억, YoY <span class="up">+23.4%</span></p></div>
+      <div class="card"><h4>② 쿼츠 원재료 42.8%</h4><p class="small" style="margin:0">옛 모멘티브. 석영 잉곳·튜브, <b>석영 도가니</b>(웨이퍼 원료용), 세라믹 원료. 1H26 2,381억, <span class="up">+2.4%</span>, OPM 1.4%</p></div>
+      <div class="card"><h4>③ 세정·코팅 11.3%</h4><p class="small" style="margin:0">쓴 부품을 씻고 코팅해 수명 연장 — <b>건당 서비스료</b>, 가동률 직결. 1H26 631억, <span class="up">+21.7%</span></p></div>
+      <div class="card"><h4>④ 세라믹 2.8% · 기타 0.6%</h4><p class="small" style="margin:0">로봇암·절연링·디스플레이 플레이트, UV 램프. 1H26 세라믹 158억, <span class="up">+23.8%</span></p></div>
+    </div>
+  </div>
+  <h3>연간 사업부 매출 추이 (억원)</h3>
+  <div id="chart-segbar" class="chart"></div>
+  <p class="src">2023~2025 실적·2026F 전망: <span class="badge b-news">보도</span> 한국IR협의회 2026-06-04 (FnGuide). YoY는 1H25→1H26 DART 부문표 비교 <span class="badge b-est">추정</span></p>
+</section>
+
+<!-- ============ 4. 반복 매출 ============ -->
+<section id="sec-recurring">
+  <h2><span class="no">4</span>'장비'가 아니라 '소모품' — 반복 매출 구조</h2>
+  <div class="analogy"><b>비유</b> — 장비회사는 <b>자동차 판매점</b>(신차는 경기 따라 들쭉날쭉), 원익QnC는 <b>타이어·엔진오일 가게</b>. 도로 위 차가 많고 많이 달릴수록 매출이 반복된다. 신차가 많이 팔리면(증설) 새 타이어도 함께 팔린다.</div>
+  <figure id="fig-cycle">
+    <svg viewBox="0 0 1000 400" role="img" aria-label="쿼츠 부품 생애주기와 capex 대비 소모품 수요 개념도">
+      <text x="20" y="30" font-size="20" font-weight="700" fill="#1f3a5f">A. 쿼츠 부품 한 개의 일생</text>
+      <g font-size="16" text-anchor="middle">
+        <circle cx="220" cy="210" r="135" fill="none" stroke="#cfd6df" stroke-width="3" stroke-dasharray="6 6"/>
+        <rect x="160" y="55" width="120" height="44" rx="10" fill="#1f3a5f"/><text x="220" y="83" fill="#fff" font-weight="700">① 신품 출하</text>
+        <rect x="320" y="150" width="110" height="44" rx="10" fill="#138a8a"/><text x="375" y="178" fill="#fff" font-weight="700">② 장착·가동</text>
+        <rect x="300" y="285" width="120" height="44" rx="10" fill="#c98a00"/><text x="360" y="313" fill="#fff" font-weight="700">③ 마모·오염</text>
+        <rect x="40" y="285" width="120" height="44" rx="10" fill="#6b5bb5"/><text x="100" y="313" fill="#fff" font-weight="700">④ 세정·코팅</text>
+        <rect x="18" y="150" width="120" height="44" rx="10" fill="#8a96a6"/><text x="78" y="178" fill="#fff" font-weight="700">⑤ 수명 끝·폐기</text>
+        <text x="220" y="200" font-size="17" font-weight="700" fill="#1b2430">②→③→④</text>
+        <text x="220" y="224" font-size="15" fill="#5a6675">여러 번 반복 후 ⑤</text>
+        <text x="220" y="246" font-size="15" fill="#5a6675">→ ① 재주문</text>
+      </g>
+      <text x="500" y="30" font-size="20" font-weight="700" fill="#1f3a5f">B. 수요는 두 겹 (개념도)</text>
+      <line x1="520" y1="340" x2="980" y2="340" stroke="#8a96a6" stroke-width="2"/>
+      <line x1="520" y1="60" x2="520" y2="340" stroke="#8a96a6" stroke-width="2"/>
+      <path d="M520,250 C570,120 610,110 650,200 C690,300 730,320 770,230 C810,120 860,90 900,170 C930,240 960,260 980,230" fill="none" stroke="#d64545" stroke-width="4"/>
+      <path d="M520,250 C600,225 660,210 720,215 C780,220 840,190 900,175 C940,165 960,160 980,155" fill="none" stroke="#138a8a" stroke-width="5"/>
+      <g font-size="16">
+        <rect x="560" y="355" width="16" height="6" fill="#d64545"/><text x="584" y="364">capex(장비 발주) — 초도 물량</text>
+        <rect x="800" y="355" width="16" height="6" fill="#138a8a"/><text x="824" y="364">가동률×웨이퍼 — 교체·세정</text>
+      </g>
+      <text x="750" y="390" font-size="14" fill="#5a6675" text-anchor="middle">시간 →  (실제 데이터 아님, 구조 이해용)</text>
+    </svg>
+    <figcaption>
+      <ol class="steps">
+        <li><b>1차 수요</b>(capex 연동): 증설 때 장비에 끼워 나가는 초도 물량 — 계단식 증가 <span class="badge b-news">보도</span> 한국IR협의회.</li>
+        <li><b>2차 수요</b>(가동률 연동): 장비가 도는 한 교체·세정이 반복 — 장비주보다 실적이 후행·진폭 작음 <span class="badge b-news">보도</span> 한화 2017.</li>
+        <li><b>주의</b>: 매출은 방어적이어도 이익은 출렁였다 — 2023년 매출 +2.9%인데 영업이익 −27.9%, 4Q24 영업손실 −81억 <span class="badge b-ok">확인</span>.</li>
+      </ol>
+    </figcaption>
+  </figure>
+  <h3>2026 상반기 가동률 — "공장이 얼마나 바쁜가"</h3>
+  <div id="chart-util" class="chart" style="height:320px"></div>
+  <p class="src">가동률 = 실제가동시간/가동가능시간 <span class="badge b-ok">확인</span> DART 반기. 중국 세정 113.8%는 초과 근무 반영.</p>
+</section>
+
+<!-- ============ 5. 공급망·고객·경쟁 ============ -->
+<section id="sec-chain">
+  <h2><span class="no">5</span>공급망 속 위치 · 고객 · 경쟁사</h2>
+  <figure id="fig-valuechain">
+    <svg viewBox="0 0 1000 330" role="img" aria-label="쿼츠 밸류체인과 원익QnC 위치">
+      <defs><marker id="ar2" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#8a96a6"/></marker></defs>
+      <g font-size="16" text-anchor="middle">
+        <rect x="10" y="40" width="175" height="150" rx="12" fill="#e6f5f5" stroke="#138a8a" stroke-width="4"/>
+        <text x="97" y="68" font-weight="700" font-size="18">❶ 원재료</text><text x="97" y="92" fill="#5a6675">용융 석영 잉곳·튜브</text>
+        <text x="97" y="122" font-weight="700" fill="#138a8a">MT Holding</text><text x="97" y="144" fill="#5a6675">헤레우스·토소</text><text x="97" y="166" fill="#5a6675">신에츠·QSIL</text>
+        <rect x="210" y="40" width="175" height="150" rx="12" fill="#e6f5f5" stroke="#138a8a" stroke-width="4"/>
+        <text x="297" y="68" font-weight="700" font-size="18">❷ 가공</text><text x="297" y="92" fill="#5a6675">쿼츠웨어(링·튜브)</text>
+        <text x="297" y="122" font-weight="700" fill="#138a8a">원익QnC 본업</text><text x="297" y="144" fill="#5a6675">페로텍·테크노쿼츠</text><text x="297" y="166" fill="#5a6675">토소·헤레우스</text>
+        <rect x="410" y="40" width="175" height="150" rx="12" fill="#f3f5f8" stroke="#b8c2cf" stroke-width="2"/>
+        <text x="497" y="68" font-weight="700" font-size="18">❸ 장비</text><text x="497" y="92" fill="#5a6675">초도 장착</text>
+        <text x="497" y="122" font-weight="700">램리서치</text><text x="497" y="144" font-weight="700">TEL</text>
+        <rect x="610" y="40" width="175" height="150" rx="12" fill="#f3f5f8" stroke="#b8c2cf" stroke-width="2"/>
+        <text x="697" y="68" font-weight="700" font-size="18">❹ 팹</text><text x="697" y="92" fill="#5a6675">교체 주문</text>
+        <text x="697" y="122" font-weight="700">삼성·SK하이닉스</text><text x="697" y="144" font-weight="700">TSMC·Intel</text><text x="697" y="166" font-weight="700">Micron·UMC</text>
+        <rect x="810" y="40" width="180" height="150" rx="12" fill="#e6f5f5" stroke="#138a8a" stroke-width="4"/>
+        <text x="900" y="68" font-weight="700" font-size="18">❺ 세정·코팅</text><text x="900" y="92" fill="#5a6675">씻어서 재사용</text>
+        <text x="900" y="122" font-weight="700" fill="#138a8a">원익QnC 세정</text><text x="900" y="144" fill="#5a6675">코미코</text><text x="900" y="166" fill="#5a6675">한솔아이원스</text>
+      </g>
+      <g stroke="#8a96a6" stroke-width="3" marker-end="url(#ar2)">
+        <line x1="186" y1="115" x2="207" y2="115"/><line x1="386" y1="115" x2="407" y2="115"/>
+        <line x1="586" y1="115" x2="607" y2="115"/><line x1="786" y1="115" x2="807" y2="115"/>
+      </g>
+      <path d="M900,192 C900,250 697,250 697,194" fill="none" stroke="#6b5bb5" stroke-width="2.5" stroke-dasharray="6 5" marker-end="url(#ar2)"/>
+      <text x="800" y="262" font-size="15" fill="#6b5bb5" text-anchor="middle">재사용 반복</text>
+      <rect x="10" y="280" width="980" height="40" rx="8" fill="#fff8e6" stroke="#e7c46a"/>
+      <text x="500" y="306" font-size="17" text-anchor="middle" fill="#8a5a00">청록 굵은 테두리(❶❷❺) = 원익QnC가 직접 하는 단계 → 원재료~가공~세정 '수직계열화'</text>
+    </svg>
+    <figcaption>
+      <ol class="steps">
+        <li>원재료(❶)는 미·독·일 소수 업체 과점 <span class="badge b-ok">확인</span> 공시 / 업체명 <span class="badge b-news">보도</span> 디일렉 2024-01. 원재료 가격 3년 연속 인상, 20~25% 인상 논의(2024) <span class="badge b-news">보도</span>.</li>
+        <li>장비사(❸)엔 식각 링, 팹(❹)엔 산화·확산·CVD 부품 공급 <span class="badge b-news">보도</span> 한국IR협의회. 대만 TSMC·UMC, 미국 Intel·Micron은 현지 법인이 공급 <span class="badge b-ok">확인</span>.</li>
+        <li>'쿼츠웨어 세계 1위' 주장은 리포트마다 다름 — 공시는 "공식 자료 없음", 한국IR협의회는 '장기 목표'로 기술 → <b>미확인</b>.</li>
+      </ol>
+    </figcaption>
+  </figure>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>영역</th><th>경쟁·대체 업체</th><th>원익QnC 포지션</th><th>근거</th></tr></thead>
+      <tbody>
+        <tr><td>쿼츠 원재료</td><td>Heraeus(독), QSIL(독), Tosoh(일), Shin-Etsu Quartz(일)</td><td>Momentive 인수로 내재화(지분 50%+1주)</td><td><span class="badge b-ok">확인</span> 공시 / <span class="badge b-news">보도</span></td></tr>
+        <tr><td>쿼츠웨어 가공</td><td>Ferrotec(일·중), Tosoh Quartz, Heraeus, Techno Quartz(일)</td><td>국내 최대, 대만서 일본 업체 물량 대체 중</td><td><span class="badge b-news">보도</span> 한국IR협의회</td></tr>
+        <tr><td>식각 링 대체재</td><td>티씨케이(SiC), 하나머티리얼즈(Si·SiC), 비씨엔씨(합성쿼츠)</td><td>쿼츠 링 사용량 여전히 최대, 일부 대체 위협</td><td><span class="badge b-news">보도</span> 디일렉·한국IR협의회</td></tr>
+        <tr><td>세정·코팅</td><td>코미코, 한솔아이원스</td><td>한국+미국(Dep.Tech)+중국(시안) 거점</td><td><span class="badge b-ok">확인</span> 공시</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ============ 6. 실적 ============ -->
+<section id="sec-earnings">
+  <h2><span class="no">6</span>최근 실적 — 쿼츠가 끌고, 자회사가 발목</h2>
+  <div class="grid2">
+    <div>
+      <h3 style="margin-top:0">분기 매출·영업이익률</h3>
+      <div id="chart-q" class="chart"></div>
+      <p class="src">연결, 억원 <span class="badge b-ok">확인</span> DART(4Q는 연간−3Q누적, 3Q26은 <a href="https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261113900562">11/13 잠정</a>)</p>
+    </div>
+    <div>
+      <h3 style="margin-top:0">연간 매출·영업이익</h3>
+      <div id="chart-annual" class="chart"></div>
+      <p class="src">2020~2025 <span class="badge b-ok">확인</span> DART 사업보고서 · 2026E <span class="badge b-est">추정</span> 9M 실적+4Q 가정(매출 2,900억·OP 455억)</p>
+    </div>
+  </div>
+  <div class="grid3">
+    <div class="check"><b>3Q26</b>: 매출 2,837억(<span class="up">+23.2%</span>), 영업이익 444억(OPM 15.7%) — 분기 최대 수준. 1~9월 누적 OP 972억 = 한국IR협의회 연간 전망(1,157억)의 84%. <span class="badge b-ok">확인</span></div>
+    <div class="warn"><b>영업이익 ≠ 순이익</b>: 3Q 세전이익 306억으로 영업이익보다 138억 적음 → 이자·영업외 손실. 지배순이익 161억(QoQ <span class="down">−29%</span>). <span class="badge b-ok">확인</span></div>
+    <div class="warn"><b>모멘티브</b>: 1H26 매출 2,381억에 영업이익 33억(OPM 1.4%). OPM 2024년 9.0% → 2025년 0.6%. 3Q26 '흑자전환' 보도. <span class="badge b-ok">확인</span>/<span class="badge b-news">보도</span></div>
+  </div>
+  <h3>자회사별 성적표 (2026 상반기, 연결조정 전) <span class="small">— 헤더 클릭 정렬</span></h3>
+  <div class="tbl-wrap">
+    <table class="sortable-table">
+      <thead><tr><th>법인</th><th>역할</th><th class="n sortable" data-type="num">매출(억)</th><th class="n sortable" data-type="num">영업이익(억)</th><th class="n sortable" data-type="num">OPM</th><th class="n sortable" data-type="num">가동률</th></tr></thead>
+      <tbody>
+        <tr><td>MT Holding(모멘티브)</td><td>쿼츠 원재료·도가니</td><td class="n">2,381.1</td><td class="n">33.4</td><td class="n">1.4%</td><td class="n" data-v="-1">–</td></tr>
+        <tr><td>W.Q.T.(대만)</td><td>쿼츠웨어(TSMC·UMC)</td><td class="n">424.0</td><td class="n">50.6</td><td class="n">11.9%</td><td class="n">78.4%</td></tr>
+        <tr><td>W.Q.E.(독일)</td><td>쿼츠웨어(반도체·태양광)</td><td class="n">111.5</td><td class="n down">-9.4</td><td class="n down">-8.4%</td><td class="n">75.7%</td></tr>
+        <tr><td>W.Q.I.(미국)</td><td>쿼츠웨어(Intel·Micron)</td><td class="n">107.3</td><td class="n">1.3</td><td class="n">1.2%</td><td class="n">95.0%</td></tr>
+        <tr><td>Dep.Tech(미국)</td><td>세정(TI·Intel)</td><td class="n">62.6</td><td class="n down">-19.8</td><td class="n down">-31.6%</td><td class="n">75.0%</td></tr>
+        <tr><td>원익서안(중국)</td><td>세정</td><td class="n">46.1</td><td class="n down">-1.7</td><td class="n down">-3.6%</td><td class="n">113.8%</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="src"><span class="badge b-ok">확인</span> DART 반기 '자회사 영업실적'·'가동률'. OPM <span class="badge b-est">추정</span> 계산. → 연결 영업이익 527억(1H26) 중 상당 부분이 <b>한국 본사</b>(쿼츠웨어·세정)에서 나온다는 뜻 <span class="badge b-est">추정</span>.</p>
+</section>
+
+<!-- ============ 7. 밸류에이션 ============ -->
+<section id="sec-valuation">
+  <h2><span class="no">7</span>밸류에이션과 주가</h2>
+  <div class="grid2">
+    <div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>지표</th><th class="n">값</th><th>계산·근거</th></tr></thead>
+          <tbody>
+            <tr><td>PBR</td><td class="n">1.43배</td><td>29,000 / BPS 20,322 <span class="badge b-ok">확인</span></td></tr>
+            <tr><td>PER(최근 4Q 지배)</td><td class="n">약 13.2배</td><td>EPS ≈ 2,204원 <span class="badge b-est">추정</span></td></tr>
+            <tr><td>PER(2026E)</td><td class="n">약 10~11배</td><td>4Q 지배순익 150~200억 가정 <span class="badge b-est">추정</span></td></tr>
+            <tr><td>EV/최근4Q 영업이익</td><td class="n">약 13.8배</td><td>EV 1.59조(시총+순차입+비지배) <span class="badge b-est">추정</span></td></tr>
+            <tr><td>컨센 목표주가</td><td class="n">42,500원</td><td>2026-11-12 평균 <span class="badge b-news">보도</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="small">목표주가 흐름: 신한 45,000(3/11) → 60,000(5/12) → 45,000(11/11, 요약상 '유지' 표기 — <b>상충</b>), BNK 50,000(5/12) <span class="badge b-news">보도</span></p>
+    </div>
+    <div>
+      <h3 style="margin-top:0">동종업체 PER 비교 <span class="small">— 헤더 클릭 정렬</span></h3>
+      <div class="tbl-wrap">
+        <table class="sortable-table">
+          <thead><tr><th>회사</th><th>주력</th><th class="n sortable" data-type="num">PER 26F<br><span class="small">(6/1)</span></th><th class="n sortable" data-type="num">12MF PER<br><span class="small">(26-04)</span></th></tr></thead>
+          <tbody>
+            <tr class="hl"><td><b>원익QnC</b></td><td>쿼츠웨어·세정</td><td class="n">14.6</td><td class="n">14</td></tr>
+            <tr><td>티씨케이</td><td>SiC 링</td><td class="n">26.9</td><td class="n">22</td></tr>
+            <tr><td>하나머티리얼즈</td><td>Si·SiC 링</td><td class="n">16.6</td><td class="n">17</td></tr>
+            <tr><td>비씨엔씨</td><td>합성쿼츠 링</td><td class="n">31.5</td><td class="n" data-v="-1">–</td></tr>
+            <tr><td>코미코</td><td>세정·코팅</td><td class="n" data-v="-1">–</td><td class="n">20</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="src"><span class="badge b-news">보도</span> 한국IR협의회(FnGuide, 2026-06-01 종가) · 증권사 리포트 요약(2026-04). 기준일 달라 직접 비교 주의. 할인 이유: 쿼츠 OPM 10~20%로 SiC 업체(20~30%)보다 낮고 모멘티브 변동성.</p>
+    </div>
+  </div>
+  <h3>주가 (주간 종가, 원)</h3>
+  <div id="chart-price" class="chart tall"></div>
+  <p class="src"><span class="badge b-ok">확인</span> 네이버 주간 시세(2023-01~2026-11-13). 2026-06 장중 고점 45,400 → 11/6 주간 21,200(약 −50%) → 3Q 공시일 29,000. 하반기 급락 원인은 자료로 확인 못함.</p>
+</section>
+
+<!-- ============ 8. 체크포인트·리스크 ============ -->
+<section id="sec-risks">
+  <h2><span class="no">8</span>핵심 체크포인트 & 리스크</h2>
+  <div class="grid2">
+    <div>
+      <h3 style="margin-top:0">무엇을 보면 되나</h3>
+      <div class="check"><b>① 고객 팹 가동률·웨이퍼 투입</b> — 교체·세정의 원천. 신한: 주요 고객향 쿼츠 가동률 90~95% 추정(3/11) <span class="badge b-news">보도</span></div>
+      <div class="check"><b>② 구미 255억 증설</b> — 2026.5~12 투자 <span class="badge b-ok">확인</span>, 완공 시 매출 기준 약 450억 CAPA 추가·4Q26부터 기여 <span class="badge b-news">보도</span></div>
+      <div class="check"><b>③ 모멘티브 흑자 지속</b> — 매출 40%대 vs OPM 1%대 → 연결 이익률 최대 변수</div>
+      <div class="check"><b>④ 2027-05-15 SJL 공동매각요구권</b> — MT Holding 적격상장 실패 시 SJL이 일괄 매도 요구 가능, 원익QnC는 SJL에 <b>인수가+연 4.5% 복리</b> 우선 보장 <span class="badge b-ok">확인</span>. SJL 출자 5,300만달러 <span class="badge b-news">보도</span> → 단순 복리 시 약 7,500만달러 <span class="badge b-est">추정</span></div>
+      <div class="check"><b>⑤ 해외 증설</b> — 미국 세정 642억 증자(~2027.6) <span class="badge b-ok">확인</span>, 대만 W.Q.T. 약 23.4억 대만달러 증설 승인 <span class="badge b-news">보도</span></div>
+    </div>
+    <div>
+      <h3 style="margin-top:0">무엇이 위험한가</h3>
+      <div class="warn"><b>재무 레버리지</b> — 차입금 7,898억, 순차입 약 7,432억(2026-06) → 이자가 순이익을 깎음 <span class="badge b-ok">확인</span>/<span class="badge b-est">추정</span></div>
+      <div class="warn"><b>자회사 변동성</b> — 모멘티브는 차량·항공·산업용 세라믹 등 비반도체 경기에 민감, 2025년 손상차손으로 연결 순이익 10억 <span class="badge b-ok">확인</span></div>
+      <div class="warn"><b>소재 대체</b> — 식각 링이 SiC·합성쿼츠로 일부 대체 <span class="badge b-news">보도</span></div>
+      <div class="warn"><b>고객 집중</b> — 램리서치·TEL·삼성 3사 매출 70%+ (2022년 보도, 오래된 수치) <span class="badge b-news">보도</span></div>
+      <div class="warn"><b>메모리 다운턴</b> — 가동률 하락 시 교체·세정↓, 증설 초도 물량 급감</div>
+    </div>
+  </div>
+  <div class="tbl-wrap" style="margin-top:14px">
+    <table>
+      <thead><tr><th>재무 구조 (2026-06-30, 연결)</th><th class="n">금액</th><th>근거</th></tr></thead>
+      <tbody>
+        <tr><td>자산 / 부채 / 자본(비지배 876억 포함)</td><td class="n">1조 6,240억 / 1조 22억 / 6,218억</td><td><span class="badge b-ok">확인</span> DART 반기</td></tr>
+        <tr><td>단기 + 유동성장기 + 장기 차입금</td><td class="n">1,668 + 357 + 5,873 = 7,898억</td><td><span class="badge b-ok">확인</span></td></tr>
+        <tr><td>현금 / 순차입금</td><td class="n">466억 / 약 7,432억</td><td><span class="badge b-ok">확인</span> / <span class="badge b-est">추정</span></td></tr>
+        <tr><td>최대주주 및 특수관계인</td><td class="n">40.61% (원익홀딩스 21.00%, 이용한 19.35%)</td><td><span class="badge b-news">보도</span> 한국IR협의회(2026-03말)</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ============ SOURCES ============ -->
+<section id="sec-sources">
+  <h2><span class="no">9</span>출처 · 면책</h2>
+  <ul class="small">
+    <li>DART 원익QnC <a href="https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260814001542">2026 반기보고서</a> (사업의 내용·부문 매출·가동률·자회사 실적·차입금·공동매각요구권) <span class="badge b-ok">확인</span></li>
+    <li>DART <a href="https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20261113900562">3Q26 연결 잠정실적 (2026-11-13)</a>, <a href="https://dart.fss.or.kr/dsaf001/main.do?rcpNo=20260323001246">2025 사업보고서</a>, 2021·2023 사업보고서(OpenDART 주요계정), 국민연금 대량보유 5.39%(2026-10-02) <span class="badge b-ok">확인</span></li>
+    <li><a href="https://file.alphasquare.co.kr/media/pdfs/market-report/%EC%9B%90%EC%9D%B5QnC%EC%BF%BC%EC%B8%A020260604%ED%95%9C%EA%B5%ADIR%ED%98%91%EC%9D%98%ED%9A%8C.pdf">한국IR협의회 '쿼츠 수요의 구조적 성장' (2026-06-04)</a> <span class="badge b-news">보도</span></li>
+    <li><a href="https://m.etnews.com/20250718000078">전자신문 'MT홀딩 美 증시 상장 연기' (2025-07-20)</a> <span class="badge b-news">보도</span></li>
+    <li><a href="https://www.youtube.com/watch?v=Qe_ElzGJEqg">디일렉 '반도체용 쿼츠 두 자릿수 인상' (2024-01-01)</a> <span class="badge b-news">보도</span></li>
+    <li>신한투자증권(2026-03-11 '신한IT 어셈블', 2026-05-12, 2026-11-11), BNK투자증권(2026-05-12), 한화투자증권(2017-01-09 '장비와 소재, 다음은 공정부품이다'), SK증권(2016-09-22) <span class="badge b-news">보도</span></li>
+    <li><a href="https://m.stock.naver.com/domestic/stock/074600">네이버증권</a> 시세·컨센서스(2026-11-13) <span class="badge b-ok">확인</span></li>
+  </ul>
+  <p class="small"><b>면책</b>: 본 자료는 <span class="brand">쩜상리서치</span>가 교육 목적으로 정리한 것이며 특정 종목의 매수·매도 권유가 아닙니다. <span class="badge b-est">추정</span> 표시 수치는 단순 가정에 의한 계산으로 실제와 다를 수 있습니다. 투자 판단과 책임은 투자자 본인에게 있습니다.</p>
+</section>
+
+<footer>© 쩜상리서치 · 원익QnC 비즈니스 모델 교재 · 2026-11-13</footer>
+</div>
+
+<script>
+(function(){
+  var UP='#d64545', DOWN='#2f6fd6', NAVY='#1f3a5f', TEAL='#138a8a', AMBER='#c98a00', PURP='#6b5bb5', GRAY='#9aa5b4';
+  var base={textStyle:{fontFamily:'Pretendard, Apple SD Gothic Neo, Noto Sans KR, sans-serif',fontSize:14}};
+  var charts=[];
+  function mk(id,opt){var el=document.getElementById(id);if(!el)return;var c=echarts.init(el);c.setOption(Object.assign({},base,opt));charts.push(c);}
+  function dz(){return [{type:'inside'},{type:'slider',height:22,bottom:8}];}
+  var narrow=window.innerWidth<600;
+
+  // 1) segment donut
+  mk('chart-seg',{
+    tooltip:{trigger:'item',formatter:'{b}<br/>{c}억원 ({d}%)'},
+    legend:{bottom:0,left:'center',itemGap:10,textStyle:{fontSize:13}},
+    series:[{type:'pie',radius:['42%','70%'],center:['50%','44%'],
+      label:{formatter:'{b}\n{d}%',fontSize:13},
+      data:[{name:'쿼츠웨어',value:2364.0,itemStyle:{color:TEAL}},
+            {name:'쿼츠 원재료',value:2381.1,itemStyle:{color:NAVY}},
+            {name:'세정·코팅',value:630.6,itemStyle:{color:PURP}},
+            {name:'세라믹',value:158.2,itemStyle:{color:AMBER}},
+            {name:'기타',value:35.2,itemStyle:{color:GRAY}}]}]
+  });
+
+  // 2) segment stacked bar
+  mk('chart-segbar',{
+    tooltip:{trigger:'axis',axisPointer:{type:'shadow'},valueFormatter:function(v){return v==null?'-':v.toLocaleString()+'억';}},
+    legend:{top:0,textStyle:{fontSize:13}},
+    grid:{left:56,right:40,top:40,bottom:64},
+    xAxis:{type:'category',data:['2023','2024','2025','2026F']},
+    yAxis:{type:'value',axisLabel:{formatter:function(v){return v.toLocaleString();}}},
+    dataZoom:dz(),
+    series:[
+      {name:'쿼츠웨어',type:'bar',stack:'s',data:[2526,3092,3627,4617],itemStyle:{color:TEAL}},
+      {name:'쿼츠 원재료',type:'bar',stack:'s',data:[4438,4544,4376,4577],itemStyle:{color:NAVY}},
+      {name:'세정',type:'bar',stack:'s',data:[855,1011,1113,1185],itemStyle:{color:PURP}},
+      {name:'세라믹',type:'bar',stack:'s',data:[190,209,254,295],itemStyle:{color:AMBER}},
+      {name:'기타',type:'bar',stack:'s',data:[50,60,67,83],itemStyle:{color:GRAY}}
+    ]
+  });
+
+  // 3) utilization
+  mk('chart-util',{
+    tooltip:{trigger:'axis',axisPointer:{type:'shadow'},valueFormatter:function(v){return v+'%';}},
+    grid:{left:50,right:40,top:20,bottom:84},
+    xAxis:{type:'category',data:['쿼츠 한국','쿼츠 미국','쿼츠 대만','쿼츠 독일','세라믹 한국','세정 한국','세정 미국','세정 중국'],axisLabel:{interval:0,rotate:narrow?40:0,fontSize:13}},
+    yAxis:{type:'value',max:120,axisLabel:{formatter:'{value}%'}},
+    dataZoom:dz(),
+    series:[{type:'bar',barMaxWidth:46,label:{show:true,position:'top',formatter:'{c}%',fontSize:12},
+      data:[{value:91.3,itemStyle:{color:TEAL}},{value:95.0,itemStyle:{color:TEAL}},{value:78.4,itemStyle:{color:TEAL}},{value:75.7,itemStyle:{color:TEAL}},
+            {value:62.6,itemStyle:{color:AMBER}},{value:68.2,itemStyle:{color:PURP}},{value:75.0,itemStyle:{color:PURP}},{value:113.8,itemStyle:{color:PURP}}]}]
+  });
+
+  // 4) quarterly
+  var qx=['4Q24','1Q25','2Q25','3Q25','4Q25','1Q26','2Q26','3Q26'];
+  var qrev=[2170.9,2313.7,2329.1,2302.7,2490.9,2562.3,2718.6,2836.9];
+  var qop=[-81.3,190.8,140.9,80.0,184.4,218.6,308.7,444.3];
+  var qopm=qop.map(function(o,i){return +(o/qrev[i]*100).toFixed(1);});
+  mk('chart-q',{
+    tooltip:{trigger:'axis'},
+    legend:{top:0,textStyle:{fontSize:13}},
+    grid:{left:56,right:56,top:40,bottom:64},
+    xAxis:{type:'category',data:qx},
+    yAxis:[{type:'value',name:'억원',axisLabel:{formatter:function(v){return v.toLocaleString();}}},{type:'value',name:'OPM %',splitLine:{show:false}}],
+    dataZoom:dz(),
+    series:[
+      {name:'매출',type:'bar',data:qrev,itemStyle:{color:'#b9c7d8'},barMaxWidth:36},
+      {name:'영업이익',type:'bar',data:qop.map(function(v){return {value:v,itemStyle:{color:v>=0?UP:DOWN}};}),barMaxWidth:36},
+      {name:'OPM',type:'line',yAxisIndex:1,data:qopm,itemStyle:{color:NAVY},lineStyle:{width:3},symbolSize:7,label:{show:!narrow,formatter:'{c}%',fontSize:12}}
+    ]
+  });
+
+  // 5) annual
+  var ax=['2020','2021','2022','2023','2024','2025','2026E'];
+  var arev=[5256,6241,7832,8059,8915,9436,11018];
+  var aop=[412,868,1151,830,906,596,1427];
+  mk('chart-annual',{
+    tooltip:{trigger:'axis',valueFormatter:function(v){return v.toLocaleString()+'억';}},
+    legend:{top:0,textStyle:{fontSize:13}},
+    grid:{left:60,right:56,top:40,bottom:64},
+    xAxis:{type:'category',data:ax},
+    yAxis:[{type:'value',name:'매출',axisLabel:{formatter:function(v){return v.toLocaleString();}}},{type:'value',name:'영업이익',splitLine:{show:false}}],
+    dataZoom:dz(),
+    series:[
+      {name:'매출',type:'bar',data:arev.map(function(v,i){return {value:v,itemStyle:{color:i===6?'#d9e2ec':'#b9c7d8',borderColor:i===6?NAVY:'transparent',borderType:'dashed'}};}),barMaxWidth:40},
+      {name:'영업이익',type:'line',yAxisIndex:1,data:aop,itemStyle:{color:UP},lineStyle:{width:3},symbolSize:8,label:{show:true,fontSize:12}}
+    ]
+  });
+
+  // 6) price weekly
+  var P="230106,25600;230113,25550;230120,25200;230127,26050;230203,25800;230210,25350;230217,25100;230224,23900;230303,23300;230310,22200;230317,23250;230324,24250;230331,25300;230407,26050;230414,25800;230421,25050;230428,24300;230504,24050;230512,24900;230519,26650;230526,26350;230602,26050;230609,26450;230616,26950;230623,29000;230630,31050;230707,28750;230714,29450;230721,28900;230728,29900;230804,26750;230811,26850;230818,27450;230825,27700;230901,29150;230908,27450;230915,30450;230922,28200;230927,27750;231006,28750;231013,28650;231020,24500;231027,24050;231103,25550;231110,26200;231117,26800;231124,27550;231201,26100;231208,27100;231215,26950;231222,27000;231228,28700;"+
+  "240105,32200;240112,31600;240119,31450;240126,29600;240202,28250;240208,27900;240216,27300;240223,27450;240229,28050;240308,30600;240315,28800;240322,32000;240329,33600;240405,34100;240412,33150;240419,31500;240426,32100;240503,33850;240510,35050;240517,34750;240524,32900;240531,33600;240607,40950;240614,38400;240621,37150;240628,37800;240705,36800;240712,34850;240719,33800;240726,29600;240802,27900;240809,28300;240816,30150;240823,28250;240830,27150;240906,24450;240913,24200;240920,23450;240927,25850;241004,25300;241011,24800;241018,23100;241025,23350;241101,23700;241108,23050;241115,20300;241122,19790;241129,18480;241206,17710;241213,18440;241220,17820;241227,17870;"+
+  "250103,18310;250110,19660;250117,19810;250124,20100;250131,18700;250207,19230;250214,20850;250221,21450;250228,18410;250307,17670;250314,20300;250321,20950;250328,18670;250404,17690;250411,16650;250418,16640;250425,17740;250502,16960;250509,16930;250516,17300;250523,16190;250530,16500;250605,17390;250613,17400;250620,18130;250627,18150;250704,18530;250711,18150;250718,18450;250725,17770;250801,17310;250808,18710;250814,18380;250822,17190;250829,17810;250905,17410;250912,21350;250919,22900;250926,23500;251002,26100;251010,27000;251017,24650;251024,23950;251031,23450;251107,22550;251114,21000;251121,18620;251128,20300;251205,21500;251212,20300;251219,20100;251226,20500;"+
+  "260102,22800;260109,22400;260116,24350;260123,24500;260130,28500;260206,29000;260213,29000;260220,31500;260227,31150;260306,36850;260313,34200;260320,33900;260327,31850;260403,29550;260410,31500;260417,35700;260424,38950;260430,37850;260508,39800;260515,35450;260522,38000;260529,32900;260605,34350;260612,42150;260619,35650;260626,32600;260703,31200;260710,31150;260716,29000;260724,25850;260731,24700;260807,27700;260814,29150;260821,26300;260828,26150;260904,25750;260911,26200;260918,28150;260923,29450;261002,32650;261008,32350;261016,27750;261023,25850;261030,25200;261106,21200;261113,29000";
+  var pd=[],pv=[];
+  P.split(';').forEach(function(s){var a=s.split(',');pd.push('20'+a[0].slice(0,2)+'-'+a[0].slice(2,4)+'-'+a[0].slice(4,6));pv.push(+a[1]);});
+  mk('chart-price',{
+    tooltip:{trigger:'axis',valueFormatter:function(v){return v.toLocaleString()+'원';}},
+    grid:{left:60,right:48,top:30,bottom:70},
+    xAxis:{type:'category',data:pd,boundaryGap:false},
+    yAxis:{type:'value',scale:true,axisLabel:{formatter:function(v){return v.toLocaleString();}}},
+    dataZoom:[{type:'inside',start:40,end:100},{type:'slider',height:22,bottom:10,start:40,end:100}],
+    series:[{name:'주간 종가',type:'line',data:pv,showSymbol:false,lineStyle:{width:2.5,color:NAVY},
+      areaStyle:{color:'rgba(31,58,95,0.08)'},
+      markPoint:{symbolSize:46,label:{fontSize:11},data:[{coord:['2026-06-12',42150],value:'고점',itemStyle:{color:UP}},{coord:['2026-11-06',21200],value:'저점',itemStyle:{color:DOWN}},{coord:['2026-11-13',29000],value:'3Q',itemStyle:{color:TEAL}}]}}]
+  });
+
+  window.addEventListener('resize',function(){charts.forEach(function(c){c.resize();});});
+
+  // sortable tables: 1 click desc, 2 asc, 3 original
+  document.querySelectorAll('table.sortable-table').forEach(function(tb){
+    var body=tb.tBodies[0];
+    var orig=Array.prototype.slice.call(body.rows);
+    var ths=tb.tHead.rows[0].cells;
+    Array.prototype.forEach.call(ths,function(th,idx){
+      if(!th.classList.contains('sortable'))return;
+      var arr=document.createElement('span');arr.className='arr';arr.textContent='';th.appendChild(arr);
+      th.dataset.state='0';
+      th.addEventListener('click',function(){
+        var st=(+th.dataset.state+1)%3;
+        Array.prototype.forEach.call(ths,function(o){if(o!==th&&o.classList.contains('sortable')){o.dataset.state='0';o.querySelector('.arr').textContent='';}});
+        th.dataset.state=String(st);
+        var rows=orig.slice();
+        if(st>0){
+          rows.sort(function(a,b){
+            function val(r){var c=r.cells[idx];if(c.dataset.v!==undefined)return NaN;return parseFloat(c.textContent.replace(/[^0-9.\-]/g,''));}
+            var x=val(a),y=val(b);
+            if(isNaN(x)&&isNaN(y))return 0;if(isNaN(x))return 1;if(isNaN(y))return -1;
+            return st===1?y-x:x-y;
+          });
+        }
+        th.querySelector('.arr').textContent=st===1?'▼':st===2?'▲':'';
+        rows.forEach(function(r){body.appendChild(r);});
+      });
+    });
+  });
+})();
+</script>
+</body>
+</html>
