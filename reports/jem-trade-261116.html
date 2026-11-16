@@ -1,0 +1,161 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>일본전자재료 무역 대조</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
+<style>
+:root{--bg:#f3f5f8;--card:#fff;--ink:#1d2731;--mut:#6a7684;--line:#e2e7ed;--up:#d63b3b;--dn:#2f6fd6;--a1:#3f6bab;--a2:#e08a2c;--a3:#3aa57a;--hl:#fff6e0}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#11151a;--card:#1a2027;--ink:#e5eaf0;--mut:#93a0ad;--line:#2b333c;--up:#ff6b6b;--dn:#6aa5ff;--a1:#7ea6e0;--a2:#f0a24e;--a3:#5cc79a;--hl:#2e2a1c}}
+:root[data-theme=dark]{--bg:#11151a;--card:#1a2027;--ink:#e5eaf0;--mut:#93a0ad;--line:#2b333c;--up:#ff6b6b;--dn:#6aa5ff;--a1:#7ea6e0;--a2:#f0a24e;--a3:#5cc79a;--hl:#2e2a1c}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:'Apple SD Gothic Neo','Pretendard',sans-serif;line-height:1.6}
+.wrap{max-width:1080px;margin:0 auto;padding:18px 16px 60px}
+h1{font-size:1.5rem;margin:4px 0}h2{font-size:1.12rem;margin:30px 0 10px;border-left:4px solid var(--a1);padding-left:9px}
+.sub{color:var(--mut);font-size:.88rem}
+.hero{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:14px 0}
+.hero b.big{font-size:1.15rem}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin:12px 0}
+.k{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:11px 12px}.k b{display:block;font-size:1.35rem}.k span{color:var(--mut);font-size:.8rem}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin:10px 0}
+.chart{width:100%;height:340px}
+.tw{overflow-x:auto;background:var(--card);border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;font-size:.86rem;min-width:620px}
+th,td{padding:7px 14px 7px 10px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+th{color:var(--mut);font-weight:600;background:var(--card)}td:first-child,th:first-child{text-align:left;white-space:normal}
+td:last-child,th:last-child{padding-right:22px}td small{display:block;color:var(--mut);font-size:.74rem}
+tr.hl td{background:var(--hl)}
+.up{color:var(--up)}.dn{color:var(--dn)}ul{padding-left:20px;margin:6px 0}li{margin:3px 0}
+.flow{width:100%;height:auto;display:block}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:760px){.grid2{grid-template-columns:1fr}}
+.tag{display:inline-block;font-size:.74rem;border:1px solid var(--line);border-radius:10px;padding:0 8px;margin-left:6px;color:var(--mut)}
+</style></head><body><div class="wrap">
+<h1>일본전자재료(6855) · 공장 위치별 수출통계 vs 매출</h1>
+<div class="sub">프로브카드(MEMS 메모리용 8할) · 일본 세관별 수출 HS 9030.90 × 행선지 ↔ 회사 지역별 분기 매출(고객 소재지) · 2026-11-16 작성</div>
+
+<div class="hero">
+<b class="big">결론: 공장 인근 세관(간사이공항·후쿠오카/구마모토공항)의 아시아행 9030.90 수출이 아시아 매출을 가장 잘 따라갑니다.</b>
+<ul>
+<li>분기 YoY 상관 <b>0.55</b>(2019~, 27분기)이고, <b>2023년 이후로 좁히면 0.68</b>입니다. 일본 전국 수출로 대조하면 0.11에 그쳐서, <b>공장 위치로 세관을 거른 효과가 큽니다</b>.</li>
+<li>3Q26 공장 세관→아시아 수출 <b>82.9억엔(YoY +28%)</b>, 2Q26은 +44%였습니다. 같은 분기 아시아 매출은 +45%·+99%로 방향이 같습니다.</li>
+<li>북미·유럽·한국은 맞지 않습니다. 물량이 작고(북미 매출 분기 4~8억엔), 미국 프리몬트 법인 경유분과 다른 업체 물량이 섞이기 때문입니다.</li>
+<li>세관 수출에는 다른 회사 물량도 함께 잡힙니다. 아시아 매출은 공장 세관→아시아 수출의 0.5~0.75배 수준이라, 금액이 아니라 <b>방향(증감률) 지표</b>로 쓰는 게 맞습니다.</li>
+</ul></div>
+
+<div class="kpis">
+<div class="k"><b>108.5억엔</b><span>3Q26 매출 (YoY +58%) · 영업이익 30.1억엔(OPM 28%)</span></div>
+<div class="k"><b>394억엔</b><span>FY26(~27.3) 매출 가이던스 · 5월 330 → 8월 364 → 11월 394</span></div>
+<div class="k"><b>0.55 → 0.68</b><span>아시아 매출 ↔ 공장 세관→아시아 수출 YoY 상관 (전체 → 2023~)</span></div>
+<div class="k"><b>51%</b><span>FY25 해외 매출 비중 · 마이크론(일본+대만) 31%</span></div>
+</div>
+
+<h2>① 공장 → 세관 → 행선지 매핑</h2>
+<div class="card">
+<svg class="flow" viewBox="0 0 900 330" role="img" aria-label="공장-세관-행선지 흐름도">
+<style>.n{fill:var(--card);stroke:var(--line);stroke-width:1.5}.t{fill:var(--ink);font-size:13px}.s{fill:var(--mut);font-size:11px}.l{fill:none;stroke-width:2.5;opacity:.75}</style>
+<text x="20" y="22" class="s">생산 공장 (일본 내 유형자산 90%)</text><text x="335" y="22" class="s">수출 신고 세관 (9030.90, 2025년)</text><text x="650" y="22" class="s">고객 지역 (FY25 매출)</text>
+<rect x="15" y="40" width="250" height="62" rx="8" class="n"/><text x="27" y="62" class="t">아마가사키 본사공장 (효고)</text><text x="27" y="80" class="s">MEMS 프로브(전공정)·R&amp;D · 218명</text><text x="27" y="95" class="s">2028.8 신공장 (구마모토 4공장의 1.3배)</text>
+<rect x="15" y="115" width="250" height="50" rx="8" class="n"/><text x="27" y="136" class="t">산다 공장 (효고)</text><text x="27" y="154" class="s">ST 배선기판(전공정) · 99명</text>
+<rect x="15" y="180" width="250" height="62" rx="8" class="n"/><text x="27" y="202" class="t">구마모토 사업소 (기쿠치시)</text><text x="27" y="220" class="s">M타입 조립(후공정) · 최대 거점 474명</text><text x="27" y="235" class="s">4공장 2024.10 준공</text>
+<rect x="15" y="257" width="250" height="58" rx="8" class="n"/><text x="27" y="278" class="t">해외 법인 (판매·수리·부품)</text><text x="27" y="296" class="s">대만 竹北 · 상하이 · 미국 프리몬트</text><text x="27" y="310" class="s">태국·선전(부품) · 프랑스(판매)</text>
+<rect x="330" y="55" width="260" height="70" rx="8" class="n"/><text x="342" y="77" class="t">간사이공항 세관 · 193.6억엔</text><text x="342" y="95" class="s">중국 62.8 · 대만 52.0 · 미국 18.9 · 필리핀 14.4</text><text x="342" y="111" class="s">+ 아마가사키 6.1 · 고베 4.4 세관</text>
+<rect x="330" y="160" width="260" height="70" rx="8" class="n"/><text x="342" y="182" class="t">후쿠오카공항 · 구마모토공항</text><text x="342" y="200" class="s">2025년 후쿠오카 74.2억엔(대만 41.4·중국 24.3)</text><text x="342" y="216" class="s">2026년부터 구마모토공항(대만) 비중 확대</text>
+<rect x="645" y="40" width="240" height="56" rx="8" class="n"/><text x="657" y="62" class="t">일본 143억엔 (49%)</text><text x="657" y="80" class="s">마이크론 히로시마 · 키옥시아 JV</text>
+<rect x="645" y="108" width="240" height="70" rx="8" class="n"/><text x="657" y="130" class="t">아시아 130억엔 (44%)</text><text x="657" y="148" class="s">대만 67(마이크론 대만) · 중국 41</text><text x="657" y="164" class="s">한국 등 나머지 22</text>
+<rect x="645" y="190" width="240" height="50" rx="8" class="n"/><text x="657" y="212" class="t">북미 15.7억엔 (5%)</text><text x="657" y="229" class="s">JEM America(프리몬트) 경유</text>
+<rect x="645" y="252" width="240" height="46" rx="8" class="n"/><text x="657" y="273" class="t">유럽 4.9억엔 (2%)</text><text x="657" y="289" class="s">JEM Europe(그르노블)</text>
+<path class="l" stroke="var(--a1)" d="M265 71 C300 71,300 90,330 90"/><path class="l" stroke="var(--a1)" d="M265 140 C300 140,300 100,330 100"/>
+<path class="l" stroke="var(--a2)" d="M265 211 C300 211,300 195,330 195"/>
+<path class="l" stroke="var(--a1)" d="M590 90 C620 90,620 143,645 143"/><path class="l" stroke="var(--a2)" d="M590 195 C620 195,620 150,645 150"/>
+<path class="l" stroke="var(--a1)" d="M590 105 C620 105,620 215,645 215"/><path class="l" stroke="var(--mut)" stroke-dasharray="4 4" d="M265 211 C430 260,560 60,645 68"/>
+<text x="400" y="300" class="s">점선: 국내 고객(수출 통계에 안 잡힘)</text>
+</svg>
+<div class="sub">세관 수출액은 같은 세관을 쓰는 다른 업체(검사장비 부품 등) 물량을 포함합니다. 국내 매출(49%)은 수출 통계로 추적할 수 없습니다.</div>
+</div>
+
+<h2>② 회사 실적: 분기 매출·지역 구성</h2>
+<div class="card"><div id="c_fin" class="chart"></div><div class="sub">백만엔 · 막대=지역별 매출(고객 소재지), 선=영업이익 · 드래그·휠로 기간 확대, 아래 슬라이더로 기간 조정</div></div>
+
+<h2>③ 핵심 대조: 아시아 매출 vs 공장 세관→아시아 수출</h2>
+<div class="grid2">
+<div class="card"><b>금액 (백만엔)</b><div id="c_lv" class="chart"></div></div>
+<div class="card"><b>YoY (%)</b><div id="c_yy" class="chart"></div></div>
+</div>
+<div class="card"><b>해외 매출 합계 vs 공장 세관 수출(전 행선지)</b><div id="c_os" class="chart"></div></div>
+
+<h2>④ 국가·지역군별 상관 (분기, 무역은 같은 분기·±1분기 시차 시험)</h2>
+<div class="tw"><table id="t_pairs"><thead><tr><th>대조 쌍</th><th>금액 r</th><th>YoY r (동분기)</th><th>YoY r (무역 1Q 선행)</th><th>YoY r (무역 1Q 후행)</th><th>n</th></tr></thead><tbody></tbody></table></div>
+<div class="sub">해외 자회사 결산이 12월이라 연결 분기에 자회사 실적이 3개월 늦게 들어갑니다. 그래서 무역이 1분기 앞서는 경우도 시험했지만, 직판(마이크론 대만 등)이 커서 같은 분기가 가장 잘 맞습니다. r 0.5 이상만 의미 있게 봅니다(n≈27).</div>
+
+<h2>⑤ 연간 국가별: 有報 각주(10% 초과국) vs 공장 세관 수출</h2>
+<div class="grid2">
+<div class="card"><div id="c_ann" class="chart"></div></div>
+<div class="card"><b>읽는 법</b><ul>
+<li>대만은 FY23~25 매출 22.7 → 55.5 → 66.8억엔이고, 공장 세관→대만 수출은 46.6 → 99.6 → 90.0억엔입니다. <b>FY24 급증은 함께 잡히고</b>, 매출÷수출 비율이 0.49 → 0.56 → 0.74로 올라가 회사 몫이 커지고 있습니다(마이크론 대만향 MEMS 카드).</li>
+<li>중국은 FY22 매출 급감(45.4 → 24.6억엔)이 수출(102 → 109억엔)에 안 보입니다. 같은 세관의 중국행 장비 부품 물량이 커서 회사 신호가 묻힙니다.</li>
+<li>회계연도는 4월~3월이라 수출도 같은 12개월로 합산했습니다.</li>
+</ul></div>
+</div>
+
+<h2>⑥ 대조군: 왜 다른 통계는 안 맞나</h2>
+<div class="card"><ul>
+<li><b>일본 전국 → 아시아</b>(YoY r 0.11): 나리타 1,437억엔 등 어드반테스트·도쿄일렉트론류 검사장비 부품이 압도적이라 회사 신호가 묻힙니다.</li>
+<li><b>한국 수입(일본산 HSK 9030.90-1000)</b>(YoY r 0.27): 2025년 3.07억달러로 2.4배가 됐지만, 이는 SK하이닉스 HBM용 MJC(마이크로닉스재팬) 물량이 중심입니다. 일본전자재료는 FY19 이후 한국이 10% 미만이라 각주에서 빠졌습니다. 오사카 세관 2026년 1~9월 한국행(165억엔, 2025년 연간 40억엔) 급증도 같은 맥락으로 봅니다.</li>
+<li><b>미국 수입(일본산 HTS 9030.90.66)</b>(YoY r 0.04): 2025년 3,600만달러로 북미 매출(15.7억엔)보다 훨씬 크고, 대부분 샌프란시스코 세관구로 들어옵니다. 프리몬트 법인 경유분이 여기 섞이지만 다른 업체 비중이 커서 추적이 안 됩니다.</li>
+</ul></div>
+
+<h2>⑦ 제품 구성과 수요</h2>
+<div class="grid2">
+<div class="card"><div id="c_split" class="chart" style="height:280px"></div></div>
+<div class="card"><ul>
+<li>M타입(MEMS, DRAM·NAND·HBM 메모리용) 비중은 2024년 50%에서 <b>80% 안팎</b>으로 올라왔습니다. M타입 전 공정(아마가사키·산다·구마모토)이 일본에 있어, 해외 고객 물량은 일본에서 수출됩니다.</li>
+<li>FY25 주요 고객: 마이크론 일본 45.7억 · 마이크론 대만 45.0억 · Flash Forward(키옥시아·샌디스크) 40.5억엔.</li>
+<li>회사가 보는 프로브카드 시장은 2025년 약 4,700억엔에서 2030년 7,000억엔 이상입니다.</li>
+<li>가이던스 394억엔은 하반기 189억엔을 뜻합니다(상반기 205억엔). 하반기 환율 가정이 150엔(상반기 실적 약 160엔)이라 보수적입니다.</li>
+</ul></div>
+</div>
+
+<h2>⑧ 4Q26 체크 포인트</h2>
+<div class="card"><ul>
+<li>일본 10월 세관별 9자리 통계(確報)는 11월 말, 11월분은 12월 말에 나옵니다. <b>공장 세관→아시아 10~12월 합계가 YoY +20% 이상이면</b> 아시아 매출이 하반기 가이던스 기준선(분기 약 95억엔 중 해외 절반) 위에서 유지되는 쪽으로 봅니다.</li>
+<li>구마모토공항 세관이 2026년부터 대만행으로 새로 잡히기 시작했습니다(1~9월 18.6억엔). 후쿠오카공항 물량이 넘어간 것으로 보이며, 규슈 합산으로 봐야 끊기지 않습니다.</li>
+<li>간사이공항→대만은 금액 상관이 0.78로 가장 높습니다(마이크론 대만향 직송 경로로 추정).</li>
+</ul></div>
+
+<h2>⑨ 한계</h2>
+<div class="card"><ul>
+<li>HS 9030.90은 '측정·검사기기 부분품' 전체입니다. 프로브카드 전용 코드가 없어 다른 업체 물량이 섞입니다.</li>
+<li>세관은 신고지 기준이라, 구마모토 조립품이 간사이공항으로 나가거나 그 반대일 수 있습니다. 그래서 공장 세관을 묶어서 봤습니다.</li>
+<li>지역 매출은 고객 소재지 기준이고, 자회사 실적은 3개월 늦게 연결됩니다.</li>
+<li>세관별 데이터는 2019년부터 받았습니다. 2026년 1~9월분은 確報 값입니다.</li>
+</ul></div>
+<p class="sub">출처: 일본전자재료 결산단신·결산보충자료·유가증권보고서(jem-net.co.jp) · e-Stat 普通貿易統計 税関別品別国別表(輸出, 9030.90-000) · US Census intltrade(HTS 9030.90.66, 일본산) · 관세청 품목별 국가별 수출입(HSK 9030.90-1000)</p>
+</div>
+<script>
+const D={"q": ["2019Q1", "2019Q2", "2019Q3", "2019Q4", "2020Q1", "2020Q2", "2020Q3", "2020Q4", "2021Q1", "2021Q2", "2021Q3", "2021Q4", "2022Q1", "2022Q2", "2022Q3", "2022Q4", "2023Q1", "2023Q2", "2023Q3", "2023Q4", "2024Q1", "2024Q2", "2024Q3", "2024Q4", "2025Q1", "2025Q2", "2025Q3", "2025Q4", "2026Q1", "2026Q2", "2026Q3"], "fin": [["2018Q2", 3418, 492, 2083, 1105, 174, 55], ["2018Q3", 4037, 192, 2393, 1345, 233, 63], ["2018Q4", 3387, 373, 2057, 1062, 204, 63], ["2019Q1", 3574, -52, 1907, 1407, 192, 66], ["2019Q2", 3191, 121, 1832, 1092, 202, 63], ["2019Q3", 3628, 340, 2200, 1026, 339, 61], ["2019Q4", 4429, 375, 1897, 2322, 146, 63], ["2020Q1", 4421, 176, 2510, 1635, 201, 73], ["2020Q2", 4188, 804, 2951, 1054, 141, 40], ["2020Q3", 4002, 415, 2182, 1486, 272, 60], ["2020Q4", 5057, 696, 2512, 2202, 285, 56], ["2021Q1", 5274, 748, 3290, 1759, 171, 51], ["2021Q2", 4789, 1142, 3009, 1439, 278, 62], ["2021Q3", 6437, 1869, 3912, 2193, 253, 76], ["2021Q4", 6159, 1183, 3307, 2623, 149, 78], ["2022Q1", 6214, 759, 3262, 2648, 210, 92], ["2022Q2", 4292, 507, 2936, 1033, 255, 66], ["2022Q3", 5270, 733, 2330, 2535, 329, 74], ["2022Q4", 5809, 1146, 3537, 1908, 268, 94], ["2023Q1", 5410, 819, 3584, 1506, 236, 83], ["2023Q2", 4137, 258, 2561, 1224, 255, 96], ["2023Q3", 3864, -238, 2042, 1433, 257, 129], ["2023Q4", 4007, 3, 1538, 2085, 240, 142], ["2024Q1", 5453, 847, 3682, 1521, 147, 101], ["2024Q2", 4992, 1180, 3187, 1443, 256, 105], ["2024Q3", 4849, 870, 2430, 2068, 231, 118], ["2024Q4", 4897, 782, 1954, 2661, 200, 82], ["2025Q1", 9091, 1753, 4287, 4302, 355, 145], ["2025Q2", 5437, 1475, 2759, 2218, 348, 110], ["2025Q3", 6885, 1182, 3235, 3067, 477, 105], ["2025Q4", 8353, 2371, 4658, 3275, 319, 98], ["2026Q1", 8691, 2221, 3638, 4447, 426, 178], ["2026Q2", 9641, 3094, 4558, 4411, 531, 140], ["2026Q3", 10853, 3008, 5385, 4451, 842, 174]], "as_lv": [["2019Q1", 1407, 3093.8], ["2019Q2", 1092, 3519.9], ["2019Q3", 1026, 4204.7], ["2019Q4", 2322, 3692.9], ["2020Q1", 1635, 3605.6], ["2020Q2", 1054, 4524.0], ["2020Q3", 1486, 5264.5], ["2020Q4", 2202, 4331.4], ["2021Q1", 1759, 3963.3], ["2021Q2", 1439, 5111.7], ["2021Q3", 2193, 6021.0], ["2021Q4", 2623, 6177.1], ["2022Q1", 2648, 6353.9], ["2022Q2", 1033, 6412.8], ["2022Q3", 2535, 6797.9], ["2022Q4", 1908, 5821.5], ["2023Q1", 1506, 4962.4], ["2023Q2", 1224, 5586.2], ["2023Q3", 1433, 4560.6], ["2023Q4", 2085, 4069.7], ["2024Q1", 1521, 4013.8], ["2024Q2", 1443, 5664.3], ["2024Q3", 2068, 6025.5], ["2024Q4", 2661, 7056.4], ["2025Q1", 4302, 5945.2], ["2025Q2", 2218, 6284.5], ["2025Q3", 3067, 6478.9], ["2025Q4", 3275, 5855.1], ["2026Q1", 4447, 5865.6], ["2026Q2", 4411, 9018.3], ["2026Q3", 4451, 8294.2]], "as_yy": [["2020Q1", 16.2, 16.5], ["2020Q2", -3.5, 28.5], ["2020Q3", 44.8, 25.2], ["2020Q4", -5.2, 17.3], ["2021Q1", 7.6, 9.9], ["2021Q2", 36.5, 13.0], ["2021Q3", 47.6, 14.4], ["2021Q4", 19.1, 42.6], ["2022Q1", 50.5, 60.3], ["2022Q2", -28.2, 25.5], ["2022Q3", 15.6, 12.9], ["2022Q4", -27.3, -5.8], ["2023Q1", -43.1, -21.9], ["2023Q2", 18.5, -12.9], ["2023Q3", -43.5, -32.9], ["2023Q4", 9.3, -30.1], ["2024Q1", 1.0, -19.1], ["2024Q2", 17.9, 1.4], ["2024Q3", 44.3, 32.1], ["2024Q4", 27.6, 73.4], ["2025Q1", 182.8, 48.1], ["2025Q2", 53.7, 10.9], ["2025Q3", 48.3, 7.5], ["2025Q4", 23.1, -17.0], ["2026Q1", 3.4, -1.3], ["2026Q2", 98.9, 43.5], ["2026Q3", 45.1, 28.0]], "os_lv": [["2019Q1", 1665, 4170.1], ["2019Q2", 1357, 4062.4], ["2019Q3", 1426, 4787.2], ["2019Q4", 2531, 4540.9], ["2020Q1", 1909, 4486.3], ["2020Q2", 1235, 5332.9], ["2020Q3", 1818, 6345.1], ["2020Q4", 2543, 7084.5], ["2021Q1", 1981, 4962.2], ["2021Q2", 1779, 6064.1], ["2021Q3", 2522, 7005.8], ["2021Q4", 2850, 7115.1], ["2022Q1", 2950, 7345.6], ["2022Q2", 1354, 7427.7], ["2022Q3", 2938, 7669.8], ["2022Q4", 2270, 7037.2], ["2023Q1", 1825, 5895.1], ["2023Q2", 1575, 6340.5], ["2023Q3", 1819, 5363.5], ["2023Q4", 2467, 4736.3], ["2024Q1", 1769, 4683.0], ["2024Q2", 1804, 6387.0], ["2024Q3", 2417, 6910.8], ["2024Q4", 2943, 7719.7], ["2025Q1", 4802, 6797.5], ["2025Q2", 2676, 7119.9], ["2025Q3", 3649, 7219.4], ["2025Q4", 3692, 6686.5], ["2026Q1", 5051, 6659.0], ["2026Q2", 5082, 9892.1], ["2026Q3", 5467, 9059.7]], "pairs": [["해외매출 ↔ 공장 인근 세관 수출(전 행선지)", "e-Stat 税関別 輸出 9030.90 · 간사이공항+아마가사키+고베+후쿠오카공항+구마모토", 0.666, 0.471, 0.368, 0.068, 27], ["아시아 매출 ↔ 공장 세관 → 아시아", "e-Stat 税関別 輸出 9030.90 → 아시아", 0.656, 0.547, 0.438, 0.16, 27], ["아시아 매출 ↔ 공장 세관 → 대만+중국", "→ 대만+중국·홍콩", 0.611, 0.526, 0.401, 0.164, 27], ["아시아 매출 ↔ 간사이공항 → 대만", "간사이공항 → 대만", 0.779, 0.423, 0.16, 0.372, 27], ["아시아 매출 ↔ 규슈(후쿠오카·구마모토공항) → 아시아", "후쿠오카공항+구마모토공항 → 아시아", 0.252, 0.341, 0.546, 0.012, 27], ["북미 매출 ↔ 공장 세관 → 미국", "→ 미국·캐나다", -0.057, 0.276, -0.035, -0.237, 27], ["북미 매출 ↔ 미국 수입(일본산 9030.90.66)", "US Census HTS 9030.90.66 원산지 일본", 0.332, 0.037, 0.106, 0.13, 30], ["북미 매출 ↔ 미국 수입 SF 세관구(프리몬트)", "US Census 9030.90.66 일본산 · San Francisco 세관구", 0.523, -0.014, 0.12, -0.1, 15], ["유럽 매출 ↔ 공장 세관 → 유럽", "→ 유럽", -0.162, 0.103, 0.285, -0.449, 27], ["아시아 매출 ↔ 일본 전국 → 아시아(대조군)", "e-Stat 전 세관 → 아시아 (어드반테스트 등 포함)", 0.765, 0.108, 0.265, -0.151, 27], ["전체 매출 ↔ 한국 수입(일본산 9030.90-1000, 대조군)", "관세청 HSK 9030.90-1000 원산지 일본", 0.698, 0.273, 0.123, 0.117, 27]], "ann": [["FY2019", null, 3299.0, null, 6106.0], ["FY2020", null, 4103.0, 2486, 7697.0], ["FY2021", null, 7204.0, 4538, 10234.0], ["FY2022", null, 6659.0, 2463, 10871.0], ["FY2023", 2270, 4656.0, 1918, 9437.0], ["FY2024", 5549, 9960.0, 3265, 8769.0], ["FY2025", 6678, 8995.0, 4107, 9580.0]], "split": [{"q": "FY2024 Q1", "cal": "2024Q2", "M": 50, "V": 41, "C": 9}, {"q": "FY2024 Q2", "cal": "2024Q3", "M": 72, "V": 17, "C": 11}, {"q": "FY2024 Q3", "cal": "2024Q4", "M": 69, "V": 22, "C": 9}, {"q": "FY2024 Q4", "cal": "2025Q1", "M": 78, "V": 15, "C": 7}, {"q": "FY2025 Q1", "cal": "2025Q2", "M": 80, "V": 8, "C": 12}, {"q": "FY2025 Q2", "cal": "2025Q3", "M": 83, "V": 10, "C": 7}, {"q": "FY2025 Q3", "cal": "2025Q4", "M": 83, "V": 10, "C": 7}, {"q": "FY2025 Q4", "cal": "2026Q1", "M": 77, "V": 16, "C": 7}, {"q": "FY2026 Q1", "cal": "2026Q2", "M": 83, "V": 12, "C": 5}, {"q": "FY2026 Q2", "cal": "2026Q3", "M": 82, "V": 10, "C": 8}], "cust": {"関西空港": [["中華人民共和国", 6277], ["台湾", 5203], ["アメリカ合衆国", 1887], ["フィリピン", 1438], ["大韓民国", 896], ["シンガポール", 854]], "尼崎": [["中華人民共和国", 308], ["アメリカ合衆国", 170], ["メキシコ", 134], ["台湾", 0], ["マレーシア", 0]], "神戸": [["中華人民共和国", 134], ["アメリカ合衆国", 122], ["台湾", 47], ["インドネシア", 39], ["マレーシア", 38], ["タイ", 15]], "福岡空港": [["台湾", 4141], ["中華人民共和国", 2431], ["大韓民国", 584], ["タイ", 244], ["アメリカ合衆国", 14], ["マレーシア", 1]], "熊本空港": [["台湾", 0]], "熊本": []}};
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const C={ink:css('--ink'),mut:css('--mut'),line:css('--line'),a1:css('--a1'),a2:css('--a2'),a3:css('--a3'),up:css('--up'),dn:css('--dn')};
+const base=()=>({textStyle:{fontFamily:'Apple SD Gothic Neo, sans-serif',color:C.ink},grid:{left:52,right:58,top:36,bottom:62},
+ tooltip:{trigger:'axis'},legend:{top:0,textStyle:{color:C.ink,fontSize:11}},
+ dataZoom:[{type:'inside'},{type:'slider',height:16,bottom:8}],toolbox:{right:4,top:18,feature:{dataZoom:{yAxisIndex:'none'},restore:{}},iconStyle:{borderColor:C.mut}}});
+const ax=(o={})=>Object.assign({type:'value',axisLabel:{color:C.mut},splitLine:{lineStyle:{color:C.line}}},o);
+const cat=d=>({type:'category',data:d,axisLabel:{color:C.mut}});
+const mk=(id,opt)=>{const c=echarts.init(document.getElementById(id));c.setOption(opt);addEventListener('resize',()=>c.resize());return c};
+// ② 실적
+mk('c_fin',Object.assign(base(),{xAxis:cat(D.fin.map(r=>r[0])),yAxis:[ax({name:'매출'}),ax({name:'영업이익',splitLine:{show:false}})],
+ series:[['일본',3,'#8a96a8'],['아시아',4,C.a1],['북미',5,C.a2],['유럽',6,C.a3]].map(([n,i,c])=>({name:n,type:'bar',stack:'r',data:D.fin.map(r=>r[i]),itemStyle:{color:c}}))
+ .concat([{name:'영업이익',type:'line',yAxisIndex:1,data:D.fin.map(r=>r[2]),itemStyle:{color:C.up},smooth:true}])}));
+// ③ 금액
+mk('c_lv',Object.assign(base(),{xAxis:cat(D.as_lv.map(r=>r[0])),yAxis:[ax({name:'아시아 매출'}),ax({name:'세관 수출',splitLine:{show:false}})],
+ series:[{name:'아시아 매출',type:'bar',data:D.as_lv.map(r=>r[1]),itemStyle:{color:C.a1}},{name:'공장 세관→아시아',type:'line',yAxisIndex:1,data:D.as_lv.map(r=>r[2]),itemStyle:{color:C.a2},smooth:true}]}));
+mk('c_yy',Object.assign(base(),{xAxis:cat(D.as_yy.map(r=>r[0])),yAxis:ax({axisLabel:{color:C.mut,formatter:'{value}%'}}),
+ series:[{name:'아시아 매출 YoY',type:'line',data:D.as_yy.map(r=>r[1]),itemStyle:{color:C.a1},smooth:true},{name:'세관→아시아 YoY',type:'line',data:D.as_yy.map(r=>r[2]),itemStyle:{color:C.a2},smooth:true}]}));
+mk('c_os',Object.assign(base(),{xAxis:cat(D.os_lv.map(r=>r[0])),yAxis:[ax({name:'해외 매출'}),ax({name:'세관 수출',splitLine:{show:false}})],
+ series:[{name:'해외 매출(아시아+북미+유럽)',type:'bar',data:D.os_lv.map(r=>r[1]),itemStyle:{color:C.a1}},{name:'공장 세관 수출(전 행선지)',type:'line',yAxisIndex:1,data:D.os_lv.map(r=>r[2]),itemStyle:{color:C.a2},smooth:true}]}));
+// ⑤ 연간
+mk('c_ann',Object.assign(base(),{dataZoom:[],xAxis:cat(D.ann.map(r=>r[0])),yAxis:ax({name:'백만엔'}),
+ series:[{name:'대만 매출',type:'bar',data:D.ann.map(r=>r[1]),itemStyle:{color:C.a1}},{name:'세관→대만',type:'bar',data:D.ann.map(r=>r[2]),itemStyle:{color:C.a1,opacity:.4}},
+ {name:'중국 매출',type:'bar',data:D.ann.map(r=>r[3]),itemStyle:{color:C.a2}},{name:'세관→중국',type:'bar',data:D.ann.map(r=>r[4]),itemStyle:{color:C.a2,opacity:.4}}]}));
+// ⑦ 구성
+mk('c_split',Object.assign(base(),{dataZoom:[],xAxis:cat(D.split.map(r=>r.cal)),yAxis:ax({max:100,axisLabel:{color:C.mut,formatter:'{value}%'}}),
+ series:[['M타입(MEMS)','M',C.a1],['수직형','V',C.a2],['캔틸레버','C',C.a3]].map(([n,k,c])=>({name:n,type:'bar',stack:'s',data:D.split.map(r=>r[k]),itemStyle:{color:c}}))}));
+// ④ 표
+const f=v=>v==null?'–':`<span class="${v>=0.5?'up':v<0?'dn':''}">${v.toFixed(2)}</span>`;
+document.querySelector('#t_pairs tbody').innerHTML=D.pairs.map(r=>`<tr class="${(r[3]||0)>=0.5?'hl':''}"><td>${r[0]}<small>${r[1]}</small></td><td>${f(r[2])}</td><td>${f(r[3])}</td><td>${f(r[4])}</td><td>${f(r[5])}</td><td>${r[6]}</td></tr>`).join('');
+</script></body></html>
