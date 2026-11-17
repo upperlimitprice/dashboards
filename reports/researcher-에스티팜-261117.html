@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>에스티팜 — 리써처TV 형식 팩트시트 | 쩜상리서치</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
+<style>
+:root{--up:#d62828;--down:#1d4ed8;--ink:#1f2937;--sub:#475569;--line:#e2e8f0;--teal:#0f766e;--bg:#f5f7fa;--card:#fff;--view:#6d28d9}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;overflow-x:hidden}
+body{background:var(--bg);color:var(--ink);font:17px/1.6 -apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",sans-serif;word-break:keep-all;overflow-wrap:anywhere}
+.wrap{max-width:1200px;margin:0 auto;padding:12px}
+section{background:var(--card);border-radius:16px;padding:26px 28px;margin:16px 0;box-shadow:0 1px 3px rgba(15,23,42,.08)}
+h1{font-size:34px;line-height:1.3;margin:0 0 8px}
+h2{font-size:26px;margin:0 0 6px}
+h3{font-size:19px;margin:18px 0 8px}
+p{margin:6px 0}
+.lead{font-size:20px;font-weight:700;color:#0f172a;background:#f1f5f9;border-left:5px solid var(--teal);padding:10px 14px;border-radius:8px;margin:12px 0 16px}
+.kicker{color:var(--sub);font-size:16px}
+.up{color:var(--up);font-weight:700}.down{color:var(--down);font-weight:700}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));gap:12px;margin:10px 0}
+.kpi{border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:#fcfdfe}
+.kpi .l{font-size:16px;color:var(--sub)}
+.kpi .v{font-size:28px;font-weight:800;line-height:1.25;margin:2px 0}
+.kpi .d{font-size:16px}
+.src{font-size:16px;color:#64748b}
+.g{display:inline-block;font-size:13px;font-weight:700;padding:1px 7px;border-radius:999px;margin-left:5px;vertical-align:1px;white-space:nowrap}
+.g.ok{background:#dcfce7;color:#166534}.g.news{background:#fef3c7;color:#92400e}.g.est{background:#e5e7eb;color:#374151}
+.view{border:1.5px solid #ddd6fe;background:#f5f3ff;border-radius:12px;padding:10px 14px;margin:10px 0}
+.view .tag{display:inline-block;background:var(--view);color:#fff;font-size:14px;font-weight:700;padding:2px 10px;border-radius:999px;margin-right:6px}
+.result{border-left:4px solid #94a3b8;background:#f8fafc;padding:8px 12px;border-radius:6px;margin:8px 0}
+.result b.rt{color:#334155}
+.tbox{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--line);border-radius:10px;margin:10px 0}
+table{border-collapse:collapse;width:100%;min-width:760px;font-size:16px}
+th,td{padding:10px 14px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{background:#f1f5f9;white-space:nowrap;font-weight:700}
+td:last-child,th:last-child{padding-right:22px}
+td.n{text-align:right;white-space:nowrap}
+th.sort{cursor:pointer;user-select:none}
+th.sort .ar{font-size:.8em;color:inherit;margin-left:4px}
+.chart{width:100%;height:320px}
+.cbox{border:1px solid var(--line);border-radius:12px;padding:10px 10px 4px}
+.cbox h3{margin:2px 4px 2px}
+.cbox .src{margin:0 4px 6px}
+ul.facts{margin:6px 0;padding-left:20px}ul.facts li{margin:4px 0}
+.card{border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.card h3{margin:0 0 6px;font-size:18px}
+.card p{font-size:16px}
+figure{margin:14px 0;border:1px solid var(--line);border-radius:12px;padding:14px;background:#fbfcfe}
+figure svg{width:100%;height:auto;display:block}
+figcaption{font-weight:700;font-size:18px;margin-bottom:8px}
+ol.how{margin:10px 0 0;padding-left:0;list-style:none;display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+ol.how li{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:16px}
+ol.how li b{display:block;color:var(--teal)}
+ol.tl{list-style:none;margin:10px 0;padding:0;columns:2;column-gap:28px}
+ol.tl li{break-inside:avoid;position:relative;padding:6px 0 8px 22px;border-left:2px solid var(--line);margin-left:6px;font-size:16px}
+ol.tl li::before{content:"";position:absolute;left:-7px;top:12px;width:12px;height:12px;border-radius:50%;background:#94a3b8}
+ol.tl li.p::before{background:var(--up)}ol.tl li.m::before{background:var(--down)}
+ol.tl .dt{font-weight:800;margin-right:6px}
+.legend{font-size:16px;color:var(--sub)}
+.dot{display:inline-block;width:11px;height:11px;border-radius:50%;margin:0 4px 0 10px;vertical-align:0}
+.cp{counter-reset:c;list-style:none;padding:0;margin:8px 0;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.cp li{border:1px solid var(--line);border-radius:10px;padding:10px 12px 10px 48px;position:relative;font-size:16px}
+.cp li::before{counter-increment:c;content:counter(c);position:absolute;left:12px;top:10px;width:26px;height:26px;border-radius:50%;background:var(--teal);color:#fff;font-weight:800;text-align:center;line-height:26px}
+footer{text-align:center;color:#64748b;font-size:16px;padding:10px 0 28px}
+@media (max-width:860px){
+  .grid2,.grid3,ol.how,.cp{grid-template-columns:1fr}
+  ol.tl{columns:1}
+  section{padding:18px 14px}
+  h1{font-size:27px}h2{font-size:22px}
+  .chart{height:290px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- 1 HERO -->
+<section id="sec-hero">
+  <div class="kicker">쩜상리서치 · 리써처TV 형식 데이터 정리 · 기준일 2026-11-17</div>
+  <h1>에스티팜 — 리써처TV 형식 팩트시트</h1>
+  <div class="lead">수주와 증설이 실체, 렉비오가 스토리 — 시총 1.48조, 고점(4/28) 대비 <span class="down">-58%</span>, 수주·증설 공시가 반등 열쇠</div>
+  <p class="kicker">올리고핵산 원료의약품(CDMO) 글로벌 메이저 + 자체신약 STP0404(=HIV-1/알로스테릭 인테그라제) 보유 / 실적·수주 기반 바이오 실적주</p>
+  <div class="kpis">
+    <div class="kpi"><div class="l">시가총액</div><div class="v">1조 4,760억</div><div class="d">고점(4/28) 대비 <span class="down">-58%</span> (동기간 KOSPI <span class="down">-25%</span>)</div><div class="src">DART 26.11.17 공시 기준<b class="g ok">확인</b> · 낙폭: 26.11.17 점검노트<b class="g est">추정</b></div></div>
+    <div class="kpi"><div class="l">3Q26 매출</div><div class="v">976억</div><div class="d">YoY <span class="up">+19.1%</span></div><div class="src">DART 26.10.27 잠정실적<b class="g ok">확인</b></div></div>
+    <div class="kpi"><div class="l">3Q26말 수주잔고</div><div class="v">3.3억달러</div><div class="d">상업화 물질 비중 77%</div><div class="src">신한증권 26.10.28<b class="g news">보도</b></div></div>
+    <div class="kpi"><div class="l">렉비오 3Q26 매출(노바티스)</div><div class="v">5.06억달러</div><div class="d">YoY <span class="up">+63%</span></div><div class="src">노바티스 3Q 컨콜 26.10.27<b class="g ok">확인</b></div></div>
+    <div class="kpi"><div class="l">ORION-4 3상(렉비오)</div><div class="v">16,124명</div><div class="d">결과 연말 발표 = 최대 분기점</div><div class="src">ClinicalTrials.gov NCT03705234<b class="g ok">확인</b></div></div>
+    <div class="kpi"><div class="l">트린골자 연간 가이던스</div><div class="v">약 $50M</div><div class="d">$100~110M에서 <span class="down">반토막</span></div><div class="src">Ionis 3Q 실적발표 26.11.9<b class="g ok">확인</b></div></div>
+  </div>
+  <h3>핵심 요약</h3>
+  <ul class="facts">
+    <li>올리고 CDMO 실적주, 3Q26 매출 976억(<span class="up">+19%</span>)·수주잔고 3.3억달러(상업화 77%)</li>
+    <li>렉비오 3Q 5.06억달러(<span class="up">+63%</span>), ORION-4(16,124명) 결과 연말 발표가 최대 분기점</li>
+    <li>제2올리고동 2차 증설 "연내 확정" 예고(10/16) + 11월20일 온라인 IR</li>
+    <li>리스크: 9/5 펠라카르센 3상 실패, 11/9 트린골자 가이던스 $50M 반토막</li>
+    <li>시총 1.48조, 고점(4/28) 대비 <span class="down">-58%</span> — 수주·증설 공시가 반등 열쇠</li>
+  </ul>
+  <p class="legend">근거 등급: <b class="g ok">확인</b> 공시·회사 발표·ClinicalTrials.gov <b class="g news">보도</b> 증권사·언론·리써처TV 단톡방 전달 <b class="g est">추정</b> 증권사 추정치·점검노트 산출 · 색상: <span class="up">상승=빨강</span> / <span class="down">하락=파랑</span></p>
+</section>
+
+<!-- 2 TIMELINE -->
+<section id="sec-timeline">
+  <h2>2026년 주요 사건 타임라인</h2>
+  <p class="legend"><span class="dot" style="background:var(--up)"></span>호재 <span class="dot" style="background:var(--down)"></span>악재 <span class="dot" style="background:#94a3b8"></span>중립·일정</p>
+  <ol class="tl">
+    <li class="p"><span class="dt">1/23</span>미국 글로벌 바이오텍 올리고 원료 공급계약 5,600만달러(약 825억) <span class="src">단톡방 26.01.23</span><b class="g news">보도</b></li>
+    <li class="p"><span class="dt">1/27</span>KoAct바이오헬스케어액티브 비중확대 + 타임폴리오K바이오액티브 신규편입 3.75% <span class="src">단톡방 26.01.27</span><b class="g news">보도</b></li>
+    <li><span class="dt">2/6</span>노바티스 파이프라인: 렉비오 소아 고지혈증 확장(KJX839) + PKN605 심방세동 2상 시작 <span class="src">주간 라이브 0206</span><b class="g news">보도</b></li>
+    <li class="p"><span class="dt">2/10</span>유럽 글로벌제약사 저분자 원료 공급계약 1,489만달러(약 217억) <span class="src">단톡방 26.02.10</span><b class="g news">보도</b></li>
+    <li class="p"><span class="dt">3/6</span>코스닥 액티브 ETF 편입 예상 바이오 명단 포함, 편입비중 3.79% <span class="src">주간 라이브 0306</span><b class="g news">보도</b></li>
+    <li class="p"><span class="dt">3/16</span>유럽 소재 제약사 올리고 원료 공급계약 898억(매출대비 32.8%) <span class="src">단톡방 26.03.16</span><b class="g news">보도</b></li>
+    <li class="p"><span class="dt">4/22</span>국민연금 지분 5.02% → 6.07% 확대 <span class="src">단톡방 26.04.22</span><b class="g news">보도</b></li>
+    <li class="p"><span class="dt">4/27</span>1Q26 잠정: 영업익 115억(예상 <span class="up">+32%</span>)·순익 151억(예상 <span class="up">+84%</span>) <span class="src">단톡방 26.04.27</span><b class="g news">보도</b></li>
+    <li><span class="dt">4/28</span>시총 고점 <span class="src">26.11.17 점검노트</span><b class="g est">추정</b></li>
+    <li class="p"><span class="dt">4/30</span>최석우 전무(바이오코리아) "연내 추가 증설 설계 검토, 캐파 최소 50%~최대 300% 확대" <span class="src">단톡방 26.04.30</span><b class="g news">보도</b></li>
+    <li class="p"><span class="dt">6/18</span>코스닥 글로벌 세그먼트 바이오 5종목 편입 <span class="src">단톡방 26.06.18</span><b class="g news">보도</b></li>
+    <li class="p"><span class="dt">6/26</span>트린골자 sHTG FDA 승인 → 아이오니스 최대 순매출 전망 20억 → 30억달러 이상 <span class="src">본문 정리</span><b class="g news">보도</b></li>
+    <li><span class="dt">8/10</span>코스닥 승강제 기대 바이오 5종목 포함(이후 시행 내년 초로 지연 전망) <span class="src">단톡방 26.08.10 · 하나증권 26.9월</span><b class="g news">보도</b></li>
+    <li class="m"><span class="dt">9/5</span>펠라카르센 Lp(a)HORIZON 3상 1차지표 미충족 = 실패 <span class="src">키움 26.9.5</span><b class="g news">보도</b></li>
+    <li class="p"><span class="dt">9/18</span>미국 소재 글로벌 바이오텍 올리고 원료 공급계약 913.3억(매출대비 27.54%) <span class="src">단톡방 26.09.18</span><b class="g news">보도</b></li>
+    <li class="p"><span class="dt">10/6</span>STP0404 2a상 CSR 수령 — 600mg 10일 HIV-1 RNA 97.5% 감소 <span class="src">신한 데일리 26.10.7</span><b class="g news">보도</b></li>
+    <li class="p"><span class="dt">10/16</span>사측 "제2올리고동 추가 증설 계획 연내 확정" <span class="src">키움 데일리 26.10.16</span><b class="g news">보도</b></li>
+    <li class="p"><span class="dt">10/20</span>GSK 히브사고 FDA 승인 — B형간염 최초 승인 ASO <span class="src">신한 데일리 26.10.22</span><b class="g news">보도</b></li>
+    <li class="p"><span class="dt">10/22</span>신한 목표주가 160,000원 제시, 2029년 10mol 글로벌 1위 캐파 전망 <span class="src">신한증권 26.10.22</span><b class="g est">추정</b></li>
+    <li class="m"><span class="dt">10/27</span>3Q26 잠정: 영업익 157억(컨센 <span class="down">-10%</span>)·순익 10억(컨센 <span class="down">-94%</span>) <span class="src">DART 26.10.27</span><b class="g ok">확인</b></li>
+    <li class="p"><span class="dt">10/27</span>렉비오 3Q 5.06억달러(<span class="up">+63%</span>) <span class="src">노바티스 3Q 컨콜</span><b class="g ok">확인</b></li>
+    <li class="m"><span class="dt">10/27</span>델데시란 HARBOR 3상 실패, 손상차손 19.4억달러 + 제조계약 충당금 6억달러 <span class="src">노바티스 3Q 컨콜</span><b class="g ok">확인</b></li>
+    <li class="m"><span class="dt">10/28</span>신한 목표주가 150,000원으로 6.3% 하향·매수 유지 <span class="src">신한증권 26.10.28</span><b class="g est">추정</b></li>
+    <li class="p"><span class="dt">11/4</span>"에스티팜 숨은 수혜자"(히브사고) 보도 <span class="src">이데일리 26.11.4</span><b class="g news">보도</b></li>
+    <li class="m"><span class="dt">11/8</span>경쟁물질 플로자시란 SHASTA-3/4 급성 췌장염 78% 감소 <span class="src">AHA 2026</span><b class="g news">보도</b></li>
+    <li class="m"><span class="dt">11/9</span>트린골자 연간 가이던스 $100~110M → 약 $50M <span class="src">Ionis 3Q 26.11.9</span><b class="g ok">확인</b></li>
+    <li><span class="dt">11/17</span>IR개최 공시: 11/20 15:30 온라인 탐방IR <span class="src">DART 26.11.17</span><b class="g ok">확인</b></li>
+  </ol>
+</section>
+
+<!-- 3 ORDERS -->
+<section id="sec-orders">
+  <h2>1. 수주·계약·수주잔고</h2>
+  <div class="tbox">
+    <table class="sortable" id="t-orders">
+      <thead><tr>
+        <th class="sort" data-type="t">공시일<span class="ar"></span></th>
+        <th>상대방</th><th>품목</th>
+        <th class="sort" data-type="n">금액(억원)<span class="ar"></span></th>
+        <th class="sort" data-type="n">매출대비<span class="ar"></span></th>
+        <th>계약기간·납기</th><th>출처·등급</th>
+      </tr></thead>
+      <tbody>
+        <tr><td data-v="20260123">26.01.23</td><td>미국 글로벌 바이오텍</td><td>올리고 핵산치료제 원료</td><td class="n" data-v="825">약 825<br><span class="src">5,600만달러</span></td><td class="n" data-v="">—</td><td>1/22~12/18 (11개월)</td><td><span class="src">단톡방 26.01.23</span><b class="g news">보도</b></td></tr>
+        <tr><td data-v="20260210">26.02.10</td><td>유럽 글로벌제약사</td><td>저분자신약 원료</td><td class="n" data-v="217">약 217<br><span class="src">1,489만달러</span></td><td class="n" data-v="">—</td><td>납기 12/15</td><td><span class="src">단톡방 26.02.10</span><b class="g news">보도</b></td></tr>
+        <tr><td data-v="20260316">26.03.16</td><td>유럽 소재 제약사</td><td>올리고핵산치료제 원료</td><td class="n" data-v="898">898</td><td class="n" data-v="32.8">32.8%</td><td>26.3.16~27.11.17 (1년8개월)</td><td><span class="src">단톡방 26.03.16</span><b class="g news">보도</b></td></tr>
+        <tr><td data-v="20260918">26.09.18</td><td>미국 소재 글로벌 바이오텍</td><td>올리고핵산치료제 원료</td><td class="n" data-v="913.3">913.3</td><td class="n" data-v="27.54">27.54%</td><td>26.9.18~27.11.22</td><td><span class="src">단톡방 26.09.18</span><b class="g news">보도</b></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="grid2">
+    <div class="cbox"><h3>2026년 공급계약 금액</h3><div class="src">단위 억원 · 리써처TV 단톡방 각 공시일<b class="g news">보도</b></div><div class="chart" id="c-orders"></div></div>
+    <div class="cbox"><h3>수주잔고 추이</h3><div class="src">단위 억달러 · 25년말·26.1말: 단톡방 26.02.10<b class="g news">보도</b> · 3Q26말: 신한증권 26.10.28<b class="g news">보도</b></div><div class="chart" id="c-backlog"></div></div>
+  </div>
+  <ul class="facts">
+    <li>1/23 계약 1건 = 25년 3분기 매출(819억원) 수준 규모</li>
+    <li>수주잔고 25년말 2억890만달러(약 3,049억) → 26년1월말 <b>3억1,632만달러(약 4,617억) 역대 최대</b></li>
+    <li>3Q26말 수주잔고 3.3억달러, 상업화 물질 비중 77% + 3분기 올리고 신규 수주 4건(초기 단계 → 후기·상업화시 고마진 전환 구조) <span class="src">신한증권 26.10.28</span><b class="g news">보도</b></li>
+    <li>AOC·신경·대사(비만 추정)·자가면역 등 만성질환으로 수주 다변화 중 <span class="src">신한증권 26.10.28</span><b class="g news">보도</b></li>
+  </ul>
+  <div class="grid2">
+    <div class="view"><span class="tag">→리써처뷰 26.01.23</span>진입장벽 높은 독과점 시장의 메이저, 앞으로도 계속 수주 기대감 있음, 관심 가지세요</div>
+    <div class="view"><span class="tag">→리써처뷰 26.03.20</span>기술수출은 옛날부터 기대 어렵다고 봄, 이 종목은 실적주 — 분기마다 수주가 계속 나오는 구조</div>
+  </div>
+  <div class="result"><b class="rt">→결과:</b> 실제 9월 913억 수주 포함 연중 수주 지속, 수주잔고는 25년말 대비 <span class="up">+46%</span> 수준으로 확대 <span class="src">26.11.17 점검노트</span><b class="g est">추정</b></div>
+</section>
+
+<!-- 4 EARNINGS -->
+<section id="sec-earnings">
+  <h2>2. 실적·재무</h2>
+  <div class="kpis">
+    <div class="kpi"><div class="l">3Q26 매출</div><div class="v">976억</div><div class="d">YoY <span class="up">+19.1%</span></div><div class="src">DART 26.10.27<b class="g ok">확인</b></div></div>
+    <div class="kpi"><div class="l">3Q26 영업익</div><div class="v">157억</div><div class="d">YoY <span class="up">+6.6%</span> · OPM 16.1% · 컨센 <span class="down">-10%</span></div><div class="src">DART 26.10.27<b class="g ok">확인</b></div></div>
+    <div class="kpi"><div class="l">3Q26 순익</div><div class="v">10억</div><div class="d">컨센 <span class="down">-94%</span></div><div class="src">DART 26.10.27<b class="g ok">확인</b></div></div>
+    <div class="kpi"><div class="l">상반기 영업활동현금흐름</div><div class="v">1,045억</div><div class="d">확대</div><div class="src">키움 데일리 26.10.7<b class="g news">보도</b></div></div>
+  </div>
+  <div class="grid2">
+    <div class="cbox"><h3>1Q26 vs 3Q26 잠정실적</h3><div class="src">단위 억원 · 1Q: 단톡방 26.04.27<b class="g news">보도</b> · 3Q: DART 26.10.27<b class="g ok">확인</b></div><div class="chart" id="c-earn"></div></div>
+    <div class="cbox"><h3>3Q26 매출 믹스</h3><div class="src">단위 억원 · 신한증권 26.10.28<b class="g news">보도</b></div><div class="chart" id="c-mix"></div></div>
+  </div>
+  <div class="grid2">
+    <div>
+      <h3>3Q 순익 쇼크 요인 (본업과 무관)</h3>
+      <ul class="facts">
+        <li>원화 강세發 외환차손 90억 + 외화환산손실 50억</li>
+        <li>올리고 매출 200억 이연 + 원재료 매입 시기·환율 미스매치</li>
+        <li>고마진 올리고 690억(YoY <span class="up">+0.6%</span>) vs 저마진 제네릭 77억(YoY <span class="up">+210%</span>) → 믹스 악화</li>
+      </ul>
+      <div class="src">신한증권 26.10.28<b class="g news">보도</b></div>
+      <p style="font-size:16px">1Q26 잠정: 매출 670억(예상 <span class="down">-4%</span>) / 영업익 115억(예상 <span class="up">+32%</span>) / 순익 151억(예상 <span class="up">+84%</span>) <span class="src">단톡방 26.04.27</span><b class="g news">보도</b></p>
+    </div>
+    <div>
+      <h3>연간 추정</h3>
+      <div class="tbox"><table style="min-width:420px">
+        <thead><tr><th>항목</th><th>추정치</th><th>근거</th></tr></thead>
+        <tbody>
+          <tr><td>26년 매출</td><td class="n">4,150억 (<span class="up">+25.1%</span>)</td><td><b class="g est">추정</b></td></tr>
+          <tr><td>26년 영업익</td><td class="n">698억 (<span class="up">+27.1%</span>, OPM 16.8%)</td><td><b class="g est">추정</b></td></tr>
+          <tr><td>27년 영업익</td><td class="n">880~1,120억</td><td><b class="g est">추정</b></td></tr>
+        </tbody></table></div>
+      <div class="src">신한증권 26.10.28 / 26.11.17 점검노트</div>
+    </div>
+  </div>
+  <div class="view"><span class="tag">→리써처뷰 26.03.18</span>실적 바이오 종목으로는 삼바·셀트리온보다 에스티팜이 가장 좋다고 판단함</div>
+</section>
+
+<!-- 5 CAPA -->
+<section id="sec-capa">
+  <h2>3. 증설(캐파)</h2>
+  <figure id="fig-capa">
+    <figcaption>증설 입장 전환과 자금 구조</figcaption>
+    <svg viewBox="0 0 1000 400" role="img" aria-label="증설 입장 전환 도해">
+      <line x1="80" y1="95" x2="920" y2="95" stroke="#cbd5e1" stroke-width="4"/>
+      <g font-size="19" text-anchor="middle" fill="#1f2937">
+        <circle cx="110" cy="95" r="16" fill="#94a3b8"/><text x="110" y="101" fill="#fff" font-weight="700">1</text>
+        <text x="110" y="45" font-weight="700">26.3 탐방</text><text x="110" y="145">"공장 증설</text><text x="110" y="170">계획 없다"</text>
+        <circle cx="370" cy="95" r="16" fill="#d62828"/><text x="370" y="101" fill="#fff" font-weight="700">2</text>
+        <text x="370" y="45" font-weight="700">26.4.30 바이오코리아</text><text x="370" y="145">연내 추가 증설 설계 검토</text><text x="370" y="170">캐파 최소 50%~최대 300%</text>
+        <circle cx="630" cy="95" r="16" fill="#d62828"/><text x="630" y="101" fill="#fff" font-weight="700">3</text>
+        <text x="630" y="45" font-weight="700">26.10.16 사측</text><text x="630" y="145">제2올리고동 추가 증설</text><text x="630" y="170">계획 "연내 확정"</text>
+        <circle cx="890" cy="95" r="16" fill="#0f766e"/><text x="890" y="101" fill="#fff" font-weight="700">4</text>
+        <text x="890" y="45" font-weight="700">2029 (신한 전망)</text><text x="890" y="145">10mol(약 5톤)</text><text x="890" y="170">글로벌 1위 캐파</text>
+      </g>
+      <g font-size="18" fill="#1f2937">
+        <text x="40" y="232" font-weight="700">캐파 확대 범위(4/30 발언)</text>
+        <rect x="40" y="248" width="80" height="26" fill="#94a3b8"/><text x="130" y="267">현재</text>
+        <rect x="40" y="282" width="120" height="26" fill="#f87171"/><text x="170" y="301">최소 +50%</text>
+        <rect x="40" y="316" width="320" height="26" fill="#d62828"/><text x="370" y="335">최대 +300%</text>
+      </g>
+      <rect x="560" y="220" width="420" height="140" rx="12" fill="#ecfdf5" stroke="#0f766e" stroke-width="2"/>
+      <g font-size="19" fill="#064e3b" text-anchor="middle">
+        <text x="770" y="254" font-weight="700">자금 조달 계획</text>
+        <text x="770" y="288">자체 보유현금 + 국민성장펀드 정책자금</text>
+        <text x="770" y="318">유상증자·CB 아님</text>
+        <text x="770" y="346" font-weight="700">= 주주 친화적</text>
+      </g>
+    </svg>
+    <ol class="how">
+      <li><b>① 어디에</b>올리고핵산 원료의약품 생산 캐파(제2올리고동 추가 증설) — 상업화 물질 비중 77%인 수주잔고를 소화할 생산 기반</li>
+      <li><b>② 어떻게</b>3월 "계획 없다" → 4/30 "최소 50%~최대 300% 설계 검토" → 10/16 "연내 확정" 예고. 자금은 보유현금+국민성장펀드 정책자금</li>
+      <li><b>③ 왜</b>증자·CB 없는 증설이라 희석 부담이 없고, 신한은 2029년 10mol(약 5톤) 글로벌 1위 캐파를 전망 — 확정 공시가 체크포인트</li>
+    </ol>
+    <div class="src" style="margin-top:8px">단톡방 26.04.30<b class="g news">보도</b> · 키움 데일리 26.10.16<b class="g news">보도</b> · 신한증권 26.10.22<b class="g est">추정</b></div>
+  </figure>
+  <div class="kpis">
+    <div class="kpi"><div class="l">신한 목표주가 (10/22)</div><div class="v">160,000원</div><div class="d">2029 글로벌 1위 캐파 전망</div><div class="src">신한증권 26.10.22<b class="g est">추정</b></div></div>
+    <div class="kpi"><div class="l">신한 목표주가 (10/28)</div><div class="v">150,000원</div><div class="d"><span class="down">-6.3%</span> 하향 · 매수 유지</div><div class="src">신한증권 26.10.28<b class="g est">추정</b></div></div>
+  </div>
+  <div class="view"><span class="tag">→리써처뷰 26.04.27</span>증설 계획이 없는 걸로 아는데 증설한다는 말 나오면 호재, 증설해야 한다고 생각함</div>
+  <div class="result"><b class="rt">→결과:</b> 3일 뒤(4/30) 캐파 300% 확대 검토 보도로 현실화</div>
+</section>
+
+<!-- 6 PIPELINE -->
+<section id="sec-pipeline">
+  <h2>4. 전방 파이프라인 — 공급 물질·고객사 이벤트</h2>
+  <figure id="fig-cdmo-chain">
+    <figcaption>올리고 CDMO 수주가 전방 임상에 연동되는 구조</figcaption>
+    <svg viewBox="0 0 1000 360" role="img" aria-label="올리고 CDMO 가치사슬 도해">
+      <defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0L10,5L0,10z" fill="#475569"/></marker></defs>
+      <g font-size="19" text-anchor="middle" fill="#1f2937">
+        <rect x="10" y="30" width="176" height="130" rx="12" fill="#f1f5f9" stroke="#94a3b8" stroke-width="2"/>
+        <text x="98" y="70" font-weight="700">① 전방 임상</text><text x="98" y="102">노바티스·아이오니스</text><text x="98" y="130">GSK 등 고객사</text>
+        <rect x="216" y="30" width="176" height="130" rx="12" fill="#f1f5f9" stroke="#94a3b8" stroke-width="2"/>
+        <text x="304" y="70" font-weight="700">② 허가·출시</text><text x="304" y="102">트린골자 sHTG</text><text x="304" y="130">히브사고 FDA</text>
+        <rect x="422" y="30" width="176" height="130" rx="12" fill="#f1f5f9" stroke="#94a3b8" stroke-width="2"/>
+        <text x="510" y="70" font-weight="700">③ 원료 발주</text><text x="510" y="102">상업화 물질</text><text x="510" y="130">잔고 비중 77%</text>
+        <rect x="628" y="30" width="176" height="130" rx="12" fill="#ecfdf5" stroke="#0f766e" stroke-width="2"/>
+        <text x="716" y="70" font-weight="700">④ 올리고 생산</text><text x="716" y="102">에스티팜 CDMO</text><text x="716" y="130">제2올리고동</text>
+        <rect x="834" y="30" width="156" height="130" rx="12" fill="#f1f5f9" stroke="#94a3b8" stroke-width="2"/>
+        <text x="912" y="70" font-weight="700">⑤ 실적 반영</text><text x="912" y="102">잔고 3.3억$</text><text x="912" y="130">3Q 매출 976억</text>
+      </g>
+      <g stroke="#475569" stroke-width="3" marker-end="url(#ah)">
+        <line x1="188" y1="95" x2="212" y2="95"/><line x1="394" y1="95" x2="418" y2="95"/><line x1="600" y1="95" x2="624" y2="95"/><line x1="806" y1="95" x2="830" y2="95"/>
+        <line x1="200" y1="162" x2="200" y2="212"/><line x1="710" y1="162" x2="710" y2="212"/>
+      </g>
+      <rect x="10" y="216" width="470" height="130" rx="12" fill="#eff6ff" stroke="#1d4ed8" stroke-width="2"/>
+      <g font-size="18" fill="#1e3a8a" text-anchor="middle">
+        <text x="245" y="248" font-weight="700">임상 실패·판매 부진 → 발주 차질</text>
+        <text x="245" y="278">펠라카르센 3상 실패(9/5) · 델데시란 HARBOR</text>
+        <text x="245" y="304">제조계약 충당금 6억달러(공급사 미공개)</text>
+        <text x="245" y="330">트린골자 가이던스 약 $50M로 하향(11/9)</text>
+      </g>
+      <rect x="520" y="216" width="470" height="130" rx="12" fill="#fef2f2" stroke="#d62828" stroke-width="2"/>
+      <g font-size="18" fill="#7f1d1d" text-anchor="middle">
+        <text x="755" y="248" font-weight="700">상업화 진입 → 고마진 전환</text>
+        <text x="755" y="278">3분기 올리고 신규 수주 4건(초기 단계)</text>
+        <text x="755" y="304">후기·상업화시 고마진 전환 구조</text>
+        <text x="755" y="330">AOC·신경·대사·자가면역으로 다변화</text>
+      </g>
+    </svg>
+    <ol class="how">
+      <li><b>① 어디에</b>ASO·siRNA 등 올리고 치료제(렉비오·트린골자·히브사고 등)의 원료의약품을 에스티팜이 생산·공급</li>
+      <li><b>② 어떻게</b>고객사 임상이 후기·상업화로 갈수록 원료 발주가 커지고 고마진으로 전환 — 잔고의 77%가 상업화 물질</li>
+      <li><b>③ 왜</b>반대로 전방 임상이 실패하면 수주가 흔들림 — 델데시란 실패로 노바티스가 제조계약 충당금 6억달러를 반영한 사례</li>
+    </ol>
+    <div class="src" style="margin-top:8px">신한증권 26.10.28<b class="g news">보도</b> · 노바티스 3Q 컨콜 26.10.27<b class="g ok">확인</b> · Ionis 3Q 26.11.9<b class="g ok">확인</b></div>
+  </figure>
+  <div class="grid2">
+    <div class="card"><h3>렉비오(=PCSK9) siRNA / 노바티스</h3>
+      <p>3Q26 매출 <b>5.06억달러</b>(<span class="up">+63%</span> YoY), 회사측 최대매출 전망 40억달러 이상 <span class="src">노바티스 3Q 컨콜 26.10.27</span><b class="g ok">확인</b></p>
+      <p>성장 가속 여부는 심혈관 사건 감소 입증: ORION-4 결과 연말, VICTORION-2-PREVENT 27.5.10 종료</p>
+      <div class="view" style="margin:6px 0 0"><span class="tag">→리써처뷰 26.09.02</span>SC제형 개선 후보 = 렉비오 추정. 의료진 투여 필요한 반쪽짜리 SC → 자가투여 PFS 전환 수순 예상</div></div>
+    <div class="card"><h3>트린골자(=APOC3) ASO 올레자르센 / 아이오니스</h3>
+      <p>24.12 FCS 승인 → 26.6.26 sHTG 승인, 최대 순매출 전망 20억 → 30억달러 이상</p>
+      <p>3Q 순매출 $9M, 9개월 누적 $41M → 연간 가이던스 <span class="down">약 $50M로 반토막</span> <span class="src">Ionis 3Q 26.11.9</span><b class="g ok">확인</b></p>
+      <p>신한: 트린골자 연 1,000억 + 렉비오 400~500억 공급 추정 유지 <span class="src">신한증권 26.10.28</span><b class="g est">추정</b></p></div>
+    <div class="card"><h3>히브사고(=HBV) ASO 베피로비르센 / GSK</h3>
+      <p>26.10.20 FDA 승인 — B형간염 최초 승인 ASO, 기능적 완치율 <b>19% vs 위약 0%</b>, 최대매출 20억파운드 이상 전망 <span class="src">신한 데일리 26.10.22</span><b class="g news">보도</b></p>
+      <p>미국·일본·캐나다 승인 <span class="src">Ionis 3Q</span><b class="g ok">확인</b> → "에스티팜 숨은 수혜자" <span class="src">이데일리 26.11.4</span><b class="g news">보도</b></p></div>
+    <div class="card"><h3>펠라카르센(=Lp(a)) ASO / 델데시란(=DMPK)</h3>
+      <p>9/5 Lp(a)HORIZON 3상 1차지표 4-point MACE <span class="down">미충족</span> — Lp(a)는 낮췄으나 심혈관 사건 감소 연결 안됨 <span class="src">키움 26.9.5</span><b class="g news">보도</b></p>
+      <p>미국 허가 신청 차질 → 주가 하락 1차 악재 <span class="src">점검노트</span><b class="g est">추정</b></p>
+      <p>델데시란 HARBOR 실패: 손상차손 19.4억달러 + 제조계약 충당금 6억달러 <span class="src">노바티스 3Q</span><b class="g ok">확인</b></p></div>
+  </div>
+</section>
+
+<!-- 7 TRIALS -->
+<section id="sec-trials">
+  <h2>임상·딜 수치 비교</h2>
+  <div class="tbox">
+    <table class="sortable" id="t-trials">
+      <thead><tr>
+        <th>시험</th><th>물질 / 회사</th>
+        <th class="sort" data-type="n">대상자(명)<span class="ar"></span></th>
+        <th>결과·상태</th>
+        <th class="sort" data-type="t">일정<span class="ar"></span></th>
+        <th>출처·등급</th>
+      </tr></thead>
+      <tbody>
+        <tr><td>ORION-4 3상<br><span class="src">NCT03705234</span></td><td>렉비오 / 노바티스</td><td class="n" data-v="16124">16,124</td><td>1차완료 26.10 → 결과 연말 발표</td><td data-v="20261231">26년 연말</td><td><span class="src">ClinicalTrials.gov</span><b class="g ok">확인</b></td></tr>
+        <tr><td>VICTORION-2-PREVENT 3상<br><span class="src">NCT05030428</span></td><td>렉비오 / 노바티스</td><td class="n" data-v="17004">17,004</td><td>진행 중</td><td data-v="20270510">27.05.10 종료</td><td><span class="src">ClinicalTrials.gov</span><b class="g ok">확인</b></td></tr>
+        <tr><td>Lp(a)HORIZON 3상</td><td>펠라카르센 / 노바티스</td><td class="n" data-v="8323">8,323</td><td><span class="down">1차지표 미충족(실패)</span></td><td data-v="20260905">26.09.05</td><td><span class="src">키움 26.9.5</span><b class="g news">보도</b></td></tr>
+        <tr><td>SHASTA-3/4 3상</td><td>플로자시란 / 애로우헤드(경쟁)</td><td class="n" data-v="757">757</td><td>급성 췌장염 78% 감소, 연내 sHTG 신청 예정</td><td data-v="20261108">26.11.08</td><td><span class="src">AHA 2026</span><b class="g news">보도</b></td></tr>
+        <tr><td>히브사고 3상</td><td>베피로비르센 / GSK</td><td class="n" data-v="">—</td><td>기능적 완치율 19% vs 위약 0% → FDA 승인</td><td data-v="20261020">26.10.20 승인</td><td><span class="src">신한 데일리 26.10.22</span><b class="g news">보도</b></td></tr>
+        <tr><td>HARBOR 3상</td><td>델데시란 / 노바티스</td><td class="n" data-v="">—</td><td><span class="down">실패</span> · 손상차손 19.4억$ + 제조계약 충당금 6억$</td><td data-v="20261027">26.10.27</td><td><span class="src">노바티스 3Q 컨콜</span><b class="g ok">확인</b></td></tr>
+        <tr><td>PKN605 2상</td><td>HDAC6 경구제 / 노바티스</td><td class="n" data-v="">—</td><td>심방세동, 저용량 vs 고용량 vs 위약</td><td data-v="20270909">27.09.09 종료예정</td><td><span class="src">주간 라이브 0206</span><b class="g news">보도</b></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="grid2">
+    <div class="cbox"><h3>주요 3상 대상자 규모</h3><div class="src">단위 명 · 회색=결과 대기, 파랑=실패, 주황=경쟁물질 · ClinicalTrials.gov<b class="g ok">확인</b> / 키움·AHA<b class="g news">보도</b></div><div class="chart" id="c-trials"></div></div>
+    <div class="cbox"><h3>트린골자 순매출 가이던스</h3><div class="src">단위 백만달러 · Ionis 3Q 실적발표 26.11.9<b class="g ok">확인</b></div><div class="chart" id="c-tryn"></div></div>
+  </div>
+</section>
+
+<!-- 8 DRUG & FLOW -->
+<section id="sec-drug-flow">
+  <h2>5. 자체 신약 · 6. 수급·지수 이벤트</h2>
+  <div class="grid2">
+    <div>
+      <h3>STP0404 (=HIV-1 알로스테릭 인테그라제 저해)</h3>
+      <div class="kpis">
+        <div class="kpi"><div class="l">HIV-1 RNA 감소 (600mg·10일)</div><div class="v">97.5%</div><div class="d">중대 이상반응 없는 내약성</div><div class="src">신한 데일리 26.10.7<b class="g news">보도</b></div></div>
+      </div>
+      <p style="font-size:16px">26.10.6 임상 2a상 CSR 수령 → 글로벌 파트너십 논의 근거 확보</p>
+      <div class="view"><span class="tag">→리써처뷰 26.03.20</span>신약 기술수출 가능성은 낮게 봄, 실적주 관점 유지 — 신약은 보너스 영역</div>
+      <h3>지분·ETF</h3>
+      <div class="kpis">
+        <div class="kpi"><div class="l">국민연금 지분 (4/22)</div><div class="v">6.07%</div><div class="d">5.02%에서 <span class="up">+1.05%p</span></div><div class="src">단톡방 26.04.22<b class="g news">보도</b></div></div>
+        <div class="kpi"><div class="l">액티브 ETF 편입비중</div><div class="v">3.75~3.79%</div><div class="d">1/27 신규편입 · 3/6 예상</div><div class="src">단톡방 26.01.27 · 라이브 0306<b class="g news">보도</b></div></div>
+      </div>
+    </div>
+    <div>
+      <h3>수급 이벤트</h3>
+      <ol class="tl" style="columns:1">
+        <li class="p"><span class="dt">1/27</span>KoAct바이오헬스케어액티브 비중확대 + 타임폴리오K바이오액티브 신규편입 3.75%</li>
+        <li class="p"><span class="dt">3/6</span>코스닥 액티브 ETF 편입 예상 바이오 명단, 편입비중 3.79%</li>
+        <li class="p"><span class="dt">4/22</span>국민연금 지분 5.02% → 6.07%</li>
+        <li class="p"><span class="dt">6/18</span>코스닥 글로벌 세그먼트 바이오 5종목(알테오젠·에이비엘바이오·리가켐·올릭스·에스티팜) 편입</li>
+        <li><span class="dt">8/10</span>코스닥 승강제 기대 바이오 5종목에 포함</li>
+        <li><span class="dt">11/17</span>IR개최 공시: <b>11월20일 15:30 코스닥 상장기업 온라인 탐방IR</b> <span class="src">DART 26.11.17</span><b class="g ok">확인</b></li>
+      </ol>
+      <div class="view"><span class="tag">→리써처뷰 26.08.10</span>승강제 기대감, 긍정적 수급 기대함</div>
+      <div class="result"><b class="rt">→결과:</b> 승강제 시행 9~10월에서 내년 초로 지연 전망 — 수급 기대는 이연 <span class="src">하나증권 26.9월</span><b class="g news">보도</b></div>
+    </div>
+  </div>
+</section>
+
+<!-- 9 RISK & CHECKPOINTS -->
+<section id="sec-risk">
+  <h2>7. 주가·리스크 체크 & 체크포인트</h2>
+  <div class="grid2">
+    <div class="cbox"><h3>시가총액 추이</h3><div class="src">단위 조원 · 26.11.17 점검노트<b class="g est">추정</b> · 11/17 값 DART 공시 기준<b class="g ok">확인</b></div><div class="chart" id="c-mcap"></div></div>
+    <div>
+      <h3>하락 원인 (연쇄)</h3>
+      <ul class="facts">
+        <li><span class="down">펠라카르센 3상 실패</span>(9/5) → <span class="down">3Q 영업익 컨센 하회</span>(10/27) → <span class="down">트린골자 가이던스 반토막</span>(11/9)</li>
+        <li>펀더멘털 붕괴가 아닌 'RNA 블록버스터 스토리' 훼손 + 시장 급락 <span class="src">26.11.17 점검노트</span><b class="g est">추정</b></li>
+      </ul>
+      <h3>잔존 리스크</h3>
+      <ul class="facts">
+        <li>트린골자 납기 연기·후속 발주 축소 가능성</li>
+        <li>플로자시란(3개월1회) 경쟁 심화 — 월1회 트린골자 대비 투여 편의성 우위</li>
+        <li>원화 강세시 외환손실 반복</li>
+      </ul>
+    </div>
+  </div>
+  <div class="view"><span class="tag">→리써처뷰 26.01.06</span>셀트리온 사고 싶으면 에스티팜이 더 좋다 — RNA가 유망하기 때문</div>
+  <div class="result"><b class="rt">→결과:</b> RNA 방향성은 유효(수주잔고 <span class="up">+46%</span>·렉비오 <span class="up">+63%</span>)하나 연초 이후 주가는 전방 임상 악재로 크게 하회 중</div>
+  <h3>정리: 수주와 증설이 실체, 렉비오가 스토리 — 체크포인트</h3>
+  <ol class="cp">
+    <li><b>26.11.20</b> 온라인 IR — 증설·수주·트린골자 발주 영향 질의 확인</li>
+    <li><b>26년 연내</b> 제2올리고동 2차 증설 확정 공시 여부(최대 캐파 300%)</li>
+    <li><b>26년 연말</b> ORION-4(NCT03705234) 심혈관 아웃컴 결과 = 렉비오 재평가 분기점</li>
+    <li><b>27년 2월</b> 4Q26 실적(연간 매출 4,150억·영업익 698억 달성 여부) + 연말 상업화 수주 공시</li>
+    <li><b>27.05.10</b> VICTORION-2-PREVENT(NCT05030428) 종료 → 렉비오 성장 가속 2차 판정</li>
+    <li><b>27년~</b> 고혈압(지레베시란 추정)·비만·AOC 등 만성질환 상업화 물질 추가 수주 여부</li>
+  </ol>
+</section>
+
+<!-- 10 SOURCES -->
+<section id="sec-sources">
+  <h2>출처·면책</h2>
+  <h3>리써처TV 회차</h3>
+  <ul class="facts">
+    <li>26.02.06 [주간 라이브_0206] 릴리+노보노디스크+노바티스 4Q25실적발표</li>
+    <li>26.03.06 [주간 라이브_0306] 타임폴리오 액티브ETF+삼성KoAct ETF+한화 PLUS코스닥150액티브 출시 의미</li>
+    <li>26.03.18 [주간 라이브_0318] 지투지바이오*엄민용 레포트&amp;리써처뷰 / TIGER기술이전바이오액티브ETF15선</li>
+    <li>26.03.20 [Q&amp;A_0320] 질의응답</li>
+    <li>26.05.06 [주간 라이브_0506] 높이 성장한 만큼 흔들림도 있다-하나증권+Pfizer 1Q26실적발표</li>
+    <li>26.07.01 [월간 라이브_0701] 6월 총 정리</li>
+    <li>회원 단톡방: 26년 1/6·1/23·1/27·2/10·3/5·3/16·3/18·4/22·4/27·4/30·6/18·8/10·9/2·9/18</li>
+  </ul>
+  <h3>이후 업데이트 출처</h3>
+  <p style="font-size:16px">DART 공시(26.10.27 잠정실적·26.11.16 분기보고서·26.11.17 IR), 신한증권(26.10.22·10.28), 키움 데일리(26.10.7·10.16), 키움(26.9.5), 하나증권(26.9월), 신한 데일리(26.10.7·10.22), 이데일리(26.11.4), 노바티스 3Q 컨콜(26.10.27), Ionis 3Q(26.11.9), AHA 2026(26.11.8), ClinicalTrials.gov(NCT03705234·NCT05030428), 26.11.17 점검노트</p>
+  <h3>근거 등급 기준</h3>
+  <p style="font-size:16px"><b class="g ok">확인</b> 공시·회사 실적발표·임상 등록정보 <b class="g news">보도</b> 증권사 리포트·데일리·언론·학회·리써처TV 단톡방 전달 사실 <b class="g est">추정</b> 증권사 추정치·목표주가·점검노트 산출치</p>
+  <h3>면책</h3>
+  <p style="font-size:16px">본 자료는 리써처TV 형식 데이터 정리 본문을 그대로 시각화한 것으로, 본문에 없는 사실은 추가하지 않았습니다. 투자 권유가 아니며 수치는 각 출처·기준일 시점 정보입니다. 투자 판단과 책임은 투자자 본인에게 있습니다.</p>
+</section>
+
+<footer>© 쩜상리서치 · 기준일 2026-11-17</footer>
+</div>
+
+<script>
+(function(){
+  var RED='#d62828',BLUE='#1d4ed8',TEAL='#0f766e',GRAY='#94a3b8',ORANGE='#ea580c',INK='#334155';
+  var charts=[];
+  function base(){return{
+    textStyle:{fontSize:14},
+    tooltip:{trigger:'axis',confine:true,textStyle:{fontSize:15},axisPointer:{type:'shadow'}},
+    grid:{left:12,right:56,top:36,bottom:62,containLabel:true},
+    dataZoom:[{type:'inside'},{type:'slider',height:18,bottom:10}]
+  };}
+  function mk(id,opt){
+    var c=echarts.init(document.getElementById(id));
+    var o=base();for(var k in opt)o[k]=opt[k];
+    c.setOption(o);charts.push(c);
+  }
+  function bar(data,colors,fmt){
+    return data.map(function(v,i){return{value:v,itemStyle:{color:colors[i]||colors[0],borderRadius:[4,4,0,0]}};});
+  }
+  var lab=function(u){return{show:true,position:'top',fontSize:14,formatter:function(p){return p.value.toLocaleString()+u;}};};
+
+  mk('c-orders',{
+    xAxis:{type:'category',data:['1/23 미국\n올리고','2/10 유럽\n저분자','3/16 유럽\n올리고','9/18 미국\n올리고'],axisLabel:{fontSize:13,interval:0}},
+    yAxis:{type:'value',name:'억원'},
+    tooltip:{trigger:'axis',confine:true,valueFormatter:function(v){return v.toLocaleString()+'억원';}},
+    series:[{type:'bar',name:'계약금액',barMaxWidth:56,data:bar([825,217,898,913.3],[TEAL,INK,TEAL,TEAL]),label:lab('억')}]
+  });
+  mk('c-backlog',{
+    xAxis:{type:'category',data:['25년말','26년1월말\n(역대 최대)','3Q26말'],axisLabel:{fontSize:13,interval:0}},
+    yAxis:{type:'value',name:'억달러'},
+    tooltip:{trigger:'axis',confine:true,valueFormatter:function(v){return v+'억달러';}},
+    series:[{type:'bar',name:'수주잔고',barMaxWidth:60,data:bar([2.089,3.1632,3.3],[GRAY,RED,RED]),label:lab('억$')}]
+  });
+  mk('c-earn',{
+    legend:{top:0,textStyle:{fontSize:14}},
+    xAxis:{type:'category',data:['매출','영업익','순익']},
+    yAxis:{type:'value',name:'억원'},
+    tooltip:{trigger:'axis',confine:true,valueFormatter:function(v){return v.toLocaleString()+'억원';}},
+    series:[
+      {type:'bar',name:'1Q26',barMaxWidth:44,itemStyle:{color:GRAY},data:[670,115,151],label:lab('')},
+      {type:'bar',name:'3Q26',barMaxWidth:44,itemStyle:{color:TEAL},data:[976,157,10],label:lab('')}
+    ]
+  });
+  mk('c-mix',{
+    xAxis:{type:'category',data:['고마진 올리고','저마진 제네릭']},
+    yAxis:{type:'value',name:'억원'},
+    tooltip:{trigger:'axis',confine:true,formatter:function(p){var y=['+0.6%','+210%'][p[0].dataIndex];return p[0].name+'<br>'+p[0].value+'억원 (YoY '+y+')';}},
+    series:[{type:'bar',name:'3Q26 매출',barMaxWidth:70,data:bar([690,77],[TEAL,INK]),
+      label:{show:true,position:'top',fontSize:14,formatter:function(p){return p.value+'억 (YoY '+['+0.6%','+210%'][p.dataIndex]+')';},color:RED}}]
+  });
+  mk('c-trials',{
+    xAxis:{type:'category',data:['ORION-4','VICTORION-2\nPREVENT','Lp(a)\nHORIZON','SHASTA-3/4'],axisLabel:{fontSize:13,interval:0}},
+    yAxis:{type:'value',name:'명'},
+    tooltip:{trigger:'axis',confine:true,formatter:function(p){var s=['결과 연말 발표','27.5.10 종료','1차지표 미충족(실패)','급성 췌장염 78% 감소(경쟁물질)'][p[0].dataIndex];return p[0].name.replace('\n',' ')+'<br>'+p[0].value.toLocaleString()+'명<br>'+s;}},
+    series:[{type:'bar',name:'대상자',barMaxWidth:56,data:bar([16124,17004,8323,757],[GRAY,GRAY,BLUE,ORANGE]),label:lab('')}]
+  });
+  mk('c-tryn',{
+    xAxis:{type:'category',data:['기존 가이던스\n하단','기존 가이던스\n상단','하향 가이던스\n(약)','9개월 누적','3Q 순매출'],axisLabel:{fontSize:12,interval:0}},
+    yAxis:{type:'value',name:'$M'},
+    tooltip:{trigger:'axis',confine:true,valueFormatter:function(v){return '$'+v+'M';}},
+    series:[{type:'bar',name:'트린골자',barMaxWidth:50,data:bar([100,110,50,41,9],[GRAY,GRAY,BLUE,INK,INK]),label:{show:true,position:'top',fontSize:14,formatter:'${c}M'}}]
+  });
+  mk('c-mcap',{
+    xAxis:{type:'category',boundaryGap:false,data:['26년 3월','26년 4월','26년 9월','26.11.17']},
+    yAxis:{type:'value',name:'조원',min:0},
+    tooltip:{trigger:'axis',confine:true,valueFormatter:function(v){return v+'조원';}},
+    series:[{type:'line',name:'시가총액',symbolSize:10,lineStyle:{width:3,color:BLUE},itemStyle:{color:BLUE},areaStyle:{color:'rgba(29,78,216,.08)'},
+      data:[3.2,3.1,1.9,1.48],label:{show:true,position:'top',fontSize:14,formatter:'{c}조'},
+      markPoint:{symbol:'pin',symbolSize:44,itemStyle:{color:BLUE},label:{fontSize:12,formatter:'-58%'},data:[{coord:['26.11.17',1.48]}]}}]
+  });
+  window.addEventListener('resize',function(){charts.forEach(function(c){c.resize();});});
+
+  // 정렬: 1클릭 내림차순 → 2클릭 오름차순 → 3클릭 원상태
+  document.querySelectorAll('table.sortable').forEach(function(t){
+    var tb=t.tBodies[0],orig=Array.prototype.slice.call(tb.rows);
+    var ths=t.querySelectorAll('th.sort');
+    ths.forEach(function(th){th.dataset.s='0';th.querySelector('.ar').textContent='↕';});
+    ths.forEach(function(th){
+      th.addEventListener('click',function(){
+        var s=(+th.dataset.s+1)%3,idx=th.cellIndex;
+        ths.forEach(function(o){o.dataset.s='0';o.querySelector('.ar').textContent='↕';});
+        th.dataset.s=String(s);
+        th.querySelector('.ar').textContent=s===1?'▼':s===2?'▲':'↕';
+        var rows=orig.slice();
+        if(s){
+          rows.sort(function(a,b){
+            var va=a.cells[idx].dataset.v,vb=b.cells[idx].dataset.v;
+            var ea=va===''||va==null,eb=vb===''||vb==null;
+            if(ea&&eb)return 0;if(ea)return 1;if(eb)return -1;
+            return s===1?(+vb)-(+va):(+va)-(+vb);
+          });
+        }
+        rows.forEach(function(r){tb.appendChild(r);});
+      });
+    });
+  });
+})();
+</script>
+</body>
+</html>
