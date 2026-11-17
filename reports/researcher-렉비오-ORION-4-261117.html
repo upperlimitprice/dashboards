@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>렉비오 ORION-4 데이터 — 리써처TV 형식 데이터 정리 | 쩜상리서치</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
+<style>
+  :root{
+    --bg:#f7f8fa; --card:#ffffff; --ink:#1b1f27; --sub:#5a6272; --line:#e3e6ec;
+    --accent:#2f5d8a; --up:#d93a3a; --down:#2a62c9; --soft:#eef2f7;
+    --ok:#1f7a4d; --news:#8a5a00; --est:#7a3fb0;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",sans-serif;
+    font-size:17px;line-height:1.65;overflow-x:hidden;word-break:keep-all;overflow-wrap:anywhere}
+  .wrap{max-width:1120px;margin:0 auto;padding:24px 18px 48px}
+  section{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:28px 26px;margin:0 0 22px}
+  h1{font-size:34px;line-height:1.3;margin:6px 0 10px}
+  h2{font-size:25px;margin:0 0 14px;padding-left:12px;border-left:5px solid var(--accent)}
+  h3{font-size:19px;margin:18px 0 8px}
+  p,li{font-size:17px}
+  .brand{font-size:16px;color:var(--accent);font-weight:700;letter-spacing:.02em}
+  .lead{font-size:19px;background:var(--soft);border-radius:12px;padding:14px 16px;margin:10px 0 18px}
+  .muted{color:var(--sub);font-size:16px}
+  .up{color:var(--up);font-weight:700}
+  .down{color:var(--down);font-weight:700}
+  .badge{display:inline-block;font-size:16px;line-height:1.3;font-weight:700;border-radius:6px;padding:1px 7px;margin:0 2px;border:1px solid;white-space:nowrap;vertical-align:1px}
+  .b-ok{color:var(--ok);border-color:var(--ok);background:#ecf7f1}
+  .b-news{color:var(--news);border-color:var(--news);background:#fbf4e6}
+  .b-est{color:var(--est);border-color:var(--est);background:#f4ecfb}
+  .b-view{color:#fff;background:#c2410c;border-color:#c2410c}
+  .src{font-size:16px;color:var(--sub)}
+  .kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+  .kpi{border:1px solid var(--line);border-radius:14px;padding:16px;background:#fcfdff}
+  .kpi .lab{font-size:16px;color:var(--sub)}
+  .kpi .val{font-size:30px;font-weight:800;line-height:1.25;margin:4px 0}
+  .kpi .val small{font-size:18px;font-weight:700}
+  .tbl-box{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--line);border-radius:12px;margin:10px 0 6px}
+  table{border-collapse:collapse;width:100%;min-width:720px;font-size:16px}
+  th,td{padding:12px 14px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+  th:last-child,td:last-child{padding-right:26px}
+  thead th{background:var(--soft);font-weight:700;white-space:nowrap}
+  th.sortable{cursor:pointer;user-select:none}
+  th.sortable .arr{font-size:.8em;color:inherit;margin-left:4px}
+  td.num{text-align:right;white-space:nowrap}
+  .chart{width:100%;height:420px;margin:8px 0}
+  figure{margin:18px 0 6px;border:1px dashed #c9d2de;border-radius:14px;padding:16px;background:#fbfcfe}
+  figure svg{display:block;width:100%;max-width:560px;height:auto;margin:0 auto}
+  figcaption{font-weight:700;font-size:17px;margin-bottom:8px}
+  figure ol{margin:12px 0 0;padding-left:22px}
+  figure ol li{font-size:16px;margin:4px 0}
+  .tl{list-style:none;margin:6px 0 0;padding:0 0 0 22px;border-left:3px solid var(--line)}
+  .tl li{position:relative;margin:0 0 14px;padding-left:6px}
+  .tl li::before{content:"";position:absolute;left:-31px;top:7px;width:13px;height:13px;border-radius:50%;background:var(--accent);border:3px solid #fff;box-shadow:0 0 0 1px var(--accent)}
+  .tl li.future::before{background:#fff}
+  .tl .d{font-weight:800;color:var(--accent);margin-right:6px}
+  .view{border:2px solid #c2410c;background:#fff7f2;border-radius:14px;padding:16px 18px;margin:12px 0}
+  .sum{border-left:5px solid var(--accent);background:var(--soft);border-radius:0 12px 12px 0;padding:14px 18px}
+  ul.plain{padding-left:20px;margin:6px 0}
+  @media (max-width:760px){
+    .wrap{padding:14px 10px 36px}
+    section{padding:20px 14px;border-radius:12px}
+    h1{font-size:26px} h2{font-size:21px}
+    .kpis{grid-template-columns:1fr 1fr;gap:10px}
+    .kpi .val{font-size:23px}
+    .chart{height:360px}
+  }
+  @media (max-width:420px){ .kpis{grid-template-columns:1fr} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- 1. HERO -->
+<section id="sec-hero">
+  <div class="brand">쩜상리서치 · 리써처TV 형식 데이터 정리 · 기준일 26.11.17</div>
+  <h1>렉비오 ORION-4 데이터 — 리써처TV 형식 데이터 정리</h1>
+  <div class="lead"><b>한 줄 결론</b> — ORION-4는 렉비오가 'LDL 낮추는 약'에서 '심혈관 사건 줄이는 약'으로 올라서느냐를 가르는 16,124명 MACE 임상. 1차완료(26년10월)는 지났고 톱라인은 연말~27년 발표 대기(수치 미발표).</div>
+  <p class="muted">근거 등급: <span class="badge b-ok">확인</span> ClinicalTrials.gov 등 공식 등록·조회 · <span class="badge b-news">보도</span> 증권사·리써처TV·텔레그램 전달 · <span class="badge b-est">추정</span> 예상치·전망·개인 의견 · <span class="badge b-view">리써처뷰</span> 리써처TV 개인 의견</p>
+  <div class="kpis">
+    <div class="kpi"><div class="lab">ORION-4 3상 규모 · 1차지표 MACE</div><div class="val">16,124<small>명</small></div><div class="src"><span class="badge b-ok">확인</span> 하나증권 26.03.09 · CT.gov 26.11.17</div></div>
+    <div class="kpi"><div class="lab">ORION-4 1차완료 / MACE 수치</div><div class="val">26.10 <small>· 미발표</small></div><div class="src"><span class="badge b-ok">확인</span> CT.gov 26.11.17 조회 · "결과 연말" <span class="badge b-news">보도</span> 텔레그램 26.10.28</div></div>
+    <div class="kpi"><div class="lab">렉비오 3Q26 매출 (yoy, cc)</div><div class="val">5.06<small>억달러</small> <span class="up">+63%</span></div><div class="src"><span class="badge b-news">보도</span> 텔레그램 26.10.28 (노바티스 3Q26)</div></div>
+    <div class="kpi"><div class="lab">노바티스 최대매출 목표</div><div class="val">40<small>억달러 이상</small></div><div class="src">5.29조원 · <span class="badge b-est">추정</span> 회사 장기 전망 · 텔레그램 26.10.28</div></div>
+    <div class="kpi"><div class="lab">후속 VICTORION-2P / 1P</div><div class="val">17,004 <small>/</small> 14,012<small>명</small></div><div class="src">결과 27년 / 29년 · <span class="badge b-ok">확인</span> 하나증권 26.03.09 · CT.gov 26.11.17</div></div>
+    <div class="kpi"><div class="lab">에스티팜 렉비오 원료 연매출</div><div class="val">400~500<small>억원</small></div><div class="src"><span class="badge b-est">추정</span> 신한증권 예상 · 텔레그램 26.10.28</div></div>
+  </div>
+</section>
+
+<!-- 2. 배경 -->
+<section id="sec-background">
+  <h2>배경 — 렉비오(inclisiran, =PCSK9 siRNA)</h2>
+  <p>노바티스의 6개월1회 SC제형 렉비오. ORION-4 톱라인 수치는 아직 미발표라 임상 설계·타임라인·배경 데이터 위주로 정리.</p>
+  <div class="tbl-box"><table>
+    <thead><tr><th>항목</th><th>내용</th><th>출처·기준일</th><th>등급</th></tr></thead>
+    <tbody>
+      <tr><td>기업인수</td><td>19년11월24일 Novartis &lt;--&gt; The Medicines Company <b>97억달러</b> 인수</td><td>리써처TV 26.09.04 정리글</td><td><span class="badge b-news">보도</span></td></tr>
+      <tr><td>peak sales (인수 당시 제시)</td><td><b>30억~100억달러</b></td><td>리써처TV 26.09.04 정리글</td><td><span class="badge b-est">추정</span></td></tr>
+      <tr><td>제형</td><td>6개월1회 SC — 병원에서 의료진이 투여해줘야 하는 '반쪽짜리 SC제형'</td><td>리써처TV 26.09.04 정리글</td><td><span class="badge b-news">보도</span></td></tr>
+      <tr><td>FDA 승인</td><td>21년12월 고지혈증(스타틴으로 LDL 조절 안 되는 환자)</td><td>하나증권 26.03.09</td><td><span class="badge b-news">보도</span></td></tr>
+      <tr><td>중국 승인</td><td>26년1월 단독요법 승인</td><td>하나증권 26.03.09</td><td><span class="badge b-news">보도</span></td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<!-- 3. 효능 데이터 -->
+<section id="sec-efficacy">
+  <h2>효능 데이터 — 전임상·3상 LDL-C</h2>
+  <p>임상 3상에서 LDL-C 50% 이상 효과 <span class="badge b-news">보도</span> <span class="src">(리써처TV 26.09.04 정리글)</span>. 하락(감소)=<span class="down">파랑</span>, 상승(증가)=<span class="up">빨강</span>.</p>
+  <div id="ch-eff" class="chart" role="img" aria-label="전임상 및 3상 LDL-C·PCSK9 변화율 막대 차트"></div>
+  <div class="tbl-box"><table class="sortable-tbl">
+    <thead><tr><th>구분</th><th>항목</th><th class="sortable" data-type="num">변화율(%)<span class="arr">↕</span></th><th>출처·기준일</th><th>등급</th></tr></thead>
+    <tbody>
+      <tr><td>전임상</td><td>1mg/kg PCSK9</td><td class="num down" data-v="-50">-50%</td><td>리써처TV 26.09.04 정리글</td><td><span class="badge b-news">보도</span></td></tr>
+      <tr><td>전임상</td><td>3mg/kg PCSK9</td><td class="num down" data-v="-85">-85%</td><td>리써처TV 26.09.04 정리글</td><td><span class="badge b-news">보도</span></td></tr>
+      <tr><td>전임상</td><td>LDL-C (3mg/kg 항목에 병기)</td><td class="num down" data-v="-60">-60%</td><td>리써처TV 26.09.04 정리글</td><td><span class="badge b-news">보도</span></td></tr>
+      <tr><td>3상(HeFH, 스타틴 병용)</td><td>540일차 LDL-C — 렉비오</td><td class="num down" data-v="-39.7">-39.7%</td><td>리써처TV 26.09.04 정리글</td><td><span class="badge b-news">보도</span></td></tr>
+      <tr><td>3상(HeFH, 스타틴 병용)</td><td>540일차 LDL-C — 위약</td><td class="num up" data-v="8.2">+8.2%</td><td>리써처TV 26.09.04 정리글</td><td><span class="badge b-news">보도</span></td></tr>
+      <tr><td>3상(HeFH, 스타틴 병용)</td><td>위약보정 LDL-C</td><td class="num down" data-v="-47.9">-47.9%</td><td>리써처TV 26.09.04 정리글</td><td><span class="badge b-news">보도</span></td></tr>
+    </tbody>
+  </table></div>
+  <p class="src">정렬: 헤더 1클릭 내림차순 · 2클릭 오름차순 · 3클릭 원상태.</p>
+</section>
+
+<!-- 4. ORION-4 설계 -->
+<section id="sec-orion4">
+  <h2>ORION-4 (NCT03705234) — 심혈관 결과 임상 3상</h2>
+  <div class="tbl-box"><table>
+    <thead><tr><th>항목</th><th>내용</th><th>출처·기준일</th><th>등급</th></tr></thead>
+    <tbody>
+      <tr><td>규모</td><td><b>16,124명</b></td><td>하나증권 26.03.09 · CT.gov 26.11.17 조회</td><td><span class="badge b-ok">확인</span></td></tr>
+      <tr><td>적응증</td><td>고콜레스테롤혈증·가족성 고콜레스테롤혈증(죽상경화성 심혈관질환 보유자)</td><td>하나증권 26.03.09</td><td><span class="badge b-news">보도</span></td></tr>
+      <tr><td>1차지표</td><td>MACE 복합 변수</td><td>하나증권 26.03.09</td><td><span class="badge b-news">보도</span></td></tr>
+      <tr><td>스폰서·상태</td><td>University of Oxford 주관 / ACTIVE_NOT_RECRUITING</td><td>ClinicalTrials.gov 26.11.17 조회</td><td><span class="badge b-ok">확인</span></td></tr>
+      <tr><td>1차완료 / 전체완료</td><td><b>26년10월</b> / 2049년12월(장기 추적)</td><td>ClinicalTrials.gov 26.11.17 조회</td><td><span class="badge b-ok">확인</span></td></tr>
+      <tr><td>결과 발표 시점</td><td>하나증권(4Q25 어닝콜 기준) <b>2027년</b> → 노바티스 3Q26 컨콜 <b>"ORION-4 연말"</b></td><td>하나증권 26.03.09 / 텔레그램 26.10.28</td><td><span class="badge b-news">보도</span></td></tr>
+      <tr><td>MACE 결과 수치</td><td><b>확인 안 됨</b> (아카이브·CT.gov 모두 미발표)</td><td>CT.gov 26.11.17 조회</td><td><span class="badge b-ok">확인</span></td></tr>
+    </tbody>
+  </table></div>
+
+  <figure id="fig-orion4-design">
+    <figcaption>도해 1. ORION-4 구조 — 무엇을 증명하려는 임상인가</figcaption>
+    <svg viewBox="0 0 420 470" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="ORION-4 임상 구조 도해">
+      <defs><marker id="ah" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#2f5d8a"/></marker></defs>
+      <g font-size="16" font-family="inherit" text-anchor="middle">
+        <rect x="30" y="10" width="360" height="70" rx="12" fill="#eef2f7" stroke="#2f5d8a"/>
+        <text x="210" y="38" font-weight="700">① 대상 16,124명</text>
+        <text x="210" y="62" fill="#5a6272">죽상경화성 심혈관질환 보유 고콜레스테롤혈증</text>
+        <line x1="210" y1="80" x2="210" y2="108" stroke="#2f5d8a" stroke-width="2" marker-end="url(#ah)"/>
+        <rect x="30" y="112" width="360" height="70" rx="12" fill="#eef2f7" stroke="#2f5d8a"/>
+        <text x="210" y="140" font-weight="700">② 렉비오 6개월1회 SC</text>
+        <text x="210" y="164" fill="#5a6272">PCSK9 siRNA · 의료진 투여</text>
+        <line x1="210" y1="182" x2="210" y2="210" stroke="#2f5d8a" stroke-width="2" marker-end="url(#ah)"/>
+        <rect x="30" y="214" width="360" height="70" rx="12" fill="#fff" stroke="#2f5d8a" stroke-dasharray="5 4"/>
+        <text x="210" y="242" font-weight="700">③ 이미 입증: LDL-C 감소</text>
+        <text x="210" y="266" fill="#2a62c9">3상 위약보정 -47.9%</text>
+        <line x1="210" y1="284" x2="210" y2="312" stroke="#2f5d8a" stroke-width="2" marker-end="url(#ah)"/>
+        <rect x="30" y="316" width="360" height="70" rx="12" fill="#fff7f2" stroke="#c2410c" stroke-width="2"/>
+        <text x="210" y="344" font-weight="700">④ 입증 대상: MACE 감소</text>
+        <text x="210" y="368" fill="#5a6272">심근경색·뇌졸중 등 심혈관 사건</text>
+        <line x1="210" y1="386" x2="210" y2="414" stroke="#2f5d8a" stroke-width="2" marker-end="url(#ah)"/>
+        <rect x="30" y="418" width="360" height="46" rx="12" fill="#2f5d8a"/>
+        <text x="210" y="447" font-weight="700" fill="#fff">⑤ 1차완료 26.10 → 톱라인 연말~27년</text>
+      </g>
+    </svg>
+    <ol>
+      <li><b>어디에</b>: 죽상경화성 심혈관질환을 가진 고콜레스테롤혈증 환자 16,124명.</li>
+      <li><b>어떻게</b>: 6개월1회 SC 렉비오(병원에서 의료진 투여).</li>
+      <li><b>이미 아는 것</b>: LDL-C를 낮춘다(3상 위약보정 -47.9%).</li>
+      <li><b>왜 하나</b>: LDL 감소가 아닌 MACE(심혈관 사건) 감소를 입증해야 'LDL 낮추는 약' → '심혈관 사건 줄이는 약'으로 올라선다.</li>
+      <li><b>언제</b>: 1차완료 26년10월 경과, 톱라인 연말~27년 대기(수치 미발표).</li>
+    </ol>
+  </figure>
+</section>
+
+<!-- 5. 심혈관 결과 임상 3건 비교 -->
+<section id="sec-cvot">
+  <h2>심혈관 결과 임상 3건 — ORION-4 + 후속 VICTORION 2건</h2>
+  <p>같은 질문: LDL 감소가 아닌 심근경색·뇌졸중 감소 입증.</p>
+  <div id="ch-cvot" class="chart" role="img" aria-label="심혈관 결과 임상 3건 환자수 막대 차트"></div>
+  <div class="tbl-box"><table class="sortable-tbl">
+    <thead><tr><th>임상</th><th>NCT</th><th class="sortable" data-type="num">환자수<span class="arr">↕</span></th><th>대상</th><th>1차지표</th><th class="sortable" data-type="num">1차완료<span class="arr">↕</span></th><th>출처·기준일</th><th>등급</th></tr></thead>
+    <tbody>
+      <tr><td><b>ORION-4</b></td><td>NCT03705234</td><td class="num" data-v="16124">16,124명</td><td>ASCVD 보유 고콜레스테롤혈증</td><td>MACE 복합 변수</td><td class="num" data-v="202610">26년10월</td><td>하나증권 26.03.09 · CT.gov 26.11.17</td><td><span class="badge b-ok">확인</span></td></tr>
+      <tr><td><b>VICTORION-2 PREVENT</b></td><td>NCT05030428</td><td class="num" data-v="17004">17,004명</td><td>심혈관질환 2차 예방</td><td>3P-MACE 첫 발생까지 시간</td><td class="num" data-v="20270510">27년5월10일</td><td>하나증권 26.03.09 · CT.gov 26.11.17</td><td><span class="badge b-ok">확인</span></td></tr>
+      <tr><td><b>VICTORION-1 PREVENT</b></td><td>NCT05739383</td><td class="num" data-v="14012">14,012명</td><td>고위험군 1차 예방</td><td>4P-MACE 첫 발생까지 시간</td><td class="num" data-v="20290416">29년4월16일</td><td>하나증권 26.03.09 · CT.gov 26.11.17</td><td><span class="badge b-ok">확인</span></td></tr>
+    </tbody>
+  </table></div>
+  <p class="src">정렬: 헤더 1클릭 내림차순 · 2클릭 오름차순 · 3클릭 원상태. 표는 좌우 스크롤.</p>
+</section>
+
+<!-- 6. 노바티스 3Q26 -->
+<section id="sec-novartis">
+  <h2>노바티스 3Q26 실적발표(26년10월27일) — 렉비오 코멘트</h2>
+  <div class="tbl-box"><table>
+    <thead><tr><th>항목</th><th>내용</th><th>출처·기준일</th><th>등급</th></tr></thead>
+    <tbody>
+      <tr><td>렉비오 3Q26 매출</td><td><b>5.06억달러</b> <span class="up">+63%</span> yoy (cc 기준)</td><td>텔레그램 26.10.28</td><td><span class="badge b-news">보도</span></td></tr>
+      <tr><td>성장 가속 질의응답</td><td>ODDO 애널리스트 "렉비오 성장 가속화되나" → 회사: <b>ORION-4 연말</b>, <b>VICTORION-2 PREVENT 2027년</b> 결과에 달렸다</td><td>텔레그램 26.10.28</td><td><span class="badge b-news">보도</span></td></tr>
+      <tr><td>최대매출</td><td><b>40억달러 이상(5.29조원)</b> 회사 장기 전망 → 달성 조건: 임상 성공·급여 확대·투약 지속성</td><td>텔레그램 26.10.28</td><td><span class="badge b-est">추정</span></td></tr>
+      <tr><td>펠라카르센(=Lp(a) ASO)</td><td>HORIZON 3상 1차지표 <b>미충족</b> → 26년 미국 허가신청 제외</td><td>텔레그램 26.10.28</td><td><span class="badge b-news">보도</span></td></tr>
+    </tbody>
+  </table></div>
+  <h3>렉비오 매출 관련 수치 비교 (억달러)</h3>
+  <div id="ch-sales" class="chart" role="img" aria-label="렉비오 매출 관련 수치 막대 차트"></div>
+  <p class="src">분기 실적(5.06)과 연간 최대매출 전망(40 이상)·인수 당시 peak sales 제시 범위(30~100)는 성격이 다른 수치 — 규모 감각용 병렬 표기.</p>
+</section>
+
+<!-- 7. 에스티팜 -->
+<section id="sec-stpharm">
+  <h2>국내 연결고리 — 에스티팜(237690)</h2>
+  <div class="tbl-box"><table>
+    <thead><tr><th>항목</th><th>내용</th><th>출처·기준일</th><th>등급</th></tr></thead>
+    <tbody>
+      <tr><td>공급</td><td>렉비오 올리고 원료 공급 중(상업화 물질)</td><td>리써처TV 26.02.06 / 하나증권 26.05.21</td><td><span class="badge b-news">보도</span></td></tr>
+      <tr><td>렉비오 연매출</td><td><b>400~500억원</b> 예상</td><td>신한증권 · 텔레그램 26.10.28</td><td><span class="badge b-est">추정</span></td></tr>
+      <tr><td>트린골자</td><td><b>1,000억원</b></td><td>신한증권 · 텔레그램 26.10.28</td><td><span class="badge b-est">추정</span></td></tr>
+      <tr><td>수주잔고</td><td><b>3.3억달러</b> 중 상업화 비중 <b>77%</b></td><td>신한증권 · 텔레그램 26.10.28</td><td><span class="badge b-news">보도</span></td></tr>
+      <tr><td>트리거 ①</td><td>ORION-4 성공 = 렉비오 재평가 → 에스티팜 상승 트리거 (가능성 <b>중간</b>, 연말~)</td><td>stock_analysis 26.11.17</td><td><span class="badge b-est">추정</span></td></tr>
+      <tr><td>트리거 ②</td><td>렉비오·신규 상업화 대형 수주 공시 (가능성 <b>높음</b>, 12월~1Q)</td><td>stock_analysis 26.11.17</td><td><span class="badge b-est">추정</span></td></tr>
+    </tbody>
+  </table></div>
+  <h3>신한증권 예상 매출 (억원)</h3>
+  <div id="ch-stp" class="chart" role="img" aria-label="에스티팜 품목별 예상 매출 막대 차트"></div>
+
+  <figure id="fig-value-chain">
+    <figcaption>도해 2. ORION-4 결과가 에스티팜까지 전달되는 경로</figcaption>
+    <svg viewBox="0 0 420 430" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="ORION-4에서 에스티팜까지 연결 도해">
+      <defs><marker id="ah2" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#2f5d8a"/></marker></defs>
+      <g font-size="16" font-family="inherit" text-anchor="middle">
+        <rect x="30" y="10" width="360" height="62" rx="12" fill="#fff7f2" stroke="#c2410c" stroke-width="2"/>
+        <text x="210" y="36" font-weight="700">① ORION-4 MACE 톱라인</text>
+        <text x="210" y="58" fill="#5a6272">연말~27년 발표 대기 · 수치 미발표</text>
+        <line x1="210" y1="72" x2="210" y2="98" stroke="#2f5d8a" stroke-width="2" marker-end="url(#ah2)"/>
+        <rect x="30" y="102" width="360" height="62" rx="12" fill="#eef2f7" stroke="#2f5d8a"/>
+        <text x="210" y="128" font-weight="700">② 렉비오 재평가</text>
+        <text x="210" y="150" fill="#5a6272">'심혈관 사건 줄이는 약'</text>
+        <line x1="210" y1="164" x2="210" y2="190" stroke="#2f5d8a" stroke-width="2" marker-end="url(#ah2)"/>
+        <rect x="30" y="194" width="360" height="62" rx="12" fill="#eef2f7" stroke="#2f5d8a"/>
+        <text x="210" y="220" font-weight="700">③ 노바티스 최대매출 40억달러+</text>
+        <text x="210" y="242" fill="#5a6272">조건: 임상 성공·급여 확대·투약 지속성</text>
+        <line x1="210" y1="256" x2="210" y2="282" stroke="#2f5d8a" stroke-width="2" marker-end="url(#ah2)"/>
+        <rect x="30" y="286" width="360" height="62" rx="12" fill="#eef2f7" stroke="#2f5d8a"/>
+        <text x="210" y="312" font-weight="700">④ 올리고 원료 공급사 에스티팜</text>
+        <text x="210" y="334" fill="#5a6272">렉비오 연 400~500억원(추정)</text>
+        <line x1="210" y1="348" x2="210" y2="374" stroke="#2f5d8a" stroke-width="2" marker-end="url(#ah2)"/>
+        <rect x="30" y="378" width="360" height="46" rx="12" fill="#2f5d8a"/>
+        <text x="210" y="407" font-weight="700" fill="#fff">⑤ 수주 공시·재평가 트리거</text>
+      </g>
+    </svg>
+    <ol>
+      <li><b>출발점</b>: ORION-4 MACE 결과 — 아직 수치 미발표.</li>
+      <li><b>어떻게 쓰이나</b>: 성공 시 렉비오가 LDL 약에서 심혈관 사건 감소 약으로 재평가.</li>
+      <li><b>왜 중요한가</b>: 노바티스 최대매출 40억달러 이상 가이던스의 근거가 됨.</li>
+      <li><b>어디로 이어지나</b>: 렉비오 올리고 원료를 공급하는 에스티팜(렉비오 연 400~500억원, 신한증권 예상).</li>
+      <li><b>결과</b>: 재평가 트리거(가능성 중간, 연말~)·대형 수주 공시(가능성 높음, 12월~1Q) — 모두 추정.</li>
+    </ol>
+  </figure>
+</section>
+
+<!-- 8. 타임라인 -->
+<section id="sec-timeline">
+  <h2>타임라인</h2>
+  <ul class="tl">
+    <li><span class="d">19.11.24</span>노바티스, The Medicines Company 97억달러 인수 <span class="badge b-news">보도</span> <span class="src">리써처TV 26.09.04</span></li>
+    <li><span class="d">21.12</span>렉비오 고지혈증 FDA 승인 <span class="badge b-news">보도</span> <span class="src">하나증권 26.03.09</span></li>
+    <li><span class="d">26.01</span>중국 단독요법 승인 <span class="badge b-news">보도</span> <span class="src">하나증권 26.03.09</span></li>
+    <li><span class="d">26.03.09</span>하나증권: ORION-4 결과 2027년(4Q25 어닝콜 기준) <span class="badge b-news">보도</span></li>
+    <li><span class="d">26.09.02</span><span class="badge b-view">리써처뷰</span> 노바티스-알테오젠 SC딜 후보로 렉비오 추정 <span class="badge b-est">추정</span></li>
+    <li><span class="d">26.10</span>ORION-4 1차완료 <span class="badge b-ok">확인</span> <span class="src">CT.gov 26.11.17</span></li>
+    <li><span class="d">26.10.27</span>노바티스 3Q26: 렉비오 5.06억달러 <span class="up">+63%</span>, "ORION-4 연말", 펠라카르센 HORIZON 1차지표 미충족 <span class="badge b-news">보도</span> <span class="src">텔레그램 26.10.28</span></li>
+    <li><span class="d">26.11.17</span>ORION-4 MACE 수치 미발표 확인 <span class="badge b-ok">확인</span> <span class="src">CT.gov 조회</span></li>
+    <li class="future"><span class="d">26년 연말~</span>ORION-4 톱라인(회사 언급) · 에스티팜 재평가 트리거(가능성 중간) <span class="badge b-est">추정</span></li>
+    <li class="future"><span class="d">26.12~27.1Q</span>에스티팜 렉비오·신규 상업화 대형 수주 공시(가능성 높음) <span class="badge b-est">추정</span> <span class="src">stock_analysis 26.11.17</span></li>
+    <li class="future"><span class="d">27.05.10</span>VICTORION-2 PREVENT 1차완료 → 27년 결과 <span class="badge b-ok">확인</span></li>
+    <li class="future"><span class="d">29.04.16</span>VICTORION-1 PREVENT 1차완료 → 29년 결과 <span class="badge b-ok">확인</span></li>
+    <li class="future"><span class="d">2049.12</span>ORION-4 전체완료(장기 추적) <span class="badge b-ok">확인</span></li>
+  </ul>
+  <p class="src">●=경과 사건, ○=예정·전망.</p>
+</section>
+
+<!-- 9. 리써처뷰 + 정리 -->
+<section id="sec-view">
+  <h2>리써처뷰 · 정리</h2>
+  <div class="view">
+    <p style="margin-top:0"><span class="badge b-view">-&gt;리써처뷰 (26.09.02)</span> <span class="badge b-est">추정</span></p>
+    <p>노바티스-알테오젠 SC딜 후보 중 렉비오(=RNA치료제)로 추정함. 6개월1회 SC인데 환자가 직접 투여 못하고 병원 가서 의료진이 투여해야 하는 반쪽짜리 SC제형이기 때문. 아제넥스도 FDA 승인 후 환자 자가투여 PFS제형으로 싹 교체한 전례 있음. <i>개인적인 생각이니 참고만.</i></p>
+  </div>
+
+  <figure id="fig-sc-view">
+    <figcaption>도해 3. 리써처뷰 논리 — '반쪽짜리 SC' (개인 의견, 추정)</figcaption>
+    <svg viewBox="0 0 420 330" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="반쪽짜리 SC 리써처뷰 도해">
+      <defs><marker id="ah3" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#c2410c"/></marker></defs>
+      <g font-size="16" font-family="inherit" text-anchor="middle">
+        <rect x="30" y="10" width="360" height="72" rx="12" fill="#eef2f7" stroke="#2f5d8a"/>
+        <text x="210" y="38" font-weight="700">① 현재 렉비오: 6개월1회 SC</text>
+        <text x="210" y="62" fill="#5a6272">병원 방문 → 의료진 투여</text>
+        <line x1="210" y1="82" x2="210" y2="110" stroke="#c2410c" stroke-width="2" marker-end="url(#ah3)"/>
+        <rect x="30" y="114" width="360" height="72" rx="12" fill="#fff" stroke="#5a6272" stroke-dasharray="5 4"/>
+        <text x="210" y="142" font-weight="700">② 전례: 아제넥스</text>
+        <text x="210" y="166" fill="#5a6272">FDA 승인 후 자가투여 PFS제형으로 교체</text>
+        <line x1="210" y1="186" x2="210" y2="214" stroke="#c2410c" stroke-width="2" marker-end="url(#ah3)"/>
+        <rect x="30" y="218" width="360" height="100" rx="12" fill="#fff7f2" stroke="#c2410c" stroke-width="2"/>
+        <text x="210" y="248" font-weight="700">③ 추정: 노바티스-알테오젠</text>
+        <text x="210" y="272" font-weight="700">SC딜 후보 = 렉비오</text>
+        <text x="210" y="298" fill="#7a3fb0">리써처뷰 26.09.02 · 개인 의견</text>
+      </g>
+    </svg>
+    <ol>
+      <li><b>어디에</b>: 현재 렉비오는 SC지만 병원에서 의료진이 투여 — 환자 자가투여 불가.</li>
+      <li><b>어떻게</b>: 아제넥스가 FDA 승인 후 자가투여 PFS제형으로 교체한 전례를 근거로 삼음.</li>
+      <li><b>왜</b>: 그래서 노바티스-알테오젠 SC딜 후보를 렉비오로 추정 — 확인된 사실 아님, 참고용.</li>
+    </ol>
+  </figure>
+
+  <div class="sum">
+    <p style="margin:0"><b>정리하면..</b> ORION-4는 렉비오가 'LDL 낮추는 약'에서 '심혈관 사건 줄이는 약'으로 올라서느냐를 가르는 16,124명 MACE 임상으로, 1차완료(26년10월)는 지났고 톱라인은 연말~27년 발표 대기 중임(수치 미발표). 성공 시 노바티스 최대매출 40억달러 이상 가이던스의 근거가 되고, 원료 공급사 에스티팜(렉비오 연 400~500억 추정)의 수주·재평가 트리거로 직결됨. 펠라카르센 HORIZON 실패로 노바티스 심혈관 포트폴리오에서 ORION-4 결과의 무게는 더 커진 상태.</p>
+  </div>
+</section>
+
+<!-- 10. 출처 -->
+<section id="sec-sources">
+  <h2>출처 · 면책</h2>
+  <ul class="plain">
+    <li>리써처TV 정리글 26.02.06(주간 라이브), 26.09.02(단톡방), 26.09.04(주간 라이브)</li>
+    <li>텔레그램 수집 26.10.28 — 노바티스 3Q26 실적·컨콜, 신한증권 에스티팜 3Q26 리뷰</li>
+    <li>하나증권 26.03.09 「제약 - 상승 곡선의 시작점, 유전자 치료제」 — 렉비오 추가 임상 도표(4Q25 어닝콜 기준) / 하나증권 26.05.21</li>
+    <li>에스티팜 하락 원인·캐털리스트 점검 (stock_analysis 26.11.17)</li>
+    <li>ClinicalTrials.gov NCT03705234 · NCT05030428 · NCT05739383 (26.11.17 조회)</li>
+  </ul>
+  <p class="muted">근거 등급 — <span class="badge b-ok">확인</span> 공식 등록·조회로 확인 · <span class="badge b-news">보도</span> 증권사·리써처TV·텔레그램 전달 · <span class="badge b-est">추정</span> 예상치·전망·개인 의견.</p>
+  <p class="muted">면책: 본 자료는 위 출처의 공개 정리 내용을 재구성한 정보 제공용이며 투자 권유가 아닙니다. ORION-4 MACE 결과 수치는 기준일(26.11.17) 현재 미발표이며, 전망·추정치는 실제와 다를 수 있습니다. 투자 판단과 책임은 투자자 본인에게 있습니다.</p>
+  <p class="brand">© 쩜상리서치</p>
+</section>
+
+</div>
+
+<script>
+(function(){
+  var UP='#d93a3a', DOWN='#2a62c9', NEU='#2f5d8a', NEU2='#8aa4c0';
+  function fs(){ return window.innerWidth < 600 ? 13 : 16; }
+  function base(cats){
+    return {
+      textStyle:{fontSize:fs()},
+      tooltip:{trigger:'axis',axisPointer:{type:'shadow'},textStyle:{fontSize:fs()},confine:true},
+      grid:{left:56,right:64,top:40,bottom:96,containLabel:true},
+      xAxis:{type:'category',data:cats,axisLabel:{fontSize:fs(),interval:0,width:window.innerWidth<600?70:130,overflow:'break'}},
+      dataZoom:[{type:'slider',xAxisIndex:0,bottom:10,height:22},{type:'inside',xAxisIndex:0}]
+    };
+  }
+  function effOpt(){
+    var cats=['전임상 1mg/kg PCSK9','전임상 3mg/kg PCSK9','전임상 LDL-C','3상 렉비오 LDL-C','3상 위약 LDL-C','3상 위약보정 LDL-C'];
+    var vals=[-50,-85,-60,-39.7,8.2,-47.9];
+    var o=base(cats);
+    o.tooltip.formatter=function(p){p=p[0];return p.name+'<br><b>'+(p.value>0?'+':'')+p.value+'%</b><br>리써처TV 26.09.04 정리글 · 보도';};
+    o.yAxis={type:'value',name:'변화율(%)',nameTextStyle:{fontSize:fs()},axisLabel:{fontSize:fs(),formatter:'{value}%'}};
+    o.series=[{type:'bar',barMaxWidth:56,data:vals.map(function(v){return {value:v,itemStyle:{color:v<0?DOWN:UP}};}),
+      label:{show:true,fontSize:fs(),formatter:function(p){return (p.value>0?'+':'')+p.value+'%';},position:'outside'}}];
+    return o;
+  }
+  function cvotOpt(){
+    var cats=['ORION-4 (1차완료 26.10)','VICTORION-2P (27.05.10)','VICTORION-1P (29.04.16)'];
+    var o=base(cats);
+    o.tooltip.formatter=function(p){p=p[0];return p.name+'<br><b>'+p.value.toLocaleString()+'명</b><br>하나증권 26.03.09 · CT.gov 26.11.17 · 확인';};
+    o.yAxis={type:'value',name:'환자수(명)',nameTextStyle:{fontSize:fs()},axisLabel:{fontSize:fs()}};
+    o.series=[{type:'bar',barMaxWidth:72,data:[{value:16124,itemStyle:{color:'#c2410c'}},{value:17004,itemStyle:{color:NEU}},{value:14012,itemStyle:{color:NEU2}}],
+      label:{show:true,fontSize:fs(),formatter:function(p){return p.value.toLocaleString()+'명';}}}];
+    return o;
+  }
+  function salesOpt(){
+    var cats=['3Q26 분기 매출','회사 최대매출 목표(이상)','인수 당시 peak sales 하단','인수 당시 peak sales 상단'];
+    var notes=['+63% yoy(cc) · 텔레그램 26.10.28 · 보도','5.29조원 · 장기 전망 · 텔레그램 26.10.28 · 추정','리써처TV 26.09.04 · 추정','리써처TV 26.09.04 · 추정'];
+    var o=base(cats);
+    o.tooltip.formatter=function(p){p=p[0];return p.name+'<br><b>'+p.value+'억달러</b><br>'+notes[p.dataIndex];};
+    o.yAxis={type:'value',name:'억달러',nameTextStyle:{fontSize:fs()},axisLabel:{fontSize:fs()}};
+    o.series=[{type:'bar',barMaxWidth:64,data:[{value:5.06,itemStyle:{color:UP}},{value:40,itemStyle:{color:NEU}},{value:30,itemStyle:{color:NEU2}},{value:100,itemStyle:{color:NEU2}}],
+      label:{show:true,fontSize:fs(),formatter:function(p){return p.value+(p.dataIndex===1?'+':'');}}}];
+    return o;
+  }
+  function stpOpt(){
+    var cats=['렉비오 하단','렉비오 상단','트린골자'];
+    var o=base(cats);
+    o.tooltip.formatter=function(p){p=p[0];return p.name+'<br><b>'+p.value.toLocaleString()+'억원</b><br>신한증권 예상 · 텔레그램 26.10.28 · 추정';};
+    o.yAxis={type:'value',name:'억원',nameTextStyle:{fontSize:fs()},axisLabel:{fontSize:fs()}};
+    o.series=[{type:'bar',barMaxWidth:72,data:[{value:400,itemStyle:{color:NEU}},{value:500,itemStyle:{color:NEU}},{value:1000,itemStyle:{color:NEU2}}],
+      label:{show:true,fontSize:fs(),formatter:function(p){return p.value.toLocaleString();}}}];
+    return o;
+  }
+  var defs=[['ch-eff',effOpt],['ch-cvot',cvotOpt],['ch-sales',salesOpt],['ch-stp',stpOpt]];
+  var inst=defs.map(function(d){var c=echarts.init(document.getElementById(d[0]));c.setOption(d[1]());return [c,d[1]];});
+  var t; window.addEventListener('resize',function(){clearTimeout(t);t=setTimeout(function(){
+    inst.forEach(function(x){x[0].setOption(x[1](),true);x[0].resize();});},150);});
+
+  // 정렬: 1클릭 내림차순 → 2클릭 오름차순 → 3클릭 원상태
+  document.querySelectorAll('table.sortable-tbl').forEach(function(tbl){
+    var tbody=tbl.tBodies[0], orig=Array.prototype.slice.call(tbody.rows), state={col:-1,step:0};
+    var ths=tbl.tHead.rows[0].cells;
+    Array.prototype.forEach.call(ths,function(th,idx){
+      if(!th.classList.contains('sortable')) return;
+      th.addEventListener('click',function(){
+        if(state.col===idx){state.step=(state.step+1)%3;} else {state.col=idx;state.step=1;}
+        Array.prototype.forEach.call(ths,function(h){var a=h.querySelector('.arr'); if(a) a.textContent='↕';});
+        var rows=orig.slice();
+        if(state.step>0){
+          rows.sort(function(a,b){var x=parseFloat(a.cells[idx].dataset.v),y=parseFloat(b.cells[idx].dataset.v);return state.step===1?y-x:x-y;});
+          th.querySelector('.arr').textContent=state.step===1?'▼':'▲';
+        }
+        rows.forEach(function(r){tbody.appendChild(r);});
+      });
+    });
+  });
+})();
+</script>
+</body>
+</html>
